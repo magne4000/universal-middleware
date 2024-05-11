@@ -15,6 +15,7 @@ const hmrPort = process.env.HMR_PORT
 
 startServer();
 
+// TODO take inspiration from https://github.com/hattipjs/hattip/blob/main/packages/adapter/adapter-node/src/request.ts
 async function startServer() {
   const app = express();
 
@@ -54,8 +55,9 @@ async function startServer() {
     //   httpResponse.pipe(res);
     // }
     const ctx = {};
+    const fullUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
     const webResponse = await vikeHandler(
-      new Request(req.url, {
+      new Request(fullUrl, {
         // TODO set-cookies special case
         headers: req.headers as Record<string, string>,
         body: req.body,
