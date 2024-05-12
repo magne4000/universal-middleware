@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import express, { type Request as ExpressRequest } from "express";
 import { vikeHandler } from "./universal-entry.js";
 import { Stream } from "node:stream";
+import { fromExpress, toExpress } from "./utils/express";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -41,33 +42,11 @@ async function startServer() {
    * @link {@see https://vike.dev}
    **/
   app.all("*", async (req: ExpressRequest, res, next) => {
-    // const pageContextInit = { urlOriginal: req.originalUrl };
-    //
-    // const pageContext = await renderPage(pageContextInit);
-    // const { httpResponse } = pageContext;
-    //
-    // if (!httpResponse) {
-    //   return next();
-    // } else {
-    //   const { statusCode, headers } = httpResponse;
-    //   headers.forEach(([name, value]) => res.setHeader(name, value));
-    //   res.status(statusCode);
-    //   httpResponse.pipe(res);
-    // }
     const ctx = {};
-    const fullUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
-    const webResponse = await vikeHandler(
-      new Request(fullUrl, {
-        // TODO set-cookies special case
-        headers: req.headers as Record<string, string>,
-        body: req.body,
-        method: req.method,
-      }),
-      ctx,
-    );
+    const webResponse = await vikeHandler(fromExpress(req), ctx);
 
     if (webResponse.body) {
-      Stream.Readable.fromWeb(webResponse.body as any).pipe(res);
+      toExpress(webResponse)(res);
     } else {
       next();
     }
