@@ -6,6 +6,8 @@ import { rateLimit } from "express-rate-limit";
 import { observer } from "./utils/express/observer.js";
 import { transformHandler } from "./utils/express/transformer.js";
 import { vikeHandler } from "./utils/vike-handler.js";
+import session from "express-session";
+import { logChange } from "./utils/proxy.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -45,18 +47,18 @@ async function startServer() {
     keyGenerator: () => "some Key",
   });
 
-  app.use(observer(helmet()));
-  app.use(observer(limiter));
-  // For now, observer hangs when used with session
-  // app.use(
-  //   expressPatcher(
-  //     session({
-  //       secret: "keyboard cat",
-  //       resave: false,
-  //       saveUninitialized: true,
-  //     }),
-  //   ),
-  // );
+  app.use(observer("helmet", helmet()));
+  app.use(observer("limiter", limiter));
+  app.use(
+    observer(
+      "session",
+      session({
+        secret: "keyboard cat",
+        resave: false,
+        saveUninitialized: true,
+      }),
+    ),
+  );
 
   /**
    * Vike route
