@@ -3,11 +3,11 @@ import type {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from "express";
-import { UniversalHandler } from "../types";
+import { UniversalHandler } from "../../types.js";
 import rfdc from "rfdc";
 import diff from "microdiff";
 
-export function fromExpress(req: ExpressRequest): Request {
+export function transformRequest(req: ExpressRequest): Request {
   const fullUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
   return new Request(fullUrl, {
     // TODO set-cookies special case
@@ -17,7 +17,7 @@ export function fromExpress(req: ExpressRequest): Request {
   });
 }
 
-export function toExpress(res: Response) {
+export function transformResponse(res: Response) {
   return (expressRes: ExpressResponse) => {
     if (!res.body) {
       expressRes.end();
@@ -46,7 +46,7 @@ export function toExpress(res: Response) {
   };
 }
 
-export function expressWrapper(handler: UniversalHandler) {
+export function transformHandler(handler: UniversalHandler) {
   return async (
     req: ExpressRequest,
     res: ExpressResponse,
@@ -57,14 +57,14 @@ export function expressWrapper(handler: UniversalHandler) {
     //   proto: true,
     // })(req);
     const ctx = {};
-    const webResponse = await handler(fromExpress(req), ctx);
+    const webResponse = await handler(transformRequest(req), ctx);
 
     // console.log(diff(reqOri, req));
 
     (req as any).context = ctx;
 
     if (webResponse.body) {
-      await toExpress(webResponse)(res);
+      await transformResponse(webResponse)(res);
     } else {
       next();
     }

@@ -1,12 +1,11 @@
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import express, { type Request as ExpressRequest } from "express";
-import { vikeHandler } from "./universal-entry.js";
-import { expressWrapper, fromExpress, toExpress } from "./utils/express";
+import express from "express";
 import helmet from "helmet";
-import { expressPatcher } from "./utils/express-patcher";
 import { rateLimit } from "express-rate-limit";
-import session from "express-session";
+import { observer } from "./utils/express/observer.js";
+import { transformHandler } from "./utils/express/transformer.js";
+import { vikeHandler } from "./utils/vike-handler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -46,8 +45,9 @@ async function startServer() {
     keyGenerator: () => "some Key",
   });
 
-  app.use(expressPatcher(helmet()));
-  app.use(expressPatcher(limiter));
+  app.use(observer(helmet()));
+  app.use(observer(limiter));
+  // For now, observer hangs when used with session
   // app.use(
   //   expressPatcher(
   //     session({
@@ -63,7 +63,7 @@ async function startServer() {
    *
    * @link {@see https://vike.dev}
    **/
-  app.all("*", expressWrapper(vikeHandler));
+  app.all("*", transformHandler(vikeHandler));
 
   app.listen(port, () => {
     console.log(`Server listening on http://localhost:${port}`);

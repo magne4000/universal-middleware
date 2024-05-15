@@ -3,12 +3,12 @@ import type {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from "express";
-import { deepProxy, LogProxyObserver } from "./patcher";
+import { deepProxy, LogProxyObserver } from "../proxy.js";
 
 const reqObserver = deepProxy(new LogProxyObserver("req"));
 const resObserver = deepProxy(new LogProxyObserver("res"));
 
-export function expressPatcher(
+export function observer(
   handler: (
     req: ExpressRequest,
     res: ExpressResponse,

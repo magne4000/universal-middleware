@@ -27,26 +27,6 @@ export class LogProxyObserver implements ProxyObserver {
   }
 }
 
-export class RequestProxyObserver implements ProxyObserver {
-  constructor(public name: string) {}
-
-  protected log(path: string[], rest: string) {
-    console.log(`${this.name} [/${path.join(".")}] ${rest})`);
-  }
-
-  onCall(path: string[], prop: PropertyKey, args: unknown[]) {
-    this.log(path, `${String(prop)}(${JSON.stringify(args)})`);
-  }
-
-  onSet(path: string[], prop: PropertyKey, value: unknown) {
-    this.log(path, `${String(prop)} = ${JSON.stringify(value)}`);
-  }
-
-  onDelete(path: string[], prop: PropertyKey) {
-    this.log(path, `-${String(prop)}`);
-  }
-}
-
 export function deepProxy(observer: ProxyObserver) {
   return function proxy<T extends object>(subject: T): T {
     return new DeepProxy(subject, {
