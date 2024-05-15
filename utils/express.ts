@@ -1,7 +1,11 @@
 import type {
+  NextFunction,
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from "express";
+import { UniversalHandler } from "../types";
+import rfdc from "rfdc";
+import diff from "microdiff";
 
 export function fromExpress(req: ExpressRequest): Request {
   const fullUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
@@ -24,6 +28,7 @@ export function toExpress(res: Response) {
         start() {
           expressRes.writeHead(
             res.status,
+            res.statusText,
             Object.fromEntries(res.headers.entries()),
           );
         },
@@ -38,5 +43,30 @@ export function toExpress(res: Response) {
         },
       }),
     );
+  };
+}
+
+export function expressWrapper(handler: UniversalHandler) {
+  return async (
+    req: ExpressRequest,
+    res: ExpressResponse,
+    next: NextFunction,
+  ) => {
+    // const reqOri = rfdc({
+    //   circles: true,
+    //   proto: true,
+    // })(req);
+    const ctx = {};
+    const webResponse = await handler(fromExpress(req), ctx);
+
+    // console.log(diff(reqOri, req));
+
+    (req as any).context = ctx;
+
+    if (webResponse.body) {
+      await toExpress(webResponse)(res);
+    } else {
+      next();
+    }
   };
 }
