@@ -23,6 +23,7 @@ export interface DecoratedRequest extends Omit<IncomingMessage, "socket"> {
   protocol?: string;
   socket?: PossiblyEncryptedSocket;
   rawBody?: Buffer | null;
+  _request?: Request;
 }
 
 /** Adapter options */
@@ -89,6 +90,11 @@ export function createRequestAdapter(
       req.socket?.remoteAddress ||
       "";
 
+    // Reuse already created request
+    if (req._request) {
+      return [req._request, ip];
+    }
+
     const protocol =
       protocolOverride ||
       req.protocol ||
@@ -117,6 +123,8 @@ export function createRequestAdapter(
       // @ts-ignore
       duplex: "half",
     });
+
+    req._request = request;
 
     return [request, ip];
   };
