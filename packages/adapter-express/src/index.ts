@@ -24,3 +24,4 @@ export interface NodePlatformInfo {
 }
 
 export { createMiddleware, createServer } from "./common.js";
+export { createRequestAdapter } from "./request.js";
