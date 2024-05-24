@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/no-unresolved
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as webStream from "node:stream/web";
 import installGetSetCookie from "@hattip/polyfills/get-set-cookie";
 import installCrypto from "@hattip/polyfills/crypto";
@@ -9,16 +9,16 @@ installCrypto();
 installHalfDuplexRequest();
 
 for (const key of Object.keys(webStream)) {
-	if (!(key in globalThis)) {
-		(globalThis as any)[key] = (webStream as any)[key];
-	}
+  if (!(key in globalThis)) {
+    (globalThis as any)[key] = (webStream as any)[key];
+  }
 }
 
 export type {
-	DecoratedRequest,
-	NodeMiddleware,
-	NodeAdapterOptions,
-	NodePlatformInfo,
-} from "./common";
+  DecoratedRequest,
+  NodeMiddleware,
+  NodeAdapterOptions,
+  NodePlatformInfo,
+} from "./common.js";
 
-export { createMiddleware, createServer } from "./common";
+export { createMiddleware, createServer } from "./common.js";

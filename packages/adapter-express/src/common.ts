@@ -1,18 +1,21 @@
 import type { AdapterRequestContext, HattipHandler } from "@hattip/core";
 import {
-	createServer as createHttpServer,
-	Server as HttpServer,
-	IncomingMessage,
-	ServerResponse,
-	ServerOptions,
+  createServer as createHttpServer,
+  Server as HttpServer,
+  IncomingMessage,
+  ServerResponse,
+  type ServerOptions,
 } from "node:http";
 import type { Socket } from "node:net";
-import { NodeRequestAdapterOptions, createRequestAdapter } from "./request";
-import { sendResponse } from "./response";
+import {
+  type NodeRequestAdapterOptions,
+  createRequestAdapter,
+} from "./request.js";
+import { sendResponse } from "./response.js";
 import process from "node:process";
 
 interface PossiblyEncryptedSocket extends Socket {
-	encrypted?: boolean;
+  encrypted?: boolean;
 }
 
 /**
@@ -20,31 +23,31 @@ interface PossiblyEncryptedSocket extends Socket {
  * `ip` and `protocol` properties.
  */
 export interface DecoratedRequest extends Omit<IncomingMessage, "socket"> {
-	ip?: string;
-	protocol?: string;
-	socket?: PossiblyEncryptedSocket;
+  ip?: string;
+  protocol?: string;
+  socket?: PossiblyEncryptedSocket;
 }
 
 /** Connect/Express style request listener/middleware */
 export type NodeMiddleware = (
-	req: DecoratedRequest,
-	res: ServerResponse,
-	next?: (err?: unknown) => void,
+  req: DecoratedRequest,
+  res: ServerResponse,
+  next?: (err?: unknown) => void,
 ) => void;
 
 /** Adapter options */
 export interface NodeAdapterOptions extends NodeRequestAdapterOptions {
-	/**
-	 * Whether to call the next middleware in the chain even if the request
-	 * was handled.@default true
-	 */
-	alwaysCallNext?: boolean;
+  /**
+   * Whether to call the next middleware in the chain even if the request
+   * was handled.@default true
+   */
+  alwaysCallNext?: boolean;
 }
 
 export interface NodePlatformInfo {
-	name: "node";
-	request: DecoratedRequest;
-	response: ServerResponse;
+  name: "node";
+  request: DecoratedRequest;
+  response: ServerResponse;
 }
 
 /**
@@ -52,84 +55,84 @@ export interface NodePlatformInfo {
  * middleware in Connect-style frameworks like Express.
  */
 export function createMiddleware(
-	handler: HattipHandler<NodePlatformInfo>,
-	options: NodeAdapterOptions = {},
+  handler: HattipHandler<NodePlatformInfo>,
+  options: NodeAdapterOptions = {},
 ): NodeMiddleware {
-	const { alwaysCallNext = true, ...requestOptions } = options;
+  const { alwaysCallNext = true, ...requestOptions } = options;
 
-	const requestAdapter = createRequestAdapter(requestOptions);
+  const requestAdapter = createRequestAdapter(requestOptions);
 
-	return async (req, res, next) => {
-		try {
-			const [request, ip] = requestAdapter(req);
+  return async (req, res, next) => {
+    try {
+      const [request, ip] = requestAdapter(req);
 
-			let passThroughCalled = false;
+      let passThroughCalled = false;
 
-			const context: AdapterRequestContext<NodePlatformInfo> = {
-				request,
+      const context: AdapterRequestContext<NodePlatformInfo> = {
+        request,
 
-				ip,
+        ip,
 
-				env(variable) {
-					return process.env[variable];
-				},
+        env(variable) {
+          return process.env[variable];
+        },
 
-				waitUntil(promise) {
-					// Do nothing
-					void promise;
-				},
+        waitUntil(promise) {
+          // Do nothing
+          void promise;
+        },
 
-				passThrough() {
-					passThroughCalled = true;
-				},
+        passThrough() {
+          passThroughCalled = true;
+        },
 
-				platform: {
-					name: "node",
-					request: req,
-					response: res,
-				},
-			};
+        platform: {
+          name: "node",
+          request: req,
+          response: res,
+        },
+      };
 
-			const response = await handler(context);
+      const response = await handler(context);
 
-			if (passThroughCalled && next) {
-				next();
-				return;
-			}
+      if (passThroughCalled && next) {
+        next();
+        return;
+      }
 
-			await sendResponse(response, res);
+      await sendResponse(response, res);
 
-			if (next && alwaysCallNext) {
-				next();
-			}
-		} catch (error) {
-			if (next) {
-				next(error);
-			} else {
-				console.error(error);
+      if (next && alwaysCallNext) {
+        next();
+      }
+    } catch (error) {
+      if (next) {
+        next(error);
+      } else {
+        console.error(error);
 
-				if (!res.headersSent) {
-					res.statusCode = 500;
-				}
+        if (!res.headersSent) {
+          res.statusCode = 500;
+        }
 
-				if (!res.writableEnded) {
-					res.end();
-				}
-			}
-		}
-	};
+        if (!res.writableEnded) {
+          res.end();
+        }
+      }
+    }
+  };
 }
 
 /**
  * Create an HTTP server
  */
 export function createServer(
-	handler: HattipHandler<NodePlatformInfo>,
-	adapterOptions?: NodeAdapterOptions,
-	serverOptions?: ServerOptions,
+  handler: HattipHandler<NodePlatformInfo>,
+  adapterOptions?: NodeAdapterOptions,
+  serverOptions?: ServerOptions,
 ): HttpServer {
-	const listener = createMiddleware(handler, adapterOptions);
-	return serverOptions
-		? createHttpServer(serverOptions, listener)
-		: createHttpServer(listener);
+  const listener = createMiddleware(handler, adapterOptions);
+  return serverOptions
+    ? createHttpServer(serverOptions, listener)
+    : createHttpServer(listener);
 }

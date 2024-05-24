@@ -1,6 +1,6 @@
 // TODO: Remove or update this rule!
 import { ServerResponse } from "node:http";
-import { DecoratedRequest, NodeAdapterOptions } from "./common";
+import type { DecoratedRequest, NodeAdapterOptions } from "./common.js";
 import installWhatwgNodeFetch from "@hattip/polyfills/whatwg-node";
 import installGetSetCookie from "@hattip/polyfills/get-set-cookie";
 import installCrypto from "@hattip/polyfills/crypto";
@@ -13,14 +13,14 @@ export type { DecoratedRequest, NodeAdapterOptions };
 
 /** Connect/Express style request listener/middleware */
 export type NodeMiddleware = (
-	req: DecoratedRequest,
-	res: ServerResponse,
-	next?: () => void,
+  req: DecoratedRequest,
+  res: ServerResponse,
+  next?: () => void,
 ) => void;
 
 export interface NodePlatformInfo {
-	request: DecoratedRequest;
-	response: ServerResponse;
+  request: DecoratedRequest;
+  response: ServerResponse;
 }
 
-export { createMiddleware, createServer } from "./common";
+export { createMiddleware, createServer } from "./common.js";
