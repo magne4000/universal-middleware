@@ -1,0 +1,48 @@
+{
+  "name": "@universal-middleware/express",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Express adapter for universal middlewares",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./native-fetch": "./dist/native-fetch.js",
+    "./whatwg-node": "./dist/whatwg-node.js",
+    "./request": "./dist/request.js",
+    "./response": "./dist/response.js",
+    "./fast-fetch": "./dist/fast-fetch.js"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*.d.ts"
+      ]
+    }
+  },
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "contributors": [
+    "Fatih Aygün <cyco130@gmail.com>"
+  ],
+  "repository": "https://github.com/hattipjs/hattip",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsup",
+    "dev": "tsup --watch",
+    "prepack": "pnpm build",
+    "test": "pnpm test:typecheck",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "rimraf": "^5.0.7",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@hattip/core": "^0.0.45",
+    "@hattip/polyfills": "^0.0.45",
+    "@hattip/walk": "^0.0.45"
+  }
+}
