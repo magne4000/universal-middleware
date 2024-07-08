@@ -36,13 +36,13 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
-    "rimraf": "^5.0.7",
-    "tsup": "^8.0.2",
-    "typescript": "^5.4.5"
+    "rimraf": "^5.0.8",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3"
   },
   "dependencies": {
-    "@hattip/core": "^0.0.45",
-    "@hattip/polyfills": "^0.0.45",
-    "@hattip/walk": "^0.0.45"
+    "@hattip/core": "^0.0.46",
+    "@hattip/polyfills": "^0.0.46",
+    "@hattip/walk": "^0.0.46"
   }
 }
