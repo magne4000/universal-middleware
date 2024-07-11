@@ -86,5 +86,8 @@ describe.concurrent.each(runs)("$name", (run) => {
     });
     expect(response.headers.get("x-test-value")).toBe("universal-middleware");
     expect(response.headers.has("x-should-be-removed")).toBe(false);
+    // added by helmet
+    expect(response.headers.has("content-security-policy")).toBe(true);
+    expect(response.headers.has("x-xss-protection")).toBe(true);
   });
 });

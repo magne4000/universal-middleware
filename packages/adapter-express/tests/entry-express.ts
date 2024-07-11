@@ -1,6 +1,7 @@
 import { createHandler, createMiddleware } from "../src/index.js";
 import express from "express";
 import mri from "mri";
+import helmet from "helmet";
 
 declare global {
   namespace Universal {
@@ -18,6 +19,10 @@ const args = mri<{ port: string }>(
 
 const app = express();
 
+// standard express middleware
+app.use(helmet());
+
+// universal middleware that updates the context synchronously
 app.use(
   createMiddleware((_request, context) => {
     context.something = {
@@ -27,6 +32,7 @@ app.use(
   }),
 );
 
+// universal middleware that update the response headers asynchronously
 app.use(
   createMiddleware((_request, _context) => {
     return async (response) => {
@@ -40,8 +46,11 @@ app.use(
   }),
 );
 
+// universal middleware that updates the context asynchronously
 app.use(
-  createMiddleware((_request, context) => {
+  createMiddleware(async (_request, context) => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     context.somethingElse = {
       b: 2,
     };
@@ -49,6 +58,7 @@ app.use(
   }),
 );
 
+// universal handler
 app.use(
   createHandler((_request, context) => {
     return new Response(JSON.stringify(context, null, 2), {
