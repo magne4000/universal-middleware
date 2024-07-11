@@ -3,43 +3,77 @@
 import type { OutgoingHttpHeaders, ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 import { ReadableStream as ReadableStreamNode } from "node:stream/web";
-import type { Awaitable } from "./types.js";
 import {
   type DecoratedServerResponse,
   pendingMiddlewaresSymbol,
   wrappedResponseSymbol,
 } from "./common.js";
 
-export function writableStreamFactory(nodeResponse: ServerResponse) {
-  return async (
-    res: Response,
-    middlewares?: ((response: Response) => Awaitable<Response>)[],
-  ) => {
-    if (middlewares) {
-      res = await middlewares?.reduce(
-        async (prev, curr) => curr(await prev),
-        Promise.resolve(res),
-      );
-    }
+// @ts-ignore
+const deno = typeof Deno !== "undefined";
 
-    return new WritableStream({
-      async start() {
-        nodeResponse.writeHead(
-          res.status,
-          res.statusText,
-          Object.fromEntries(res.headers.entries()),
-        );
-      },
-      write(chunk) {
-        nodeResponse.write(chunk);
-      },
-      close() {
-        nodeResponse.end();
-      },
-      abort(err) {
-        nodeResponse.end(err);
-      },
+/**
+ * Send a fetch API Response into a Node.js HTTP response stream.
+ */
+export async function sendResponse(
+  fetchResponse: Response,
+  nodeResponse: DecoratedServerResponse,
+): Promise<void> {
+  const fetchBody: unknown = fetchResponse.body;
+
+  let body: Readable | null = null;
+  if (fetchBody instanceof Readable) {
+    body = fetchBody;
+  } else if (
+    fetchBody instanceof ReadableStream ||
+    (fetchBody as any) instanceof ReadableStreamNode
+  ) {
+    if (!deno) {
+      body = Readable.fromWeb(fetchBody as ReadableStreamNode);
+    } else {
+      const reader = (fetchBody as ReadableStream).getReader();
+      body = new Readable({
+        async read() {
+          const { done, value } = await reader.read();
+          this.push(done ? null : value);
+        },
+      });
+    }
+  } else if (fetchBody) {
+    body = Readable.from(fetchBody as any);
+  }
+
+  setHeaders(fetchResponse, nodeResponse);
+
+  if (body) {
+    body.pipe(nodeResponse);
+    await new Promise((resolve, reject) => {
+      body.on("error", reject);
+      nodeResponse.on("finish", resolve);
+      nodeResponse.on("error", reject);
     });
+  } else {
+    nodeResponse.setHeader("content-length", "0");
+    nodeResponse.end();
+  }
+}
+
+function override<T extends DecoratedServerResponse>(
+  nodeResponse: T,
+  key: keyof T,
+  callback: () => Promise<unknown>,
+) {
+  const original: any = nodeResponse[key];
+
+  (nodeResponse as any)[key] = async (...args: any) => {
+    console.log("BEFORE", key);
+    await callback();
+    console.log("AFTER", key);
+    return original.apply(nodeResponse, args);
+  };
+
+  return function restore() {
+    nodeResponse[key] = original;
   };
 }
 
@@ -47,15 +81,19 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
   if (nodeResponse[wrappedResponseSymbol]) return;
   nodeResponse[wrappedResponseSymbol] = true;
 
-  const originalWrite = nodeResponse.write;
-  const originalEnd = nodeResponse.end;
-  const originalWriteHead = nodeResponse.writeHead;
+  const restore = [
+    override(nodeResponse, "write", triggerPendingMiddlewares),
+    override(nodeResponse, "end", triggerPendingMiddlewares),
+    override(nodeResponse, "writeHead", triggerPendingMiddlewares),
+  ];
   let resolve: () => void;
   const pendingResponse: Promise<void> = new Promise((r) => (resolve = r));
 
   async function triggerPendingMiddlewares() {
     if (nodeResponse[pendingMiddlewaresSymbol]) {
-      const response = await nodeResponse[pendingMiddlewaresSymbol].reduce(
+      const middlewares = nodeResponse[pendingMiddlewaresSymbol];
+      delete nodeResponse[pendingMiddlewaresSymbol];
+      const response = await middlewares.reduce(
         async (prev, curr) => curr(await prev),
         Promise.resolve(
           new Response(null, {
@@ -75,63 +113,10 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
       setHeaders(response, nodeResponse, true);
 
       resolve();
-      nodeResponse.write = originalWrite;
-      nodeResponse.end = originalEnd;
-      nodeResponse.writeHead = originalWriteHead;
+      restore.forEach((r) => r());
     } else {
       await pendingResponse;
     }
-  }
-
-  (nodeResponse.write as any) = async (...args: any) => {
-    await triggerPendingMiddlewares();
-    return originalWrite.apply(nodeResponse, args);
-  };
-
-  (nodeResponse.end as any) = async (...args: any) => {
-    await triggerPendingMiddlewares();
-    return originalEnd.apply(nodeResponse, args);
-  };
-
-  (nodeResponse.writeHead as any) = async (...args: any) => {
-    await triggerPendingMiddlewares();
-    return originalWriteHead.apply(nodeResponse, args);
-  };
-}
-
-/**
- * Send a fetch API Response into a Node.js HTTP response stream.
- */
-export async function sendResponse(
-  fetchResponse: Response,
-  nodeResponse: DecoratedServerResponse,
-): Promise<void> {
-  const fetchBody: unknown = fetchResponse.body;
-
-  let body: Readable | null = null;
-  if (fetchBody instanceof Readable) {
-    body = fetchBody;
-  } else if (
-    fetchBody instanceof ReadableStream ||
-    (fetchBody as any) instanceof ReadableStreamNode
-  ) {
-    body = Readable.fromWeb(fetchBody as ReadableStreamNode);
-  } else if (fetchBody) {
-    body = Readable.from(fetchBody as any);
-  }
-
-  setHeaders(fetchResponse, nodeResponse);
-
-  if (body) {
-    body.pipe(nodeResponse);
-    await new Promise((resolve, reject) => {
-      body.on("error", reject);
-      nodeResponse.on("finish", resolve);
-      nodeResponse.on("error", reject);
-    });
-  } else {
-    nodeResponse.setHeader("content-length", "0");
-    nodeResponse.end();
   }
 }
 

@@ -12,5 +12,13 @@
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": "latest"
+  },
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      1,
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ]
   }
 }

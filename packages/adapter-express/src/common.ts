@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment,@typescript-eslint/no-explicit-any */
-
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Socket } from "node:net";
 import {
@@ -20,10 +18,20 @@ export const pendingMiddlewaresSymbol = Symbol("unPendingMiddlewares");
 export const wrappedResponseSymbol = Symbol("unWrappedResponse");
 
 export const env: Record<string, string | undefined> =
-  typeof process?.env !== "undefined"
-    ? process.env
-    : typeof (import.meta as any)?.env !== "undefined"
-      ? (import.meta as any).env
+  typeof globalThis.process?.env !== "undefined"
+    ? globalThis.process.env
+    : typeof (
+          import.meta as unknown as Record<
+            "env",
+            Record<string, string | undefined>
+          >
+        )?.env !== "undefined"
+      ? (
+          import.meta as unknown as Record<
+            "env",
+            Record<string, string | undefined>
+          >
+        ).env
       : {};
 
 export interface PossiblyEncryptedSocket extends Socket {
@@ -58,13 +66,7 @@ export type NodeMiddleware = (
 /** Adapter options */
 export interface NodeAdapterHandlerOptions extends NodeRequestAdapterOptions {}
 export interface NodeAdapterMiddlewareOptions
-  extends NodeRequestAdapterOptions {
-  /**
-   * If `true`, this middleware pipes the returned Response to the Node Response.
-   * Otherwise let other middlewares
-   */
-  send?: boolean;
-}
+  extends NodeRequestAdapterOptions {}
 
 /**
  * Creates a request handler to be passed to http.createServer() or used as a
@@ -101,6 +103,9 @@ export function createHandler(
   };
 }
 
+/**
+ * Creates a middleware to be passed to Connect-style frameworks like Express
+ */
 export function createMiddleware(
   middleware: UniversalMiddleware,
   options: NodeAdapterMiddlewareOptions = {},
@@ -145,4 +150,10 @@ export function createMiddleware(
       }
     }
   };
+}
+
+export function getContext(
+  req: DecoratedRequest,
+): UniversalContext | undefined {
+  return req[contextSymbol];
 }

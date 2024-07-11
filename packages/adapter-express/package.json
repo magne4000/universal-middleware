@@ -28,13 +28,22 @@
     "build": "rimraf dist && tsup",
     "dev": "tsup --watch",
     "prepack": "pnpm build",
-    "test": "pnpm test:typecheck",
+    "test": "vitest run",
+    "test:run-express:node": "tsx tests/entry-express.ts",
+    "test:run-express:bun": "bun tests/entry-express.ts",
+    "test:run-express:deno": "deno run --unstable-sloppy-imports -A tests/entry-express.ts",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
+    "express": "^4.19.2",
+    "mri": "^1.2.0",
     "rimraf": "^6.0.0",
     "tsup": "^8.1.0",
-    "typescript": "^5.5.3"
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3",
+    "vitest": "^2.0.2",
+    "wait-port": "^1.1.0",
+    "zx": "^8.1.4"
   }
 }

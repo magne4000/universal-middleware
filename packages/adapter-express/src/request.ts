@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment,@typescript-eslint/no-explicit-any */
-
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { type DecoratedRequest, env, requestSymbol } from "./common.js";
 
 // @ts-ignore
@@ -115,7 +114,7 @@ function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
 
   if (!bun && !deno) {
     // Real Node can handle ReadableStream
-    return req as any;
+    return req as unknown as BodyInit;
   }
 
   return new ReadableStream({

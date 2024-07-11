@@ -9,5 +9,6 @@ export type NodeMiddleware = (
   next?: () => void,
 ) => void;
 
-export { createHandler } from "./common.js";
+export { createHandler, createMiddleware, getContext } from "./common.js";
 export { createRequestAdapter } from "./request.js";
+export { sendResponse } from "./response.js";
