@@ -1,7 +1,11 @@
 The goal of this repository is to flatten out the state of current JS (HTTP) servers(less) ecosystem,
 and determine what would be the best course of action to create a unified way to represent Handlers and Middlewares (and their Context).
 
-The repository contains some code to test some patterns, represent Handlers and Middlewares, and adapters for all the major implementations.
+The [playground](https://github.com/magne4000/universal-handler/tree/main/playground) contains code to test some patterns, represent Handlers and Middlewares, and adapters for all the major implementations.
+
+Some [packages](https://github.com/magne4000/universal-handler/tree/main/packages) are also being authored (WIP).
+The goal of those packages will be to provide tool authors a mean to declare their Handlers and Middlewares once, targetting all supported servers.
+Think of it as [unplugin](https://github.com/unjs/unplugin) but for Handlers and Middlewares.
 
 ## Definitions
 ### Handler
