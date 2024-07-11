@@ -1,4 +1,3 @@
-import ssr from "vike/plugin";
 import devServer from "@hono/vite-dev-server";
 import { hattip } from "@hattip/vite";
 import { defineConfig, type PluginOption } from "vite";
@@ -13,7 +12,7 @@ export default defineConfig(({ mode }) => {
     case "hono":
       plugins.push(
         devServer({
-          entry: "hono-entry.ts",
+          entry: "playground/hono-entry.ts",
 
           exclude: [
             /^\/@.+$/,
@@ -32,6 +31,6 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    plugins: [...plugins, ssr()],
+    plugins,
   };
 });
