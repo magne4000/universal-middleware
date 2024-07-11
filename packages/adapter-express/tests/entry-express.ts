@@ -2,6 +2,15 @@ import { createHandler, createMiddleware } from "../src/index.js";
 import express from "express";
 import mri from "mri";
 
+declare global {
+  namespace Universal {
+    interface Context {
+      something?: Record<string, unknown>;
+      somethingElse?: Record<string, unknown>;
+    }
+  }
+}
+
 const args = mri<{ port: string }>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (globalThis as any).Deno?.args ?? globalThis.process.argv.slice(2),
@@ -13,6 +22,7 @@ app.use(
   createMiddleware((_request, context) => {
     context.something = {
       a: 1,
+      c: 3,
     };
   }),
 );
@@ -35,6 +45,7 @@ app.use(
     context.somethingElse = {
       b: 2,
     };
+    delete context.something!.c;
   }),
 );
 

@@ -6,17 +6,9 @@
   "files": [
     "dist"
   ],
+  "types": "./config.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./request": "./dist/request.js",
-    "./response": "./dist/response.js"
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*.d.ts"
-      ]
-    }
+    ".": "./dist/index.js"
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
   "contributors": [
@@ -32,12 +24,17 @@
     "test:run-express:node": "tsx tests/entry-express.ts",
     "test:run-express:bun": "bun tests/entry-express.ts",
     "test:run-express:deno": "deno run --unstable-sloppy-imports -A tests/entry-express.ts",
-    "test:typecheck": "tsc -p tsconfig.json --noEmit"
+    "test:typecheck": "tsc -p tsconfig.json --noEmit",
+    "release": "LANG=en_US release-me patch",
+    "release:minor": "LANG=en_US release-me minor",
+    "release:commit": "LANG=en_US release-me commit"
   },
   "devDependencies": {
+    "@brillout/release-me": "^0.3.9",
     "@types/node": "^20.14.10",
     "express": "^4.19.2",
     "mri": "^1.2.0",
+    "readable-stream": "^4.5.2",
     "rimraf": "^6.0.0",
     "tsup": "^8.1.0",
     "tsx": "^4.16.2",

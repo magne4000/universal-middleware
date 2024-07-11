@@ -7,7 +7,6 @@ import {
 import { sendResponse, wrapResponse } from "./response.js";
 import type {
   Awaitable,
-  UniversalContext,
   UniversalHandler,
   UniversalMiddleware,
 } from "./types.js";
@@ -47,7 +46,7 @@ export interface DecoratedRequest extends Omit<IncomingMessage, "socket"> {
   protocol?: string;
   socket?: PossiblyEncryptedSocket;
   rawBody?: Buffer | null;
-  [contextSymbol]?: UniversalContext;
+  [contextSymbol]?: Universal.Context;
   [requestSymbol]?: Request;
 }
 
@@ -154,6 +153,6 @@ export function createMiddleware(
 
 export function getContext(
   req: DecoratedRequest,
-): UniversalContext | undefined {
+): Universal.Context | undefined {
   return req[contextSymbol];
 }

@@ -1,12 +1,9 @@
 export type Awaitable<T> = T | Promise<T>;
 
-export interface UniversalContext
-  extends Record<string | number | symbol, unknown> {}
-
 export interface UniversalMiddleware {
   (
     request: Request,
-    context: UniversalContext,
+    context: Universal.Context,
   ):
     | Awaitable<Response>
     | Awaitable<void>
@@ -14,5 +11,5 @@ export interface UniversalMiddleware {
 }
 
 export interface UniversalHandler {
-  (request: Request, context: UniversalContext): Awaitable<Response>;
+  (request: Request, context: Universal.Context): Awaitable<Response>;
 }

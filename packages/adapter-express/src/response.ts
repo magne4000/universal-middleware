@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment,@typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { OutgoingHttpHeaders, ServerResponse } from "node:http";
 import { Readable } from "node:stream";
-import { ReadableStream as ReadableStreamNode } from "node:stream/web";
+import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
 import {
   type DecoratedServerResponse,
   pendingMiddlewaresSymbol,
@@ -22,13 +22,10 @@ export async function sendResponse(
   const fetchBody: unknown = fetchResponse.body;
 
   let body: Readable | null = null;
-  if (fetchBody instanceof Readable) {
-    body = fetchBody;
-  } else if (
-    fetchBody instanceof ReadableStream ||
-    (fetchBody as any) instanceof ReadableStreamNode
-  ) {
-    if (!deno) {
+  if (typeof (fetchBody as any).pipe === "function") {
+    body = fetchBody as Readable;
+  } else if (typeof (fetchBody as any).pipeTo === "function") {
+    if (!deno && Readable.fromWeb) {
       body = Readable.fromWeb(fetchBody as ReadableStreamNode);
     } else {
       const reader = (fetchBody as ReadableStream).getReader();
@@ -66,9 +63,7 @@ function override<T extends DecoratedServerResponse>(
   const original: any = nodeResponse[key];
 
   (nodeResponse as any)[key] = async (...args: any) => {
-    console.log("BEFORE", key);
     await callback();
-    console.log("AFTER", key);
     return original.apply(nodeResponse, args);
   };
 

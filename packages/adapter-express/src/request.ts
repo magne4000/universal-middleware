@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { type DecoratedRequest, env, requestSymbol } from "./common.js";
 
 // @ts-ignore
