@@ -8,7 +8,9 @@
     "dev:h3": "tsx ./playground/h3-entry.ts",
     "dev:hono": "vite --mode hono",
     "dev:hattip": "hattip serve ./playground/hattip-entry.ts --client",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx ."
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
+    "build": "pnpm run -r build",
+    "test": "pnpm run -r test"
   },
   "keywords": [],
   "author": "",
