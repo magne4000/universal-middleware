@@ -32,7 +32,7 @@ Each framework as its own way to represent the Context, either by attaching it t
   - node
   - bun
   - deno
-  - netlify (and orobably others) with [serverless adapter](https://www.npmjs.com/package/serverless-http)
+  - netlify (and probably others) with [serverless adapter](https://www.npmjs.com/package/serverless-http)
 
 ### fastify
 - Own internal representation as [Request](https://github.com/fastify/fastify/blob/main/docs/Reference/Request.md#request) and [Reply](https://github.com/fastify/fastify/blob/main/docs/Reference/Reply.md#reply)
