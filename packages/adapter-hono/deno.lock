@@ -5,14 +5,14 @@
       "npm:@brillout/release-me@^0.3.9": "npm:@brillout/release-me@0.3.9",
       "npm:@types/node@^20.14.10": "npm:@types/node@20.14.10",
       "npm:hono@^4.4.13": "npm:hono@4.4.13",
-      "npm:mri@^1.2.0": "npm:mri@1.2.0",
+      "npm:mri": "npm:mri@1.2.0",
       "npm:rimraf@^6.0.0": "npm:rimraf@6.0.1",
       "npm:tsup@^8.1.0": "npm:tsup@8.1.0_typescript@5.5.3_esbuild@0.21.5",
       "npm:tsx@^4.16.2": "npm:tsx@4.16.2",
       "npm:typescript@^5.5.3": "npm:typescript@5.5.3",
       "npm:vitest@^2.0.2": "npm:vitest@2.0.2_@types+node@20.14.10",
-      "npm:wait-port@^1.1.0": "npm:wait-port@1.1.0",
-      "npm:zx@^8.1.4": "npm:zx@8.1.4"
+      "npm:wait-port": "npm:wait-port@1.1.0",
+      "npm:zx": "npm:zx@8.1.4"
     },
     "npm": {
       "@ampproject/remapping@2.3.0": {
@@ -1670,19 +1670,21 @@
   },
   "remote": {},
   "workspace": {
+    "dependencies": [
+      "npm:mri",
+      "npm:wait-port",
+      "npm:zx"
+    ],
     "packageJson": {
       "dependencies": [
         "npm:@brillout/release-me@^0.3.9",
         "npm:@types/node@^20.14.10",
         "npm:hono@^4.4.13",
-        "npm:mri@^1.2.0",
         "npm:rimraf@^6.0.0",
         "npm:tsup@^8.1.0",
         "npm:tsx@^4.16.2",
         "npm:typescript@^5.5.3",
-        "npm:vitest@^2.0.2",
-        "npm:wait-port@^1.1.0",
-        "npm:zx@^8.1.4"
+        "npm:vitest@^2.0.2"
       ]
     }
   }

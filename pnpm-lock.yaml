@@ -117,15 +117,15 @@ importers:
       '@universal-middleware/core':
         specifier: workspace:^
         version: link:../core
+      '@universal-middleware/tests':
+        specifier: workspace:*
+        version: link:../tests
       express:
         specifier: ^4.19.2
         version: 4.19.2
       helmet:
         specifier: ^7.1.0
         version: 7.1.0
-      mri:
-        specifier: ^1.2.0
-        version: 1.2.0
       rimraf:
         specifier: ^6.0.0
         version: 6.0.0
@@ -141,12 +141,6 @@ importers:
       vitest:
         specifier: ^2.0.2
         version: 2.0.2(@types/node@20.14.10)
-      wait-port:
-        specifier: ^1.1.0
-        version: 1.1.0
-      zx:
-        specifier: ^8.1.4
-        version: 8.1.4
 
   packages/adapter-hono:
     devDependencies:
@@ -159,12 +153,12 @@ importers:
       '@universal-middleware/core':
         specifier: workspace:^
         version: link:../core
+      '@universal-middleware/tests':
+        specifier: workspace:*
+        version: link:../tests
       hono:
         specifier: ^4.4.13
         version: 4.4.13
-      mri:
-        specifier: ^1.2.0
-        version: 1.2.0
       rimraf:
         specifier: ^6.0.0
         version: 6.0.0
@@ -180,12 +174,6 @@ importers:
       vitest:
         specifier: ^2.0.2
         version: 2.0.2(@types/node@20.14.10)
-      wait-port:
-        specifier: ^1.1.0
-        version: 1.1.0
-      zx:
-        specifier: ^8.1.4
-        version: 8.1.4
 
   packages/core:
     devDependencies:
@@ -204,6 +192,37 @@ importers:
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
+
+  packages/tests:
+    dependencies:
+      mri:
+        specifier: ^1.2.0
+        version: 1.2.0
+      wait-port:
+        specifier: ^1.1.0
+        version: 1.1.0
+      zx:
+        specifier: ^8.1.4
+        version: 8.1.4
+    devDependencies:
+      '@types/node':
+        specifier: ^20.14.10
+        version: 20.14.10
+      '@universal-middleware/core':
+        specifier: workspace:*
+        version: link:../core
+      rimraf:
+        specifier: ^6.0.0
+        version: 6.0.0
+      tsup:
+        specifier: ^8.1.0
+        version: 8.1.0(postcss@8.4.39)(typescript@5.5.3)
+      typescript:
+        specifier: ^5.5.3
+        version: 5.5.3
+      vitest:
+        specifier: ^2.0.2
+        version: 2.0.2(@types/node@20.14.10)
 
 packages:
 

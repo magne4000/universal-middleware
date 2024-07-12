@@ -4,17 +4,16 @@
     "specifiers": {
       "npm:@brillout/release-me@^0.3.9": "npm:@brillout/release-me@0.3.9",
       "npm:@types/node@^20.14.10": "npm:@types/node@20.14.10",
-      "npm:express@4.18.2": "npm:express@4.18.2",
       "npm:express@^4.19.2": "npm:express@4.19.2",
       "npm:helmet@^7.1.0": "npm:helmet@7.1.0",
-      "npm:mri@^1.2.0": "npm:mri@1.2.0",
+      "npm:mri": "npm:mri@1.2.0",
       "npm:rimraf@^6.0.0": "npm:rimraf@6.0.1",
       "npm:tsup@^8.1.0": "npm:tsup@8.1.0_typescript@5.5.3_esbuild@0.21.5",
       "npm:tsx@^4.16.2": "npm:tsx@4.16.2",
       "npm:typescript@^5.5.3": "npm:typescript@5.5.3",
       "npm:vitest@^2.0.2": "npm:vitest@2.0.2_@types+node@20.14.10",
-      "npm:wait-port@^1.1.0": "npm:wait-port@1.1.0",
-      "npm:zx@^8.1.4": "npm:zx@8.1.4"
+      "npm:wait-port": "npm:wait-port@1.1.0",
+      "npm:zx": "npm:zx@8.1.4"
     },
     "npm": {
       "@ampproject/remapping@2.3.0": {
@@ -431,23 +430,6 @@
         "integrity": "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==",
         "dependencies": {}
       },
-      "body-parser@1.20.1": {
-        "integrity": "sha512-jWi7abTbYwajOytWCQc37VulmWiRae5RyTpaCyDcS5/lMdtwSz5lOpDE67srw/HYe35f1z3fDQw+3txg7gNtWw==",
-        "dependencies": {
-          "bytes": "bytes@3.1.2",
-          "content-type": "content-type@1.0.5",
-          "debug": "debug@2.6.9",
-          "depd": "depd@2.0.0",
-          "destroy": "destroy@1.2.0",
-          "http-errors": "http-errors@2.0.0",
-          "iconv-lite": "iconv-lite@0.4.24",
-          "on-finished": "on-finished@2.4.1",
-          "qs": "qs@6.11.0",
-          "raw-body": "raw-body@2.5.1",
-          "type-is": "type-is@1.6.18",
-          "unpipe": "unpipe@1.0.0"
-        }
-      },
       "body-parser@1.20.2": {
         "integrity": "sha512-ml9pReCu3M61kGlqoTm2umSXTlRTuGTx0bfYj+uIUKKYycG5NtSbeetV3faSU6R7ajOPw0g/J1PvK4qNy7s5bA==",
         "dependencies": {
@@ -698,10 +680,6 @@
         "integrity": "sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==",
         "dependencies": {}
       },
-      "cookie@0.5.0": {
-        "integrity": "sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==",
-        "dependencies": {}
-      },
       "cookie@0.6.0": {
         "integrity": "sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==",
         "dependencies": {}
@@ -870,42 +848,6 @@
           "onetime": "onetime@6.0.0",
           "signal-exit": "signal-exit@4.1.0",
           "strip-final-newline": "strip-final-newline@3.0.0"
-        }
-      },
-      "express@4.18.2": {
-        "integrity": "sha512-5/PsL6iGPdfQ/lKM1UuielYgv3BUoJfz1aUwU9vHZ+J7gyvwdQXFEBIEIaxeGf0GIcreATNyBExtalisDbuMqQ==",
-        "dependencies": {
-          "accepts": "accepts@1.3.8",
-          "array-flatten": "array-flatten@1.1.1",
-          "body-parser": "body-parser@1.20.1",
-          "content-disposition": "content-disposition@0.5.4",
-          "content-type": "content-type@1.0.5",
-          "cookie": "cookie@0.5.0",
-          "cookie-signature": "cookie-signature@1.0.6",
-          "debug": "debug@2.6.9",
-          "depd": "depd@2.0.0",
-          "encodeurl": "encodeurl@1.0.2",
-          "escape-html": "escape-html@1.0.3",
-          "etag": "etag@1.8.1",
-          "finalhandler": "finalhandler@1.2.0",
-          "fresh": "fresh@0.5.2",
-          "http-errors": "http-errors@2.0.0",
-          "merge-descriptors": "merge-descriptors@1.0.1",
-          "methods": "methods@1.1.2",
-          "on-finished": "on-finished@2.4.1",
-          "parseurl": "parseurl@1.3.3",
-          "path-to-regexp": "path-to-regexp@0.1.7",
-          "proxy-addr": "proxy-addr@2.0.7",
-          "qs": "qs@6.11.0",
-          "range-parser": "range-parser@1.2.1",
-          "safe-buffer": "safe-buffer@5.2.1",
-          "send": "send@0.18.0",
-          "serve-static": "serve-static@1.15.0",
-          "setprototypeof": "setprototypeof@1.2.0",
-          "statuses": "statuses@2.0.1",
-          "type-is": "type-is@1.6.18",
-          "utils-merge": "utils-merge@1.0.1",
-          "vary": "vary@1.1.2"
         }
       },
       "express@4.19.2": {
@@ -1593,15 +1535,6 @@
         "integrity": "sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==",
         "dependencies": {}
       },
-      "raw-body@2.5.1": {
-        "integrity": "sha512-qqJBtEyVgS0ZmPGdCFPWJ3FreoqvG4MVQln/kCgF7Olq95IbOp0/BWyMwbdtn4VTvkM8Y7khCQ2Xgk/tcrCXig==",
-        "dependencies": {
-          "bytes": "bytes@3.1.2",
-          "http-errors": "http-errors@2.0.0",
-          "iconv-lite": "iconv-lite@0.4.24",
-          "unpipe": "unpipe@1.0.0"
-        }
-      },
       "raw-body@2.5.2": {
         "integrity": "sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==",
         "dependencies": {
@@ -2134,20 +2067,22 @@
   },
   "remote": {},
   "workspace": {
+    "dependencies": [
+      "npm:mri",
+      "npm:wait-port",
+      "npm:zx"
+    ],
     "packageJson": {
       "dependencies": [
         "npm:@brillout/release-me@^0.3.9",
         "npm:@types/node@^20.14.10",
         "npm:express@^4.19.2",
         "npm:helmet@^7.1.0",
-        "npm:mri@^1.2.0",
         "npm:rimraf@^6.0.0",
         "npm:tsup@^8.1.0",
         "npm:tsx@^4.16.2",
         "npm:typescript@^5.5.3",
-        "npm:vitest@^2.0.2",
-        "npm:wait-port@^1.1.0",
-        "npm:zx@^8.1.4"
+        "npm:vitest@^2.0.2"
       ]
     }
   }
