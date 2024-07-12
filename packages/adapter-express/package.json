@@ -28,10 +28,12 @@
     "release:minor": "LANG=en_US release-me minor",
     "release:commit": "LANG=en_US release-me commit"
   },
+  "dependencies": {
+    "@universal-middleware/core": "workspace:^"
+  },
   "devDependencies": {
     "@brillout/release-me": "^0.3.9",
     "@types/node": "^20.14.10",
-    "@universal-middleware/core": "workspace:^",
     "@universal-middleware/tests": "workspace:*",
     "express": "^4.19.2",
     "helmet": "^7.1.0",

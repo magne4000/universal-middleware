@@ -107,6 +107,10 @@ importers:
         version: 5.5.3
 
   packages/adapter-express:
+    dependencies:
+      '@universal-middleware/core':
+        specifier: workspace:^
+        version: link:../core
     devDependencies:
       '@brillout/release-me':
         specifier: ^0.3.9
@@ -114,9 +118,6 @@ importers:
       '@types/node':
         specifier: ^20.14.10
         version: 20.14.10
-      '@universal-middleware/core':
-        specifier: workspace:^
-        version: link:../core
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -143,6 +144,10 @@ importers:
         version: 2.0.2(@types/node@20.14.10)
 
   packages/adapter-hono:
+    dependencies:
+      '@universal-middleware/core':
+        specifier: workspace:^
+        version: link:../core
     devDependencies:
       '@brillout/release-me':
         specifier: ^0.3.9
@@ -150,9 +155,6 @@ importers:
       '@types/node':
         specifier: ^20.14.10
         version: 20.14.10
-      '@universal-middleware/core':
-        specifier: workspace:^
-        version: link:../core
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
