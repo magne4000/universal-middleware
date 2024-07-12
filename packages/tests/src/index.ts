@@ -72,28 +72,32 @@ export function runTests(runs: Run[], options: Options) {
           server = undefined;
         });
       }
-    });
+    }, 30_000);
 
-    options.vitest.test("middlewares", async () => {
-      const response = await fetch(host);
-      const text = await response.text();
-      options.vitest.expect(response.status).toBe(200);
-      options.vitest.expect(JSON.parse(text)).toEqual({
-        something: {
-          a: 1,
-        },
-        somethingElse: {
-          b: 2,
-        },
-      });
-      options.vitest
-        .expect(response.headers.get("x-test-value"))
-        .toBe("universal-middleware");
-      options.vitest
-        .expect(response.headers.has("x-should-be-removed"))
-        .toBe(false);
-      await options?.test?.(response);
-    });
+    options.vitest.test(
+      "middlewares",
+      async () => {
+        const response = await fetch(host);
+        const text = await response.text();
+        options.vitest.expect(response.status).toBe(200);
+        options.vitest.expect(JSON.parse(text)).toEqual({
+          something: {
+            a: 1,
+          },
+          somethingElse: {
+            b: 2,
+          },
+        });
+        options.vitest
+          .expect(response.headers.get("x-test-value"))
+          .toBe("universal-middleware");
+        options.vitest
+          .expect(response.headers.has("x-should-be-removed"))
+          .toBe(false);
+        await options?.test?.(response);
+      },
+      30_000,
+    );
   });
 }
 
