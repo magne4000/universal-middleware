@@ -1,8 +1,8 @@
 {
-  "name": "@universal-middleware/hono",
+  "name": "@universal-middleware/core",
   "version": "0.1.0",
   "type": "module",
-  "description": "Hono adapter for universal middlewares",
+  "description": "Universal middlewares core utilities",
   "files": [
     "dist"
   ],
@@ -14,12 +14,7 @@
   "license": "MIT",
   "scripts": {
     "build": "rimraf dist && tsup",
-    "dev": "tsup --watch",
     "prepack": "pnpm build",
-    "test": "vitest run",
-    "test:run-hono:node": "tsx tests/entry-hono.ts",
-    "test:run-hono:bun": "bun tests/entry-hono.ts",
-    "test:run-hono:deno": "deno run --unstable-sloppy-imports -A tests/entry-hono.ts",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "release": "LANG=en_US release-me patch",
     "release:minor": "LANG=en_US release-me minor",
@@ -28,15 +23,8 @@
   "devDependencies": {
     "@brillout/release-me": "^0.3.9",
     "@types/node": "^20.14.10",
-    "@universal-middleware/core": "workspace:^",
-    "hono": "^4.4.13",
-    "mri": "^1.2.0",
     "rimraf": "^6.0.0",
     "tsup": "^8.1.0",
-    "tsx": "^4.16.2",
-    "typescript": "^5.5.3",
-    "vitest": "^2.0.2",
-    "wait-port": "^1.1.0",
-    "zx": "^8.1.4"
+    "typescript": "^5.5.3"
   }
 }

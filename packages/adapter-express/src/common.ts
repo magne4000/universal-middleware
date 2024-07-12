@@ -9,7 +9,7 @@ import type {
   Awaitable,
   UniversalHandler,
   UniversalMiddleware,
-} from "./types.js";
+} from "@universal-middleware/core";
 
 export const contextSymbol = Symbol("unContext");
 export const requestSymbol = Symbol("unRequest");

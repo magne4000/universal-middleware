@@ -1,5 +1,8 @@
 import type { Context as HonoContext, Handler, MiddlewareHandler } from "hono";
-import type { UniversalHandler, UniversalMiddleware } from "./types.js";
+import type {
+  UniversalHandler,
+  UniversalMiddleware,
+} from "@universal-middleware/core";
 
 export const contextSymbol = Symbol("unContext");
 

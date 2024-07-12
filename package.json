@@ -10,7 +10,8 @@
     "dev:hattip": "hattip serve ./playground/hattip-entry.ts --client",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "build": "pnpm run -r build",
-    "test": "pnpm run -r --sequential test"
+    "test": "pnpm run -r --sequential test",
+    "test:typecheck": "pnpm run -r test:typecheck"
   },
   "keywords": [],
   "author": "",
