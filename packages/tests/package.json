@@ -1,0 +1,37 @@
+{
+  "name": "@universal-middleware/tests",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Universal middlewares tests utilities",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "repository": "https://github.com/magne4000/universal-handler",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsup",
+    "prepack": "pnpm build",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "mri": "^1.2.0",
+    "wait-port": "^1.1.0",
+    "zx": "^8.1.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@universal-middleware/core": "workspace:*",
+    "rimraf": "^6.0.0",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3",
+    "vitest": "^2.0.2"
+  },
+  "peerDependencies": {
+    "vitest": "^2.0.2"
+  }
+}

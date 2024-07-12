@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "@universal-middleware/tests": "../tests/dist",
+    "mri": "npm:mri",
+    "zx": "npm:zx",
+    "wait-port": "npm:wait-port"
+  }
+}
