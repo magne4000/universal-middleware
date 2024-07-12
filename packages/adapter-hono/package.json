@@ -1,8 +1,8 @@
 {
-  "name": "@universal-middleware/express",
+  "name": "@universal-middleware/hono",
   "version": "0.1.0",
   "type": "module",
-  "description": "Express adapter for universal middlewares",
+  "description": "Hono adapter for universal middlewares",
   "files": [
     "dist"
   ],
@@ -11,9 +11,6 @@
     ".": "./dist/index.js"
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
-  "contributors": [
-    "Fatih Aygün <cyco130@gmail.com>"
-  ],
   "repository": "https://github.com/magne4000/universal-handler",
   "license": "MIT",
   "scripts": {
