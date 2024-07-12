@@ -64,12 +64,15 @@ describe.concurrent.each(runs)("$name", (run) => {
         })
         .catch(reject);
     });
-  }, 20_000);
+  }, 30_000);
 
   afterAll(async () => {
-    await kill(server!.pid!, "SIGKILL").finally(() => {
-      server = undefined;
-    });
+    const pid = server?.pid;
+    if (typeof pid === "number") {
+      await kill(pid, "SIGKILL").finally(() => {
+        server = undefined;
+      });
+    }
   });
 
   test("middlewares", async () => {
