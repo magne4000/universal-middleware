@@ -14,17 +14,13 @@ A function that returns a response. Depending on the framework, a response can b
 A standard, agnostic and future-proof way to represent a request would certainly be with the [Response interface](https://fetch.spec.whatwg.org/#request), even if it currently have [some limitations](https://github.com/whatwg/fetch/issues/1716).
 
 ### Middleware
-A function that modifies the Context or Response, and returns nothing. It can be called before and after a Handler.
+A function that modifies the Context or Response, and can return nothing. It can be called before and after a Handler.
 [Hono as a great way to represent this](https://hono.dev/concepts/middleware).
 Each framework as its own way to implement middlewares.
-
-A standard, agnostic and feature-full pattern to represent middlewares will be a challenge.
 
 ### Context
 Some data with the same lifespan as a Request.
 Each framework as its own way to represent the Context, either by attaching it to their internal Request representation, or by having the Context itself containing the Request.
-
-An agnostic and feature-full pattern to represent Context will be a challenge.
 
 ## Current state of popular servers
 ### express
