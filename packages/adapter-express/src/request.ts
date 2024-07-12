@@ -1,30 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment,@typescript-eslint/no-explicit-any */
-
-import type { IncomingMessage } from "node:http";
-import type { Socket } from "node:net";
-import process from "node:process";
-import { Buffer } from "node:buffer";
+import { type DecoratedRequest, env, requestSymbol } from "./common.js";
 
 // @ts-ignore
 const deno = typeof Deno !== "undefined";
 // @ts-ignore
 const bun = typeof Bun !== "undefined";
-
-interface PossiblyEncryptedSocket extends Socket {
-  encrypted?: boolean;
-}
-
-/**
- * `IncomingMessage` possibly augmented with some environment-specific
- * properties.
- */
-export interface DecoratedRequest extends Omit<IncomingMessage, "socket"> {
-  ip?: string;
-  protocol?: string;
-  socket?: PossiblyEncryptedSocket;
-  rawBody?: Buffer | null;
-  _request?: Request;
-}
 
 /** Adapter options */
 export interface NodeRequestAdapterOptions {
@@ -53,11 +32,8 @@ export interface NodeRequestAdapterOptions {
 /** Create a function that converts a Node HTTP request into a fetch API `Request` object */
 export function createRequestAdapter(
   options: NodeRequestAdapterOptions = {},
-): (req: DecoratedRequest) => [request: Request, ip: string] {
-  const {
-    origin = process.env.ORIGIN,
-    trustProxy = process.env.TRUST_PROXY === "1",
-  } = options;
+): (req: DecoratedRequest) => Request {
+  const { origin = env.ORIGIN, trustProxy = env.TRUST_PROXY === "1" } = options;
 
   // eslint-disable-next-line prefer-const
   let { protocol: protocolOverride, host: hostOverride } = origin
@@ -71,28 +47,22 @@ export function createRequestAdapter(
   let warned = false;
 
   return function requestAdapter(req) {
+    // Reuse already created request
+    if (req[requestSymbol]) {
+      return req[requestSymbol];
+    }
+
     // TODO: Support the newer `Forwarded` standard header
     function parseForwardedHeader(name: string) {
       return (headers["x-forwarded-" + name] || "").split(",", 1)[0].trim();
     }
 
-    let headers = req.headers as any;
+    let headers = req.headers as Record<string, string>;
     // Filter out pseudo-headers
     if (headers[":method"]) {
       headers = Object.fromEntries(
         Object.entries(headers).filter(([key]) => !key.startsWith(":")),
       );
-    }
-
-    const ip =
-      req.ip ||
-      (trustProxy && parseForwardedHeader("for")) ||
-      req.socket?.remoteAddress ||
-      "";
-
-    // Reuse already created request
-    if (req._request) {
-      return [req._request, ip];
     }
 
     const protocol =
@@ -124,9 +94,9 @@ export function createRequestAdapter(
       duplex: "half",
     });
 
-    req._request = request;
+    req[requestSymbol] = request;
 
-    return [request, ip];
+    return request;
   };
 }
 
@@ -143,11 +113,11 @@ function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
 
   if (!bun && !deno) {
     // Real Node can handle ReadableStream
-    return req as any;
+    return req as unknown as BodyInit;
   }
 
   return new ReadableStream({
-    start(controller: any) {
+    start(controller) {
       req.on("data", (chunk) => controller.enqueue(chunk));
       req.on("end", () => controller.close());
       req.on("error", (err) => controller.error(err));

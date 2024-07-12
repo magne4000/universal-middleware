@@ -4,15 +4,13 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dev:express": "tsx ./express-entry.ts",
-    "build:express": "vite build",
-    "dev:h3": "tsx ./h3-entry.ts",
-    "build:h3": "vite build",
+    "dev:express": "tsx ./playground/express-entry.ts",
+    "dev:h3": "tsx ./playground/h3-entry.ts",
     "dev:hono": "vite --mode hono",
-    "build:hono": "vite build  --mode hono",
-    "dev:hattip": "hattip serve ./hattip-entry.ts --client",
-    "build:hattip": "NODE_ENV=production hattip build ./hattip-entry.ts --client",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx ."
+    "dev:hattip": "hattip serve ./playground/hattip-entry.ts --client",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
+    "build": "pnpm run -r build",
+    "test": "pnpm run -r test"
   },
   "keywords": [],
   "author": "",
@@ -50,7 +48,6 @@
     "hono": "^4.4.12",
     "serve-static": "^1.15.0",
     "tsx": "^4.16.2",
-    "vike": "^0.4.179",
     "vite": "^5.3.3"
   },
   "packageManager": "pnpm@9.4.0"

@@ -3,9 +3,7 @@ import type {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from "express";
-import { UniversalHandler } from "../../types.js";
-import rfdc from "rfdc";
-import diff from "microdiff";
+import type { UniversalHandler } from "../../types.js";
 
 export function transformRequest(req: ExpressRequest): Request {
   const fullUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
