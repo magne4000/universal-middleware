@@ -61,11 +61,11 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - name: Run lint
+      - name: Run CI tests
         run: pnpm run lint
 
-      - name: Run typecheck
+      - name: Run CI tests
         run: pnpm run test:typecheck
 
-      - name: Run tests
+      - name: Run CI tests
         run: pnpm run test
