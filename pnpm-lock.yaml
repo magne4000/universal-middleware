@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@universal-middleware/core': link:./packages/core
+
 importers:
 
   .:
@@ -109,7 +112,7 @@ importers:
   packages/adapter-express:
     dependencies:
       '@universal-middleware/core':
-        specifier: workspace:^
+        specifier: link:../core
         version: link:../core
     devDependencies:
       '@brillout/release-me':
@@ -146,7 +149,7 @@ importers:
   packages/adapter-hono:
     dependencies:
       '@universal-middleware/core':
-        specifier: workspace:^
+        specifier: link:../core
         version: link:../core
     devDependencies:
       '@brillout/release-me':
@@ -211,7 +214,7 @@ importers:
         specifier: ^20.14.10
         version: 20.14.10
       '@universal-middleware/core':
-        specifier: workspace:*
+        specifier: link:../core
         version: link:../core
       rimraf:
         specifier: ^6.0.0

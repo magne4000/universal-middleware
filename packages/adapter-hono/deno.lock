@@ -4,6 +4,7 @@
     "specifiers": {
       "npm:@brillout/release-me@^0.3.9": "npm:@brillout/release-me@0.3.9",
       "npm:@types/node@^20.14.10": "npm:@types/node@20.14.10",
+      "npm:@universal-middleware/core@^0.1.1": "npm:@universal-middleware/core@0.1.1",
       "npm:hono@^4.4.13": "npm:hono@4.4.13",
       "npm:mri": "npm:mri@1.2.0",
       "npm:rimraf@^6.0.0": "npm:rimraf@6.0.1",
@@ -305,6 +306,10 @@
       },
       "@types/normalize-package-data@2.4.4": {
         "integrity": "sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==",
+        "dependencies": {}
+      },
+      "@universal-middleware/core@0.1.1": {
+        "integrity": "sha512-1paKMQ/B/l5NL9j5vR3T7mvk3VqfP3aIuJj0XU5WvlrqZGjde1qFyjEDfw4RQtSkgloUobgttdhs4qzop9lS2g==",
         "dependencies": {}
       },
       "@vitest/expect@2.0.2": {
@@ -1679,6 +1684,7 @@
       "dependencies": [
         "npm:@brillout/release-me@^0.3.9",
         "npm:@types/node@^20.14.10",
+        "npm:@universal-middleware/core@^0.1.1",
         "npm:hono@^4.4.13",
         "npm:rimraf@^6.0.0",
         "npm:tsup@^8.1.0",
