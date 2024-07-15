@@ -146,6 +146,58 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2(@types/node@20.14.10)
 
+  packages/adapter-hattip:
+    dependencies:
+      '@universal-middleware/core':
+        specifier: link:../core
+        version: link:../core
+    devDependencies:
+      '@brillout/release-me':
+        specifier: ^0.3.9
+        version: 0.3.9
+      '@hattip/adapter-bun':
+        specifier: ^0.0.46
+        version: 0.0.46
+      '@hattip/adapter-deno':
+        specifier: ^0.0.46
+        version: 0.0.46
+      '@hattip/adapter-node':
+        specifier: ^0.0.46
+        version: 0.0.46
+      '@hattip/compose':
+        specifier: ^0.0.46
+        version: 0.0.46
+      '@hattip/core':
+        specifier: ^0.0.46
+        version: 0.0.46
+      '@hattip/cors':
+        specifier: ^0.0.46
+        version: 0.0.46
+      '@hattip/router':
+        specifier: ^0.0.46
+        version: 0.0.46
+      '@types/node':
+        specifier: ^20.14.10
+        version: 20.14.10
+      '@universal-middleware/tests':
+        specifier: workspace:*
+        version: link:../tests
+      rimraf:
+        specifier: ^6.0.0
+        version: 6.0.0
+      tsup:
+        specifier: ^8.1.0
+        version: 8.1.0(postcss@8.4.39)(typescript@5.5.3)
+      tsx:
+        specifier: ^4.16.2
+        version: 4.16.2
+      typescript:
+        specifier: ^5.5.3
+        version: 5.5.3
+      vitest:
+        specifier: ^2.0.2
+        version: 2.0.2(@types/node@20.14.10)
+
   packages/adapter-hono:
     dependencies:
       '@universal-middleware/core':
@@ -448,6 +500,12 @@ packages:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
+  '@hattip/adapter-bun@0.0.46':
+    resolution: {integrity: sha512-7hlKJRO1DfaLHihmIloi9Gb9Qta1MxFCwOV3/rlqn39hd9L7LvJjLRxprVtfGTZcBFu8nJcG4A8H/i5hxqZsmA==}
+
+  '@hattip/adapter-deno@0.0.46':
+    resolution: {integrity: sha512-7JL/H5l8jc/JtEa5vzh2KsL2HKu3gp2jzE8+3OGjzTxMs+aOp14dLbt6N4Uy32fHoGXME36I46WTCrM30gq9Dw==}
+
   '@hattip/adapter-node@0.0.46':
     resolution: {integrity: sha512-DvG2VH4/116T7x1ibzzeGcoGA940w4G0Gy7XjVOgE6ZXwAOunoXS2zfqTlSxFsdTegDnXpGxI50XVq6cdcwBKA==}
 
@@ -456,6 +514,9 @@ packages:
 
   '@hattip/core@0.0.46':
     resolution: {integrity: sha512-6pk22hPi9qVc6jyROu89T2yV2IcORTJZUq5OdFDfWmu4ynMP4I2avC+hnCJj6o3vlN1Io7zBbdT5OIPxpBIX7A==}
+
+  '@hattip/cors@0.0.46':
+    resolution: {integrity: sha512-ldg+HNACfZ4Vud7V1+plmXB/csJIIECTB9O8b08KrLBY5y+L3CB049UIeCz8WVmKvVxjj+H4VZfF+JUoHoWQDQ==}
 
   '@hattip/headers@0.0.46':
     resolution: {integrity: sha512-kk6hzTjTv0McRgt8bv8IwUOWsphrRQzaUvtXz4w60eQQCO6RHL/wzX6BEh+3eJQFVtmu6yFnh/O6NDnSxSPM7Q==}
@@ -633,6 +694,9 @@ packages:
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
 
+  '@types/cookie@0.6.0':
+    resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
+
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
@@ -660,6 +724,9 @@ packages:
   '@types/node@18.19.39':
     resolution: {integrity: sha512-nPwTRDKUctxw3di5b4TfT3I0sWDiWoPQCZjXhvdkINntwr8lcoVCKsTgnXeRubKIlfnV+eN/HYk6Jb40tbcEAQ==}
 
+  '@types/node@20.12.14':
+    resolution: {integrity: sha512-scnD59RpYD91xngrQQLGkE+6UrHUPzeKZWhhjBSa3HSkwjbQc38+q3RoIVEwxQGRw3M+j5hpNAM+lgV3cVormg==}
+
   '@types/node@20.14.10':
     resolution: {integrity: sha512-MdiXf+nDuMvY0gJKxyfZ7/6UFsETO7mGKF54MVD/ekJS6HdFtpZFBgrh6Pseu64XTb2MLyFPlbW6hj8HYRQNOQ==}
 
@@ -677,6 +744,9 @@ packages:
 
   '@types/serve-static@1.15.7':
     resolution: {integrity: sha512-W8Ym+h8nhuRwaKPaDw34QUkwsGi6Rc4yYqvKFo5rm2FUEhCFbzVWrxXUxuKK8TASjWsysJY0nsmNCGhCOIsrOw==}
+
+  '@types/ws@8.5.11':
+    resolution: {integrity: sha512-4+q7P5h3SpJxaBft0Dzpbr6lmMaqh0Jr2tbhJZ/luAwvD7ohSCniYkwz/pLxuT2h0EOa6QADgJj1Ko+TzRfZ+w==}
 
   '@typescript-eslint/eslint-plugin@7.15.0':
     resolution: {integrity: sha512-uiNHpyjZtFrLwLDpHnzaDlP3Tt6sGMqTCiqmxaN4n4RP0EfYZDODJyddiFDF44Hjwxr5xAcaYxVKm9QKQFJFLA==}
@@ -880,6 +950,9 @@ packages:
   braces@3.0.3:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
+
+  bun-types@1.1.20:
+    resolution: {integrity: sha512-2u84HciDR3E7Uc0t0AEeXHmQAWe9uzRKTz120D3silIJOQlbGIMJMJiGaM8Yx7nEvMyfV0LfSdkEGnb77AN5AA==}
 
   bundle-require@4.2.1:
     resolution: {integrity: sha512-7Q/6vkyYAwOmQNRw75x+4yRtZCZJXUDmHHlFdkiV0wgv/reNjtJwpu1jPJ0w2kbEpIM0uoKI3S4/f39dU7AjSA==}
@@ -2557,6 +2630,15 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
+  '@hattip/adapter-bun@0.0.46':
+    dependencies:
+      '@hattip/core': 0.0.46
+      bun-types: 1.1.20
+
+  '@hattip/adapter-deno@0.0.46':
+    dependencies:
+      '@hattip/core': 0.0.46
+
   '@hattip/adapter-node@0.0.46':
     dependencies:
       '@hattip/core': 0.0.46
@@ -2568,6 +2650,13 @@ snapshots:
       '@hattip/core': 0.0.46
 
   '@hattip/core@0.0.46': {}
+
+  '@hattip/cors@0.0.46':
+    dependencies:
+      '@hattip/compose': 0.0.46
+      '@hattip/core': 0.0.46
+      '@types/cookie': 0.6.0
+      cookie: 0.6.0
 
   '@hattip/headers@0.0.46':
     dependencies:
@@ -2734,6 +2823,8 @@ snapshots:
     dependencies:
       '@types/node': 20.14.10
 
+  '@types/cookie@0.6.0': {}
+
   '@types/estree@1.0.5': {}
 
   '@types/express-serve-static-core@4.19.5':
@@ -2773,6 +2864,10 @@ snapshots:
     dependencies:
       undici-types: 5.26.5
 
+  '@types/node@20.12.14':
+    dependencies:
+      undici-types: 5.26.5
+
   '@types/node@20.14.10':
     dependencies:
       undici-types: 5.26.5
@@ -2793,6 +2888,10 @@ snapshots:
       '@types/http-errors': 2.0.4
       '@types/node': 20.14.10
       '@types/send': 0.17.4
+
+  '@types/ws@8.5.11':
+    dependencies:
+      '@types/node': 20.14.10
 
   '@typescript-eslint/eslint-plugin@7.15.0(@typescript-eslint/parser@7.15.0(eslint@8.57.0)(typescript@5.5.3))(eslint@8.57.0)(typescript@5.5.3)':
     dependencies:
@@ -3038,6 +3137,11 @@ snapshots:
   braces@3.0.3:
     dependencies:
       fill-range: 7.1.1
+
+  bun-types@1.1.20:
+    dependencies:
+      '@types/node': 20.12.14
+      '@types/ws': 8.5.11
 
   bundle-require@4.2.1(esbuild@0.21.5):
     dependencies:
