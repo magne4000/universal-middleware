@@ -85,7 +85,7 @@
     "release": "LANG=en_US release-me patch",
     "release:minor": "LANG=en_US release-me minor",
     "release:commit": "LANG=en_US release-me commit",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "dependencies": {
     "esbuild": "^0.23.0",
