@@ -3,13 +3,22 @@
 import { describe, expect, it } from "vitest";
 import { type OutputChunk, rollup, type RollupOutput } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
+import typescript from "@rollup/plugin-typescript";
 import unplugin from "../src/build";
+import { parse } from "node:path";
 
 describe("rollup", () => {
   it("generates all server files (string input)", async () => {
+    const entry = "test/files/folder1/handler.ts";
     const result = await rollup({
-      input: "test/handler.ts?handler",
-      plugins: [unplugin.rollup(), nodeResolve()],
+      input: entry + "?handler",
+      plugins: [
+        unplugin.rollup(),
+        nodeResolve(),
+        typescript({
+          sourceMap: false,
+        }),
+      ],
       onwarn(warning) {
         throw new Error(warning.message);
       },
@@ -17,21 +26,33 @@ describe("rollup", () => {
 
     const gen = await result.generate({});
 
-    const handler = gen.output.find(
-      (f: any) => f.facadeModuleId === "test/handler.ts",
-    ) as OutputChunk | undefined;
-    expect(handler?.name).toEqual("handler");
+    expect(
+      gen.output.filter((f) => f.type === "chunk" && f.isEntry),
+    ).toHaveLength(expectNbOutput(1));
 
-    testRollupHandlers(gen);
+    const handler = gen.output.find((f: any) => f.facadeModuleId === entry) as
+      | OutputChunk
+      | undefined;
+    expect(handler?.name).toEqual("test/files/folder1/handler");
+
+    testRollupOutput(gen, "handler", entry);
   });
 
   it("generates all server files (object input)", async () => {
+    const entry1 = "test/files/folder1/handler.ts";
+    const entry2 = "test/files/middleware.ts";
     const result = await rollup({
       input: {
-        h: "test/handler.ts?handler",
-        m: "test/middleware.ts?middleware",
+        h: entry1 + "?handler",
+        m: entry2 + "?middleware",
       },
-      plugins: [unplugin.rollup(), nodeResolve()],
+      plugins: [
+        unplugin.rollup(),
+        nodeResolve(),
+        typescript({
+          sourceMap: false,
+        }),
+      ],
       onwarn(warning) {
         throw new Error(warning.message);
       },
@@ -39,24 +60,36 @@ describe("rollup", () => {
 
     const gen = await result.generate({});
 
-    const handler = gen.output.find(
-      (f: any) => f.facadeModuleId === "test/handler.ts",
-    ) as OutputChunk | undefined;
+    expect(
+      gen.output.filter((f) => f.type === "chunk" && f.isEntry),
+    ).toHaveLength(expectNbOutput(2));
+
+    const handler = gen.output.find((f: any) => f.facadeModuleId === entry1) as
+      | OutputChunk
+      | undefined;
     expect(handler?.name).toEqual("h");
 
     const middleware = gen.output.find(
-      (f: any) => f.facadeModuleId === "test/middleware.ts",
+      (f: any) => f.facadeModuleId === entry2,
     ) as OutputChunk | undefined;
     expect(middleware?.name).toEqual("m");
 
-    testRollupHandlers(gen);
-    testRollupMiddlewares(gen);
+    testRollupOutput(gen, "handler", entry1);
+    testRollupOutput(gen, "middleware", entry2);
   });
 
   it("generates all server files (array input)", async () => {
+    const entry1 = "test/files/folder1/handler.ts";
+    const entry2 = "test/files/middleware.ts";
     const result = await rollup({
-      input: ["test/handler.ts?handler", "test/middleware.ts?middleware"],
-      plugins: [unplugin.rollup(), nodeResolve()],
+      input: [entry1 + "?handler", entry2 + "?middleware"],
+      plugins: [
+        unplugin.rollup(),
+        nodeResolve(),
+        typescript({
+          sourceMap: false,
+        }),
+      ],
       onwarn(warning) {
         throw new Error(warning.message);
       },
@@ -64,63 +97,90 @@ describe("rollup", () => {
 
     const gen = await result.generate({});
 
-    const handler = gen.output.find(
-      (f: any) => f.facadeModuleId === "test/handler.ts",
-    ) as OutputChunk | undefined;
-    expect(handler?.name).toEqual("handler");
+    expect(
+      gen.output.filter((f) => f.type === "chunk" && f.isEntry),
+    ).toHaveLength(expectNbOutput(2));
+
+    const handler = gen.output.find((f: any) => f.facadeModuleId === entry1) as
+      | OutputChunk
+      | undefined;
+    expect(handler?.name).toEqual("test/files/folder1/handler");
 
     const middleware = gen.output.find(
-      (f: any) => f.facadeModuleId === "test/middleware.ts",
+      (f: any) => f.facadeModuleId === entry2,
     ) as OutputChunk | undefined;
-    expect(middleware?.name).toEqual("middleware");
+    expect(middleware?.name).toEqual("test/files/middleware");
 
-    testRollupHandlers(gen);
-    testRollupMiddlewares(gen);
+    testRollupOutput(gen, "handler", entry1);
+    testRollupOutput(gen, "middleware", entry2);
+  });
+
+  it("generates all server files (multiple handlers)", async () => {
+    const entry1 = "test/files/folder1/handler.ts";
+    const entry2 = "test/files/folder2/handler.ts";
+    const result = await rollup({
+      input: [entry1 + "?handler", entry2 + "?handler"],
+      plugins: [
+        unplugin.rollup(),
+        nodeResolve(),
+        typescript({
+          sourceMap: false,
+        }),
+      ],
+      onwarn(warning) {
+        throw new Error(warning.message);
+      },
+    });
+
+    const gen = await result.generate({});
+
+    expect(
+      gen.output.filter((f) => f.type === "chunk" && f.isEntry),
+    ).toHaveLength(expectNbOutput(2));
+
+    const handler1 = gen.output.find(
+      (f: any) => f.facadeModuleId === entry1,
+    ) as OutputChunk | undefined;
+    expect(handler1?.name).toEqual("test/files/folder1/handler");
+
+    const handler2 = gen.output.find(
+      (f: any) => f.facadeModuleId === entry2,
+    ) as OutputChunk | undefined;
+    expect(handler2?.name).toEqual("test/files/folder2/handler");
+
+    testRollupOutput(gen, "handler", entry1);
+    testRollupOutput(gen, "handler", entry2);
   });
 });
 
-function testRollupHandlers(gen: RollupOutput) {
-  const hattip = gen.output.find(
-    (f: any) =>
-      f.facadeModuleId ===
-      "virtual:universal-middleware:hattip:handler:test/handler.ts",
+function testRollupHandler(
+  gen: RollupOutput,
+  type: "handler" | "middleware",
+  server: string,
+  f: string,
+) {
+  const parsed = parse(f);
+  const res = gen.output.find(
+    (file: any) =>
+      file.facadeModuleId ===
+      `virtual:universal-middleware:${server}:${type}:${f}`,
   ) as OutputChunk | undefined;
-  expect(hattip?.name).toEqual("universal-hattip-handler");
-
-  const express = gen.output.find(
-    (f: any) =>
-      f.facadeModuleId ===
-      "virtual:universal-middleware:express:handler:test/handler.ts",
-  ) as OutputChunk | undefined;
-  expect(express?.name).toEqual("universal-express-handler");
-
-  const hono = gen.output.find(
-    (f: any) =>
-      f.facadeModuleId ===
-      "virtual:universal-middleware:hono:handler:test/handler.ts",
-  ) as OutputChunk | undefined;
-  expect(hono?.name).toEqual("universal-hono-handler");
+  expect(res?.name).toEqual(
+    `${parsed.dir}/universal-${server}-${type}-${parsed.name}`,
+  );
 }
 
-function testRollupMiddlewares(gen: RollupOutput) {
-  const hattip = gen.output.find(
-    (f: any) =>
-      f.facadeModuleId ===
-      "virtual:universal-middleware:hattip:middleware:test/middleware.ts",
-  ) as OutputChunk | undefined;
-  expect(hattip?.name).toEqual("universal-hattip-middleware");
+function testRollupOutput(
+  gen: RollupOutput,
+  type: "handler" | "middleware",
+  f: string,
+) {
+  // FIXME hash
+  testRollupHandler(gen, type, "express", f);
+  testRollupHandler(gen, type, "hono", f);
+  testRollupHandler(gen, type, "hattip", f);
+}
 
-  const express = gen.output.find(
-    (f: any) =>
-      f.facadeModuleId ===
-      "virtual:universal-middleware:express:middleware:test/middleware.ts",
-  ) as OutputChunk | undefined;
-  expect(express?.name).toEqual("universal-express-middleware");
-
-  const hono = gen.output.find(
-    (f: any) =>
-      f.facadeModuleId ===
-      "virtual:universal-middleware:hono:middleware:test/middleware.ts",
-  ) as OutputChunk | undefined;
-  expect(hono?.name).toEqual("universal-hono-middleware");
+function expectNbOutput(i: number) {
+  return i * 4;
 }

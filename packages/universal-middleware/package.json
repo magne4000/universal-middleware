@@ -88,13 +88,14 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "esbuild": "^0.23.0",
     "@universal-middleware/express": "^0.1.0",
     "@universal-middleware/hattip": "^0.1.0",
-    "@universal-middleware/hono": "^0.1.1"
+    "@universal-middleware/hono": "^0.1.1",
+    "esbuild": "^0.23.0"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@universal-middleware/core": "^0.1.1",
     "rimraf": "^6.0.1",
     "rollup": "^4.18.1",
@@ -105,11 +106,11 @@
     "vitest": "^2.0.3"
   },
   "peerDependencies": {
+    "@rollup/plugin-node-resolve": "^15",
     "esbuild": "*",
     "rollup": "^4",
     "vite": ">=5",
-    "webpack": "^4 || ^5",
-    "@rollup/plugin-node-resolve": "^15"
+    "webpack": "^4 || ^5"
   },
   "peerDependenciesMeta": {
     "webpack": {

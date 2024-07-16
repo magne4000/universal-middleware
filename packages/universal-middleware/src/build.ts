@@ -100,12 +100,12 @@ function appendVirtualInputs(
   });
 }
 
-function load(id: string) {
+function load(id: string, resolve?: (handler: string, type: string) => string) {
   const [, , server, type, handler] = id.split(":");
 
   const fn = type === "handler" ? "createHandler" : "createMiddleware";
   const code = `import { ${fn} } from "@universal-middleware/${server}";
-import ${type} from "${handler}";
+import ${type} from "${resolve ? resolve(handler, type) : handler}";
 export default ${fn}(${type});
 `;
   return { code };
@@ -120,13 +120,19 @@ const universalMiddleware = createUnplugin((options?: Options) => {
     name: namespace,
     enforce: "post",
     rollup: {
-      async options(opts) {
+      options(opts) {
         const normalizedInput = normalizeInput(opts.input);
         if (normalizedInput) {
           opts.input = normalizedInput;
           appendVirtualInputs(opts.input, options?.servers);
         }
       },
+      // outputOptions(opts) {
+      //   opts.entryFileNames = (chunkInfo) => {
+      //     console.log(chunkInfo);
+      //     return chunkInfo.name + '-[hash]';
+      //   };
+      // },
     },
 
     esbuild: {
@@ -224,7 +230,9 @@ const universalMiddleware = createUnplugin((options?: Options) => {
       return id.startsWith(namespace);
     },
 
-    load,
+    load(id) {
+      return load(id, (handler, type) => `${handler}?${type}`);
+    },
   };
 });
 
