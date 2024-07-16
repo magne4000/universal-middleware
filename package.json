@@ -1,5 +1,6 @@
 {
-  "name": "my-app",
+  "name": "universal-middlewware",
+  "private": true,
   "version": "0.0.1",
   "description": "",
   "type": "module",
@@ -9,7 +10,7 @@
     "dev:hono": "vite --mode hono",
     "dev:hattip": "hattip serve ./playground/hattip-entry.ts --client",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
-    "build": "pnpm run -r build",
+    "build": "pnpm run -r --sequential build",
     "test": "pnpm run -r --sequential test",
     "test:typecheck": "pnpm run -r test:typecheck"
   },
@@ -53,7 +54,10 @@
   },
   "pnpm": {
     "overrides": {
-      "@universal-middleware/core": "link:./packages/core"
+      "@universal-middleware/core": "link:./packages/core",
+      "@universal-middleware/express": "link:./packages/adapter-express",
+      "@universal-middleware/hono": "link:./packages/adapter-hono",
+      "@universal-middleware/hattip": "link:./packages/adapter-hattip"
     }
   },
   "packageManager": "pnpm@9.4.0"
