@@ -28,54 +28,51 @@ function filterInput(input: string) {
   return null;
 }
 
+function normalizeInput(
+  input: undefined | string | string[] | Record<string, string>,
+) {
+  if (typeof input === "string") {
+    const filtered = filterInput(input);
+    if (filtered) {
+      return {
+        [parse(input).name]: input,
+      };
+    }
+  } else if (Array.isArray(input)) {
+    return Object.fromEntries(input.map((e) => [parse(e).name, e]));
+  } else if (input && typeof input === "object") {
+    return input;
+  }
+  return null;
+}
+
+function appendVirtualInputs(input: Record<string, string>) {
+  Object.values(input).forEach((v) => {
+    const filtered = filterInput(v);
+    if (filtered) {
+      const virtualInputs = getVirtualInputs(filtered, v);
+      virtualInputs.forEach((vinput) => {
+        input[vinput.key] = vinput.value;
+      });
+    }
+  });
+}
+
 const universalMiddleware = createUnplugin((options = {}) => {
   return {
     name: namespace,
     enforce: "post",
     rollup: {
       async options(opts) {
-        if (typeof opts.input === "string") {
-          const filtered = filterInput(opts.input);
-          if (filtered) {
-            const orig = opts.input;
-            opts.input = {
-              [parse(orig).name]: orig,
-            };
-            const virtualInputs = getVirtualInputs(filtered, orig);
-            virtualInputs.forEach((vinput) => {
-              (opts.input as Record<string, unknown>)[vinput.key] =
-                vinput.value;
-            });
-          }
-        } else if (Array.isArray(opts.input)) {
-          const orig = opts.input;
-          opts.input = Object.fromEntries(orig.map((e) => [parse(e).name, e]));
-          orig.forEach((v) => {
-            const filtered = filterInput(v);
-            if (filtered) {
-              const virtualInputs = getVirtualInputs(filtered, v);
-              virtualInputs.forEach((vinput) => {
-                (opts.input as Record<string, unknown>)[vinput.key] =
-                  vinput.value;
-              });
-            }
-          });
-        } else if (opts.input && typeof opts.input === "object") {
-          Object.entries(opts.input).forEach(([k, v]) => {
-            const filtered = filterInput(v);
-            if (filtered) {
-              const virtualInputs = getVirtualInputs(filtered, v);
-              virtualInputs.forEach((vinput) => {
-                (opts.input as Record<string, unknown>)[vinput.key] =
-                  vinput.value;
-              });
-            }
-          });
+        const normalizedInput = normalizeInput(opts.input);
+        if (normalizedInput) {
+          opts.input = normalizedInput;
+          appendVirtualInputs(opts.input);
         }
       },
     },
 
-    resolveId(id, _importer, { isEntry }) {
+    resolveId(id) {
       const filtered = filterInput(id);
       if (filtered) {
         return id.replace(`?${filtered}`, "");
