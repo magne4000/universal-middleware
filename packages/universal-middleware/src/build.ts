@@ -127,12 +127,6 @@ const universalMiddleware = createUnplugin((options?: Options) => {
           appendVirtualInputs(opts.input, options?.servers);
         }
       },
-      // outputOptions(opts) {
-      //   opts.entryFileNames = (chunkInfo) => {
-      //     console.log(chunkInfo);
-      //     return chunkInfo.name + '-[hash]';
-      //   };
-      // },
     },
 
     esbuild: {
