@@ -141,7 +141,10 @@ function appendVirtualInputs(
 function applyOutbase(input: Record<string, string>, outbase: string) {
   if (!outbase) return input;
 
-  const re = new RegExp("^" + outbase + "/?", "gu");
+  const re = new RegExp(
+    `^(${outbase.replaceAll("\\", "/")}|${outbase.replaceAll("/", "\\")})/?`,
+    "gu",
+  );
 
   return Object.keys(input).reduce(
     (acc, key) => {
