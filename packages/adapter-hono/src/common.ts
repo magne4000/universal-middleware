@@ -1,15 +1,27 @@
-import type { Context as HonoContext, Handler, MiddlewareHandler } from "hono";
+import type {
+  Context as HonoContext,
+  Env,
+  Handler,
+  MiddlewareHandler,
+} from "hono";
 import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
+
+interface UniversalEnv {
+  Bindings: Env["Bindings"];
+  Variables: Env["Variables"] & Record<symbol, Universal.Context>;
+}
 
 export const contextSymbol = Symbol("unContext");
 
 /**
  * Creates a request handler to be passed to app.all() or any other route function
  */
-export function createHandler(handler: UniversalHandler): Handler {
+export function createHandler(
+  handler: UniversalHandler,
+): Handler<UniversalEnv> {
   return (honoContext) => {
     let context: Universal.Context = honoContext.get(contextSymbol);
     if (typeof context !== "object") {
@@ -25,7 +37,7 @@ export function createHandler(handler: UniversalHandler): Handler {
  */
 export function createMiddleware(
   middleware: UniversalMiddleware,
-): MiddlewareHandler {
+): MiddlewareHandler<UniversalEnv> {
   return async (honoContext, next) => {
     let context: Universal.Context = honoContext.get(contextSymbol);
     if (typeof context !== "object") {
@@ -46,7 +58,7 @@ export function createMiddleware(
 }
 
 export function getContext(
-  honoContext: HonoContext,
+  honoContext: HonoContext<UniversalEnv>,
 ): Universal.Context | undefined {
   return honoContext.get(contextSymbol);
 }

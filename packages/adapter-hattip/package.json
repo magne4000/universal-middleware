@@ -37,6 +37,7 @@
     "@hattip/core": "^0.0.46",
     "@hattip/cors": "^0.0.46",
     "@hattip/router": "^0.0.46",
+    "@swc/core": "^1.6.13",
     "@types/node": "^20.14.10",
     "@universal-middleware/tests": "workspace:*",
     "rimraf": "^6.0.0",

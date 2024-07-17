@@ -9,9 +9,8 @@
     "url": "https://github.com/magne4000/universal-handler/issues"
   },
   "keywords": [
-    "unplugin",
+    "esbuild",
     "vite",
-    "webpack",
     "rollup",
     "transform",
     "universal-middleware"
@@ -20,61 +19,26 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./astro": {
-      "types": "./dist/astro.d.ts",
-      "import": "./dist/astro.js",
-      "require": "./dist/astro.cjs"
-    },
-    "./rspack": {
-      "types": "./dist/rspack.d.ts",
-      "import": "./dist/rspack.js",
-      "require": "./dist/rspack.cjs"
+      "default": "./dist/index.js"
     },
     "./vite": {
-      "types": "./dist/vite.d.ts",
-      "import": "./dist/vite.js",
-      "require": "./dist/vite.cjs"
-    },
-    "./webpack": {
-      "types": "./dist/webpack.d.ts",
-      "import": "./dist/webpack.js",
-      "require": "./dist/webpack.cjs"
+      "types": "./dist/rollup.d.ts",
+      "import": "./dist/rollup.js",
+      "default": "./dist/rollup.js"
     },
     "./rollup": {
       "types": "./dist/rollup.d.ts",
       "import": "./dist/rollup.js",
-      "require": "./dist/rollup.cjs"
+      "default": "./dist/rollup.js"
     },
     "./esbuild": {
       "types": "./dist/esbuild.d.ts",
       "import": "./dist/esbuild.js",
-      "require": "./dist/esbuild.cjs"
-    },
-    "./nuxt": {
-      "types": "./dist/nuxt.d.ts",
-      "import": "./dist/nuxt.js",
-      "require": "./dist/nuxt.cjs"
-    },
-    "./types": {
-      "types": "./dist/types.d.ts",
-      "import": "./dist/types.js",
-      "require": "./dist/types.cjs"
-    },
-    "./*": "./*"
-  },
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist/*",
-        "./*"
-      ]
+      "default": "./dist/esbuild.js"
     }
   },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -88,20 +52,21 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "unplugin": "^1.11.0",
     "@universal-middleware/express": "^0.1.0",
     "@universal-middleware/hattip": "^0.1.0",
-    "@universal-middleware/hono": "^0.1.1",
-    "esbuild": "^0.23.0"
+    "@universal-middleware/hono": "^0.1.1"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@swc/core": "^1.6.13",
     "@universal-middleware/core": "^0.1.1",
+    "esbuild": "^0.23.0",
     "rimraf": "^6.0.1",
     "rollup": "^4.18.1",
     "tsup": "^8.1.0",
     "typescript": "^5.5.3",
-    "unplugin": "^1.11.0",
     "vite": "^5.3.4",
     "vitest": "^2.0.3"
   },
@@ -109,13 +74,9 @@
     "@rollup/plugin-node-resolve": "^15",
     "esbuild": "*",
     "rollup": "^4",
-    "vite": ">=5",
-    "webpack": "^4 || ^5"
+    "vite": ">=5"
   },
   "peerDependenciesMeta": {
-    "webpack": {
-      "optional": true
-    },
     "rollup": {
       "optional": true
     },

@@ -1,5 +1,5 @@
 import { join, parse, posix, relative, resolve } from "node:path";
-import { createUnplugin } from "unplugin";
+import { type UnpluginFactory } from "unplugin";
 
 export interface Options {
   servers?: (typeof defaultWrappers)[number][];
@@ -296,7 +296,9 @@ function genReport(bundle: Record<string, BundleInfo>) {
   return reports;
 }
 
-const universalMiddleware = createUnplugin((options?: Options) => {
+const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
+  options?: Options,
+) => {
   const serversExportNames =
     options?.serversExportNames ?? "./[dir]/[name]-[type]-[server]";
   const entryExportNames = options?.entryExportNames ?? "./[dir]/[name]-[type]";
@@ -509,6 +511,6 @@ const universalMiddleware = createUnplugin((options?: Options) => {
       return load(id, (handler, type) => `${handler}?${type}`);
     },
   };
-});
+};
 
 export default universalMiddleware;

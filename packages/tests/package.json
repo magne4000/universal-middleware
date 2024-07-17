@@ -24,6 +24,7 @@
     "zx": "^8.1.4"
   },
   "devDependencies": {
+    "@swc/core": "^1.6.13",
     "@types/node": "^20.14.10",
     "@universal-middleware/core": "workspace:*",
     "rimraf": "^6.0.0",

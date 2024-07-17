@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import { build, type BuildResult } from "esbuild";
-import unplugin from "../src/build";
+import plugin from "../src/esbuild";
 import { join } from "node:path";
 
 describe("esbuild", () => {
@@ -11,7 +11,7 @@ describe("esbuild", () => {
     const result = await build({
       entryPoints: [{ out: "handler", in: entry + "?handler" }],
       plugins: [
-        unplugin.esbuild({
+        plugin({
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(1));
             const exports = report.map((r) => r.exports);
@@ -56,7 +56,7 @@ describe("esbuild", () => {
         middleware: entry2 + "?middleware",
       },
       plugins: [
-        unplugin.esbuild({
+        plugin({
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -106,7 +106,7 @@ describe("esbuild", () => {
     const result = await build({
       entryPoints: [entry1 + "?handler", entry2 + "?middleware"],
       plugins: [
-        unplugin.esbuild({
+        plugin({
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -168,7 +168,7 @@ describe("esbuild", () => {
     const result = await build({
       entryPoints: [entry1 + "?handler", entry2 + "?handler"],
       plugins: [
-        unplugin.esbuild({
+        plugin({
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -230,7 +230,7 @@ describe("esbuild", () => {
     const result = await build({
       entryPoints: [entry1 + "?handler", entry2 + "?handler"],
       plugins: [
-        unplugin.esbuild({
+        plugin({
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -281,7 +281,7 @@ describe("esbuild", () => {
     const result = await build({
       entryPoints: [entry1 + "?handler", entry2 + "?handler"],
       plugins: [
-        unplugin.esbuild({
+        plugin({
           servers: ["hono"],
           buildEnd(report) {
             expect(report).toHaveLength(4);
@@ -329,7 +329,7 @@ describe("esbuild", () => {
     await expect(
       build({
         entryPoints: [entry1 + "?handler", entry2 + "?handler"],
-        plugins: [unplugin.esbuild()],
+        plugins: [plugin()],
         outdir: "dist",
         write: false,
         metafile: true,
@@ -347,7 +347,7 @@ describe("esbuild", () => {
       build({
         entryPoints: [entry1 + "?handler", entry2 + "?handler"],
         plugins: [
-          unplugin.esbuild({
+          plugin({
             serversExportNames: "[name]-[type]-[server]",
           }),
         ],

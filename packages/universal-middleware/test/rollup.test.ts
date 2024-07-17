@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { type OutputChunk, rollup, type RollupOutput } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
-import unplugin from "../src/build";
+import plugin from "../src/rollup";
 import { join, parse } from "node:path";
 
 describe("rollup", () => {
@@ -13,7 +13,7 @@ describe("rollup", () => {
     const result = await rollup({
       input: entry + "?handler",
       plugins: [
-        unplugin.rollup({
+        plugin({
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(1));
             const exports = report.map((r) => r.exports);
@@ -63,7 +63,7 @@ describe("rollup", () => {
         m: entry2 + "?middleware",
       },
       plugins: [
-        unplugin.rollup({
+        plugin({
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -114,7 +114,7 @@ describe("rollup", () => {
     const result = await rollup({
       input: [entry1 + "?handler", entry2 + "?middleware"],
       plugins: [
-        unplugin.rollup({
+        plugin({
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -177,7 +177,7 @@ describe("rollup", () => {
     const result = await rollup({
       input: [entry1 + "?handler", entry2 + "?handler"],
       plugins: [
-        unplugin.rollup({
+        plugin({
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -240,7 +240,7 @@ describe("rollup", () => {
     const result = await rollup({
       input: [entry1 + "?handler", entry2 + "?handler"],
       plugins: [
-        unplugin.rollup({
+        plugin({
           servers: ["hono"],
           buildEnd(report) {
             expect(report).toHaveLength(4);
@@ -290,7 +290,7 @@ describe("rollup", () => {
     const result = await rollup({
       input: [entry1 + "?handler", entry2 + "?handler"],
       plugins: [
-        unplugin.rollup({
+        plugin({
           serversExportNames: "[name]-[type]-[server]",
         }),
         nodeResolve(),
