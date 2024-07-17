@@ -12,7 +12,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "build:core": "pnpm run -r --filter \"@universal-middleware/*\" build",
     "build:plugin": "pnpm run --filter \"universal-middleware\" build",
-    "build:examples": "pnpm run --filter \"./examples/**\" build",
+    "build:examples": "pnpm run --filter \"@universal-middleware-examples/*\" build",
     "build": "run-s build:core build:plugin build:examples",
     "test": "pnpm run -r --sequential test",
     "test:typecheck": "pnpm run -r test:typecheck"

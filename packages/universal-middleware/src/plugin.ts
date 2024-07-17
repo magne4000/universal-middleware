@@ -1,11 +1,14 @@
 import { join, parse, posix, resolve } from "node:path";
 import { type UnpluginFactory } from "unplugin";
+import { packageUp } from "package-up";
+import { readFile, writeFile } from "node:fs/promises";
 
 export interface Options {
   servers?: (typeof defaultWrappers)[number][];
   serversExportNames?: string;
   entryExportNames?: string;
   ignoreRecommendations?: boolean;
+  doNotEditPackageJson?: boolean;
   buildEnd?: (report: Report[]) => void | Promise<void>;
 }
 
@@ -33,6 +36,7 @@ const externals = [
   "@universal-middleware/hattip",
   "@universal-middleware/hono",
 ];
+const versionRange = "^0";
 
 function getVirtualInputs(
   type: "handler" | "middleware",
@@ -291,6 +295,37 @@ function genReport(bundle: Record<string, BundleInfo>) {
   return reports;
 }
 
+export async function readAndEditPackageJson(reports: Report[]) {
+  const packageJsonPath = await packageUp();
+
+  if (!packageJsonPath) {
+    throw new Error("Cannot find package.json");
+  }
+
+  const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
+
+  packageJson.peerDependencies ??= {};
+  for (const external of externals) {
+    packageJson.peerDependencies[external] = versionRange;
+  }
+
+  packageJson.exports ??= {};
+
+  for (const report of reports) {
+    // No CJS support
+    packageJson.exports[report.exports] = {
+      types: report.out.replace(/\.js$/, ".d.ts"),
+      import: report.out,
+      default: report.out,
+    };
+  }
+
+  return {
+    path: packageJsonPath,
+    packageJson,
+  };
+}
+
 const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
   options?: Options,
 ) => {
@@ -362,6 +397,11 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
         Object.values(mapping).forEach((v) => (v.out = join(out, v.out)));
 
         const report = genReport(mapping);
+
+        if (!options?.doNotEditPackageJson) {
+          const { path, packageJson } = await readAndEditPackageJson(report);
+          await writeFile(path, JSON.stringify(packageJson, undefined, 2));
+        }
 
         await options?.buildEnd?.(report);
       },
@@ -489,6 +529,11 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
           );
 
           const report = genReport(mapping);
+
+          if (!options?.doNotEditPackageJson) {
+            const { path, packageJson } = await readAndEditPackageJson(report);
+            await writeFile(path, JSON.stringify(packageJson, undefined, 2));
+          }
 
           await options?.buildEnd?.(report);
         });

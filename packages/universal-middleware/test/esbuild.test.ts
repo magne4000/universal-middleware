@@ -12,8 +12,8 @@ describe("esbuild", () => {
       entryPoints: [{ out: "handler", in: entry }],
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           buildEnd(report) {
-            console.log(report);
             expect(report).toHaveLength(expectNbOutput(1));
             const exports = report.map((r) => r.exports);
 
@@ -58,6 +58,7 @@ describe("esbuild", () => {
       },
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -108,6 +109,7 @@ describe("esbuild", () => {
       entryPoints: [entry1, entry2],
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -170,6 +172,7 @@ describe("esbuild", () => {
       entryPoints: [entry1, entry2],
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -232,6 +235,7 @@ describe("esbuild", () => {
       entryPoints: [entry1, entry2],
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -283,6 +287,7 @@ describe("esbuild", () => {
       entryPoints: [entry1, entry2],
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           servers: ["hono"],
           buildEnd(report) {
             expect(report).toHaveLength(4);
@@ -330,7 +335,11 @@ describe("esbuild", () => {
     await expect(
       build({
         entryPoints: [entry1, entry2],
-        plugins: [plugin()],
+        plugins: [
+          plugin({
+            doNotEditPackageJson: true,
+          }),
+        ],
         outdir: "dist",
         write: false,
         metafile: true,
@@ -349,6 +358,7 @@ describe("esbuild", () => {
         entryPoints: [entry1, entry2],
         plugins: [
           plugin({
+            doNotEditPackageJson: true,
             serversExportNames: "[name]-[type]-[server]",
           }),
         ],

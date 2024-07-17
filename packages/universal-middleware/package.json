@@ -52,11 +52,12 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "unplugin": "^1.11.0",
     "@universal-middleware/core": "^0.1.1",
     "@universal-middleware/express": "^0.1.0",
     "@universal-middleware/hattip": "^0.1.0",
-    "@universal-middleware/hono": "^0.1.1"
+    "@universal-middleware/hono": "^0.1.1",
+    "package-up": "^5.0.0",
+    "unplugin": "^1.11.0"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",

@@ -1,5 +1,5 @@
 {
-  "name": "@universal-middleware/tests-tool",
+  "name": "@universal-middleware-tests/tool",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
-    "@universal-middleware/example-tool": "workspace:*",
+    "@universal-middleware-examples/tool": "workspace:*",
     "@universal-middleware/hono": "^0.1.1",
     "hono": "^4.5.0",
     "rimraf": "^6.0.0",

@@ -14,6 +14,7 @@ describe("rollup", () => {
       input: entry,
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(1));
             const exports = report.map((r) => r.exports);
@@ -64,6 +65,7 @@ describe("rollup", () => {
       },
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -115,6 +117,7 @@ describe("rollup", () => {
       input: [entry1, entry2],
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -178,6 +181,7 @@ describe("rollup", () => {
       input: [entry1, entry2],
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -241,6 +245,7 @@ describe("rollup", () => {
       input: [entry1, entry2],
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           servers: ["hono"],
           buildEnd(report) {
             expect(report).toHaveLength(4);
@@ -291,6 +296,7 @@ describe("rollup", () => {
       input: [entry1, entry2],
       plugins: [
         plugin({
+          doNotEditPackageJson: true,
           serversExportNames: "[name]-[type]-[server]",
         }),
         nodeResolve(),
