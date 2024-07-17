@@ -10,7 +10,9 @@
     "dev:hono": "vite --mode hono",
     "dev:hattip": "hattip serve ./playground/hattip-entry.ts --client",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
-    "build": "pnpm run -r --filter \"@universal-middleware/*\" build && pnpm run --filter \"universal-middleware\" build",
+    "build:core": "pnpm run -r --filter \"@universal-middleware/*\" build",
+    "build:plugin": "pnpm run --filter \"universal-middleware\" build",
+    "build": "run-s build:core build:plugin",
     "test": "pnpm run -r --sequential test",
     "test:typecheck": "pnpm run -r test:typecheck"
   },
@@ -31,6 +33,7 @@
     "express-rate-limit": "^7.3.1",
     "express-session": "^1.18.0",
     "microdiff": "^1.4.0",
+    "npm-run-all2": "^6.2.2",
     "on-change": "^5.0.1",
     "prettier": "^3.3.2",
     "proxy-deep": "^4.0.1",

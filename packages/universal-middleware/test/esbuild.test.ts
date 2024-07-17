@@ -147,7 +147,7 @@ describe("esbuild", () => {
       entryPoints: [entry1 + "?handler", entry2 + "?handler"],
       plugins: [unplugin.esbuild()],
       outdir: "dist",
-      outbase: join("test", "files"),
+      outbase: "test/files",
       write: false,
       metafile: true,
       bundle: true,
