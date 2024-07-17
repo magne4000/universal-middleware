@@ -1,4 +1,4 @@
-import { join, parse, posix, relative, resolve } from "node:path";
+import { join, parse, posix, resolve } from "node:path";
 import { createUnplugin } from "unplugin";
 
 export interface Options {
@@ -12,6 +12,16 @@ export interface Options {
 export interface Report {
   in: string;
   out: string;
+  type: "handler" | "middleware";
+  exports: string;
+}
+
+interface BundleInfo {
+  in: string;
+  out: string;
+  id: string;
+  dir: string;
+  name: string;
   type: "handler" | "middleware";
   exports: string;
 }
@@ -190,17 +200,145 @@ function formatDuplicatesForErrorMessage(duplicates: Map<string, Report[]>) {
   return formattedMessage;
 }
 
+function genBundleInfo<T>(
+  input: Record<string, string>,
+  findDest: (path: string) => string,
+): Record<string, BundleInfo> {
+  const entries = Object.entries(input);
+
+  return Object.fromEntries(
+    entries.map(([k, v]) => {
+      const cleanV = cleanPath(v);
+      const dest = findDest(cleanV);
+      const parsed = parse(dest!);
+      return [
+        cleanV,
+        {
+          in: cleanV,
+          out: dest!,
+          id: k,
+          dir: parsed.dir,
+          name: parsed.name,
+          type: filterInput(v)! as "handler" | "middleware",
+          exports: "",
+        },
+      ];
+    }),
+  );
+}
+
+function fixBundleExports(
+  bundle: Record<string, BundleInfo>,
+  options: { entryExportNames: string; serversExportNames: string },
+) {
+  Object.entries(bundle).forEach(([k, v]) => {
+    if (!k.startsWith(namespace)) {
+      v.exports =
+        "./" +
+        posix.normalize(
+          options.entryExportNames
+            .replace("[dir]", v.dir)
+            .replace("[name]", v.name)
+            .replace("[type]", v.type),
+        );
+    }
+  });
+
+  Object.entries(bundle).forEach(([k, v]) => {
+    if (k.startsWith(namespace)) {
+      const [, , server, type, handler] = k.split(":");
+      v.exports =
+        "./" +
+        posix.normalize(
+          options.serversExportNames
+            .replace("[name]", bundle[handler].name)
+            .replace("[dir]", bundle[handler].dir)
+            .replace("[type]", type)
+            .replace("[server]", server),
+        );
+    }
+  });
+
+  return bundle;
+}
+
+function genReport(bundle: Record<string, BundleInfo>) {
+  const reports = Object.values(bundle).reduce((acc, curr) => {
+    acc.push({
+      in: curr.in,
+      out: curr.out,
+      type: curr.type,
+      exports: curr.exports,
+    });
+
+    return acc;
+  }, [] as Report[]);
+
+  const duplicates = findDuplicateReports(reports);
+
+  if (duplicates.size > 0) {
+    const message = formatDuplicatesForErrorMessage(duplicates);
+    throw new Error(message);
+  }
+
+  return reports;
+}
+
 const universalMiddleware = createUnplugin((options?: Options) => {
+  const serversExportNames =
+    options?.serversExportNames ?? "./[dir]/[name]-[type]-[server]";
+  const entryExportNames = options?.entryExportNames ?? "./[dir]/[name]-[type]";
+
+  let normalizedInput: Record<string, string> | null = null;
+
   return {
     name: namespace,
     enforce: "post",
     rollup: {
       options(opts) {
-        const normalizedInput = normalizeInput(opts.input, options);
+        this.meta;
+        normalizedInput = normalizeInput(opts.input, options);
         if (normalizedInput) {
           opts.input = normalizedInput;
           appendVirtualInputs(opts.input, options?.servers);
         }
+      },
+      async generateBundle(opts, bundle) {
+        if (!normalizedInput) return;
+
+        const out = opts.dir ?? "dist";
+        const outputs = Object.entries(bundle);
+
+        let mapping = genBundleInfo(normalizedInput, (cleanV) => {
+          const found = outputs.find(([, value]) => {
+            if (value.type === "chunk" && value.isEntry) {
+              const cleanEntry = cleanPath(value.facadeModuleId!);
+              return (
+                cleanEntry === cleanV || cleanEntry === namespace + ":" + cleanV
+              );
+            }
+
+            return false;
+          })?.[0];
+
+          if (!found) {
+            throw new Error("Error occured while generating bundle info");
+          }
+
+          return found;
+        });
+
+        mapping = fixBundleExports(mapping, {
+          serversExportNames,
+          entryExportNames,
+        });
+
+        // Add dist folder to `out`
+        Object.values(mapping).forEach((v) => (v.out = join(out, v.out)));
+
+        const report = genReport(mapping);
+
+        await options?.buildEnd?.(report);
       },
     },
 
@@ -293,91 +431,36 @@ const universalMiddleware = createUnplugin((options?: Options) => {
         });
 
         builder.onEnd(async (result) => {
-          const serversExportNames =
-            options?.serversExportNames ?? "./[dir]/[name]-[type]-[server]";
-          const entryExportNames =
-            options?.entryExportNames ?? "./[dir]/[name]-[type]";
-
-          const entries = Object.entries(normalizedInput);
           const outputs = Object.entries(result.metafile!.outputs);
 
-          const mapping = Object.fromEntries(
-            entries.map(([k, v]) => {
-              const cleanV = cleanPath(v);
-              const dest = outputs.find(([, value]) => {
-                if (value.entryPoint) {
-                  const cleanEntry = cleanPath(value.entryPoint);
-                  return (
-                    cleanEntry === cleanV ||
-                    cleanEntry === namespace + ":" + cleanV
-                  );
-                }
-
-                return false;
-              })?.[0];
-              const parsed = parse(dest!);
-              return [
-                cleanV,
-                {
-                  in: cleanV,
-                  out: dest!,
-                  id: k,
-                  dir: relative(outdir, parsed.dir),
-                  name: parsed.name,
-                  type: filterInput(v)! as "handler" | "middleware",
-                  exports: "",
-                },
-              ];
-            }),
-          );
-
-          Object.entries(mapping).forEach(([k, v]) => {
-            if (!k.startsWith(namespace)) {
-              (v as Record<string, unknown>).exports =
-                "./" +
-                posix.normalize(
-                  entryExportNames
-                    .replace("[dir]", v.dir)
-                    .replace("[name]", v.name)
-                    .replace("[type]", v.type),
+          let mapping = genBundleInfo(normalizedInput, (cleanV) => {
+            const found = outputs.find(([, value]) => {
+              if (value.entryPoint) {
+                const cleanEntry = cleanPath(value.entryPoint);
+                return (
+                  cleanEntry === cleanV ||
+                  cleanEntry === namespace + ":" + cleanV
                 );
+              }
+
+              return false;
+            })?.[0];
+
+            if (!found) {
+              throw new Error("Error occured while generating bundle info");
             }
+
+            return found;
           });
 
-          Object.entries(mapping).forEach(([k, v]) => {
-            if (k.startsWith(namespace)) {
-              const [, , server, type, handler] = k.split(":");
-              (v as Record<string, unknown>).exports =
-                "./" +
-                posix.normalize(
-                  serversExportNames
-                    .replace("[name]", mapping[handler].name)
-                    .replace("[dir]", mapping[handler].dir)
-                    .replace("[type]", type)
-                    .replace("[server]", server),
-                );
-            }
+          mapping = fixBundleExports(mapping, {
+            serversExportNames,
+            entryExportNames,
           });
 
-          const reports = Object.values(mapping).reduce((acc, curr) => {
-            acc.push({
-              in: curr.in,
-              out: curr.out,
-              type: curr.type,
-              exports: curr.exports,
-            });
+          const report = genReport(mapping);
 
-            return acc;
-          }, [] as Report[]);
-
-          const duplicates = findDuplicateReports(reports);
-
-          if (duplicates.size > 0) {
-            const message = formatDuplicatesForErrorMessage(duplicates);
-            throw new Error(message);
-          }
-
-          await options?.buildEnd?.(reports);
+          await options?.buildEnd?.(report);
         });
       },
     },
