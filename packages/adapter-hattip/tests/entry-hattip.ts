@@ -14,10 +14,10 @@ const app = createRouter();
 // standard hattip middleware
 app.use(cors());
 
-middlewares.forEach((middleware) => app.use(createMiddleware(middleware)));
+middlewares.forEach((middleware) => app.use(createMiddleware(middleware)()));
 
 // universal handler
-app.get("/", createHandler(handler));
+app.get("/", createHandler(handler)());
 
 const hattipHandler = app.buildHandler();
 

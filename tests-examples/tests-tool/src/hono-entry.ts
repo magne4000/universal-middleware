@@ -5,8 +5,8 @@ import handler from "@universal-middleware-examples/tool/dummy-handler-hono";
 
 const app = new Hono();
 
-app.use(contextMiddleware);
-app.use(headersMiddleware);
-app.get("/", handler);
+app.use(contextMiddleware("something"));
+app.use(headersMiddleware());
+app.get("/", handler());
 
 export default app;

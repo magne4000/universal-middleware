@@ -1,7 +1,7 @@
 import { kill } from "zx";
 import { type ChildProcess, spawn } from "node:child_process";
 import waitPort from "wait-port";
-import type { UniversalMiddleware } from "@universal-middleware/core";
+import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 import type { UniversalHandler } from "../../../playground/types";
 import mri from "mri";
 
@@ -101,16 +101,16 @@ export function runTests(runs: Run[], options: Options) {
   });
 }
 
-export const middlewares: UniversalMiddleware[] = [
+export const middlewares: Get<[], UniversalMiddleware>[] = [
   // universal middleware that updates the context synchronously
-  (_request, context) => {
+  () => (_request, context) => {
     context.something = {
       a: 1,
       c: 3,
     };
   },
   // universal middleware that update the response headers asynchronously
-  (_request, _context) => {
+  () => (_request, _context) => {
     return async (response) => {
       response.headers.set("x-test-value", "universal-middleware");
       response.headers.delete("x-should-be-removed");
@@ -121,7 +121,7 @@ export const middlewares: UniversalMiddleware[] = [
     };
   },
   // universal middleware that updates the context asynchronously
-  async (_request, context) => {
+  () => async (_request, context) => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     context.somethingElse = {
@@ -131,7 +131,7 @@ export const middlewares: UniversalMiddleware[] = [
   },
 ];
 
-export const handler: UniversalHandler = (_request, context) => {
+export const handler: Get<[], UniversalHandler> = () => (_request, context) => {
   return new Response(JSON.stringify(context, null, 2), {
     headers: {
       "x-should-be-removed": "universal-middleware",

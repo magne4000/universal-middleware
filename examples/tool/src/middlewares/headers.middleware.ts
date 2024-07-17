@@ -1,11 +1,12 @@
-import type { UniversalMiddleware } from "universal-middleware";
+import type { Get, UniversalMiddleware } from "universal-middleware";
 
-const headersMiddleware: UniversalMiddleware = (_request, ctx) => {
-  return (response) => {
-    response.headers.set("X-Custom-Header", ctx.something ?? "NONE");
+const headersMiddleware: Get<[], UniversalMiddleware> =
+  () => (_request, ctx) => {
+    return (response) => {
+      response.headers.set("X-Custom-Header", ctx.something ?? "NONE");
 
-    return response;
+      return response;
+    };
   };
-};
 
 export default headersMiddleware;

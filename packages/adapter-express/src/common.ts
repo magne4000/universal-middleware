@@ -7,6 +7,7 @@ import {
 import { sendResponse, wrapResponse } from "./response.js";
 import type {
   Awaitable,
+  Get,
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
@@ -73,83 +74,91 @@ export interface NodeAdapterMiddlewareOptions
  * Creates a request handler to be passed to http.createServer() or used as a
  * middleware in Connect-style frameworks like Express.
  */
-export function createHandler(
-  handler: UniversalHandler,
+export function createHandler<T extends unknown[]>(
+  handlerFactory: Get<T, UniversalHandler>,
   options: NodeAdapterHandlerOptions = {},
-): NodeMiddleware {
+): Get<T, NodeMiddleware> {
   const requestAdapter = createRequestAdapter(options);
 
-  return async (req, res, next) => {
-    try {
-      req[contextSymbol] ??= {};
-      const request = requestAdapter(req);
-      const response = await handler(request, req[contextSymbol]);
+  return (...args) => {
+    const handler = handlerFactory(...args);
 
-      await sendResponse(response, res);
-    } catch (error) {
-      if (next) {
-        next(error);
-      } else {
-        console.error(error);
+    return async (req, res, next) => {
+      try {
+        req[contextSymbol] ??= {};
+        const request = requestAdapter(req);
+        const response = await handler(request, req[contextSymbol]);
 
-        if (!res.headersSent) {
-          res.statusCode = 500;
-        }
+        await sendResponse(response, res);
+      } catch (error) {
+        if (next) {
+          next(error);
+        } else {
+          console.error(error);
 
-        if (!res.writableEnded) {
-          res.end();
+          if (!res.headersSent) {
+            res.statusCode = 500;
+          }
+
+          if (!res.writableEnded) {
+            res.end();
+          }
         }
       }
-    }
+    };
   };
 }
 
 /**
  * Creates a middleware to be passed to Connect-style frameworks like Express
  */
-export function createMiddleware(
-  middleware: UniversalMiddleware,
+export function createMiddleware<T extends unknown[]>(
+  middlewareFactory: Get<T, UniversalMiddleware>,
   options: NodeAdapterMiddlewareOptions = {},
-): NodeMiddleware {
+): Get<T, NodeMiddleware> {
   const requestAdapter = createRequestAdapter(options);
 
-  return async (req, res, next) => {
-    try {
-      req[contextSymbol] ??= {};
-      const request = requestAdapter(req);
-      const response = await middleware(request, req[contextSymbol]);
+  return (...args) => {
+    const middleware = middlewareFactory(...args);
 
-      if (!response) {
-        return next?.();
-      } else if (typeof response === "function") {
-        if (res.headersSent) {
-          throw new Error(
-            "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-handler",
-          );
+    return async (req, res, next) => {
+      try {
+        req[contextSymbol] ??= {};
+        const request = requestAdapter(req);
+        const response = await middleware(request, req[contextSymbol]);
+
+        if (!response) {
+          return next?.();
+        } else if (typeof response === "function") {
+          if (res.headersSent) {
+            throw new Error(
+              "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-handler",
+            );
+          }
+          wrapResponse(res);
+          res[pendingMiddlewaresSymbol] ??= [];
+          // `wrapResponse` takes care of calling those middlewares right before sending the response
+          res[pendingMiddlewaresSymbol].push(response);
+          return next?.();
+        } else {
+          await sendResponse(response, res);
         }
-        wrapResponse(res);
-        res[pendingMiddlewaresSymbol] ??= [];
-        // `wrapResponse` takes care of calling those middlewares right before sending the response
-        res[pendingMiddlewaresSymbol].push(response);
-        return next?.();
-      } else {
-        await sendResponse(response, res);
+      } catch (error) {
+        if (next) {
+          next(error);
+        } else {
+          console.error(error);
+
+          if (!res.headersSent) {
+            res.statusCode = 500;
+          }
+
+          if (!res.writableEnded) {
+            res.end();
+          }
+        }
       }
-    } catch (error) {
-      if (next) {
-        next(error);
-      } else {
-        console.error(error);
-
-        if (!res.headersSent) {
-          res.statusCode = 500;
-        }
-
-        if (!res.writableEnded) {
-          res.end();
-        }
-      }
-    }
+    };
   };
 }
 

@@ -13,3 +13,5 @@ export interface UniversalMiddleware {
 export interface UniversalHandler {
   (request: Request, context: Universal.Context): Awaitable<Response>;
 }
+
+export type Get<T extends unknown[], U> = (...args: T) => U;

@@ -7,10 +7,10 @@ const app = express();
 
 app.use(helmet());
 
-middlewares.forEach((middleware) => app.use(createMiddleware(middleware)));
+middlewares.forEach((middleware) => app.use(createMiddleware(middleware)()));
 
 // universal handler
-app.get("/", createHandler(handler));
+app.get("/", createHandler(handler)());
 
 const port = args.port ? parseInt(args.port) : 3000;
 

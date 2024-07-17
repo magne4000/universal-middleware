@@ -14,10 +14,10 @@ const app = new Hono();
 // standard Hono middleware
 app.use(secureHeaders());
 
-middlewares.forEach((middleware) => app.use(createMiddleware(middleware)));
+middlewares.forEach((middleware) => app.use(createMiddleware(middleware)()));
 
 // universal handler
-app.get("/", createHandler(handler));
+app.get("/", createHandler(handler)());
 
 const port = args.port ? parseInt(args.port) : 3000;
 

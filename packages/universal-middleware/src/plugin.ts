@@ -198,8 +198,10 @@ function loadDts(
   const t = typesByServer[server][type as "middleware" | "handler"];
   const code = `import { ${fn}, type ${t} } from "@universal-middleware/${server}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
-export default ${fn}(${type}) as ${t};
+type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
+export default ${fn}(${type}) as (...args: ExtractT<typeof ${type}>) => ${t};
 `;
+
   return { code };
 }
 
@@ -323,7 +325,12 @@ async function genDts(bundle: Record<string, BundleInfo>, options?: Options) {
   for (const value of Object.values(bundle)) {
     if (!value.in.startsWith(namespace)) continue;
 
-    await generateDts(loadDts(value.in).code, value.dts);
+    await generateDts(
+      loadDts(value.in, (handler) =>
+        posix.relative(value.dts, bundle[handler].dts).replace(/^\.\./, "."),
+      ).code,
+      value.dts,
+    );
   }
 }
 
