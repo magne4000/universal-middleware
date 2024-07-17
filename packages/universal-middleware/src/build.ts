@@ -3,6 +3,8 @@ import { createUnplugin } from "unplugin";
 
 export interface Options {
   servers?: (typeof defaultWrappers)[number][];
+  serversExportNames?: string;
+  entryExportNames?: string;
   ignoreRecommendations?: boolean;
 }
 
@@ -48,6 +50,7 @@ function normalizeInput(
     | string[]
     | Record<string, string>
     | { in: string; out: string }[],
+  options?: Options,
 ) {
   const keys = new Set<string>();
 
@@ -70,15 +73,27 @@ function normalizeInput(
       };
     }
   } else if (Array.isArray(input)) {
-    return Object.fromEntries(
+    let i = 0;
+    const res = Object.fromEntries(
       input.map((e) => {
         if (typeof e === "string") {
+          if (filterInput(e)) {
+            i += 1;
+          }
           const parsed = parse(e);
           return getTuple(join(parsed.dir, parsed.name), e);
         }
         return getTuple(e.out, e.in);
       }),
     );
+
+    if (!options?.ignoreRecommendations && i >= 2) {
+      console.warn(
+        "Prefer using an object for esbuild `entryPoints` instead of an array",
+      );
+    }
+
+    return res;
   } else if (input && typeof input === "object") {
     return input;
   }
@@ -98,6 +113,20 @@ function appendVirtualInputs(
       });
     }
   });
+}
+
+function applyOutbase(input: Record<string, string>, outbase: string) {
+  if (!outbase) return input;
+
+  const re = new RegExp("^" + outbase + "/?", "gu");
+
+  return Object.keys(input).reduce(
+    (acc, key) => {
+      acc[key.replace(re, "")] = input[key];
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
 }
 
 function load(id: string, resolve?: (handler: string, type: string) => string) {
@@ -121,7 +150,7 @@ const universalMiddleware = createUnplugin((options?: Options) => {
     enforce: "post",
     rollup: {
       options(opts) {
-        const normalizedInput = normalizeInput(opts.input);
+        const normalizedInput = normalizeInput(opts.input, options);
         if (normalizedInput) {
           opts.input = normalizedInput;
           appendVirtualInputs(opts.input, options?.servers);
@@ -140,10 +169,11 @@ const universalMiddleware = createUnplugin((options?: Options) => {
         if (!options?.ignoreRecommendations) {
           if (
             builder.initialOptions.entryNames &&
-            !builder.initialOptions.entryNames.includes("[hash]")
+            !builder.initialOptions.entryNames.includes("[hash]") &&
+            !builder.initialOptions.entryNames.includes("[dir]")
           ) {
             console.warn(
-              "esbuild config specifies `entryNames` without [hash]. This could lead to unknown behaviour",
+              "esbuild config specifies `entryNames` without [hash] or [dir]. This could lead to missing files",
             );
           }
           if (!builder.initialOptions.splitting) {
@@ -154,9 +184,7 @@ const universalMiddleware = createUnplugin((options?: Options) => {
           // TODO
         }
 
-        if (!builder.initialOptions.entryNames) {
-          builder.initialOptions.entryNames = "[name]-[hash]";
-        }
+        builder.initialOptions.metafile = true;
 
         if (builder.initialOptions.bundle) {
           builder.initialOptions.external = [
@@ -173,10 +201,16 @@ const universalMiddleware = createUnplugin((options?: Options) => {
 
         if (!normalizedInput) return;
 
+        const outbase = builder.initialOptions.outbase ?? "";
+
         builder.initialOptions.entryPoints = normalizedInput;
         appendVirtualInputs(
           builder.initialOptions.entryPoints,
           options?.servers,
+        );
+        builder.initialOptions.entryPoints = applyOutbase(
+          builder.initialOptions.entryPoints,
+          outbase,
         );
 
         builder.onResolve(
@@ -194,7 +228,7 @@ const universalMiddleware = createUnplugin((options?: Options) => {
         );
 
         builder.onResolve({ filter: /\?(middleware|handler)$/ }, (args) => {
-          // console.log("onResolve:?", args);
+          // console.log("onResolve:?", args, resolve(cleanPath(args.path)));
           return {
             path: resolve(cleanPath(args.path)),
           };
@@ -209,6 +243,66 @@ const universalMiddleware = createUnplugin((options?: Options) => {
             resolveDir: args.pluginData.resolveDir,
             loader: "js",
           };
+        });
+
+        builder.onEnd((result) => {
+          const serversExportNames =
+            options?.serversExportNames ?? "./[name]-[type]-[server]";
+          const entryExportNames =
+            options?.entryExportNames ?? "./[name]-[type]";
+
+          const entries = Object.entries(normalizedInput);
+          const outputs = Object.entries(result.metafile!.outputs);
+
+          const mapping = Object.fromEntries(
+            entries.map(([k, v]) => {
+              const cleanV = cleanPath(v);
+              const dest = outputs.find(([, value]) => {
+                if (value.entryPoint) {
+                  const cleanEntry = cleanPath(value.entryPoint);
+                  return (
+                    cleanEntry === cleanV ||
+                    cleanEntry === namespace + ":" + cleanV
+                  );
+                }
+
+                return false;
+              })?.[0];
+              const parsed = parse(cleanV);
+              return [
+                cleanV,
+                {
+                  dest,
+                  id: k,
+                  dir: parsed.dir,
+                  name: parsed.name,
+                  type: filterInput(v),
+                },
+              ];
+            }),
+          );
+
+          Object.entries(mapping).forEach(([k, v]) => {
+            if (!k.startsWith(namespace)) {
+              (v as Record<string, unknown>).exports = entryExportNames
+                .replace("[name]", v.name)
+                .replace("[type]", v.type!);
+            }
+          });
+
+          Object.entries(mapping).forEach(([k, v]) => {
+            if (k.startsWith(namespace)) {
+              const [, , server, type, handler] = k.split(":");
+              (v as Record<string, unknown>).exports = serversExportNames
+                .replace("[name]", mapping[handler].name)
+                .replace("[type]", type)
+                .replace("[server]", server);
+            }
+          });
+
+          // TODO: test with https://esbuild.github.io/api/#outbase
+
+          // console.log(mapping);
         });
       },
     },

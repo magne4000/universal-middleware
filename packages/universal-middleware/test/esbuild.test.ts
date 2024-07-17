@@ -25,7 +25,11 @@ describe("esbuild", () => {
       result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
     ).toHaveLength(expectNbOutput(1));
 
-    expect(findOutput(result, entry)).toBeTruthy();
+    console.log(result.outputFiles);
+
+    expect(findOutput(result, entry)).toSatisfy((s: string) =>
+      s.startsWith("dist/handler"),
+    );
 
     testEsbuildOutput(result, "handler", entry);
   });
@@ -35,7 +39,7 @@ describe("esbuild", () => {
     const entry2 = "test/files/middleware.ts";
     const result = await build({
       entryPoints: {
-        handler: entry1 + "?handler",
+        "handlers/one": entry1 + "?handler",
         middleware: entry2 + "?middleware",
       },
       plugins: [unplugin.esbuild()],
@@ -54,14 +58,18 @@ describe("esbuild", () => {
       result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
     ).toHaveLength(expectNbOutput(2));
 
-    expect(findOutput(result, entry1)).toBeTruthy();
-    expect(findOutput(result, entry2)).toBeTruthy();
+    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
+      s.startsWith("dist/handlers/one"),
+    );
+    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
+      s.startsWith("dist/middleware"),
+    );
 
     testEsbuildOutput(result, "handler", entry1);
     testEsbuildOutput(result, "middleware", entry2);
   });
 
-  it("generates all server files (object input)", async () => {
+  it("generates all server files (array input)", async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/middleware.ts";
     const result = await build({
@@ -82,8 +90,12 @@ describe("esbuild", () => {
       result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
     ).toHaveLength(expectNbOutput(2));
 
-    expect(findOutput(result, entry1)).toBeTruthy();
-    expect(findOutput(result, entry2)).toBeTruthy();
+    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
+      s.startsWith("dist/test/files/folder1/handler"),
+    );
+    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
+      s.startsWith("dist/test/files/middleware"),
+    );
 
     testEsbuildOutput(result, "handler", entry1);
     testEsbuildOutput(result, "middleware", entry2);
@@ -110,8 +122,45 @@ describe("esbuild", () => {
       result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
     ).toHaveLength(expectNbOutput(2));
 
-    expect(findOutput(result, entry1)).toBeTruthy();
-    expect(findOutput(result, entry2)).toBeTruthy();
+    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
+      s.startsWith("dist/test/files/folder1/handler"),
+    );
+    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
+      s.startsWith("dist/test/files/folder2/handler"),
+    );
+
+    testEsbuildOutput(result, "handler", entry1);
+    testEsbuildOutput(result, "handler", entry2);
+  });
+
+  it("respects outbase", async () => {
+    const entry1 = "test/files/folder1/handler.ts";
+    const entry2 = "test/files/folder2/handler.ts";
+    const result = await build({
+      entryPoints: [entry1 + "?handler", entry2 + "?handler"],
+      plugins: [unplugin.esbuild()],
+      outdir: "dist",
+      outbase: "test/files",
+      write: false,
+      metafile: true,
+      bundle: true,
+      platform: "neutral",
+      format: "esm",
+      target: "es2022",
+      splitting: true,
+    });
+
+    expect(result.errors).toHaveLength(0);
+    expect(
+      result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
+    ).toHaveLength(expectNbOutput(2));
+
+    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
+      s.startsWith("dist/folder1/handler"),
+    );
+    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
+      s.startsWith("dist/folder2/handler"),
+    );
 
     testEsbuildOutput(result, "handler", entry1);
     testEsbuildOutput(result, "handler", entry2);
@@ -142,8 +191,12 @@ describe("esbuild", () => {
       result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
     ).toHaveLength(4);
 
-    expect(findOutput(result, entry1)).toBeTruthy();
-    expect(findOutput(result, entry2)).toBeTruthy();
+    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
+      s.startsWith("dist/test/files/folder1/handler"),
+    );
+    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
+      s.startsWith("dist/test/files/folder2/handler"),
+    );
   });
 
   it("fails when bundle is not true", async () => {
@@ -187,7 +240,7 @@ function testEsbuildHandler(
   expect(output).toBeTruthy();
 
   const file = result.outputFiles.find((f) =>
-    f.path.includes(`dist/universal-${server}-${type}`),
+    f.path.includes(`universal-${server}-${type}`),
   );
   if (type === "handler") {
     expect(file?.text).toContain(
