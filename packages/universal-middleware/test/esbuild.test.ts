@@ -3,6 +3,7 @@
 import { describe, expect, it } from "vitest";
 import { build, type BuildResult } from "esbuild";
 import unplugin from "../src/build";
+import { join } from "node:path";
 
 describe("esbuild", () => {
   it("generates all server files (in/out input)", async () => {
@@ -22,7 +23,9 @@ describe("esbuild", () => {
 
     expect(result.errors).toHaveLength(0);
     expect(
-      result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
+      result.outputFiles.filter(
+        (f) => !f.path.includes(join("dist", "chunk-")),
+      ),
     ).toHaveLength(expectNbOutput(1));
 
     expect(findOutput(result, entry)).toSatisfy((s: string) =>
@@ -53,7 +56,9 @@ describe("esbuild", () => {
 
     expect(result.errors).toHaveLength(0);
     expect(
-      result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
+      result.outputFiles.filter(
+        (f) => !f.path.includes(join("dist", "chunk-")),
+      ),
     ).toHaveLength(expectNbOutput(2));
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) =>
@@ -85,7 +90,9 @@ describe("esbuild", () => {
 
     expect(result.errors).toHaveLength(0);
     expect(
-      result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
+      result.outputFiles.filter(
+        (f) => !f.path.includes(join("dist", "chunk-")),
+      ),
     ).toHaveLength(expectNbOutput(2));
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) =>
@@ -117,7 +124,9 @@ describe("esbuild", () => {
 
     expect(result.errors).toHaveLength(0);
     expect(
-      result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
+      result.outputFiles.filter(
+        (f) => !f.path.includes(join("dist", "chunk-")),
+      ),
     ).toHaveLength(expectNbOutput(2));
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) =>
@@ -150,7 +159,9 @@ describe("esbuild", () => {
 
     expect(result.errors).toHaveLength(0);
     expect(
-      result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
+      result.outputFiles.filter(
+        (f) => !f.path.includes(join("dist", "chunk-")),
+      ),
     ).toHaveLength(expectNbOutput(2));
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) =>
@@ -186,7 +197,9 @@ describe("esbuild", () => {
 
     expect(result.errors).toHaveLength(0);
     expect(
-      result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
+      result.outputFiles.filter(
+        (f) => !f.path.includes(join("dist", "chunk-")),
+      ),
     ).toHaveLength(4);
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) =>

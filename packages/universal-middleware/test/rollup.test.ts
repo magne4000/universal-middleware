@@ -5,7 +5,7 @@ import { type OutputChunk, rollup, type RollupOutput } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import unplugin from "../src/build";
-import { parse } from "node:path";
+import { join, parse } from "node:path";
 
 describe("rollup", () => {
   it("generates all server files (string input)", async () => {
@@ -33,7 +33,7 @@ describe("rollup", () => {
     const handler = gen.output.find((f: any) => f.facadeModuleId === entry) as
       | OutputChunk
       | undefined;
-    expect(handler?.name).toEqual("test/files/folder1/handler");
+    expect(handler?.name).toEqual(join("test", "files", "folder1", "handler"));
 
     testRollupOutput(gen, "handler", entry);
   });
@@ -104,12 +104,12 @@ describe("rollup", () => {
     const handler = gen.output.find((f: any) => f.facadeModuleId === entry1) as
       | OutputChunk
       | undefined;
-    expect(handler?.name).toEqual("test/files/folder1/handler");
+    expect(handler?.name).toEqual(join("test", "files", "folder1", "handler"));
 
     const middleware = gen.output.find(
       (f: any) => f.facadeModuleId === entry2,
     ) as OutputChunk | undefined;
-    expect(middleware?.name).toEqual("test/files/middleware");
+    expect(middleware?.name).toEqual(join("test", "files", "middleware"));
 
     testRollupOutput(gen, "handler", entry1);
     testRollupOutput(gen, "middleware", entry2);
@@ -141,12 +141,12 @@ describe("rollup", () => {
     const handler1 = gen.output.find(
       (f: any) => f.facadeModuleId === entry1,
     ) as OutputChunk | undefined;
-    expect(handler1?.name).toEqual("test/files/folder1/handler");
+    expect(handler1?.name).toEqual(join("test", "files", "folder1", "handler"));
 
     const handler2 = gen.output.find(
       (f: any) => f.facadeModuleId === entry2,
     ) as OutputChunk | undefined;
-    expect(handler2?.name).toEqual("test/files/folder2/handler");
+    expect(handler2?.name).toEqual(join("test", "files", "folder2", "handler"));
 
     testRollupOutput(gen, "handler", entry1);
     testRollupOutput(gen, "handler", entry2);
@@ -180,12 +180,12 @@ describe("rollup", () => {
     const handler1 = gen.output.find(
       (f: any) => f.facadeModuleId === entry1,
     ) as OutputChunk | undefined;
-    expect(handler1?.name).toEqual("test/files/folder1/handler");
+    expect(handler1?.name).toEqual(join("test", "files", "folder1", "handler"));
 
     const handler2 = gen.output.find(
       (f: any) => f.facadeModuleId === entry2,
     ) as OutputChunk | undefined;
-    expect(handler2?.name).toEqual("test/files/folder2/handler");
+    expect(handler2?.name).toEqual(join("test", "files", "folder2", "handler"));
   });
 
   it("fails when exports overlap", async () => {
