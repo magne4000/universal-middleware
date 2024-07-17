@@ -1,5 +1,5 @@
 import devServer from "@hono/vite-dev-server";
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 
 export default defineConfig({
   plugins: [
@@ -17,6 +17,6 @@ export default defineConfig({
       ],
 
       injectClientScript: false,
-    }),
+    }) as Plugin,
   ],
 });
