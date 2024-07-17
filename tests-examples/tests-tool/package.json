@@ -1,0 +1,30 @@
+{
+  "name": "@universal-middleware/tests-tool",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "repository": "https://github.com/magne4000/universal-handler",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsup",
+    "dev": "tsup --watch",
+    "prepack": "pnpm build",
+    "test": "vitest run",
+    "test:run-hono:node": "tsx tests/entry-hono.ts",
+    "test:run-hono:bun": "bun tests/entry-hono.ts",
+    "test:run-hono:deno": "deno run --unstable-sloppy-imports -A tests/entry-hono.ts",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@universal-middleware/example-tool": "workspace:*",
+    "@universal-middleware/hono": "^0.1.1",
+    "hono": "^4.5.0",
+    "rimraf": "^6.0.0",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3",
+    "vitest": "^2.0.2"
+  },
+  "sideEffects": false
+}

@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "unplugin": "^1.11.0",
+    "@universal-middleware/core": "^0.1.1",
     "@universal-middleware/express": "^0.1.0",
     "@universal-middleware/hattip": "^0.1.0",
     "@universal-middleware/hono": "^0.1.1"
@@ -61,7 +62,6 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
     "@swc/core": "^1.6.13",
-    "@universal-middleware/core": "^0.1.1",
     "esbuild": "^0.23.0",
     "rimraf": "^6.0.1",
     "rollup": "^4.18.1",

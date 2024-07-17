@@ -12,7 +12,8 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "build:core": "pnpm run -r --filter \"@universal-middleware/*\" build",
     "build:plugin": "pnpm run --filter \"universal-middleware\" build",
-    "build": "run-s build:core build:plugin",
+    "build:examples": "pnpm run --filter \"./examples/**\" build",
+    "build": "run-s build:core build:plugin build:examples",
     "test": "pnpm run -r --sequential test",
     "test:typecheck": "pnpm run -r test:typecheck"
   },
@@ -60,7 +61,8 @@
       "@universal-middleware/core": "link:./packages/core",
       "@universal-middleware/express": "link:./packages/adapter-express",
       "@universal-middleware/hono": "link:./packages/adapter-hono",
-      "@universal-middleware/hattip": "link:./packages/adapter-hattip"
+      "@universal-middleware/hattip": "link:./packages/adapter-hattip",
+      "universal-middleware": "link:./packages/universal-middleware"
     }
   },
   "packageManager": "pnpm@9.4.0"

@@ -1,0 +1,45 @@
+{
+  "name": "@universal-middleware/example-tool",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "repository": "https://github.com/magne4000/universal-handler",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsup",
+    "prepack": "pnpm build",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "universal-middleware": "*",
+    "@swc/core": "^1.6.13",
+    "@types/node": "^20.14.10",
+    "rimraf": "^6.0.0",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3"
+  },
+  "peerDependencies": {
+    "@universal-middleware/express": "^0",
+    "@universal-middleware/hono": "^0",
+    "@universal-middleware/hattip": "^0"
+  },
+  "peerDependenciesMeta": {
+    "@universal-middleware/express": {
+      "optional": true
+    },
+    "@universal-middleware/hono": {
+      "optional": true
+    },
+    "@universal-middleware/hattip": {
+      "optional": true
+    }
+  },
+  "sideEffects": false
+}

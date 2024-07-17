@@ -9,10 +9,11 @@ describe("esbuild", () => {
   it("generates all server files (in/out input)", async () => {
     const entry = "test/files/folder1/handler.ts";
     const result = await build({
-      entryPoints: [{ out: "handler", in: entry + "?handler" }],
+      entryPoints: [{ out: "handler", in: entry }],
       plugins: [
         plugin({
           buildEnd(report) {
+            console.log(report);
             expect(report).toHaveLength(expectNbOutput(1));
             const exports = report.map((r) => r.exports);
 
@@ -52,8 +53,8 @@ describe("esbuild", () => {
     const entry2 = "test/files/middleware.ts";
     const result = await build({
       entryPoints: {
-        "handlers/one": entry1 + "?handler",
-        middleware: entry2 + "?middleware",
+        "handlers/one": entry1,
+        middleware: entry2,
       },
       plugins: [
         plugin({
@@ -104,7 +105,7 @@ describe("esbuild", () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/middleware.ts";
     const result = await build({
-      entryPoints: [entry1 + "?handler", entry2 + "?middleware"],
+      entryPoints: [entry1, entry2],
       plugins: [
         plugin({
           buildEnd(report) {
@@ -166,7 +167,7 @@ describe("esbuild", () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await build({
-      entryPoints: [entry1 + "?handler", entry2 + "?handler"],
+      entryPoints: [entry1, entry2],
       plugins: [
         plugin({
           buildEnd(report) {
@@ -228,7 +229,7 @@ describe("esbuild", () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await build({
-      entryPoints: [entry1 + "?handler", entry2 + "?handler"],
+      entryPoints: [entry1, entry2],
       plugins: [
         plugin({
           buildEnd(report) {
@@ -279,7 +280,7 @@ describe("esbuild", () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await build({
-      entryPoints: [entry1 + "?handler", entry2 + "?handler"],
+      entryPoints: [entry1, entry2],
       plugins: [
         plugin({
           servers: ["hono"],
@@ -328,7 +329,7 @@ describe("esbuild", () => {
     const entry2 = "test/files/folder2/handler.ts";
     await expect(
       build({
-        entryPoints: [entry1 + "?handler", entry2 + "?handler"],
+        entryPoints: [entry1, entry2],
         plugins: [plugin()],
         outdir: "dist",
         write: false,
@@ -345,7 +346,7 @@ describe("esbuild", () => {
     const entry2 = "test/files/folder2/handler.ts";
     await expect(
       build({
-        entryPoints: [entry1 + "?handler", entry2 + "?handler"],
+        entryPoints: [entry1, entry2],
         plugins: [
           plugin({
             serversExportNames: "[name]-[type]-[server]",
@@ -380,7 +381,7 @@ function testEsbuildHandler(
 ) {
   const output = findOutput(
     result,
-    `virtual:universal-middleware:virtual:universal-middleware:${server}:${type}:${f}?${type}`,
+    `virtual:universal-middleware:virtual:universal-middleware:${server}:${type}:${f}`,
   );
   expect(output).toBeTruthy();
 

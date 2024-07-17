@@ -57,10 +57,10 @@ function getVirtualInputs(
 }
 
 function filterInput(input: string) {
-  if (input.endsWith("?handler")) {
+  if (input.match(/(^|\.|\/|\\\\)handler\.[cm]?[jt]sx?$/)) {
     return "handler";
   }
-  if (input.endsWith("?middleware")) {
+  if (input.match(/(^|\.|\/|\\\\)middleware\.[cm]?[jt]sx?$/)) {
     return "middleware";
   }
   return null;
@@ -166,10 +166,6 @@ export default ${fn}(${type});
   return { code };
 }
 
-function cleanPath(s: string) {
-  return s.replace(`?middleware`, "").replace(`?handler`, "");
-}
-
 function findDuplicateReports(reports: Report[]): Map<string, Report[]> {
   const exportCounts: Record<string, number> = {};
   const duplicates = new Map<string, Report[]>();
@@ -216,13 +212,12 @@ function genBundleInfo(
 
   return Object.fromEntries(
     entries.map(([k, v]) => {
-      const cleanV = cleanPath(v);
-      const dest = findDest(cleanV);
+      const dest = findDest(v);
       const parsed = parse(dest!);
       return [
-        cleanV,
+        v,
         {
-          in: cleanV,
+          in: v,
           out: dest!,
           id: k,
           dir: parsed.dir,
@@ -341,9 +336,10 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
         let mapping = genBundleInfo(normalizedInput, (cleanV) => {
           const found = outputs.find(([, value]) => {
             if (value.type === "chunk" && value.isEntry) {
-              const cleanEntry = cleanPath(value.facadeModuleId!);
+              const cleanEntry = value.facadeModuleId!;
               return (
-                cleanEntry === cleanV || cleanEntry === namespace + ":" + cleanV
+                posix.relative(cleanEntry, cleanV) === "" ||
+                posix.relative(cleanEntry, namespace + ":" + cleanV) === ""
               );
             }
 
@@ -438,12 +434,15 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
           },
         );
 
-        builder.onResolve({ filter: /\?(middleware|handler)$/ }, (args) => {
-          // console.log("onResolve:?", args, resolve(cleanPath(args.path)));
-          return {
-            path: resolve(cleanPath(args.path)),
-          };
-        });
+        builder.onResolve(
+          { filter: /(^|\.|\/|\\\\)(handler|middleware)\./ },
+          (args) => {
+            // console.log("onResolve:?", args);
+            return {
+              path: resolve(args.path),
+            };
+          },
+        );
 
         builder.onLoad({ filter: /.*/, namespace }, async (args) => {
           // console.log("onLoad", args);
@@ -462,10 +461,10 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
           let mapping = genBundleInfo(normalizedInput, (cleanV) => {
             const found = outputs.find(([, value]) => {
               if (value.entryPoint) {
-                const cleanEntry = cleanPath(value.entryPoint);
+                const cleanEntry = value.entryPoint;
                 return (
-                  cleanEntry === cleanV ||
-                  cleanEntry === namespace + ":" + cleanV
+                  posix.relative(cleanEntry, cleanV) === "" ||
+                  posix.relative(cleanEntry, namespace + ":" + cleanV) === ""
                 );
               }
 
@@ -497,9 +496,8 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
     },
 
     resolveId(id) {
-      const filtered = filterInput(id);
-      if (filtered) {
-        return id.replace(`?${filtered}`, "");
+      if (id.startsWith(namespace) || filterInput(id)) {
+        return id;
       }
     },
 
@@ -507,9 +505,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
       return id.startsWith(namespace);
     },
 
-    load(id) {
-      return load(id, (handler, type) => `${handler}?${type}`);
-    },
+    load,
   };
 };
 

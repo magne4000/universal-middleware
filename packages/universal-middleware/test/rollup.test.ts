@@ -11,7 +11,7 @@ describe("rollup", () => {
   it("generates all server files (string input)", async () => {
     const entry = "test/files/folder1/handler.ts";
     const result = await rollup({
-      input: entry + "?handler",
+      input: entry,
       plugins: [
         plugin({
           buildEnd(report) {
@@ -59,8 +59,8 @@ describe("rollup", () => {
     const entry2 = "test/files/middleware.ts";
     const result = await rollup({
       input: {
-        h: entry1 + "?handler",
-        m: entry2 + "?middleware",
+        h: entry1,
+        m: entry2,
       },
       plugins: [
         plugin({
@@ -112,7 +112,7 @@ describe("rollup", () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/middleware.ts";
     const result = await rollup({
-      input: [entry1 + "?handler", entry2 + "?middleware"],
+      input: [entry1, entry2],
       plugins: [
         plugin({
           buildEnd(report) {
@@ -175,7 +175,7 @@ describe("rollup", () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await rollup({
-      input: [entry1 + "?handler", entry2 + "?handler"],
+      input: [entry1, entry2],
       plugins: [
         plugin({
           buildEnd(report) {
@@ -238,7 +238,7 @@ describe("rollup", () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await rollup({
-      input: [entry1 + "?handler", entry2 + "?handler"],
+      input: [entry1, entry2],
       plugins: [
         plugin({
           servers: ["hono"],
@@ -288,7 +288,7 @@ describe("rollup", () => {
     const entry2 = "test/files/folder2/handler.ts";
 
     const result = await rollup({
-      input: [entry1 + "?handler", entry2 + "?handler"],
+      input: [entry1, entry2],
       plugins: [
         plugin({
           serversExportNames: "[name]-[type]-[server]",
