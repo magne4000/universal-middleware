@@ -417,6 +417,8 @@ const universalMiddleware = createUnplugin((options?: Options) => {
           outbase,
         );
 
+        console.log(builder.initialOptions.entryPoints);
+
         builder.onResolve(
           { filter: /^virtual:universal-middleware/ },
           (args) => {
