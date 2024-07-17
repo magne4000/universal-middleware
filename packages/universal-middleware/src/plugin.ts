@@ -250,7 +250,7 @@ function fixBundleExports(
               .replace("[name]", v.name)
               .replace("[type]", v.type),
           )
-          .replaceAll("\\\\", "/");
+          .replaceAll("\\", "/");
     }
   });
 
@@ -267,7 +267,7 @@ function fixBundleExports(
               .replace("[type]", type)
               .replace("[server]", server),
           )
-          .replaceAll("\\\\", "/");
+          .replaceAll("\\", "/");
     }
   });
 
