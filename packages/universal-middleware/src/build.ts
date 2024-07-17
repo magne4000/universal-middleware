@@ -385,7 +385,6 @@ const universalMiddleware = createUnplugin((options?: Options) => {
               "enable esbuild `splitting` option to reduce bundle size",
             );
           }
-          // TODO
         }
 
         builder.initialOptions.metafile = true;

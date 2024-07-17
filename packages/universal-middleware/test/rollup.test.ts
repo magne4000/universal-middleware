@@ -236,7 +236,6 @@ function testRollupOutput(
   type: "handler" | "middleware",
   f: string,
 ) {
-  // FIXME hash
   testRollupHandler(gen, type, "express", f);
   testRollupHandler(gen, type, "hono", f);
   testRollupHandler(gen, type, "hattip", f);
