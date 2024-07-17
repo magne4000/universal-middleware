@@ -103,6 +103,9 @@ importers:
       on-change:
         specifier: ^5.0.1
         version: 5.0.1
+      playwright:
+        specifier: ^1.45.2
+        version: 1.45.2
       prettier:
         specifier: ^3.3.2
         version: 3.3.3
