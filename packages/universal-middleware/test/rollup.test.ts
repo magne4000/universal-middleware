@@ -246,6 +246,8 @@ describe("rollup", () => {
             expect(report).toHaveLength(4);
             const exports = report.map((r) => r.exports);
 
+            console.log(report);
+
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/folder2/handler-handler");
             expect(exports).toContain(
