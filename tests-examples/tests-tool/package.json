@@ -7,22 +7,22 @@
   "repository": "https://github.com/magne4000/universal-handler",
   "license": "MIT",
   "scripts": {
-    "dev": "tsx src/hono-entry.ts",
-    "test": "vitest run",
-    "test:run-hono:node": "tsx tests/entry-hono.ts",
-    "test:run-hono:bun": "bun tests/entry-hono.ts",
-    "test:run-hono:deno": "deno run --unstable-sloppy-imports -A tests/entry-hono.ts",
+    "dev": "vite --port 3000",
+    "test": "test-e2e",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
+    "@brillout/test-e2e": "^0.5.33",
+    "@hono/vite-dev-server": "^0.13.0",
     "@types/node": "^20.14.10",
     "@universal-middleware-examples/tool": "workspace:*",
     "@universal-middleware/hono": "^0.1.1",
     "hono": "^4.5.0",
+    "playwright": "^1.45.2",
     "rimraf": "^6.0.0",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3",
-    "vitest": "^2.0.2"
+    "vite": "^5.3.4"
   },
   "sideEffects": false
 }

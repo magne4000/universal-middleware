@@ -1,9 +1,12 @@
 import { Hono } from "hono";
-import { serve } from "@hono/node-server";
+import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hono";
+import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hono";
 import handler from "@universal-middleware-examples/tool/dummy-handler-hono";
 
 const app = new Hono();
 
+app.use(contextMiddleware);
+app.use(headersMiddleware);
 app.get("/", handler);
 
-serve(app);
+export default app;

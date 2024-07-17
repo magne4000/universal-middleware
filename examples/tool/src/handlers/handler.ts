@@ -1,7 +1,7 @@
 import type { UniversalHandler } from "universal-middleware";
 
-const handler: UniversalHandler = (_request, _ctx) => {
-  return new Response("OK", {
+const handler: UniversalHandler = (_request, ctx) => {
+  return new Response("context: " + JSON.stringify(ctx), {
     status: 200,
   });
 };
