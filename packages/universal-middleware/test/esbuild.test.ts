@@ -3,7 +3,7 @@
 import { describe, expect, it } from "vitest";
 import { build, type BuildResult } from "esbuild";
 import unplugin from "../src/build";
-import { join } from "node:path";
+import { join, posix } from "node:path";
 
 describe("esbuild", () => {
   it("generates all server files (in/out input)", async () => {
@@ -96,10 +96,10 @@ describe("esbuild", () => {
     ).toHaveLength(expectNbOutput(2));
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder1/handler"),
+      posix.normalize(s).startsWith("dist/test/files/folder1/handler"),
     );
     expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/middleware"),
+      posix.normalize(s).startsWith("dist/test/files/middleware"),
     );
 
     testEsbuildOutput(result, "handler", entry1);
@@ -130,10 +130,10 @@ describe("esbuild", () => {
     ).toHaveLength(expectNbOutput(2));
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder1/handler"),
+      posix.normalize(s).startsWith("dist/test/files/folder1/handler"),
     );
     expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder2/handler"),
+      posix.normalize(s).startsWith("dist/test/files/folder2/handler"),
     );
 
     testEsbuildOutput(result, "handler", entry1);
@@ -165,10 +165,10 @@ describe("esbuild", () => {
     ).toHaveLength(expectNbOutput(2));
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/folder1/handler"),
+      posix.normalize(s).startsWith("dist/folder1/handler"),
     );
     expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/folder2/handler"),
+      posix.normalize(s).startsWith("dist/folder2/handler"),
     );
 
     testEsbuildOutput(result, "handler", entry1);
@@ -203,10 +203,10 @@ describe("esbuild", () => {
     ).toHaveLength(4);
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder1/handler"),
+      posix.normalize(s).startsWith("dist/test/files/folder1/handler"),
     );
     expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder2/handler"),
+      posix.normalize(s).startsWith("dist/test/files/folder2/handler"),
     );
   });
 

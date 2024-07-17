@@ -5,7 +5,7 @@ import { type OutputChunk, rollup, type RollupOutput } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import unplugin from "../src/build";
-import { join, parse } from "node:path";
+import { join, parse, posix } from "node:path";
 
 describe("rollup", () => {
   it("generates all server files (string input)", async () => {
@@ -226,7 +226,7 @@ function testRollupHandler(
       file.facadeModuleId ===
       `virtual:universal-middleware:${server}:${type}:${f}`,
   ) as OutputChunk | undefined;
-  expect(res?.name).toEqual(
+  expect(posix.normalize(res!.name)).toEqual(
     `${parsed.dir}/universal-${server}-${type}-${parsed.name}`,
   );
 }
