@@ -151,6 +151,67 @@ describe("rollup", () => {
     testRollupOutput(gen, "handler", entry1);
     testRollupOutput(gen, "handler", entry2);
   });
+
+  it("generates selected server files", async () => {
+    const entry1 = "test/files/folder1/handler.ts";
+    const entry2 = "test/files/folder2/handler.ts";
+    const result = await rollup({
+      input: [entry1 + "?handler", entry2 + "?handler"],
+      plugins: [
+        unplugin.rollup({
+          servers: ["hono"],
+        }),
+        nodeResolve(),
+        typescript({
+          sourceMap: false,
+        }),
+      ],
+      onwarn(warning) {
+        throw new Error(warning.message);
+      },
+    });
+
+    const gen = await result.generate({});
+
+    expect(
+      gen.output.filter((f) => f.type === "chunk" && f.isEntry),
+    ).toHaveLength(4);
+
+    const handler1 = gen.output.find(
+      (f: any) => f.facadeModuleId === entry1,
+    ) as OutputChunk | undefined;
+    expect(handler1?.name).toEqual("test/files/folder1/handler");
+
+    const handler2 = gen.output.find(
+      (f: any) => f.facadeModuleId === entry2,
+    ) as OutputChunk | undefined;
+    expect(handler2?.name).toEqual("test/files/folder2/handler");
+  });
+
+  it("fails when exports overlap", async () => {
+    const entry1 = "test/files/folder1/handler.ts";
+    const entry2 = "test/files/folder2/handler.ts";
+
+    const result = await rollup({
+      input: [entry1 + "?handler", entry2 + "?handler"],
+      plugins: [
+        unplugin.rollup({
+          serversExportNames: "[name]-[type]-[server]",
+        }),
+        nodeResolve(),
+        typescript({
+          sourceMap: false,
+        }),
+      ],
+      onwarn(warning) {
+        throw new Error(warning.message);
+      },
+    });
+
+    await expect(result.generate({})).rejects.toThrow(
+      "The following files have overlapping exports",
+    );
+  });
 });
 
 function testRollupHandler(

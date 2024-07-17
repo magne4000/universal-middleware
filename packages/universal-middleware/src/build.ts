@@ -28,6 +28,11 @@ interface BundleInfo {
 
 const defaultWrappers = ["hono", "express", "hattip"] as const;
 const namespace = "virtual:universal-middleware";
+const externals = [
+  "@universal-middleware/express",
+  "@universal-middleware/hattip",
+  "@universal-middleware/hono",
+];
 
 function getVirtualInputs(
   type: "handler" | "middleware",
@@ -200,7 +205,7 @@ function formatDuplicatesForErrorMessage(duplicates: Map<string, Report[]>) {
   return formattedMessage;
 }
 
-function genBundleInfo<T>(
+function genBundleInfo(
   input: Record<string, string>,
   findDest: (path: string) => string,
 ): Record<string, BundleInfo> {
@@ -296,11 +301,26 @@ const universalMiddleware = createUnplugin((options?: Options) => {
     enforce: "post",
     rollup: {
       options(opts) {
-        this.meta;
         normalizedInput = normalizeInput(opts.input, options);
         if (normalizedInput) {
           opts.input = normalizedInput;
           appendVirtualInputs(opts.input, options?.servers);
+
+          if (typeof opts.external === "function") {
+            const orig = opts.external;
+            opts.external = (id, parentId, isResolved) => {
+              if (externals.includes(id)) return true;
+              return orig(id, parentId, isResolved);
+            };
+          } else if (Array.isArray(opts.external)) {
+            opts.external = [...opts.external, ...externals];
+          } else if (opts.external) {
+            opts.external = [opts.external, ...externals];
+          } else {
+            opts.external = [...externals];
+          }
+
+          return opts;
         }
       },
       async generateBundle(opts, bundle) {
@@ -373,9 +393,7 @@ const universalMiddleware = createUnplugin((options?: Options) => {
         if (builder.initialOptions.bundle) {
           builder.initialOptions.external = [
             ...(builder.initialOptions.external ?? []),
-            "@universal-middleware/express",
-            "@universal-middleware/hattip",
-            "@universal-middleware/hono",
+            ...externals,
           ];
         }
 
@@ -386,7 +404,6 @@ const universalMiddleware = createUnplugin((options?: Options) => {
         if (!normalizedInput) return;
 
         const outbase = builder.initialOptions.outbase ?? "";
-        const outdir = builder.initialOptions.outdir ?? "dist";
 
         builder.initialOptions.entryPoints = normalizedInput;
         appendVirtualInputs(
