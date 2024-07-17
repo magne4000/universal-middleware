@@ -12,11 +12,7 @@ export default defineConfig([
     platform: "neutral",
     target: "es2022",
     dts: true,
-    esbuildPlugins: [
-      universalMiddleware({
-        buildEnd: console.log,
-      }),
-    ],
+    esbuildPlugins: [universalMiddleware()],
     esbuildOptions(opts) {
       opts.outbase = "src";
     },

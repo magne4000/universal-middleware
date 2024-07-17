@@ -13,6 +13,7 @@ describe("esbuild", () => {
       plugins: [
         plugin({
           doNotEditPackageJson: true,
+          dts: false,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(1));
             const exports = report.map((r) => r.exports);
@@ -59,6 +60,7 @@ describe("esbuild", () => {
       plugins: [
         plugin({
           doNotEditPackageJson: true,
+          dts: false,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -110,6 +112,7 @@ describe("esbuild", () => {
       plugins: [
         plugin({
           doNotEditPackageJson: true,
+          dts: false,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -173,6 +176,7 @@ describe("esbuild", () => {
       plugins: [
         plugin({
           doNotEditPackageJson: true,
+          dts: false,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -236,6 +240,7 @@ describe("esbuild", () => {
       plugins: [
         plugin({
           doNotEditPackageJson: true,
+          dts: false,
           buildEnd(report) {
             expect(report).toHaveLength(expectNbOutput(2));
             const exports = report.map((r) => r.exports);
@@ -288,6 +293,7 @@ describe("esbuild", () => {
       plugins: [
         plugin({
           doNotEditPackageJson: true,
+          dts: false,
           servers: ["hono"],
           buildEnd(report) {
             expect(report).toHaveLength(4);
@@ -338,6 +344,7 @@ describe("esbuild", () => {
         plugins: [
           plugin({
             doNotEditPackageJson: true,
+            dts: false,
           }),
         ],
         outdir: "dist",
@@ -359,6 +366,7 @@ describe("esbuild", () => {
         plugins: [
           plugin({
             doNotEditPackageJson: true,
+            dts: false,
             serversExportNames: "[name]-[type]-[server]",
           }),
         ],

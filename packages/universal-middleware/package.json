@@ -56,6 +56,7 @@
     "@universal-middleware/express": "^0.1.0",
     "@universal-middleware/hattip": "^0.1.0",
     "@universal-middleware/hono": "^0.1.1",
+    "oxc-transform": "^0.20.0",
     "package-up": "^5.0.0",
     "unplugin": "^1.11.0"
   },

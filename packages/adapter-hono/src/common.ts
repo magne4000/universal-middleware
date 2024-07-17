@@ -14,6 +14,9 @@ interface UniversalEnv {
   Variables: Env["Variables"] & Record<symbol, Universal.Context>;
 }
 
+export type HonoHandler = Handler<UniversalEnv>;
+export type HonoMiddleware = MiddlewareHandler<UniversalEnv>;
+
 export const contextSymbol = Symbol("unContext");
 
 /**

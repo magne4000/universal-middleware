@@ -1,1 +1,7 @@
-export { createHandler, createMiddleware, getContext } from "./common.js";
+export {
+  createHandler,
+  createMiddleware,
+  getContext,
+  type HattipHandler,
+  type HattipMiddleware,
+} from "./common.js";

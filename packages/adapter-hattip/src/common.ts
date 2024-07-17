@@ -13,6 +13,9 @@ declare module "@hattip/core" {
   }
 }
 
+export type { HattipHandler };
+export type HattipMiddleware = RequestHandler;
+
 /**
  * Creates a request handler to be passed to hattip
  */

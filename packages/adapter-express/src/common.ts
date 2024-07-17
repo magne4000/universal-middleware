@@ -62,6 +62,8 @@ export type NodeMiddleware = (
   next?: (err?: unknown) => void,
 ) => void;
 
+export type NodeHandler = NodeMiddleware;
+
 /** Adapter options */
 export interface NodeAdapterHandlerOptions extends NodeRequestAdapterOptions {}
 export interface NodeAdapterMiddlewareOptions

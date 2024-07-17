@@ -7,9 +7,7 @@
   "repository": "https://github.com/magne4000/universal-handler",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsup",
-    "dev": "tsup --watch",
-    "prepack": "pnpm build",
+    "dev": "tsx src/hono-entry.ts",
     "test": "vitest run",
     "test:run-hono:node": "tsx tests/entry-hono.ts",
     "test:run-hono:bun": "bun tests/entry-hono.ts",

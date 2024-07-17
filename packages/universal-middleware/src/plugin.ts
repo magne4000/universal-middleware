@@ -1,7 +1,7 @@
-import { join, parse, posix, resolve } from "node:path";
+import { dirname, join, parse, posix, resolve } from "node:path";
 import { type UnpluginFactory } from "unplugin";
 import { packageUp } from "package-up";
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 
 export interface Options {
   servers?: (typeof defaultWrappers)[number][];
@@ -9,12 +9,14 @@ export interface Options {
   entryExportNames?: string;
   ignoreRecommendations?: boolean;
   doNotEditPackageJson?: boolean;
+  dts?: boolean;
   buildEnd?: (report: Report[]) => void | Promise<void>;
 }
 
 export interface Report {
   in: string;
   out: string;
+  dts?: string;
   type: "handler" | "middleware";
   exports: string;
 }
@@ -22,6 +24,7 @@ export interface Report {
 interface BundleInfo {
   in: string;
   out: string;
+  dts: string;
   id: string;
   dir: string;
   name: string;
@@ -170,6 +173,36 @@ export default ${fn}(${type});
   return { code };
 }
 
+const typesByServer: Record<string, { middleware: string; handler: string }> = {
+  hono: {
+    middleware: "HonoMiddleware",
+    handler: "HonoHandler",
+  },
+  express: {
+    middleware: "NodeMiddleware",
+    handler: "NodeHandler",
+  },
+  hattip: {
+    middleware: "HattipMiddleware",
+    handler: "HattipHandler",
+  },
+};
+
+function loadDts(
+  id: string,
+  resolve?: (handler: string, type: string) => string,
+) {
+  const [, , server, type, handler] = id.split(":");
+
+  const fn = type === "handler" ? "createHandler" : "createMiddleware";
+  const t = typesByServer[server][type as "middleware" | "handler"];
+  const code = `import { ${fn}, type ${t} } from "@universal-middleware/${server}";
+import ${type} from "${resolve ? resolve(handler, type) : handler}";
+export default ${fn}(${type}) as ${t};
+`;
+  return { code };
+}
+
 function findDuplicateReports(reports: Report[]): Map<string, Report[]> {
   const exportCounts: Record<string, number> = {};
   const duplicates = new Map<string, Report[]>();
@@ -223,6 +256,7 @@ function genBundleInfo(
         {
           in: v,
           out: dest!,
+          dts: dest!.replace(/\.js$/, ".d.ts"),
           id: k,
           dir: parsed.dir,
           name: parsed.name,
@@ -273,14 +307,40 @@ function fixBundleExports(
   return bundle;
 }
 
-function genReport(bundle: Record<string, BundleInfo>) {
+async function generateDts(content: string, outFile: string) {
+  const { isolatedDeclaration } = await import("oxc-transform");
+
+  const code = isolatedDeclaration("file.ts", content);
+
+  await mkdir(dirname(outFile), { recursive: true });
+
+  await writeFile(outFile, code.sourceText);
+}
+
+async function genDts(bundle: Record<string, BundleInfo>, options?: Options) {
+  if (options?.dts === false) return;
+
+  for (const value of Object.values(bundle)) {
+    if (!value.in.startsWith(namespace)) continue;
+
+    await generateDts(loadDts(value.in).code, value.dts);
+  }
+}
+
+function genReport(bundle: Record<string, BundleInfo>, options?: Options) {
   const reports = Object.values(bundle).reduce((acc, curr) => {
-    acc.push({
+    const report: Report = {
       in: curr.in,
       out: curr.out,
       type: curr.type,
       exports: curr.exports,
-    });
+    };
+
+    if (options?.dts !== false) {
+      report.dts = curr.dts;
+    }
+
+    acc.push(report);
 
     return acc;
   }, [] as Report[]);
@@ -304,9 +364,9 @@ export async function readAndEditPackageJson(reports: Report[]) {
 
   const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
 
-  packageJson.peerDependencies ??= {};
+  packageJson.optionalDependencies ??= {};
   for (const external of externals) {
-    packageJson.peerDependencies[external] = versionRange;
+    packageJson.optionalDependencies[external] = versionRange;
   }
 
   packageJson.exports ??= {};
@@ -314,9 +374,9 @@ export async function readAndEditPackageJson(reports: Report[]) {
   for (const report of reports) {
     // No CJS support
     packageJson.exports[report.exports] = {
-      types: report.out.replace(/\.js$/, ".d.ts"),
-      import: report.out,
-      default: report.out,
+      types: report.dts ? "./" + report.dts : undefined,
+      import: "./" + report.out,
+      default: "./" + report.out,
     };
   }
 
@@ -393,8 +453,13 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
           entryExportNames,
         });
 
-        // Add dist folder to `out`
-        Object.values(mapping).forEach((v) => (v.out = join(out, v.out)));
+        // Add dist folder to `out` and `dts`
+        Object.values(mapping).forEach((v) => {
+          v.out = join(out, v.out);
+          v.dts = join(out, v.dts);
+        });
+
+        await genDts(mapping, options);
 
         const report = genReport(mapping);
 
@@ -527,6 +592,8 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
           Object.values(mapping).forEach(
             (v) => (v.exports = "./" + posix.relative(outdir, v.exports)),
           );
+
+          await genDts(mapping, options);
 
           const report = genReport(mapping);
 
