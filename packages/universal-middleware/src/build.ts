@@ -1,4 +1,4 @@
-import { join, parse, posix, resolve } from "node:path";
+import { join, parse, posix, relative, resolve } from "node:path";
 import { createUnplugin } from "unplugin";
 
 export interface Options {
@@ -243,12 +243,14 @@ function fixBundleExports(
     if (!k.startsWith(namespace)) {
       v.exports =
         "./" +
-        posix.normalize(
-          options.entryExportNames
-            .replace("[dir]", v.dir)
-            .replace("[name]", v.name)
-            .replace("[type]", v.type),
-        );
+        posix
+          .normalize(
+            options.entryExportNames
+              .replace("[dir]", v.dir)
+              .replace("[name]", v.name)
+              .replace("[type]", v.type),
+          )
+          .replaceAll("\\\\", "/");
     }
   });
 
@@ -257,13 +259,15 @@ function fixBundleExports(
       const [, , server, type, handler] = k.split(":");
       v.exports =
         "./" +
-        posix.normalize(
-          options.serversExportNames
-            .replace("[name]", bundle[handler].name)
-            .replace("[dir]", bundle[handler].dir)
-            .replace("[type]", type)
-            .replace("[server]", server),
-        );
+        posix
+          .normalize(
+            options.serversExportNames
+              .replace("[name]", bundle[handler].name)
+              .replace("[dir]", bundle[handler].dir)
+              .replace("[type]", type)
+              .replace("[server]", server),
+          )
+          .replaceAll("\\\\", "/");
     }
   });
 
@@ -406,6 +410,7 @@ const universalMiddleware = createUnplugin((options?: Options) => {
         if (!normalizedInput) return;
 
         const outbase = builder.initialOptions.outbase ?? "";
+        const outdir = builder.initialOptions.outdir ?? "dist";
 
         builder.initialOptions.entryPoints = normalizedInput;
         appendVirtualInputs(
@@ -476,6 +481,11 @@ const universalMiddleware = createUnplugin((options?: Options) => {
             serversExportNames,
             entryExportNames,
           });
+
+          // Remove dist folder from `exports`
+          Object.values(mapping).forEach(
+            (v) => (v.exports = "./" + relative(outdir, v.exports)),
+          );
 
           const report = genReport(mapping);
 

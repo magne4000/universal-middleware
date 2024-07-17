@@ -13,7 +13,23 @@ describe("rollup", () => {
     const result = await rollup({
       input: entry + "?handler",
       plugins: [
-        unplugin.rollup(),
+        unplugin.rollup({
+          buildEnd(report) {
+            expect(report).toHaveLength(expectNbOutput(1));
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./test/files/folder1/handler-handler");
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hono",
+            );
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-express",
+            );
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hattip",
+            );
+          },
+        }),
         nodeResolve(),
         typescript({
           sourceMap: false,
@@ -47,7 +63,21 @@ describe("rollup", () => {
         m: entry2 + "?middleware",
       },
       plugins: [
-        unplugin.rollup(),
+        unplugin.rollup({
+          buildEnd(report) {
+            expect(report).toHaveLength(expectNbOutput(2));
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./h-handler");
+            expect(exports).toContain("./m-middleware");
+            expect(exports).toContain("./h-handler-hono");
+            expect(exports).toContain("./h-handler-express");
+            expect(exports).toContain("./h-handler-hattip");
+            expect(exports).toContain("./m-middleware-hono");
+            expect(exports).toContain("./m-middleware-express");
+            expect(exports).toContain("./m-middleware-hattip");
+          },
+        }),
         nodeResolve(),
         typescript({
           sourceMap: false,
@@ -84,7 +114,33 @@ describe("rollup", () => {
     const result = await rollup({
       input: [entry1 + "?handler", entry2 + "?middleware"],
       plugins: [
-        unplugin.rollup(),
+        unplugin.rollup({
+          buildEnd(report) {
+            expect(report).toHaveLength(expectNbOutput(2));
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./test/files/folder1/handler-handler");
+            expect(exports).toContain("./test/files/middleware-middleware");
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hono",
+            );
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-express",
+            );
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hattip",
+            );
+            expect(exports).toContain(
+              "./test/files/middleware-middleware-hono",
+            );
+            expect(exports).toContain(
+              "./test/files/middleware-middleware-express",
+            );
+            expect(exports).toContain(
+              "./test/files/middleware-middleware-hattip",
+            );
+          },
+        }),
         nodeResolve(),
         typescript({
           sourceMap: false,
@@ -121,7 +177,33 @@ describe("rollup", () => {
     const result = await rollup({
       input: [entry1 + "?handler", entry2 + "?handler"],
       plugins: [
-        unplugin.rollup(),
+        unplugin.rollup({
+          buildEnd(report) {
+            expect(report).toHaveLength(expectNbOutput(2));
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./test/files/folder1/handler-handler");
+            expect(exports).toContain("./test/files/folder2/handler-handler");
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hono",
+            );
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-express",
+            );
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hattip",
+            );
+            expect(exports).toContain(
+              "./test/files/folder2/handler-handler-hono",
+            );
+            expect(exports).toContain(
+              "./test/files/folder2/handler-handler-express",
+            );
+            expect(exports).toContain(
+              "./test/files/folder2/handler-handler-hattip",
+            );
+          },
+        }),
         nodeResolve(),
         typescript({
           sourceMap: false,
@@ -160,6 +242,19 @@ describe("rollup", () => {
       plugins: [
         unplugin.rollup({
           servers: ["hono"],
+          buildEnd(report) {
+            expect(report).toHaveLength(4);
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./test/files/folder1/handler-handler");
+            expect(exports).toContain("./test/files/folder2/handler-handler");
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hono",
+            );
+            expect(exports).toContain(
+              "./test/files/folder2/handler-handler-hono",
+            );
+          },
         }),
         nodeResolve(),
         typescript({

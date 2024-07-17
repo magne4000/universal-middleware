@@ -10,7 +10,19 @@ describe("esbuild", () => {
     const entry = "test/files/folder1/handler.ts";
     const result = await build({
       entryPoints: [{ out: "handler", in: entry + "?handler" }],
-      plugins: [unplugin.esbuild()],
+      plugins: [
+        unplugin.esbuild({
+          buildEnd(report) {
+            expect(report).toHaveLength(expectNbOutput(1));
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./handler-handler");
+            expect(exports).toContain("./handler-handler-hono");
+            expect(exports).toContain("./handler-handler-express");
+            expect(exports).toContain("./handler-handler-hattip");
+          },
+        }),
+      ],
       outdir: "dist",
       write: false,
       metafile: true,
@@ -43,7 +55,23 @@ describe("esbuild", () => {
         "handlers/one": entry1 + "?handler",
         middleware: entry2 + "?middleware",
       },
-      plugins: [unplugin.esbuild()],
+      plugins: [
+        unplugin.esbuild({
+          buildEnd(report) {
+            expect(report).toHaveLength(expectNbOutput(2));
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./handlers/one-handler");
+            expect(exports).toContain("./middleware-middleware");
+            expect(exports).toContain("./handlers/one-handler-hono");
+            expect(exports).toContain("./handlers/one-handler-express");
+            expect(exports).toContain("./handlers/one-handler-hattip");
+            expect(exports).toContain("./middleware-middleware-hono");
+            expect(exports).toContain("./middleware-middleware-express");
+            expect(exports).toContain("./middleware-middleware-hattip");
+          },
+        }),
+      ],
       outdir: "dist",
       write: false,
       metafile: true,
@@ -77,7 +105,35 @@ describe("esbuild", () => {
     const entry2 = "test/files/middleware.ts";
     const result = await build({
       entryPoints: [entry1 + "?handler", entry2 + "?middleware"],
-      plugins: [unplugin.esbuild()],
+      plugins: [
+        unplugin.esbuild({
+          buildEnd(report) {
+            expect(report).toHaveLength(expectNbOutput(2));
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./test/files/folder1/handler-handler");
+            expect(exports).toContain("./test/files/middleware-middleware");
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hono",
+            );
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-express",
+            );
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hattip",
+            );
+            expect(exports).toContain(
+              "./test/files/middleware-middleware-hono",
+            );
+            expect(exports).toContain(
+              "./test/files/middleware-middleware-express",
+            );
+            expect(exports).toContain(
+              "./test/files/middleware-middleware-hattip",
+            );
+          },
+        }),
+      ],
       outdir: "dist",
       write: false,
       metafile: true,
@@ -111,7 +167,35 @@ describe("esbuild", () => {
     const entry2 = "test/files/folder2/handler.ts";
     const result = await build({
       entryPoints: [entry1 + "?handler", entry2 + "?handler"],
-      plugins: [unplugin.esbuild()],
+      plugins: [
+        unplugin.esbuild({
+          buildEnd(report) {
+            expect(report).toHaveLength(expectNbOutput(2));
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./test/files/folder1/handler-handler");
+            expect(exports).toContain("./test/files/folder2/handler-handler");
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hono",
+            );
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-express",
+            );
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hattip",
+            );
+            expect(exports).toContain(
+              "./test/files/folder2/handler-handler-hono",
+            );
+            expect(exports).toContain(
+              "./test/files/folder2/handler-handler-express",
+            );
+            expect(exports).toContain(
+              "./test/files/folder2/handler-handler-hattip",
+            );
+          },
+        }),
+      ],
       outdir: "dist",
       write: false,
       metafile: true,
@@ -145,7 +229,23 @@ describe("esbuild", () => {
     const entry2 = "test/files/folder2/handler.ts";
     const result = await build({
       entryPoints: [entry1 + "?handler", entry2 + "?handler"],
-      plugins: [unplugin.esbuild()],
+      plugins: [
+        unplugin.esbuild({
+          buildEnd(report) {
+            expect(report).toHaveLength(expectNbOutput(2));
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./folder1/handler-handler");
+            expect(exports).toContain("./folder2/handler-handler");
+            expect(exports).toContain("./folder1/handler-handler-hono");
+            expect(exports).toContain("./folder1/handler-handler-express");
+            expect(exports).toContain("./folder1/handler-handler-hattip");
+            expect(exports).toContain("./folder2/handler-handler-hono");
+            expect(exports).toContain("./folder2/handler-handler-express");
+            expect(exports).toContain("./folder2/handler-handler-hattip");
+          },
+        }),
+      ],
       outdir: "dist",
       outbase: "test/files",
       write: false,
@@ -183,6 +283,19 @@ describe("esbuild", () => {
       plugins: [
         unplugin.esbuild({
           servers: ["hono"],
+          buildEnd(report) {
+            expect(report).toHaveLength(4);
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./test/files/folder1/handler-handler");
+            expect(exports).toContain("./test/files/folder2/handler-handler");
+            expect(exports).toContain(
+              "./test/files/folder1/handler-handler-hono",
+            );
+            expect(exports).toContain(
+              "./test/files/folder2/handler-handler-hono",
+            );
+          },
         }),
       ],
       outdir: "dist",
