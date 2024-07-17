@@ -1,4 +1,4 @@
-import { join, parse, posix, relative, resolve } from "node:path";
+import { join, parse, posix, resolve } from "node:path";
 import { type UnpluginFactory } from "unplugin";
 
 export interface Options {
@@ -486,7 +486,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
 
           // Remove dist folder from `exports`
           Object.values(mapping).forEach(
-            (v) => (v.exports = "./" + relative(outdir, v.exports)),
+            (v) => (v.exports = "./" + posix.relative(outdir, v.exports)),
           );
 
           const report = genReport(mapping);
