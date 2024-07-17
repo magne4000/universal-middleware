@@ -142,7 +142,7 @@ function applyOutbase(input: Record<string, string>, outbase: string) {
   if (!outbase) return input;
 
   const re = new RegExp(
-    `^(${outbase.replaceAll("\\", "/")}|${outbase.replaceAll("/", "\\")})/?`,
+    `^(${outbase.replaceAll("\\\\", "/")}|${outbase.replaceAll("/", "\\\\")})/?`,
     "gu",
   );
 
@@ -416,8 +416,6 @@ const universalMiddleware = createUnplugin((options?: Options) => {
           builder.initialOptions.entryPoints,
           outbase,
         );
-
-        console.log(builder.initialOptions.entryPoints);
 
         builder.onResolve(
           { filter: /^virtual:universal-middleware/ },
