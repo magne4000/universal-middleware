@@ -25,8 +25,6 @@ describe("esbuild", () => {
       result.outputFiles.filter((f) => !f.path.includes("dist/chunk-")),
     ).toHaveLength(expectNbOutput(1));
 
-    console.log(result.outputFiles);
-
     expect(findOutput(result, entry)).toSatisfy((s: string) =>
       s.startsWith("dist/handler"),
     );
@@ -200,12 +198,11 @@ describe("esbuild", () => {
   });
 
   it("fails when bundle is not true", async () => {
+    const entry1 = "test/files/folder1/handler.ts";
+    const entry2 = "test/files/folder2/handler.ts";
     await expect(
       build({
-        entryPoints: [
-          "test/handler.ts?handler",
-          "test/middleware.ts?middleware",
-        ],
+        entryPoints: [entry1 + "?handler", entry2 + "?handler"],
         plugins: [unplugin.esbuild()],
         outdir: "dist",
         write: false,
@@ -214,7 +211,29 @@ describe("esbuild", () => {
         format: "esm",
         target: "es2022",
       }),
-    ).rejects.toThrow();
+    ).rejects.toThrow("bundle");
+  });
+
+  it("fails when exports overlap", async () => {
+    const entry1 = "test/files/folder1/handler.ts";
+    const entry2 = "test/files/folder2/handler.ts";
+    await expect(
+      build({
+        entryPoints: [entry1 + "?handler", entry2 + "?handler"],
+        plugins: [
+          unplugin.esbuild({
+            serversExportNames: "[name]-[type]-[server]",
+          }),
+        ],
+        outdir: "dist",
+        bundle: true,
+        write: false,
+        metafile: true,
+        platform: "neutral",
+        format: "esm",
+        target: "es2022",
+      }),
+    ).rejects.toThrow("The following files have overlapping exports");
   });
 });
 

@@ -1,4 +1,4 @@
-import { join, parse, resolve } from "node:path";
+import { join, parse, posix, relative, resolve } from "node:path";
 import { createUnplugin } from "unplugin";
 
 export interface Options {
@@ -6,6 +6,14 @@ export interface Options {
   serversExportNames?: string;
   entryExportNames?: string;
   ignoreRecommendations?: boolean;
+  buildEnd?: (report: Report[]) => void | Promise<void>;
+}
+
+export interface Report {
+  in: string;
+  out: string;
+  type: "handler" | "middleware";
+  exports: string;
 }
 
 const defaultWrappers = ["hono", "express", "hattip"] as const;
@@ -144,6 +152,44 @@ function cleanPath(s: string) {
   return s.replace(`?middleware`, "").replace(`?handler`, "");
 }
 
+function findDuplicateReports(reports: Report[]): Map<string, Report[]> {
+  const exportCounts: Record<string, number> = {};
+  const duplicates = new Map<string, Report[]>();
+
+  // Count occurrences of each 'exports' value
+  reports.forEach((report) => {
+    exportCounts[report.exports] = (exportCounts[report.exports] || 0) + 1;
+  });
+
+  // Collect reports that have duplicates
+  reports.forEach((report) => {
+    if (exportCounts[report.exports] > 1) {
+      if (!duplicates.has(report.exports)) {
+        duplicates.set(report.exports, []);
+      }
+      duplicates.get(report.exports)!.push(report);
+    }
+  });
+
+  return duplicates;
+}
+
+function formatDuplicatesForErrorMessage(duplicates: Map<string, Report[]>) {
+  let formattedMessage = "The following files have overlapping exports:\n";
+
+  duplicates.forEach((reports, exportValue) => {
+    formattedMessage += `exports: ${exportValue}\n`;
+    reports.forEach((report) => {
+      formattedMessage += `  in: ${report.in}, out: ${report.out}\n`;
+    });
+  });
+
+  formattedMessage +=
+    "Make sure you are using esbuild `entryPoints` object syntax or that `serversExportNames` option contains [dir].";
+
+  return formattedMessage;
+}
+
 const universalMiddleware = createUnplugin((options?: Options) => {
   return {
     name: namespace,
@@ -202,6 +248,7 @@ const universalMiddleware = createUnplugin((options?: Options) => {
         if (!normalizedInput) return;
 
         const outbase = builder.initialOptions.outbase ?? "";
+        const outdir = builder.initialOptions.outdir ?? "dist";
 
         builder.initialOptions.entryPoints = normalizedInput;
         appendVirtualInputs(
@@ -245,11 +292,11 @@ const universalMiddleware = createUnplugin((options?: Options) => {
           };
         });
 
-        builder.onEnd((result) => {
+        builder.onEnd(async (result) => {
           const serversExportNames =
-            options?.serversExportNames ?? "./[name]-[type]-[server]";
+            options?.serversExportNames ?? "./[dir]/[name]-[type]-[server]";
           const entryExportNames =
-            options?.entryExportNames ?? "./[name]-[type]";
+            options?.entryExportNames ?? "./[dir]/[name]-[type]";
 
           const entries = Object.entries(normalizedInput);
           const outputs = Object.entries(result.metafile!.outputs);
@@ -268,15 +315,17 @@ const universalMiddleware = createUnplugin((options?: Options) => {
 
                 return false;
               })?.[0];
-              const parsed = parse(cleanV);
+              const parsed = parse(dest!);
               return [
                 cleanV,
                 {
-                  dest,
+                  in: cleanV,
+                  out: dest!,
                   id: k,
-                  dir: parsed.dir,
+                  dir: relative(outdir, parsed.dir),
                   name: parsed.name,
-                  type: filterInput(v),
+                  type: filterInput(v)! as "handler" | "middleware",
+                  exports: "",
                 },
               ];
             }),
@@ -284,25 +333,51 @@ const universalMiddleware = createUnplugin((options?: Options) => {
 
           Object.entries(mapping).forEach(([k, v]) => {
             if (!k.startsWith(namespace)) {
-              (v as Record<string, unknown>).exports = entryExportNames
-                .replace("[name]", v.name)
-                .replace("[type]", v.type!);
+              (v as Record<string, unknown>).exports =
+                "./" +
+                posix.normalize(
+                  entryExportNames
+                    .replace("[dir]", v.dir)
+                    .replace("[name]", v.name)
+                    .replace("[type]", v.type),
+                );
             }
           });
 
           Object.entries(mapping).forEach(([k, v]) => {
             if (k.startsWith(namespace)) {
               const [, , server, type, handler] = k.split(":");
-              (v as Record<string, unknown>).exports = serversExportNames
-                .replace("[name]", mapping[handler].name)
-                .replace("[type]", type)
-                .replace("[server]", server);
+              (v as Record<string, unknown>).exports =
+                "./" +
+                posix.normalize(
+                  serversExportNames
+                    .replace("[name]", mapping[handler].name)
+                    .replace("[dir]", mapping[handler].dir)
+                    .replace("[type]", type)
+                    .replace("[server]", server),
+                );
             }
           });
 
-          // TODO: test with https://esbuild.github.io/api/#outbase
+          const reports = Object.values(mapping).reduce((acc, curr) => {
+            acc.push({
+              in: curr.in,
+              out: curr.out,
+              type: curr.type,
+              exports: curr.exports,
+            });
 
-          // console.log(mapping);
+            return acc;
+          }, [] as Report[]);
+
+          const duplicates = findDuplicateReports(reports);
+
+          if (duplicates.size > 0) {
+            const message = formatDuplicatesForErrorMessage(duplicates);
+            throw new Error(message);
+          }
+
+          await options?.buildEnd?.(reports);
         });
       },
     },
