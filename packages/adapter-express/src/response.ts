@@ -22,7 +22,9 @@ export async function sendResponse(
   const fetchBody: unknown = fetchResponse.body;
 
   let body: Readable | null = null;
-  if (typeof (fetchBody as any).pipe === "function") {
+  if (!fetchBody) {
+    body = null;
+  } else if (typeof (fetchBody as any).pipe === "function") {
     body = fetchBody as Readable;
   } else if (typeof (fetchBody as any).pipeTo === "function") {
     if (!deno && Readable.fromWeb) {
