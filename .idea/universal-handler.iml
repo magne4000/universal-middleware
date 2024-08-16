@@ -12,6 +12,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-hattip/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/universal-middleware/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples/tool/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/playground" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

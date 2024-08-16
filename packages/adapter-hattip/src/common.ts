@@ -1,18 +1,11 @@
 import type { AdapterRequestContext, HattipHandler } from "@hattip/core";
 import type { RequestHandler } from "@hattip/compose";
-import type {
-  Get,
-  UniversalHandler,
-  UniversalMiddleware,
+import {
+  type Get,
+  getContext as getContextCore,
+  type UniversalHandler,
+  type UniversalMiddleware,
 } from "@universal-middleware/core";
-
-export const contextSymbol = Symbol("unContext");
-
-declare module "@hattip/core" {
-  interface AdapterRequestContext {
-    [contextSymbol]?: Universal.Context;
-  }
-}
 
 export type { HattipHandler };
 export type HattipMiddleware = RequestHandler;
@@ -27,8 +20,7 @@ export function createHandler<T extends unknown[]>(
     const handler = handlerFactory(...args);
 
     return (context) => {
-      context[contextSymbol] ??= {};
-      return handler(context.request, context[contextSymbol]);
+      return handler(context.request);
     };
   };
 }
@@ -43,11 +35,7 @@ export function createMiddleware<T extends unknown[]>(
     const middleware = middlewareFactory(...args);
 
     return async (context) => {
-      context[contextSymbol] ??= {};
-      const response = await middleware(
-        context.request,
-        context[contextSymbol],
-      );
+      const response = await middleware(context.request);
 
       if (typeof response === "function") {
         const res = await context.next();
@@ -59,10 +47,8 @@ export function createMiddleware<T extends unknown[]>(
   };
 }
 
-type X = typeof createMiddleware;
-
-export function getContext(
+export function getContext<T extends object>(
   context: AdapterRequestContext,
-): Universal.Context | undefined {
-  return context[contextSymbol];
+): T | undefined {
+  return getContextCore<T>(context.request);
 }
