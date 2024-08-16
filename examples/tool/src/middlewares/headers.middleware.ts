@@ -1,9 +1,13 @@
 import type { Get, UniversalMiddleware } from "universal-middleware";
+import { getContext } from "@universal-middleware/core";
 
-const headersMiddleware: Get<[], UniversalMiddleware> =
-  () => (_request, ctx) => {
+const headersMiddleware: Get<[], UniversalMiddleware<{ something: string }>> =
+  () => (request) => {
     return (response) => {
-      response.headers.set("X-Custom-Header", ctx.something ?? "NONE");
+      response.headers.set(
+        "X-Custom-Header",
+        getContext(request).something ?? "NONE",
+      );
 
       return response;
     };

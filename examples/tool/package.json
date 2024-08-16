@@ -76,6 +76,9 @@
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
+  "dependencies": {
+    "@universal-middleware/core": "^"
+  },
   "devDependencies": {
     "@hono/node-server": "^1.12.0",
     "@swc/core": "^1.6.13",

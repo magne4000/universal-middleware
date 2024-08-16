@@ -120,6 +120,10 @@ importers:
         version: 5.5.3
 
   examples/tool:
+    dependencies:
+      '@universal-middleware/core':
+        specifier: link:../../packages/core
+        version: link:../../packages/core
     optionalDependencies:
       '@universal-middleware/express':
         specifier: link:../../packages/adapter-express
