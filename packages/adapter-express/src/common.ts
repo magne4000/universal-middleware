@@ -5,14 +5,15 @@ import {
   type NodeRequestAdapterOptions,
 } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
-import type {
-  Awaitable,
-  Get,
-  UniversalHandler,
-  UniversalMiddleware,
+import {
+  type Awaitable,
+  type Get,
+  getContext as getContextCore,
+  type UniversalHandler,
+  type UniversalMiddleware,
+  type UniversalRequest,
 } from "@universal-middleware/core";
 
-export const contextSymbol = Symbol("unContext");
 export const requestSymbol = Symbol("unRequest");
 export const pendingMiddlewaresSymbol = Symbol("unPendingMiddlewares");
 export const wrappedResponseSymbol = Symbol("unWrappedResponse");
@@ -42,13 +43,13 @@ export interface PossiblyEncryptedSocket extends Socket {
  * `IncomingMessage` possibly augmented by Express-specific
  * `ip` and `protocol` properties.
  */
-export interface DecoratedRequest extends Omit<IncomingMessage, "socket"> {
+export interface DecoratedRequest<T extends object>
+  extends Omit<IncomingMessage, "socket"> {
   ip?: string;
   protocol?: string;
   socket?: PossiblyEncryptedSocket;
   rawBody?: Buffer | null;
-  [contextSymbol]?: Universal.Context;
-  [requestSymbol]?: Request;
+  [requestSymbol]?: UniversalRequest<T>;
 }
 
 export interface DecoratedServerResponse extends ServerResponse {
@@ -57,13 +58,13 @@ export interface DecoratedServerResponse extends ServerResponse {
 }
 
 /** Connect/Express style request listener/middleware */
-export type NodeMiddleware = (
-  req: DecoratedRequest,
+export type NodeMiddleware<T extends object> = (
+  req: DecoratedRequest<T>,
   res: DecoratedServerResponse,
   next?: (err?: unknown) => void,
 ) => void;
 
-export type NodeHandler = NodeMiddleware;
+export type NodeHandler<T extends object> = NodeMiddleware<T>;
 
 /** Adapter options */
 export interface NodeAdapterHandlerOptions extends NodeRequestAdapterOptions {}
@@ -74,10 +75,10 @@ export interface NodeAdapterMiddlewareOptions
  * Creates a request handler to be passed to http.createServer() or used as a
  * middleware in Connect-style frameworks like Express.
  */
-export function createHandler<T extends unknown[]>(
-  handlerFactory: Get<T, UniversalHandler>,
+export function createHandler<T extends unknown[], C extends object>(
+  handlerFactory: Get<T, UniversalHandler<C>>,
   options: NodeAdapterHandlerOptions = {},
-): Get<T, NodeMiddleware> {
+): Get<T, NodeMiddleware<C>> {
   const requestAdapter = createRequestAdapter(options);
 
   return (...args) => {
@@ -85,9 +86,9 @@ export function createHandler<T extends unknown[]>(
 
     return async (req, res, next) => {
       try {
-        req[contextSymbol] ??= {};
+        initContext(req);
         const request = requestAdapter(req);
-        const response = await handler(request, req[contextSymbol]);
+        const response = await handler(request);
 
         await sendResponse(response, res);
       } catch (error) {
@@ -112,10 +113,10 @@ export function createHandler<T extends unknown[]>(
 /**
  * Creates a middleware to be passed to Connect-style frameworks like Express
  */
-export function createMiddleware<T extends unknown[]>(
-  middlewareFactory: Get<T, UniversalMiddleware>,
+export function createMiddleware<T extends unknown[], C extends object>(
+  middlewareFactory: Get<T, UniversalMiddleware<C>>,
   options: NodeAdapterMiddlewareOptions = {},
-): Get<T, NodeMiddleware> {
+): Get<T, NodeMiddleware<C>> {
   const requestAdapter = createRequestAdapter(options);
 
   return (...args) => {
@@ -123,9 +124,9 @@ export function createMiddleware<T extends unknown[]>(
 
     return async (req, res, next) => {
       try {
-        req[contextSymbol] ??= {};
+        initContext(req);
         const request = requestAdapter(req);
-        const response = await middleware(request, req[contextSymbol]);
+        const response = await middleware(request);
 
         if (!response) {
           return next?.();
@@ -162,8 +163,14 @@ export function createMiddleware<T extends unknown[]>(
   };
 }
 
-export function getContext(
-  req: DecoratedRequest,
-): Universal.Context | undefined {
-  return req[contextSymbol];
+export function initContext<T extends object>(req: DecoratedRequest<T>): void {
+  if (req[requestSymbol]) {
+    getContextCore(req[requestSymbol]);
+  }
+}
+
+export function getContext<T extends object>(
+  req: DecoratedRequest<T>,
+): T | undefined {
+  return req[requestSymbol] ? getContextCore(req[requestSymbol]) : undefined;
 }

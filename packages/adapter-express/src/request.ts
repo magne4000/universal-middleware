@@ -30,9 +30,9 @@ export interface NodeRequestAdapterOptions {
 }
 
 /** Create a function that converts a Node HTTP request into a fetch API `Request` object */
-export function createRequestAdapter(
+export function createRequestAdapter<T extends object>(
   options: NodeRequestAdapterOptions = {},
-): (req: DecoratedRequest) => Request {
+): (req: DecoratedRequest<T>) => Request {
   const { origin = env.ORIGIN, trustProxy = env.TRUST_PROXY === "1" } = options;
 
   // eslint-disable-next-line prefer-const
@@ -100,7 +100,9 @@ export function createRequestAdapter(
   };
 }
 
-function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
+function convertBody<T extends object>(
+  req: DecoratedRequest<T>,
+): BodyInit | null | undefined {
   if (req.method === "GET" || req.method === "HEAD") {
     return;
   }
