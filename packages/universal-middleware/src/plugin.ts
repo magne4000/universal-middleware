@@ -195,11 +195,14 @@ function loadDts(
   const [, , server, type, handler] = id.split(":");
 
   const fn = type === "handler" ? "createHandler" : "createMiddleware";
+  const x = type === "handler" ? "UniversalHandler" : "UniversalMiddleware";
   const t = typesByServer[server][type as "middleware" | "handler"];
-  const code = `import { ${fn}, type ${t} } from "@universal-middleware/${server}";
+  const code = `import { ${fn}, ${t} } from "@universal-middleware/${server}";
+import { ${x} } from 'universal-middleware';
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
-export default ${fn}(${type}) as (...args: ExtractT<typeof ${type}>) => ${t};
+type ExtractU<T> = ReturnType<T> extends ${x}<infer X> ? X : never;
+export default ${fn}(${type}) as (...args: ExtractT<typeof ${type}>) => ${t}<ExtractU<typeof ${type}>>;
 `;
 
   return { code };
