@@ -1,8 +1,12 @@
 import { kill } from "zx";
 import { type ChildProcess, spawn } from "node:child_process";
 import waitPort from "wait-port";
-import type { Get, UniversalMiddleware } from "@universal-middleware/core";
-import type { UniversalHandler } from "../../../playground/types";
+import type {
+  Get,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "@universal-middleware/core";
+import { getContext, setContext } from "@universal-middleware/core";
 import mri from "mri";
 
 export interface Run {
@@ -16,13 +20,9 @@ export interface Options {
   test?: (response: Response) => void | Promise<void>;
 }
 
-declare global {
-  namespace Universal {
-    interface Context {
-      something?: Record<string, unknown>;
-      somethingElse?: Record<string, unknown>;
-    }
-  }
+interface Context {
+  something?: Record<string, unknown>;
+  somethingElse?: Record<string, unknown>;
 }
 
 export function runTests(runs: Run[], options: Options) {
@@ -101,16 +101,16 @@ export function runTests(runs: Run[], options: Options) {
   });
 }
 
-export const middlewares: Get<[], UniversalMiddleware>[] = [
+export const middlewares: Get<[], UniversalMiddleware<Context>>[] = [
   // universal middleware that updates the context synchronously
-  () => (_request, context) => {
-    context.something = {
+  () => (request) => {
+    setContext(request, "something", {
       a: 1,
       c: 3,
-    };
+    });
   },
   // universal middleware that update the response headers asynchronously
-  () => (_request, _context) => {
+  () => (_request) => {
     return async (response) => {
       response.headers.set("x-test-value", "universal-middleware");
       response.headers.delete("x-should-be-removed");
@@ -121,18 +121,19 @@ export const middlewares: Get<[], UniversalMiddleware>[] = [
     };
   },
   // universal middleware that updates the context asynchronously
-  () => async (_request, context) => {
+  () => async (request) => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    context.somethingElse = {
+    setContext(request, "somethingElse", {
       b: 2,
-    };
-    delete context.something!.c;
+    });
+
+    delete getContext(request).something!.c;
   },
 ];
 
-export const handler: Get<[], UniversalHandler> = () => (_request, context) => {
-  return new Response(JSON.stringify(context, null, 2), {
+export const handler: Get<[], UniversalHandler> = () => (request) => {
+  return new Response(JSON.stringify(getContext(request), null, 2), {
     headers: {
       "x-should-be-removed": "universal-middleware",
     },

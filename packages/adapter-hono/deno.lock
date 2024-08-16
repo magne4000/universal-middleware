@@ -9,7 +9,7 @@
       "npm:hono@^4.4.13": "npm:hono@4.4.13",
       "npm:mri": "npm:mri@1.2.0",
       "npm:rimraf@^6.0.0": "npm:rimraf@6.0.1",
-      "npm:tsup@^8.1.0": "npm:tsup@8.1.0_typescript@5.5.3_esbuild@0.21.5",
+      "npm:tsup@^8.1.0": "npm:tsup@8.1.0_@swc+core@1.6.13_typescript@5.5.3_esbuild@0.21.5",
       "npm:tsx@^4.16.2": "npm:tsx@4.16.2",
       "npm:typescript@^5.5.3": "npm:typescript@5.5.3",
       "npm:vitest@^2.0.2": "npm:vitest@2.0.2_@types+node@20.14.10",
@@ -1571,9 +1571,10 @@
         "integrity": "sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==",
         "dependencies": {}
       },
-      "tsup@8.1.0_typescript@5.5.3_esbuild@0.21.5": {
+      "tsup@8.1.0_@swc+core@1.6.13_typescript@5.5.3_esbuild@0.21.5": {
         "integrity": "sha512-UFdfCAXukax+U6KzeTNO2kAARHcWxmKsnvSPXUcfA1D+kU05XDccCrkffCQpFaWDsZfV0jMyTsxU39VfCp6EOg==",
         "dependencies": {
+          "@swc/core": "@swc/core@1.6.13",
           "bundle-require": "bundle-require@4.2.1_esbuild@0.21.5",
           "cac": "cac@6.7.14",
           "chokidar": "chokidar@3.6.0",

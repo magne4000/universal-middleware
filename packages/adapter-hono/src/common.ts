@@ -4,19 +4,22 @@ import type {
   Handler,
   MiddlewareHandler,
 } from "hono";
-import type {
-  Get,
-  UniversalHandler,
-  UniversalMiddleware,
+import {
+  type Get,
+  getContext as getContextCore,
+  type UniversalHandler,
+  type UniversalMiddleware,
 } from "@universal-middleware/core";
 
-interface UniversalEnv {
+interface UniversalEnv<T extends object> {
   Bindings: Env["Bindings"];
-  Variables: Env["Variables"] & Record<symbol, Universal.Context>;
+  Variables: Env["Variables"] & Record<symbol, T>;
 }
 
-export type HonoHandler = Handler<UniversalEnv>;
-export type HonoMiddleware = MiddlewareHandler<UniversalEnv>;
+export type HonoHandler<T extends object> = Handler<UniversalEnv<T>>;
+export type HonoMiddleware<T extends object> = MiddlewareHandler<
+  UniversalEnv<T>
+>;
 
 export const contextSymbol = Symbol("unContext");
 
@@ -25,17 +28,13 @@ export const contextSymbol = Symbol("unContext");
  */
 export function createHandler<T extends unknown[]>(
   handlerFactory: Get<T, UniversalHandler>,
-): Get<T, HonoHandler> {
+): Get<T, HonoHandler<T>> {
   return (...args) => {
     const handler = handlerFactory(...args);
 
     return (honoContext) => {
-      let context: Universal.Context = honoContext.get(contextSymbol);
-      if (typeof context !== "object") {
-        context = {};
-        honoContext.set(contextSymbol, context);
-      }
-      return handler(honoContext.req.raw, context);
+      initContext(honoContext);
+      return handler(honoContext.req.raw);
     };
   };
 }
@@ -43,19 +42,15 @@ export function createHandler<T extends unknown[]>(
 /**
  * Creates a middleware to be passed to app.use() or any route function
  */
-export function createMiddleware<T extends unknown[]>(
-  middlewareFactory: Get<T, UniversalMiddleware>,
-): Get<T, HonoMiddleware> {
+export function createMiddleware<T extends unknown[], C extends object>(
+  middlewareFactory: Get<T, UniversalMiddleware<C>>,
+): Get<T, HonoMiddleware<C>> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
     return async (honoContext, next) => {
-      let context: Universal.Context = honoContext.get(contextSymbol);
-      if (typeof context !== "object") {
-        context = {};
-        honoContext.set(contextSymbol, context);
-      }
-      const response = await middleware(honoContext.req.raw, context);
+      initContext(honoContext);
+      const response = await middleware(honoContext.req.raw);
 
       if (typeof response === "function") {
         await next();
@@ -69,8 +64,15 @@ export function createMiddleware<T extends unknown[]>(
   };
 }
 
-export function getContext(
-  honoContext: HonoContext<UniversalEnv>,
-): Universal.Context | undefined {
+function initContext<T extends object>(
+  honoContext: HonoContext<UniversalEnv<T>>,
+): void {
+  const ctx = getContextCore<T>(honoContext.req.raw);
+  honoContext.set(contextSymbol, ctx);
+}
+
+export function getContext<T extends object>(
+  honoContext: HonoContext<UniversalEnv<T>>,
+): T | undefined {
   return honoContext.get(contextSymbol);
 }
