@@ -36,8 +36,12 @@ export function createHandler<T extends unknown[]>(
 /**
  * Creates a middleware to be passed to @hattip/compose or @hattip/router
  */
-export function createMiddleware<T extends unknown[]>(
-  middlewareFactory: Get<T, UniversalMiddleware>,
+export function createMiddleware<
+  T extends unknown[],
+  InContext extends Universal.Context,
+  OutContext extends Universal.Context,
+>(
+  middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
 ): Get<T, HattipMiddleware> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
@@ -46,23 +50,26 @@ export function createMiddleware<T extends unknown[]>(
       context[contextSymbol] ??= {};
       const response = await middleware(
         context.request,
-        context[contextSymbol],
+        getContext<InContext>(context)!,
       );
 
       if (typeof response === "function") {
         const res = await context.next();
         return response(res);
-      } else if (typeof response === "object" && "body" in response) {
-        return response;
+      } else if (response !== null && typeof response === "object") {
+        if (response instanceof Response) {
+          return response;
+        }
+
+        // Update context
+        context[contextSymbol] = response;
       }
     };
   };
 }
 
-type X = typeof createMiddleware;
-
-export function getContext(
-  context: AdapterRequestContext,
-): Universal.Context | undefined {
-  return context[contextSymbol];
+export function getContext<
+  InContext extends Universal.Context = Universal.Context,
+>(context: AdapterRequestContext): InContext | undefined {
+  return context[contextSymbol] as InContext | undefined;
 }

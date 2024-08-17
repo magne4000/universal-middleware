@@ -43,16 +43,20 @@ export function createHandler<T extends unknown[]>(
 /**
  * Creates a middleware to be passed to app.use() or any route function
  */
-export function createMiddleware<T extends unknown[]>(
-  middlewareFactory: Get<T, UniversalMiddleware>,
+export function createMiddleware<
+  T extends unknown[],
+  InContext extends Universal.Context,
+  OutContext extends Universal.Context,
+>(
+  middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
 ): Get<T, HonoMiddleware> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
     return async (honoContext, next) => {
-      let context: Universal.Context = honoContext.get(contextSymbol);
+      let context = honoContext.get(contextSymbol) as InContext;
       if (typeof context !== "object") {
-        context = {};
+        context = {} as InContext;
         honoContext.set(contextSymbol, context);
       }
       const response = await middleware(honoContext.req.raw, context);
@@ -60,8 +64,13 @@ export function createMiddleware<T extends unknown[]>(
       if (typeof response === "function") {
         await next();
         honoContext.res = await response(honoContext.res);
-      } else if (typeof response === "object" && "body" in response) {
-        return response;
+      } else if (response !== null && typeof response === "object") {
+        if (response instanceof Response) {
+          return response;
+        }
+        // Update context
+        honoContext.set(contextSymbol, response);
+        return next();
       } else {
         return next();
       }

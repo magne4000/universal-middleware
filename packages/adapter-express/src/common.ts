@@ -42,12 +42,14 @@ export interface PossiblyEncryptedSocket extends Socket {
  * `IncomingMessage` possibly augmented by Express-specific
  * `ip` and `protocol` properties.
  */
-export interface DecoratedRequest extends Omit<IncomingMessage, "socket"> {
+export interface DecoratedRequest<
+  C extends Universal.Context = Universal.Context,
+> extends Omit<IncomingMessage, "socket"> {
   ip?: string;
   protocol?: string;
   socket?: PossiblyEncryptedSocket;
   rawBody?: Buffer | null;
-  [contextSymbol]?: Universal.Context;
+  [contextSymbol]?: C;
   [requestSymbol]?: Request;
 }
 
@@ -57,13 +59,14 @@ export interface DecoratedServerResponse extends ServerResponse {
 }
 
 /** Connect/Express style request listener/middleware */
-export type NodeMiddleware = (
-  req: DecoratedRequest,
+export type NodeMiddleware<C extends Universal.Context = Universal.Context> = (
+  req: DecoratedRequest<C>,
   res: DecoratedServerResponse,
   next?: (err?: unknown) => void,
 ) => void;
 
-export type NodeHandler = NodeMiddleware;
+export type NodeHandler<C extends Universal.Context = Universal.Context> =
+  NodeMiddleware<C>;
 
 /** Adapter options */
 export interface NodeAdapterHandlerOptions extends NodeRequestAdapterOptions {}
@@ -112,10 +115,14 @@ export function createHandler<T extends unknown[]>(
 /**
  * Creates a middleware to be passed to Connect-style frameworks like Express
  */
-export function createMiddleware<T extends unknown[]>(
-  middlewareFactory: Get<T, UniversalMiddleware>,
+export function createMiddleware<
+  T extends unknown[],
+  InContext extends Universal.Context,
+  OutContext extends Universal.Context,
+>(
+  middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
   options: NodeAdapterMiddlewareOptions = {},
-): Get<T, NodeMiddleware> {
+): Get<T, NodeMiddleware<OutContext>> {
   const requestAdapter = createRequestAdapter(options);
 
   return (...args) => {
@@ -123,9 +130,9 @@ export function createMiddleware<T extends unknown[]>(
 
     return async (req, res, next) => {
       try {
-        req[contextSymbol] ??= {};
+        req[contextSymbol] ??= {} as OutContext;
         const request = requestAdapter(req);
-        const response = await middleware(request, req[contextSymbol]);
+        const response = await middleware(request, getContext(req)!);
 
         if (!response) {
           return next?.();
@@ -140,8 +147,10 @@ export function createMiddleware<T extends unknown[]>(
           // `wrapResponse` takes care of calling those middlewares right before sending the response
           res[pendingMiddlewaresSymbol].push(response);
           return next?.();
-        } else {
+        } else if (response instanceof Response) {
           await sendResponse(response, res);
+        } else {
+          req[contextSymbol] = response;
         }
       } catch (error) {
         if (next) {
@@ -162,8 +171,8 @@ export function createMiddleware<T extends unknown[]>(
   };
 }
 
-export function getContext(
-  req: DecoratedRequest,
-): Universal.Context | undefined {
-  return req[contextSymbol];
+export function getContext<
+  InContext extends Universal.Context = Universal.Context,
+>(req: DecoratedRequest): InContext | undefined {
+  return req[contextSymbol] as InContext | undefined;
 }
