@@ -101,16 +101,18 @@ export function runTests(runs: Run[], options: Options) {
   });
 }
 
-export const middlewares: Get<[], UniversalMiddleware>[] = [
+export const middlewares = [
   // universal middleware that updates the context synchronously
-  () => (_request, context) => {
-    context.something = {
-      a: 1,
-      c: 3,
+  () => () => {
+    return {
+      something: {
+        a: 1,
+        c: 3,
+      },
     };
   },
   // universal middleware that update the response headers asynchronously
-  () => (_request, _context) => {
+  () => () => {
     return async (response) => {
       response.headers.set("x-test-value", "universal-middleware");
       response.headers.delete("x-should-be-removed");
@@ -124,12 +126,16 @@ export const middlewares: Get<[], UniversalMiddleware>[] = [
   () => async (_request, context) => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    context.somethingElse = {
-      b: 2,
+    return {
+      something: {
+        a: context.something?.a,
+      },
+      somethingElse: {
+        b: 2,
+      },
     };
-    delete context.something!.c;
   },
-];
+] as const satisfies Get<[], UniversalMiddleware>[];
 
 export const handler: Get<[], UniversalHandler> = () => (_request, context) => {
   return new Response(JSON.stringify(context, null, 2), {
