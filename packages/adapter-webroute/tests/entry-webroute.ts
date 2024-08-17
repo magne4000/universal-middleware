@@ -22,6 +22,7 @@ type M1 = MiddlewareFactoryDataResult<typeof m1>;
 type M3 = MiddlewareFactoryDataResult<typeof m3>;
 
 const router = route()
+  // `createMiddleware(m1)()` or `m1()` should roughly be equivelant. The former allows better control over typings
   .use(m1())
   .use((_request, ctx) => {
     console.log("something BEFORE", ctx.state.something);

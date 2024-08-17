@@ -151,6 +151,7 @@ export function createMiddleware<
           await sendResponse(response, res);
         } else {
           req[contextSymbol] = response;
+          return next?.();
         }
       } catch (error) {
         if (next) {
