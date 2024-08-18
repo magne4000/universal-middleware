@@ -34,7 +34,7 @@
     "@types/node": "^20.14.10",
     "@universal-middleware/tests": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
-    "@webroute/middleware": "^0.8.0",
+    "@webroute/middleware": "^0.9.0 ",
     "@webroute/route": "^0.6.0",
     "hono": "^4.5.5",
     "rimraf": "^6.0.0",

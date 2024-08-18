@@ -23,6 +23,7 @@
   "devDependencies": {
     "@brillout/release-me": "^0.3.9",
     "@swc/core": "^1.6.13",
+    "@types/bun": "^1.1.6",
     "@types/node": "^20.14.10",
     "rimraf": "^6.0.0",
     "tsup": "^8.1.0",

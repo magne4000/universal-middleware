@@ -11,6 +11,7 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
+import { getAdapterRuntime } from "@universal-middleware/core";
 
 export const contextSymbol = Symbol("unContext");
 export const requestSymbol = Symbol("unRequest");
@@ -90,7 +91,14 @@ export function createHandler<T extends unknown[]>(
       try {
         req[contextSymbol] ??= {};
         const request = requestAdapter(req);
-        const response = await handler(request, req[contextSymbol]);
+        const response = await handler(
+          request,
+          req[contextSymbol],
+          getAdapterRuntime("node", {
+            req: req as IncomingMessage,
+            res,
+          }),
+        );
 
         await sendResponse(response, res);
       } catch (error) {
@@ -132,7 +140,14 @@ export function createMiddleware<
       try {
         req[contextSymbol] ??= {} as OutContext;
         const request = requestAdapter(req);
-        const response = await middleware(request, getContext(req)!);
+        const response = await middleware(
+          request,
+          getContext(req)!,
+          getAdapterRuntime("node", {
+            req: req as IncomingMessage,
+            res,
+          }),
+        );
 
         if (!response) {
           return next?.();

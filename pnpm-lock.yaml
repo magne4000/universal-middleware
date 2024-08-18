@@ -44,7 +44,7 @@ importers:
         version: 7.1.0
       hono:
         specifier: ^4.4.12
-        version: 4.5.0
+        version: 4.5.5
       serve-static:
         specifier: ^1.15.0
         version: 1.15.0
@@ -63,7 +63,7 @@ importers:
         version: 0.0.46(vite@5.3.4(@types/node@18.19.40))
       '@hono/vite-dev-server':
         specifier: ^0.13.0
-        version: 0.13.1(hono@4.5.0)
+        version: 0.13.1(hono@4.5.5)
       '@types/express':
         specifier: ^4.17.21
         version: 4.17.21
@@ -268,7 +268,7 @@ importers:
         version: link:../tests
       hono:
         specifier: ^4.4.13
-        version: 4.5.0
+        version: 4.5.5
       rimraf:
         specifier: ^6.0.0
         version: 6.0.1
@@ -307,8 +307,8 @@ importers:
         specifier: workspace:*
         version: link:../tests
       '@webroute/middleware':
-        specifier: ^0.8.0
-        version: 0.8.0
+        specifier: ^0.9.0
+        version: 0.9.0
       '@webroute/route':
         specifier: ^0.6.0
         version: 0.6.0
@@ -339,6 +339,9 @@ importers:
       '@swc/core':
         specifier: ^1.6.13
         version: 1.6.13
+      '@types/bun':
+        specifier: ^1.1.6
+        version: 1.1.6
       '@types/node':
         specifier: ^20.14.10
         version: 20.14.11
@@ -448,7 +451,7 @@ importers:
         version: 0.5.33
       '@hono/vite-dev-server':
         specifier: ^0.13.0
-        version: 0.13.1(hono@4.5.0)
+        version: 0.13.1(hono@4.5.5)
       '@types/node':
         specifier: ^20.14.10
         version: 20.14.11
@@ -460,7 +463,7 @@ importers:
         version: link:../../packages/adapter-hono
       hono:
         specifier: ^4.5.0
-        version: 4.5.0
+        version: 4.5.5
       playwright:
         specifier: ^1.45.2
         version: 1.45.2
@@ -1340,6 +1343,9 @@ packages:
   '@types/body-parser@1.19.5':
     resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
 
+  '@types/bun@1.1.6':
+    resolution: {integrity: sha512-uJgKjTdX0GkWEHZzQzFsJkWp5+43ZS7HC8sZPFnOwnSo1AsNl2q9o2bFeS23disNDqbggEgyFkKCHl/w8iZsMA==}
+
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
 
@@ -1501,6 +1507,9 @@ packages:
   '@webroute/middleware@0.8.0':
     resolution: {integrity: sha512-OKVOnzClDDvALBS3wbgNHRo+gDGmvquj8ey09r6he/6R6DcVyBdjOs6tW5lp+puSzAjsYFTUaBjaIJvw8IaXnA==}
 
+  '@webroute/middleware@0.9.0':
+    resolution: {integrity: sha512-KECzsFrxadVRpZYfA4W4xElANOAucOigrAN8g/7BEHTFL8tIcT2xZ0SzxpSY07foGbBbipq7GLC0hrfauNuoKQ==}
+
   '@webroute/route@0.6.0':
     resolution: {integrity: sha512-w4XMPRdLjuqpRiGrPfzpIuhtlXLX2NuClWMq3pRAqdRxlj2ZVJeulzSqDR5eSe7vyxl1DLUTfIQnt/1g7prfKg==}
     engines: {node: ^20.0.0}
@@ -1625,6 +1634,9 @@ packages:
   builtin-modules@3.3.0:
     resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
     engines: {node: '>=6'}
+
+  bun-types@1.1.17:
+    resolution: {integrity: sha512-Z4+OplcSd/YZq7ZsrfD00DKJeCwuNY96a1IDJyR73+cTBaFIS7SC6LhpY/W3AMEXO9iYq5NJ58WAwnwL1p5vKg==}
 
   bun-types@1.1.20:
     resolution: {integrity: sha512-2u84HciDR3E7Uc0t0AEeXHmQAWe9uzRKTz120D3silIJOQlbGIMJMJiGaM8Yx7nEvMyfV0LfSdkEGnb77AN5AA==}
@@ -2202,10 +2214,6 @@ packages:
 
   helmet@7.1.0:
     resolution: {integrity: sha512-g+HZqgfbpXdCkme/Cd/mZkV0aV3BZZZSugecH03kl38m/Kmdx8jKjBikpDj2cr+Iynv4KpYEviojNdTJActJAg==}
-    engines: {node: '>=16.0.0'}
-
-  hono@4.5.0:
-    resolution: {integrity: sha512-ZbezypZfn4odyApjCCv+Fw5OgweBqRLA/EsMyc4FUknFvBJcBIKhHy4sqmD1rWpBc/3wUlaQ6tqOPjk36R1ckg==}
     engines: {node: '>=16.0.0'}
 
   hono@4.5.5:
@@ -3723,10 +3731,10 @@ snapshots:
 
   '@hono/node-server@1.12.0': {}
 
-  '@hono/vite-dev-server@0.13.1(hono@4.5.0)':
+  '@hono/vite-dev-server@0.13.1(hono@4.5.5)':
     dependencies:
       '@hono/node-server': 1.12.0
-      hono: 4.5.0
+      hono: 4.5.5
       miniflare: 3.20240712.0
       minimatch: 9.0.5
     transitivePeerDependencies:
@@ -3967,6 +3975,10 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/node': 20.14.11
 
+  '@types/bun@1.1.6':
+    dependencies:
+      bun-types: 1.1.17
+
   '@types/connect@3.4.38':
     dependencies:
       '@types/node': 20.14.11
@@ -4184,6 +4196,13 @@ snapshots:
       '@hattip/compose': 0.0.45
       hono: 4.5.5
 
+  '@webroute/middleware@0.9.0':
+    dependencies:
+      '@webroute/common': 1.0.0
+    optionalDependencies:
+      '@hattip/compose': 0.0.45
+      hono: 4.5.5
+
   '@webroute/route@0.6.0':
     dependencies:
       '@webroute/common': 1.0.0
@@ -4321,6 +4340,11 @@ snapshots:
   buffer-from@1.1.2: {}
 
   builtin-modules@3.3.0: {}
+
+  bun-types@1.1.17:
+    dependencies:
+      '@types/node': 20.12.14
+      '@types/ws': 8.5.11
 
   bun-types@1.1.20:
     dependencies:
@@ -5053,8 +5077,6 @@ snapshots:
   hattip@0.0.33: {}
 
   helmet@7.1.0: {}
-
-  hono@4.5.0: {}
 
   hono@4.5.5: {}
 

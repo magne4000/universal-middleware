@@ -5,6 +5,7 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
+import { getAdapterRuntime } from "@universal-middleware/core";
 
 export const contextSymbol = Symbol("unContext");
 
@@ -27,8 +28,21 @@ export function createHandler<T extends unknown[]>(
     const handler = handlerFactory(...args);
 
     return (context) => {
-      context[contextSymbol] ??= {};
-      return handler(context.request, context[contextSymbol]);
+      const ctx = initContext(context);
+      return handler(
+        context.request,
+        ctx,
+        getAdapterRuntime(
+          "other",
+          {},
+          {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            env: (context.platform as any)?.env,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ctx: (context.platform as any)?.context,
+          },
+        ),
+      );
     };
   };
 }
@@ -47,10 +61,20 @@ export function createMiddleware<
     const middleware = middlewareFactory(...args);
 
     return async (context) => {
-      context[contextSymbol] ??= {};
+      const ctx = initContext<InContext>(context);
       const response = await middleware(
         context.request,
-        getContext<InContext>(context)!,
+        ctx,
+        getAdapterRuntime(
+          "other",
+          {},
+          {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            env: (context.platform as any)?.env,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ctx: (context.platform as any)?.context,
+          },
+        ),
       );
 
       if (typeof response === "function") {
@@ -66,6 +90,14 @@ export function createMiddleware<
       }
     };
   };
+}
+
+export function initContext<
+  InContext extends Universal.Context = Universal.Context,
+>(context: AdapterRequestContext): InContext {
+  context[contextSymbol] ??= {};
+
+  return context[contextSymbol] as InContext;
 }
 
 export function getContext<

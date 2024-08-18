@@ -9,6 +9,7 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
+import { getAdapterRuntime } from "@universal-middleware/core";
 
 interface UniversalEnv {
   Bindings: Env["Bindings"];
@@ -19,6 +20,14 @@ export type HonoHandler = Handler<UniversalEnv>;
 export type HonoMiddleware = MiddlewareHandler<UniversalEnv>;
 
 export const contextSymbol = Symbol("unContext");
+
+function getExecutionCtx(honoContext: HonoContext) {
+  try {
+    return honoContext.executionCtx;
+  } catch {
+    return;
+  }
+}
 
 /**
  * Creates a request handler to be passed to app.all() or any other route function
@@ -35,7 +44,18 @@ export function createHandler<T extends unknown[]>(
         context = {};
         honoContext.set(contextSymbol, context);
       }
-      return handler(honoContext.req.raw, context);
+      return handler(
+        honoContext.req.raw,
+        context,
+        getAdapterRuntime(
+          "other",
+          {},
+          {
+            env: honoContext.env,
+            ctx: getExecutionCtx(honoContext),
+          },
+        ),
+      );
     };
   };
 }
@@ -59,7 +79,18 @@ export function createMiddleware<
         context = {} as InContext;
         honoContext.set(contextSymbol, context);
       }
-      const response = await middleware(honoContext.req.raw, context);
+      const response = await middleware(
+        honoContext.req.raw,
+        context,
+        getAdapterRuntime(
+          "other",
+          {},
+          {
+            env: honoContext.env,
+            ctx: getExecutionCtx(honoContext),
+          },
+        ),
+      );
 
       if (typeof response === "function") {
         await next();

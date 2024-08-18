@@ -9,7 +9,6 @@ import {
   middlewares,
 } from "@universal-middleware/tests";
 import { route } from "@webroute/route";
-import { type MiddlewareFactoryDataResult } from "../src/common.js";
 import { createAdapter } from "@webroute/middleware";
 
 const app = new Hono();
@@ -18,17 +17,15 @@ const m1 = middlewares[0];
 const m2 = middlewares[1];
 const m3 = middlewares[2];
 
-type M1 = MiddlewareFactoryDataResult<typeof m1>;
-type M3 = MiddlewareFactoryDataResult<typeof m3>;
-
 const router = route()
-  // `createMiddleware(m1)()` or `m1()` should roughly be equivelant. The former allows better control over typings
+  // `createMiddleware(m1)()` or `m1()` are roughly equivalant (if not using the second parameter).
+  // The former allows better extraction of typings.
   .use(m1())
   .use((_request, ctx) => {
     console.log("something BEFORE", ctx.state.something);
   })
-  .use(createMiddleware<[], M1, M1>(m2)())
-  .use(createMiddleware<[], M1, M3>(m3)())
+  .use(createMiddleware(m2)())
+  .use(createMiddleware(m3)())
   .use((_request, ctx) => {
     console.log("something", ctx.state.something);
     console.log("somethingElse", ctx.state.somethingElse);

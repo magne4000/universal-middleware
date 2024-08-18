@@ -7,6 +7,7 @@
       "npm:@types/node@^20.14.10": "npm:@types/node@20.15.0",
       "npm:@universal-middleware/core@^0.1.1": "npm:@universal-middleware/core@0.1.1",
       "npm:@webroute/middleware@^0.8.0": "npm:@webroute/middleware@0.8.0",
+      "npm:@webroute/middleware@^0.9.0": "npm:@webroute/middleware@0.9.0",
       "npm:@webroute/route@^0.6.0": "npm:@webroute/route@0.6.0",
       "npm:hono@^4.5.5": "npm:hono@4.5.6",
       "npm:mri": "npm:mri@1.2.0",
@@ -567,6 +568,14 @@
       },
       "@webroute/middleware@0.8.0": {
         "integrity": "sha512-OKVOnzClDDvALBS3wbgNHRo+gDGmvquj8ey09r6he/6R6DcVyBdjOs6tW5lp+puSzAjsYFTUaBjaIJvw8IaXnA==",
+        "dependencies": {
+          "@hattip/compose": "@hattip/compose@0.0.45",
+          "@webroute/common": "@webroute/common@1.0.0",
+          "hono": "hono@4.5.6"
+        }
+      },
+      "@webroute/middleware@0.9.0": {
+        "integrity": "sha512-KECzsFrxadVRpZYfA4W4xElANOAucOigrAN8g/7BEHTFL8tIcT2xZ0SzxpSY07foGbBbipq7GLC0hrfauNuoKQ==",
         "dependencies": {
           "@hattip/compose": "@hattip/compose@0.0.45",
           "@webroute/common": "@webroute/common@1.0.0",
@@ -2006,7 +2015,7 @@
         "npm:@swc/core@^1.6.13",
         "npm:@types/node@^20.14.10",
         "npm:@universal-middleware/core@^0.1.1",
-        "npm:@webroute/middleware@^0.8.0",
+        "npm:@webroute/middleware@^0.9.0",
         "npm:@webroute/route@^0.6.0",
         "npm:hono@^4.5.5",
         "npm:rimraf@^6.0.0",

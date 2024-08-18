@@ -4,6 +4,7 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
+import { getAdapterRuntime } from "@universal-middleware/core";
 import { type DataResult, type MiddlewareFn } from "@webroute/middleware";
 
 export type WebrouteMiddleware<
@@ -54,7 +55,7 @@ export function createHandler<
 
     return (request, ctx) => {
       const context = initContext(ctx);
-      return handler(request, context);
+      return handler(request, context, getAdapterRuntime("other", {}));
     };
   };
 }
@@ -91,12 +92,13 @@ export function createMiddleware<
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
-    return (request, ctx) => {
+    return ((request, ctx) => {
       const context = initContext(ctx);
-      // TODO: create a PR to fix webroute types
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return middleware(request, context) as any;
-    };
+      return middleware(request, context, getAdapterRuntime("other", {}));
+    }) as WebrouteMiddleware<
+      InContext,
+      MiddlewareFactoryDataResult<typeof middlewareFactory>
+    >;
   };
 }
 
