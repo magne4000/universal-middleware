@@ -8,7 +8,9 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --port 3000",
-    "test": "test-e2e",
+    "test:e2e": "test-e2e",
+    "test:types": "vitest --typecheck",
+    "test": "run-s test:types test:e2e",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
@@ -16,13 +18,19 @@
     "@hono/vite-dev-server": "^0.13.0",
     "@types/node": "^20.14.10",
     "@universal-middleware-examples/tool": "workspace:*",
-    "@universal-middleware/hono": "^0.1.1",
+    "@universal-middleware/core": "workspace:*",
+    "@universal-middleware/hono": "workspace:*",
+    "@universal-middleware/webroute": "workspace:*",
+    "@universal-middleware/express": "workspace:*",
+    "@universal-middleware/hattip": "workspace:*",
     "hono": "^4.5.0",
+    "npm-run-all2": "^6.2.2",
     "playwright": "^1.45.2",
     "rimraf": "^6.0.0",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3",
-    "vite": "^5.3.4"
+    "vite": "^5.3.4",
+    "vitest": "^2.0.5"
   },
   "sideEffects": false
 }
