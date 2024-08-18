@@ -16,9 +16,9 @@
     "build": "run-s build:core build:plugin build:examples",
     "test": "pnpm run -r --sequential test",
     "test:typecheck": "pnpm run -r test:typecheck",
-    "release": "pnpm run -r release",
-    "release:minor": "pnpm run -r release:minor",
-    "release:commit": "pnpm run -r release:commit"
+    "release": "pnpm run -r --sequential release",
+    "release:minor": "pnpm run -r --sequential release:minor",
+    "release:commit": "pnpm run -r --sequential release:commit"
   },
   "keywords": [],
   "author": "",
