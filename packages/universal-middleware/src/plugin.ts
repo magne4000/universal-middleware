@@ -425,6 +425,12 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
     name: namespace,
     enforce: "post",
     rollup: {
+      resolveId(id) {
+        if (id.startsWith(namespace) || filterInput(id)) {
+          return id;
+        }
+      },
+
       options(opts) {
         normalizedInput = normalizeInput(opts.input, options);
         if (normalizedInput) {
@@ -557,7 +563,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
             // console.log("onResolve:virtual", args);
             return {
               path: args.path,
-              namespace,
+              namespace: namespace,
               pluginData: {
                 resolveDir: args.resolveDir,
               },
@@ -575,7 +581,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
           },
         );
 
-        builder.onLoad({ filter: /.*/, namespace }, async (args) => {
+        builder.onLoad({ filter: /.*/, namespace: namespace }, async (args) => {
           // console.log("onLoad", args);
           const { code } = load(args.path);
 
@@ -631,12 +637,6 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
           await options?.buildEnd?.(report);
         });
       },
-    },
-
-    resolveId(id) {
-      if (id.startsWith(namespace) || filterInput(id)) {
-        return id;
-      }
     },
 
     loadInclude(id) {

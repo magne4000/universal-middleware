@@ -113,7 +113,7 @@ export const middlewares = [
   },
   // universal middleware that update the response headers asynchronously
   () => () => {
-    return async (response) => {
+    return async (response: Response) => {
       response.headers.set("x-test-value", "universal-middleware");
       response.headers.delete("x-should-be-removed");
 
@@ -123,7 +123,7 @@ export const middlewares = [
     };
   },
   // universal middleware that updates the context asynchronously
-  () => async (_request, context) => {
+  () => async (_request: Request, context: Universal.Context) => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     return {

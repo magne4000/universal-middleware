@@ -29,16 +29,16 @@
     "@universal-middleware/core": "^0.1.1"
   },
   "devDependencies": {
-    "@brillout/release-me": "^0.3.9",
-    "@swc/core": "^1.6.13",
+    "@brillout/release-me": "^0.4.0",
+    "@swc/core": "^1.7.11",
     "@types/node": "^20.14.10",
     "@universal-middleware/tests": "workspace:*",
-    "hono": "^4.4.13",
+    "hono": "^4.5.6",
     "rimraf": "^6.0.0",
-    "tsup": "^8.1.0",
-    "tsx": "^4.16.2",
-    "typescript": "^5.5.3",
-    "vitest": "^2.0.2"
+    "tsup": "^8.2.4",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
   },
   "sideEffects": false
 }

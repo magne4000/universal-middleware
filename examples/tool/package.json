@@ -93,11 +93,11 @@
   },
   "devDependencies": {
     "@hono/node-server": "^1.12.0",
-    "@swc/core": "^1.6.13",
+    "@swc/core": "^1.7.11",
     "@types/node": "^20.14.10",
     "rimraf": "^6.0.0",
-    "tsup": "^8.1.0",
-    "typescript": "^5.5.3",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
     "universal-middleware": "*"
   },
   "optionalDependencies": {
