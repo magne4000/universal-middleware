@@ -15,7 +15,10 @@
     "build:examples": "pnpm run --filter \"@universal-middleware-examples/*\" build",
     "build": "run-s build:core build:plugin build:examples",
     "test": "pnpm run -r --sequential test",
-    "test:typecheck": "pnpm run -r test:typecheck"
+    "test:typecheck": "pnpm run -r test:typecheck",
+    "release": "LANG=en_US release-me patch",
+    "release:minor": "LANG=en_US release-me minor",
+    "release:commit": "LANG=en_US release-me commit"
   },
   "keywords": [],
   "author": "",
@@ -43,6 +46,7 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "@brillout/release-me": "^0.4.0",
     "@hattip/adapter-node": "^0.0.47",
     "@hattip/core": "^0.0.47",
     "@hattip/polyfills": "^0.0.47",
