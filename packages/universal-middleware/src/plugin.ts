@@ -202,10 +202,14 @@ function loadDts(
     typesByServer[server as (typeof defaultWrappers)[number]][
       type as "middleware" | "handler"
     ];
-  const code = `import { ${fn}, type ${t} } from "@universal-middleware/${server}";
+  const code = `import { UniversalMiddleware } from 'universal-middleware';
+import { ${fn}, ${t}${server === "webroute" ? ", MiddlewareFactoryDataResult" : ""} } from "@universal-middleware/${server}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
-export default ${fn}(${type}) as (...args: ExtractT<typeof ${type}>) => ${t};
+type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<infer X> ? X : {};
+export type InContext = ExtractInContext<typeof ${type}>;
+${server === "webroute" ? `export type OutContext = MiddlewareFactoryDataResult<typeof ${type}>;` : ""}
+export default ${fn}(${type}) as (...args: ExtractT<typeof ${type}>) => ${t}${server === "webroute" ? `<InContext, void extends OutContext ? InContext : OutContext>` : ""};
 `;
 
   return { code };
