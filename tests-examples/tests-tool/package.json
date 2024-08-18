@@ -1,0 +1,36 @@
+{
+  "name": "@universal-middleware-tests/tool",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "repository": "https://github.com/magne4000/universal-handler",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite --port 3000",
+    "test:e2e": "test-e2e",
+    "test:types": "vitest --typecheck",
+    "test": "run-s \"test:types run\" test:e2e",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@brillout/test-e2e": "^0.5.34",
+    "@hono/vite-dev-server": "^0.14.0",
+    "@types/node": "^20.14.10",
+    "@universal-middleware-examples/tool": "workspace:*",
+    "@universal-middleware/core": "link:packages/core",
+    "@universal-middleware/express": "link:packages/adapter-express",
+    "@universal-middleware/hattip": "link:packages/adapter-hattip",
+    "@universal-middleware/hono": "link:packages/adapter-hono",
+    "@universal-middleware/webroute": "link:packages/adapter-webroute",
+    "hono": "^4.5.6",
+    "npm-run-all2": "^6.2.2",
+    "playwright": "^1.46.1",
+    "rimraf": "^6.0.0",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.1",
+    "vitest": "^2.0.5"
+  },
+  "sideEffects": false
+}

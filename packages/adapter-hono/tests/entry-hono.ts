@@ -8,16 +8,19 @@ import {
   handler,
   middlewares,
 } from "@universal-middleware/tests";
+import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 const app = new Hono();
 
 // standard Hono middleware
 app.use(secureHeaders());
 
-middlewares.forEach((middleware) => app.use(createMiddleware(middleware)));
+middlewares.forEach((middleware) =>
+  app.use(createMiddleware(middleware as Get<[], UniversalMiddleware>)()),
+);
 
 // universal handler
-app.get("/", createHandler(handler));
+app.get("/", createHandler(handler)());
 
 const port = args.port ? parseInt(args.port) : 3000;
 

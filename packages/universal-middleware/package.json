@@ -1,0 +1,96 @@
+{
+  "name": "universal-middleware",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "",
+  "license": "MIT",
+  "repository": "https://github.com/magne4000/universal-handler",
+  "bugs": {
+    "url": "https://github.com/magne4000/universal-handler/issues"
+  },
+  "keywords": [
+    "esbuild",
+    "vite",
+    "rollup",
+    "transform",
+    "universal-middleware"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./vite": {
+      "types": "./dist/rollup.d.ts",
+      "import": "./dist/rollup.js",
+      "default": "./dist/rollup.js"
+    },
+    "./rollup": {
+      "types": "./dist/rollup.d.ts",
+      "import": "./dist/rollup.js",
+      "default": "./dist/rollup.js"
+    },
+    "./esbuild": {
+      "types": "./dist/esbuild.d.ts",
+      "import": "./dist/esbuild.js",
+      "default": "./dist/esbuild.js"
+    }
+  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup",
+    "prepack": "pnpm build",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit",
+    "release": "LANG=en_US release-me patch",
+    "release:minor": "LANG=en_US release-me minor",
+    "release:commit": "LANG=en_US release-me commit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@universal-middleware/core": "^0.1.1",
+    "@universal-middleware/express": "^0.1.1",
+    "@universal-middleware/hattip": "^0.1.0",
+    "@universal-middleware/hono": "^0.1.1",
+    "@universal-middleware/webroute": "^0.1.0",
+    "oxc-transform": "^0.24.3",
+    "package-up": "^5.0.0",
+    "unplugin": "^1.12.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@swc/core": "^1.7.11",
+    "esbuild": "^0.23.1",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.21.0",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.1",
+    "vitest": "^2.0.5"
+  },
+  "peerDependencies": {
+    "@rollup/plugin-node-resolve": "^15",
+    "esbuild": "*",
+    "rollup": "^4",
+    "vite": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "rollup": {
+      "optional": true
+    },
+    "@rollup/plugin-node-resolve": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "esbuild": {
+      "optional": true
+    }
+  }
+}

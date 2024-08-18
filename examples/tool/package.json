@@ -1,0 +1,116 @@
+{
+  "name": "@universal-middleware-examples/tool",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./dummy-handler": {
+      "types": "./dist/dummy.d.ts",
+      "import": "./dist/dummy.js",
+      "default": "./dist/dummy.js"
+    },
+    "./middlewares/context-middleware": {
+      "types": "./dist/middlewares/context.d.ts",
+      "import": "./dist/middlewares/context.js",
+      "default": "./dist/middlewares/context.js"
+    },
+    "./middlewares/headers-middleware": {
+      "types": "./dist/middlewares/headers.d.ts",
+      "import": "./dist/middlewares/headers.js",
+      "default": "./dist/middlewares/headers.js"
+    },
+    "./dummy-handler-hono": {
+      "types": "./dist/handlers/universal-hono-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-hono-handler-handler.js",
+      "default": "./dist/handlers/universal-hono-handler-handler.js"
+    },
+    "./dummy-handler-express": {
+      "types": "./dist/handlers/universal-express-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-express-handler-handler.js",
+      "default": "./dist/handlers/universal-express-handler-handler.js"
+    },
+    "./dummy-handler-hattip": {
+      "types": "./dist/handlers/universal-hattip-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-hattip-handler-handler.js",
+      "default": "./dist/handlers/universal-hattip-handler-handler.js"
+    },
+    "./middlewares/context-middleware-hono": {
+      "types": "./dist/middlewares/universal-hono-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-hono-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-hono-middleware-context.middleware.js"
+    },
+    "./middlewares/context-middleware-express": {
+      "types": "./dist/middlewares/universal-express-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-express-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-express-middleware-context.middleware.js"
+    },
+    "./middlewares/context-middleware-hattip": {
+      "types": "./dist/middlewares/universal-hattip-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-hattip-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-hattip-middleware-context.middleware.js"
+    },
+    "./middlewares/headers-middleware-hono": {
+      "types": "./dist/middlewares/universal-hono-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-hono-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-hono-middleware-headers.middleware.js"
+    },
+    "./middlewares/headers-middleware-express": {
+      "types": "./dist/middlewares/universal-express-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-express-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-express-middleware-headers.middleware.js"
+    },
+    "./middlewares/headers-middleware-hattip": {
+      "types": "./dist/middlewares/universal-hattip-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-hattip-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-hattip-middleware-headers.middleware.js"
+    },
+    "./dummy-handler-webroute": {
+      "types": "./dist/handlers/universal-webroute-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-webroute-handler-handler.js",
+      "default": "./dist/handlers/universal-webroute-handler-handler.js"
+    },
+    "./middlewares/context-middleware-webroute": {
+      "types": "./dist/middlewares/universal-webroute-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-webroute-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-webroute-middleware-context.middleware.js"
+    },
+    "./middlewares/headers-middleware-webroute": {
+      "types": "./dist/middlewares/universal-webroute-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-webroute-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-webroute-middleware-headers.middleware.js"
+    }
+  },
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "repository": "https://github.com/magne4000/universal-handler",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsup",
+    "prepack": "pnpm build",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@hono/node-server": "^1.12.0",
+    "@swc/core": "^1.7.11",
+    "@types/node": "^20.14.10",
+    "rimraf": "^6.0.0",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
+    "universal-middleware": "*"
+  },
+  "optionalDependencies": {
+    "@universal-middleware/express": "^0",
+    "@universal-middleware/hattip": "^0",
+    "@universal-middleware/hono": "^0",
+    "@universal-middleware/webroute": "^0"
+  },
+  "sideEffects": false,
+  "peerDependencies": {
+    "@universal-middleware/express": "^0",
+    "@universal-middleware/hattip": "^0",
+    "@universal-middleware/hono": "^0",
+    "@universal-middleware/webroute": "^0"
+  }
+}

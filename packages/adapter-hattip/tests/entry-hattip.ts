@@ -8,16 +8,19 @@ import {
   middlewares,
 } from "@universal-middleware/tests";
 import { createRouter } from "@hattip/router";
+import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 const app = createRouter();
 
 // standard hattip middleware
 app.use(cors());
 
-middlewares.forEach((middleware) => app.use(createMiddleware(middleware)));
+middlewares.forEach((middleware) =>
+  app.use(createMiddleware(middleware as Get<[], UniversalMiddleware>)()),
+);
 
 // universal handler
-app.get("/", createHandler(handler));
+app.get("/", createHandler(handler)());
 
 const hattipHandler = app.buildHandler();
 
@@ -45,7 +48,7 @@ if (deno) {
   const bunAdapter = await import("@hattip/adapter-bun");
   bunHandler = bunAdapter.default(hattipHandler, {
     port,
-  });
+  } as import("@hattip/adapter-bun").BunAdapterOptions);
 }
 
 // Bun
