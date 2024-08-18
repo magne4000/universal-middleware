@@ -9,6 +9,7 @@ overrides:
   '@universal-middleware/express': link:./packages/adapter-express
   '@universal-middleware/hono': link:./packages/adapter-hono
   '@universal-middleware/hattip': link:./packages/adapter-hattip
+  '@universal-middleware/webroute': link:./packages/adapter-webroute
   universal-middleware: link:./packages/universal-middleware
 
 importers:
