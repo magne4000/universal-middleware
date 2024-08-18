@@ -1,13 +1,37 @@
 # `universal-middleware`
-### For tool authors
-Declare middlewares and handlers once, target all supported servers:
 
+Write standard-based middlewares and handlers once, target all supported servers.
+
+Supports the following adapters:
+- [Hono](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-hono)
+- [Express](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-express)
+- [Hattip](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-hattip)
+- [Webroute](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-webroute)
+- TODO: fastify
+- TODO: h3
+- TODO: elysia
+
+## Who is this for?
+As mentionned above, the main goal of this package is for lib authors to be able to write server related logic once,
+and target all supported servers.
+
+Example of possible middleware or handler that can benefit from this lib:
+- middleware that modifies HTTP headers
+- middleware that modifies some request related context, like an authentication middleware that creates a `user` property for logged-in users
+- middleware that applies guard logic upon request, like checking for `Authentication` header before continuing
+- handler written following web standard Request/Response
+
+## Code example
+
+In this example, we are writing a middleware that adds a `something` property onto the request Context.
+Any subsequent middleware or handler will have access to this property.
 ```ts
 // src/middlewares/context.middleware.ts
 import type { Get, UniversalMiddleware } from "universal-middleware";
 
 const contextMiddleware = ((value) => (request, ctx) => {
-  // Can return a Response, a Response Handler, updated Context data or void
+  // Return the new Context, thus keeping complete type safety
+  // A less typesafe way to do the same thing would be to `ctx.something = value` and return nothing
   return {
     ...ctx,
     something: value,
@@ -15,8 +39,12 @@ const contextMiddleware = ((value) => (request, ctx) => {
   // Using `satisfies` to not lose return type
 }) satisfies Get<[string], UniversalMiddleware>;
 
+// Always export default the middleware
 export default contextMiddleware;
 ```
+
+Here, the build process is handled by [tsup](https://tsup.egoist.dev/) (which mostly relies on [esbuild](https://esbuild.github.io/) under the hood).
+It also supports [rollup](https://rollupjs.org/) (and by consequence [vite](https://vitejs.dev/))
 ```ts
 // tsup.config.ts
 import { defineConfig } from "tsup";
@@ -26,6 +54,7 @@ import universalMiddleware from "universal-middleware/esbuild";
 export default defineConfig([
   {
     entry: {
+      // all .middleware. or .handler. entry will be managed by `universal-middleware`
       "middlewares/context": "./src/middlewares/context.middleware.ts",
     },
     format: ["esm"],
@@ -35,7 +64,7 @@ export default defineConfig([
     esbuildPlugins: [universalMiddleware({
       // Only generate files for selected servers. All enabled by default
       servers?: ('hono' | 'express' | 'hattip' | 'webroute')[];
-      // akin to ebsuild `entryNames` for generated "exports" in package.json
+      // akin to esbuild `entryNames` for generated "exports" in package.json
       serversExportNames?: string;
       // akin to ebsuild `entryNames` for generated "exports" in package.json
       entryExportNames?: string;
@@ -56,9 +85,11 @@ export default defineConfig([
 ]);
 ```
 
+Once the build is executed, all target files will be generated into your dist folder,
+and your `package.json` will be updated with necessary `exports` config.
 ```json5
 // package.json
-// --> Generates the following "exports" in package.json, and all files in dist folder
+// --> Generates the following "exports" in package.json
 
 {
   "./middlewares/context-middleware": {
@@ -92,12 +123,15 @@ export default defineConfig([
 }
 ```
 
-### For users
+## For users
 Easy usage for supported servers:
 
 ```ts
 //hono-entry.ts
 import { Hono } from "hono";
+// hattip users would use "some-lib/middlewares/context-middleware-hattip"
+// express users would use "some-lib/middlewares/context-middleware-express"
+// etc.
 import contextMiddleware from "some-lib/middlewares/context-middleware-hono";
 
 const app = new Hono();
