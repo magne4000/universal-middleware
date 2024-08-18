@@ -11,6 +11,7 @@ overrides:
   '@universal-middleware/hattip': link:./packages/adapter-hattip
   '@universal-middleware/webroute': link:./packages/adapter-webroute
   universal-middleware: link:./packages/universal-middleware
+  '@webroute/middleware': ^0.9.0
 
 importers:
 
@@ -1504,9 +1505,6 @@ packages:
 
   '@webroute/common@1.0.0':
     resolution: {integrity: sha512-JQ1+RDjQuwtbXJg46EaZvh6NqgHEKObfQHq3YwUYGiZ9TsfnP+zbaNUYi0mpQfZZjZl18O54vC13s2Hc6dDNuw==}
-
-  '@webroute/middleware@0.8.0':
-    resolution: {integrity: sha512-OKVOnzClDDvALBS3wbgNHRo+gDGmvquj8ey09r6he/6R6DcVyBdjOs6tW5lp+puSzAjsYFTUaBjaIJvw8IaXnA==}
 
   '@webroute/middleware@0.9.0':
     resolution: {integrity: sha512-KECzsFrxadVRpZYfA4W4xElANOAucOigrAN8g/7BEHTFL8tIcT2xZ0SzxpSY07foGbBbipq7GLC0hrfauNuoKQ==}
@@ -4190,13 +4188,6 @@ snapshots:
 
   '@webroute/common@1.0.0': {}
 
-  '@webroute/middleware@0.8.0':
-    dependencies:
-      '@webroute/common': 1.0.0
-    optionalDependencies:
-      '@hattip/compose': 0.0.45
-      hono: 4.5.5
-
   '@webroute/middleware@0.9.0':
     dependencies:
       '@webroute/common': 1.0.0
@@ -4207,7 +4198,7 @@ snapshots:
   '@webroute/route@0.6.0':
     dependencies:
       '@webroute/common': 1.0.0
-      '@webroute/middleware': 0.8.0
+      '@webroute/middleware': 0.9.0
       '@webroute/schema': 0.4.0
       debug: 4.3.5
     transitivePeerDependencies:

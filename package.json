@@ -64,7 +64,8 @@
       "@universal-middleware/hono": "link:./packages/adapter-hono",
       "@universal-middleware/hattip": "link:./packages/adapter-hattip",
       "@universal-middleware/webroute": "link:./packages/adapter-webroute",
-      "universal-middleware": "link:./packages/universal-middleware"
+      "universal-middleware": "link:./packages/universal-middleware",
+      "@webroute/middleware": "^0.9.0"
     }
   },
   "packageManager": "pnpm@9.4.0"

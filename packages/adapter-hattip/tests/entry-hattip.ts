@@ -48,7 +48,7 @@ if (deno) {
   const bunAdapter = await import("@hattip/adapter-bun");
   bunHandler = bunAdapter.default(hattipHandler, {
     port,
-  });
+  } as import("@hattip/adapter-bun").BunAdapterOptions);
 }
 
 // Bun
