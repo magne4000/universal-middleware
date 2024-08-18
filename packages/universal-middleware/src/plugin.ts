@@ -171,7 +171,13 @@ export default ${fn}(${type});
 
 const typesByServer: Record<
   (typeof defaultWrappers)[number],
-  { middleware: string; handler: string }
+  {
+    middleware: string;
+    handler: string;
+    selfImports?: string[];
+    outContext?: (type: string) => string;
+    genericParameters?: string;
+  }
 > = {
   hono: {
     middleware: "HonoMiddleware",
@@ -188,6 +194,10 @@ const typesByServer: Record<
   webroute: {
     middleware: "WebrouteMiddleware",
     handler: "WebrouteHandler",
+    selfImports: ["type MiddlewareFactoryDataResult"],
+    outContext: (type) => `MiddlewareFactoryDataResult<typeof ${type}>`,
+    genericParameters:
+      "<InContext, void extends OutContext ? InContext : OutContext>",
   },
 };
 
@@ -198,18 +208,17 @@ function loadDts(
   const [, , server, type, handler] = id.split(":");
 
   const fn = type === "handler" ? "createHandler" : "createMiddleware";
-  const t =
-    typesByServer[server as (typeof defaultWrappers)[number]][
-      type as "middleware" | "handler"
-    ];
-  const code = `import { UniversalMiddleware } from 'universal-middleware';
-import { ${fn}, ${t}${server === "webroute" ? ", MiddlewareFactoryDataResult" : ""} } from "@universal-middleware/${server}";
+  const info = typesByServer[server as (typeof defaultWrappers)[number]];
+  const t = info[type as "middleware" | "handler"];
+  const selfImports = [fn, `type ${t}`, ...(info.selfImports ?? [])];
+  const code = `import { type UniversalMiddleware } from 'universal-middleware';
+import { ${selfImports.join(", ")} } from "@universal-middleware/${server}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
 type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<infer X> ? X : {};
 export type InContext = ExtractInContext<typeof ${type}>;
-${server === "webroute" ? `export type OutContext = MiddlewareFactoryDataResult<typeof ${type}>;` : ""}
-export default ${fn}(${type}) as (...args: ExtractT<typeof ${type}>) => ${t}${server === "webroute" ? `<InContext, void extends OutContext ? InContext : OutContext>` : ""};
+export type OutContext = ${info.outContext?.(type) ?? "unknown"};
+export default ${fn}(${type}) as (...args: ExtractT<typeof ${type}>) => ${t}${info.genericParameters ?? ""};
 `;
 
   return { code };
