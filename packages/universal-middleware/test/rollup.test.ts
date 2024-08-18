@@ -7,6 +7,8 @@ import typescript from "@rollup/plugin-typescript";
 import plugin from "../src/rollup";
 import { join, parse } from "node:path";
 
+const adapters = ["hono", "express", "hattip", "webroute"] as const;
+
 describe("rollup", () => {
   it("generates all server files (string input)", async () => {
     const entry = "test/files/folder1/handler.ts";
@@ -21,15 +23,12 @@ describe("rollup", () => {
             const exports = report.map((r) => r.exports);
 
             expect(exports).toContain("./test/files/folder1/handler-handler");
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hono",
-            );
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-express",
-            );
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hattip",
-            );
+
+            for (const adapter of adapters) {
+              expect(exports).toContain(
+                `./test/files/folder1/handler-handler-${adapter}`,
+              );
+            }
           },
         }),
         nodeResolve(),
@@ -74,12 +73,10 @@ describe("rollup", () => {
 
             expect(exports).toContain("./h-handler");
             expect(exports).toContain("./m-middleware");
-            expect(exports).toContain("./h-handler-hono");
-            expect(exports).toContain("./h-handler-express");
-            expect(exports).toContain("./h-handler-hattip");
-            expect(exports).toContain("./m-middleware-hono");
-            expect(exports).toContain("./m-middleware-express");
-            expect(exports).toContain("./m-middleware-hattip");
+            for (const adapter of adapters) {
+              expect(exports).toContain(`./h-handler-${adapter}`);
+              expect(exports).toContain(`./m-middleware-${adapter}`);
+            }
           },
         }),
         nodeResolve(),
@@ -127,24 +124,14 @@ describe("rollup", () => {
 
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/middleware-middleware");
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hono",
-            );
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-express",
-            );
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hattip",
-            );
-            expect(exports).toContain(
-              "./test/files/middleware-middleware-hono",
-            );
-            expect(exports).toContain(
-              "./test/files/middleware-middleware-express",
-            );
-            expect(exports).toContain(
-              "./test/files/middleware-middleware-hattip",
-            );
+            for (const adapter of adapters) {
+              expect(exports).toContain(
+                `./test/files/folder1/handler-handler-${adapter}`,
+              );
+              expect(exports).toContain(
+                `./test/files/middleware-middleware-${adapter}`,
+              );
+            }
           },
         }),
         nodeResolve(),
@@ -192,24 +179,14 @@ describe("rollup", () => {
 
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/folder2/handler-handler");
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hono",
-            );
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-express",
-            );
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hattip",
-            );
-            expect(exports).toContain(
-              "./test/files/folder2/handler-handler-hono",
-            );
-            expect(exports).toContain(
-              "./test/files/folder2/handler-handler-express",
-            );
-            expect(exports).toContain(
-              "./test/files/folder2/handler-handler-hattip",
-            );
+            for (const adapter of adapters) {
+              expect(exports).toContain(
+                `./test/files/folder1/handler-handler-${adapter}`,
+              );
+              expect(exports).toContain(
+                `./test/files/folder2/handler-handler-${adapter}`,
+              );
+            }
           },
         }),
         nodeResolve(),
@@ -343,11 +320,11 @@ function testRollupOutput(
   type: "handler" | "middleware",
   f: string,
 ) {
-  testRollupHandler(gen, type, "express", f);
-  testRollupHandler(gen, type, "hono", f);
-  testRollupHandler(gen, type, "hattip", f);
+  for (const adapter of adapters) {
+    testRollupHandler(gen, type, adapter, f);
+  }
 }
 
 function expectNbOutput(i: number) {
-  return i * 4;
+  return i * (adapters.length + 1);
 }

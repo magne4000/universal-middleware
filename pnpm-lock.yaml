@@ -132,6 +132,9 @@ importers:
       '@universal-middleware/hono':
         specifier: link:../../packages/adapter-hono
         version: link:../../packages/adapter-hono
+      '@universal-middleware/webroute':
+        specifier: link:../../packages/adapter-webroute
+        version: link:../../packages/adapter-webroute
     devDependencies:
       '@hono/node-server':
         specifier: ^1.12.0

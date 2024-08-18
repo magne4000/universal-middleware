@@ -8,13 +8,13 @@ import { getAdapterRuntime } from "@universal-middleware/core";
 import { type DataResult, type MiddlewareFn } from "@webroute/middleware";
 
 export type WebrouteMiddleware<
-  Context extends object,
+  InContext extends object = {},
   TResult extends DataResult | void = void,
   TParams = unknown,
   TQuery = unknown,
   TBody = unknown,
   THeaders = unknown,
-  TState extends Context = Context,
+  TState extends InContext = InContext,
   TProviders = unknown,
 > = MiddlewareFn<
   TResult,
@@ -22,16 +22,16 @@ export type WebrouteMiddleware<
 >;
 
 export type WebrouteHandler<
-  Context extends object,
+  InContext extends object = {},
   TResult extends DataResult | void = void,
   TParams = unknown,
   TQuery = unknown,
   TBody = unknown,
   THeaders = unknown,
-  TState extends Context = Context,
+  TState extends InContext = InContext,
   TProviders = unknown,
 > = WebrouteMiddleware<
-  Context,
+  InContext,
   TResult,
   TParams,
   TQuery,

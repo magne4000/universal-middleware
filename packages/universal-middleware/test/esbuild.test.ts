@@ -5,6 +5,8 @@ import { build, type BuildResult } from "esbuild";
 import plugin from "../src/esbuild";
 import { join } from "node:path";
 
+const adapters = ["hono", "express", "hattip", "webroute"] as const;
+
 describe("esbuild", () => {
   it("generates all server files (in/out input)", async () => {
     const entry = "test/files/folder1/handler.ts";
@@ -19,9 +21,10 @@ describe("esbuild", () => {
             const exports = report.map((r) => r.exports);
 
             expect(exports).toContain("./handler-handler");
-            expect(exports).toContain("./handler-handler-hono");
-            expect(exports).toContain("./handler-handler-express");
-            expect(exports).toContain("./handler-handler-hattip");
+
+            for (const adapter of adapters) {
+              expect(exports).toContain(`./handler-handler-${adapter}`);
+            }
           },
         }),
       ],
@@ -67,12 +70,10 @@ describe("esbuild", () => {
 
             expect(exports).toContain("./handlers/one-handler");
             expect(exports).toContain("./middleware-middleware");
-            expect(exports).toContain("./handlers/one-handler-hono");
-            expect(exports).toContain("./handlers/one-handler-express");
-            expect(exports).toContain("./handlers/one-handler-hattip");
-            expect(exports).toContain("./middleware-middleware-hono");
-            expect(exports).toContain("./middleware-middleware-express");
-            expect(exports).toContain("./middleware-middleware-hattip");
+            for (const adapter of adapters) {
+              expect(exports).toContain(`./handlers/one-handler-${adapter}`);
+              expect(exports).toContain(`./middleware-middleware-${adapter}`);
+            }
           },
         }),
       ],
@@ -119,24 +120,14 @@ describe("esbuild", () => {
 
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/middleware-middleware");
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hono",
-            );
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-express",
-            );
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hattip",
-            );
-            expect(exports).toContain(
-              "./test/files/middleware-middleware-hono",
-            );
-            expect(exports).toContain(
-              "./test/files/middleware-middleware-express",
-            );
-            expect(exports).toContain(
-              "./test/files/middleware-middleware-hattip",
-            );
+            for (const adapter of adapters) {
+              expect(exports).toContain(
+                `./test/files/folder1/handler-handler-${adapter}`,
+              );
+              expect(exports).toContain(
+                `./test/files/middleware-middleware-${adapter}`,
+              );
+            }
           },
         }),
       ],
@@ -183,24 +174,14 @@ describe("esbuild", () => {
 
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/folder2/handler-handler");
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hono",
-            );
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-express",
-            );
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hattip",
-            );
-            expect(exports).toContain(
-              "./test/files/folder2/handler-handler-hono",
-            );
-            expect(exports).toContain(
-              "./test/files/folder2/handler-handler-express",
-            );
-            expect(exports).toContain(
-              "./test/files/folder2/handler-handler-hattip",
-            );
+            for (const adapter of adapters) {
+              expect(exports).toContain(
+                `./test/files/folder1/handler-handler-${adapter}`,
+              );
+              expect(exports).toContain(
+                `./test/files/folder2/handler-handler-${adapter}`,
+              );
+            }
           },
         }),
       ],
@@ -247,12 +228,11 @@ describe("esbuild", () => {
 
             expect(exports).toContain("./folder1/handler-handler");
             expect(exports).toContain("./folder2/handler-handler");
-            expect(exports).toContain("./folder1/handler-handler-hono");
-            expect(exports).toContain("./folder1/handler-handler-express");
-            expect(exports).toContain("./folder1/handler-handler-hattip");
-            expect(exports).toContain("./folder2/handler-handler-hono");
-            expect(exports).toContain("./folder2/handler-handler-express");
-            expect(exports).toContain("./folder2/handler-handler-hattip");
+
+            for (const adapter of adapters) {
+              expect(exports).toContain(`./folder1/handler-handler-${adapter}`);
+              expect(exports).toContain(`./folder2/handler-handler-${adapter}`);
+            }
           },
         }),
       ],
@@ -422,11 +402,11 @@ function testEsbuildOutput(
   type: "handler" | "middleware",
   file: string,
 ) {
-  testEsbuildHandler(result, type, "express", file);
-  testEsbuildHandler(result, type, "hono", file);
-  testEsbuildHandler(result, type, "hattip", file);
+  for (const adapter of adapters) {
+    testEsbuildHandler(result, type, adapter, file);
+  }
 }
 
 function expectNbOutput(i: number) {
-  return i * 4;
+  return i * (adapters.length + 1);
 }

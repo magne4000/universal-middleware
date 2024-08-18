@@ -32,13 +32,9 @@ interface BundleInfo {
   exports: string;
 }
 
-const defaultWrappers = ["hono", "express", "hattip"] as const;
+const defaultWrappers = ["hono", "express", "hattip", "webroute"] as const;
 const namespace = "virtual:universal-middleware";
-const externals = [
-  "@universal-middleware/express",
-  "@universal-middleware/hattip",
-  "@universal-middleware/hono",
-];
+const externals = defaultWrappers.map((w) => `@universal-middleware/${w}`);
 const versionRange = "^0";
 
 function getVirtualInputs(
@@ -173,7 +169,10 @@ export default ${fn}(${type});
   return { code };
 }
 
-const typesByServer: Record<string, { middleware: string; handler: string }> = {
+const typesByServer: Record<
+  (typeof defaultWrappers)[number],
+  { middleware: string; handler: string }
+> = {
   hono: {
     middleware: "HonoMiddleware",
     handler: "HonoHandler",
@@ -186,6 +185,10 @@ const typesByServer: Record<string, { middleware: string; handler: string }> = {
     middleware: "HattipMiddleware",
     handler: "HattipHandler",
   },
+  webroute: {
+    middleware: "WebrouteMiddleware",
+    handler: "WebrouteHandler",
+  },
 };
 
 function loadDts(
@@ -195,7 +198,10 @@ function loadDts(
   const [, , server, type, handler] = id.split(":");
 
   const fn = type === "handler" ? "createHandler" : "createMiddleware";
-  const t = typesByServer[server][type as "middleware" | "handler"];
+  const t =
+    typesByServer[server as (typeof defaultWrappers)[number]][
+      type as "middleware" | "handler"
+    ];
   const code = `import { ${fn}, type ${t} } from "@universal-middleware/${server}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 type ExtractT<T> = T extends (...args: infer X) => any ? X : never;

@@ -66,6 +66,21 @@
       "types": "./dist/middlewares/universal-hattip-middleware-headers.middleware.d.ts",
       "import": "./dist/middlewares/universal-hattip-middleware-headers.middleware.js",
       "default": "./dist/middlewares/universal-hattip-middleware-headers.middleware.js"
+    },
+    "./dummy-handler-webroute": {
+      "types": "./dist/handlers/universal-webroute-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-webroute-handler-handler.js",
+      "default": "./dist/handlers/universal-webroute-handler-handler.js"
+    },
+    "./middlewares/context-middleware-webroute": {
+      "types": "./dist/middlewares/universal-webroute-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-webroute-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-webroute-middleware-context.middleware.js"
+    },
+    "./middlewares/headers-middleware-webroute": {
+      "types": "./dist/middlewares/universal-webroute-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-webroute-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-webroute-middleware-headers.middleware.js"
     }
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
@@ -88,12 +103,14 @@
   "optionalDependencies": {
     "@universal-middleware/express": "^0",
     "@universal-middleware/hattip": "^0",
-    "@universal-middleware/hono": "^0"
+    "@universal-middleware/hono": "^0",
+    "@universal-middleware/webroute": "^0"
   },
   "sideEffects": false,
   "peerDependencies": {
     "@universal-middleware/express": "^0",
     "@universal-middleware/hattip": "^0",
-    "@universal-middleware/hono": "^0"
+    "@universal-middleware/hono": "^0",
+    "@universal-middleware/webroute": "^0"
   }
 }
