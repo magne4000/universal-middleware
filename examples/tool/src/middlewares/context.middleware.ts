@@ -1,8 +1,11 @@
 import type { Get, UniversalMiddleware } from "universal-middleware";
 
-const contextMiddleware: Get<[string], UniversalMiddleware> =
-  (value) => (_request, ctx) => {
-    ctx.something = value;
+const contextMiddleware = ((value) => (_request, ctx) => {
+  return {
+    ...ctx,
+    something: value,
   };
+  // Using `satisfies` to not lose return type
+}) satisfies Get<[string], UniversalMiddleware>;
 
 export default contextMiddleware;

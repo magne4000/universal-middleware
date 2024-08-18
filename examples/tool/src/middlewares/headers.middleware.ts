@@ -1,6 +1,6 @@
 import type { Get, UniversalMiddleware } from "universal-middleware";
 
-const headersMiddleware: Get<[], UniversalMiddleware> =
+const headersMiddleware: Get<[], UniversalMiddleware<{ something?: string }>> =
   () => (_request, ctx) => {
     return (response) => {
       response.headers.set("X-Custom-Header", ctx.something ?? "NONE");
