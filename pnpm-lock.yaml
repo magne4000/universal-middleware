@@ -422,6 +422,9 @@ importers:
         specifier: ^1.12.2
         version: 1.12.2
     devDependencies:
+      '@brillout/release-me':
+        specifier: ^0.4.0
+        version: 0.4.0
       '@rollup/plugin-node-resolve':
         specifier: ^15.2.3
         version: 15.2.3(rollup@4.21.0)
