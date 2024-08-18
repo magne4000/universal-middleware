@@ -12,7 +12,7 @@ Supports the following adapters:
 - TODO: elysia
 
 ## Who is this for?
-As mentionned above, the main goal of this package is for lib authors to be able to write server related logic once,
+The main goal of this package is for lib authors to be able to write server related logic once,
 and target all supported servers.
 
 Example of possible middleware or handler that can benefit from this lib:
@@ -39,7 +39,7 @@ const contextMiddleware = ((value) => (request, ctx) => {
   // Using `satisfies` to not lose return type
 }) satisfies Get<[string], UniversalMiddleware>;
 
-// Always export default the middleware
+// export default is mandatory
 export default contextMiddleware;
 ```
 
@@ -123,7 +123,7 @@ and your `package.json` will be updated with necessary `exports` config.
 }
 ```
 
-## For users
+### For users
 Easy usage for supported servers:
 
 ```ts
@@ -141,3 +141,134 @@ app.get("/", () => return new Response('ok')));
 
 export default app;
 ```
+
+## Supported syntax
+### Handler
+
+Universal Handler compatible with all supported servers.
+
+```ts
+// src/handlers/index.handler.ts
+import type { Get, UniversalHandler } from "universal-middleware";
+
+const handler: Get<[string], UniversalHandler> = () => (request, ctx) => {
+  // A handler must ALWAYS return a Response
+  // Here, we return the Context to the user
+  return new Response(JSON.stringify(ctx));
+};
+
+// export default is mandatory
+export default handler;
+```
+
+### Middleware that updates the Context
+
+The Context contains data with the same lifespan as a Request. It can be used by middleware to pass any kind of data
+to any subsequent middleware or handler.
+
+```ts
+// src/middlewares/context.middleware.ts
+import type { Get, UniversalMiddleware } from "universal-middleware";
+
+const contextMiddleware = (() => (request, ctx) => {
+  // The new Context can either be returned, thus keeping complete type safety, or mutated
+  return {
+    ...ctx,
+    // subsequent middlewares and handlers will have access to this property
+    something: value,
+  };
+  // Using `satisfies` to not lose return type
+}) satisfies Get<[string], UniversalMiddleware>;
+
+// export default is mandatory
+export default contextMiddleware;
+```
+
+#### Using the Context
+
+Each adapter have its own way to store the Context.
+For instance, using Hono, you can either retrieve the Context as usual in other `universal-middleware` middlewares.
+Or you can write a simple Hono handler, and retrieve the Context like this:
+```ts
+// Also exists for others servers, such as "@universal-middleware/express", "@universal-middleware/hattip", etc.
+import { getContext } from "@universal-middleware/hono";
+import contextMiddleware from "@my-lib/middlewares/context-middleware-hono";
+import { Hono } from "hono";
+
+const app = new Hono();
+
+// Update Context
+app.use(contextMiddleware("something"));
+app.get("/", (honoContext) => {
+  // retrieve `universal-middleware` Context
+  const universalContext = getContext(honoContext);
+  // send it to the user
+  return new Response(JSON.stringify(universalContext));
+});
+
+export default app;
+```
+
+### Middleware that updates the Response
+
+Those are usually used to modify the Response headers.
+
+```ts
+// src/middlewares/headers.middleware.ts
+import type { Get, UniversalMiddleware } from "universal-middleware";
+
+const headersMiddleware = (() => (request, ctx) => {
+  // This is a Response Handler, and will be executed after a handler or a middleware have returned a Response
+  return (response) => {
+    // Add a new header, using previously set Context
+    response.headers.set("X-Custom-Header", ctx.something ?? "NONE");
+    
+    return response;
+  }
+  // Using `satisfies` to not lose return type
+  // You can specify the type of the Context upon entry
+}) satisfies Get<[string], UniversalMiddleware<{ something?: string }>>;
+
+// export default is mandatory
+export default headersMiddleware;
+```
+
+### Middleware that return an early Response
+
+Those can be used to guard some routes
+
+```ts
+// src/middlewares/guard.middleware.ts
+import type { Get, UniversalMiddleware } from "universal-middleware";
+
+const guardMiddleware = (() => (request, ctx) => {
+  if (!ctx.user) {
+    return new Response("Unauthorized", {
+      status: 401
+    });
+  }
+  // If a middleware returns nothing, next middleware is automatically executed
+  
+  // Using `satisfies` to not lose return type
+  // You can specify the type of the Context upon entry
+}) satisfies Get<[string], UniversalMiddleware<{ user?: string }>>;
+
+// export default is mandatory
+export default guardMiddleware;
+```
+
+## Adapters specifity
+### Hono
+TODO
+
+### Express
+TODO
+
+### Hattip
+TODO
+
+### Webroute
+TODO
+
+## Access runtime specific API
+TODO
