@@ -5,10 +5,10 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dev:express": "tsx ./playground/express-entry.ts",
-    "dev:h3": "tsx ./playground/h3-entry.ts",
-    "dev:hono": "vite --mode hono",
-    "dev:hattip": "hattip serve ./playground/hattip-entry.ts --client",
+    "play:express": "tsx ./playground/express-entry.ts",
+    "play:h3": "tsx ./playground/h3-entry.ts",
+    "play:hono": "vite --mode hono",
+    "play:hattip": "hattip serve ./playground/hattip-entry.ts --client",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "build:core": "pnpm run -r --filter \"@universal-middleware/*\" build",
     "build:plugin": "pnpm run --filter \"universal-middleware\" build",
@@ -63,6 +63,7 @@
       "@universal-middleware/express": "link:./packages/adapter-express",
       "@universal-middleware/hono": "link:./packages/adapter-hono",
       "@universal-middleware/hattip": "link:./packages/adapter-hattip",
+      "@universal-middleware/webroute": "link:./packages/adapter-webroute",
       "universal-middleware": "link:./packages/universal-middleware"
     }
   },
