@@ -19,7 +19,7 @@
     "test": "vitest run",
     "test:run-webroute:node": "tsx tests/entry-webroute.ts",
     "test:run-webroute:bun": "bun tests/entry-webroute.ts",
-    "test:run-webroute:deno": "deno run --unstable-sloppy-imports -A tests/entry-webroute.ts",
+    "test:run-webroute:deno": "deno run --unstable-byonm --unstable-sloppy-imports -A tests/entry-webroute.ts",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "release": "LANG=en_US release-me patch",
     "release:minor": "LANG=en_US release-me minor",

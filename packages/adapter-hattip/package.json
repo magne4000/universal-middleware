@@ -19,7 +19,7 @@
     "test": "vitest run",
     "test:run-hattip:node": "tsx tests/entry-hattip.ts",
     "test:run-hattip:bun": "bun tests/entry-hattip.ts",
-    "test:run-hattip:deno": "deno run --unstable-sloppy-imports -A tests/entry-hattip.ts",
+    "test:run-hattip:deno": "deno run --unstable-byonm --unstable-sloppy-imports -A tests/entry-hattip.ts",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "release": "LANG=en_US release-me patch",
     "release:minor": "LANG=en_US release-me minor",
