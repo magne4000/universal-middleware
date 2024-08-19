@@ -1,3 +1,13 @@
+## [0.2.1](https://github.com/magne4000/universal-handler/compare/@universal-middleware/express@0.2.0...@universal-middleware/express@0.2.1) (2024-08-19)
+
+
+### Features
+
+* Add support for Fastify ([#17](https://github.com/magne4000/universal-handler/issues/17)) ([fcd2fdd](https://github.com/magne4000/universal-handler/commit/fcd2fdd14f04022621f997d6655442dc77a4d9b0))
+* h3 ([#18](https://github.com/magne4000/universal-handler/issues/18)) ([74a774d](https://github.com/magne4000/universal-handler/commit/74a774deaf56e60ee6be13d2e78f132bdcbe7b9c))
+
+
+
 # [0.2.0](https://github.com/magne4000/universal-handler/compare/@universal-middleware/express@0.1.1...@universal-middleware/express@0.2.0) (2024-08-18)
 
 
