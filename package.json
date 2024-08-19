@@ -13,9 +13,9 @@
     "build": "turbo build",
     "test": "turbo test",
     "test:typecheck": "turbo test:typecheck",
-    "release": "turbo release",
-    "release:minor": "turbo release:minor",
-    "release:commit": "turbo release:commit"
+    "release": "turbo release --ui tui",
+    "release:minor": "turbo release:minor --ui tui",
+    "release:commit": "turbo release:commit --ui tui"
   },
   "keywords": [],
   "author": "",
