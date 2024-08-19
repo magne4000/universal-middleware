@@ -1,3 +1,12 @@
+## [0.2.3](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.2...@universal-middleware/core@0.2.3) (2024-08-19)
+
+
+### Bug Fixes
+
+* core types for middleware returning empty context ([ed0c33f](https://github.com/magne4000/universal-handler/commit/ed0c33fb9bcf011de55cdc1b22dd83e2135811f3))
+
+
+
 ## [0.2.2](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.1...@universal-middleware/core@0.2.2) (2024-08-19)
 
 
