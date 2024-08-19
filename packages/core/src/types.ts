@@ -94,8 +94,8 @@ export interface UniversalMiddleware<
     context: InContext,
     runtime: RuntimeAdapter,
   ):
-    | Awaitable<Response>
-    | Awaitable<void>
+    | Awaitable<Response | undefined>
+    | Awaitable<void | undefined>
     | Awaitable<OutContext | undefined>
     | ((response: Response) => Awaitable<Response>);
 }
