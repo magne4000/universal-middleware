@@ -81,6 +81,21 @@
       "types": "./dist/middlewares/universal-webroute-middleware-headers.middleware.d.ts",
       "import": "./dist/middlewares/universal-webroute-middleware-headers.middleware.js",
       "default": "./dist/middlewares/universal-webroute-middleware-headers.middleware.js"
+    },
+    "./dummy-handler-fastify": {
+      "types": "./dist/handlers/universal-fastify-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-fastify-handler-handler.js",
+      "default": "./dist/handlers/universal-fastify-handler-handler.js"
+    },
+    "./middlewares/context-middleware-fastify": {
+      "types": "./dist/middlewares/universal-fastify-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-fastify-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-fastify-middleware-context.middleware.js"
+    },
+    "./middlewares/headers-middleware-fastify": {
+      "types": "./dist/middlewares/universal-fastify-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-fastify-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-fastify-middleware-headers.middleware.js"
     }
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
@@ -104,7 +119,8 @@
     "@universal-middleware/express": "^0",
     "@universal-middleware/hattip": "^0",
     "@universal-middleware/hono": "^0",
-    "@universal-middleware/webroute": "^0"
+    "@universal-middleware/webroute": "^0",
+    "@universal-middleware/fastify": "^0"
   },
   "sideEffects": false,
   "peerDependencies": {

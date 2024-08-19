@@ -7,7 +7,7 @@ import typescript from "@rollup/plugin-typescript";
 import plugin from "../src/rollup";
 import { join, parse } from "node:path";
 
-const adapters = ["hono", "express", "hattip", "webroute"] as const;
+const adapters = ["hono", "express", "hattip", "webroute", "fastify"] as const;
 
 describe("rollup", () => {
   it(

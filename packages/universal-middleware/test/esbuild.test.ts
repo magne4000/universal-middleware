@@ -5,7 +5,7 @@ import { build, type BuildResult } from "esbuild";
 import plugin from "../src/esbuild";
 import { join } from "node:path";
 
-const adapters = ["hono", "express", "hattip", "webroute"] as const;
+const adapters = ["hono", "express", "hattip", "webroute", "fastify"] as const;
 
 describe("esbuild", () => {
   it(

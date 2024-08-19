@@ -450,6 +450,9 @@ importers:
       '@universal-middleware/express':
         specifier: link:../adapter-express
         version: link:../adapter-express
+      '@universal-middleware/fastify':
+        specifier: link:../adapter-fastify
+        version: link:../adapter-fastify
       '@universal-middleware/hattip':
         specifier: link:../adapter-hattip
         version: link:../adapter-hattip
