@@ -7,7 +7,7 @@ Supports the following adapters:
 - [Express](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-express)
 - [Hattip](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-hattip)
 - [Webroute](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-webroute)
-- TODO: fastify
+- [Fastify](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-fastify)
 - TODO: h3
 - TODO: elysia
 
