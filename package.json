@@ -1,5 +1,5 @@
 {
-  "name": "universal-middlewware",
+  "name": "universal-middleware-workspace",
   "private": true,
   "version": "0.0.1",
   "description": "",
@@ -10,15 +10,12 @@
     "play:hono": "vite --mode hono",
     "play:hattip": "hattip serve ./playground/hattip-entry.ts --client",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
-    "build:core": "pnpm run -r --filter \"@universal-middleware/*\" build",
-    "build:plugin": "pnpm run --filter \"universal-middleware\" build",
-    "build:examples": "pnpm run --filter \"@universal-middleware-examples/*\" build",
-    "build": "run-s build:core build:plugin build:examples",
-    "test": "pnpm run -r --sequential test",
-    "test:typecheck": "pnpm run -r test:typecheck",
-    "release": "pnpm run -r --sequential release",
-    "release:minor": "pnpm run -r --sequential release:minor",
-    "release:commit": "pnpm run -r --sequential release:commit"
+    "build": "turbo build",
+    "test": "turbo test",
+    "test:typecheck": "turbo test:typecheck",
+    "release": "turbo release",
+    "release:minor": "turbo release:minor",
+    "release:commit": "turbo release:commit"
   },
   "keywords": [],
   "author": "",
@@ -37,12 +34,12 @@
     "express-rate-limit": "^7.4.0",
     "express-session": "^1.18.0",
     "microdiff": "^1.4.0",
-    "npm-run-all2": "^6.2.2",
     "on-change": "^5.0.1",
     "playwright": "^1.46.1",
     "prettier": "^3.3.2",
     "proxy-deep": "^4.0.1",
     "rfdc": "^1.4.1",
+    "turbo": "^2.0.14",
     "typescript": "^5.5.4"
   },
   "dependencies": {

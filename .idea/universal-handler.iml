@@ -13,7 +13,11 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/universal-middleware/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples/tool/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-webroute/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/examples/tool/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-fastify/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/core/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/universal-middleware/.turbo" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

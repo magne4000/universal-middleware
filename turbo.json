@@ -1,0 +1,30 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["^build"]
+    },
+    "test:typecheck": {
+      "dependsOn": ["build"]
+    },
+    "test": {
+      "dependsOn": ["build"]
+    },
+    "release": {
+      "dependsOn": ["build", "test", "test:typecheck"],
+      "interactive": true,
+      "cache": false
+    },
+    "release:minor": {
+      "dependsOn": ["build", "test", "test:typecheck"],
+      "interactive": true,
+      "cache": false
+    },
+    "release:commit": {
+      "dependsOn": ["build", "test", "test:typecheck"],
+      "interactive": true,
+      "cache": false
+    }
+  }
+}
