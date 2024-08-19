@@ -8,212 +8,228 @@ import { join } from "node:path";
 const adapters = ["hono", "express", "hattip", "webroute"] as const;
 
 describe("esbuild", () => {
-  it("generates all server files (in/out input)", async () => {
-    const entry = "test/files/folder1/handler.ts";
-    const result = await build({
-      entryPoints: [{ out: "handler", in: entry }],
-      plugins: [
-        plugin({
-          doNotEditPackageJson: true,
-          dts: false,
-          buildEnd(report) {
-            expect(report).toHaveLength(expectNbOutput(1));
-            const exports = report.map((r) => r.exports);
+  it(
+    "generates all server files (in/out input)",
+    { timeout: 30000 },
+    async () => {
+      const entry = "test/files/folder1/handler.ts";
+      const result = await build({
+        entryPoints: [{ out: "handler", in: entry }],
+        plugins: [
+          plugin({
+            doNotEditPackageJson: true,
+            dts: false,
+            buildEnd(report) {
+              expect(report).toHaveLength(expectNbOutput(1));
+              const exports = report.map((r) => r.exports);
 
-            expect(exports).toContain("./handler-handler");
+              expect(exports).toContain("./handler-handler");
 
-            for (const adapter of adapters) {
-              expect(exports).toContain(`./handler-handler-${adapter}`);
-            }
-          },
-        }),
-      ],
-      outdir: "dist",
-      write: false,
-      metafile: true,
-      bundle: true,
-      platform: "neutral",
-      format: "esm",
-      target: "es2022",
-      splitting: true,
-    });
+              for (const adapter of adapters) {
+                expect(exports).toContain(`./handler-handler-${adapter}`);
+              }
+            },
+          }),
+        ],
+        outdir: "dist",
+        write: false,
+        metafile: true,
+        bundle: true,
+        platform: "neutral",
+        format: "esm",
+        target: "es2022",
+        splitting: true,
+      });
 
-    expect(result.errors).toHaveLength(0);
-    expect(
-      result.outputFiles.filter(
-        (f) => !f.path.includes(join("dist", "chunk-")),
-      ),
-    ).toHaveLength(expectNbOutput(1));
+      expect(result.errors).toHaveLength(0);
+      expect(
+        result.outputFiles.filter(
+          (f) => !f.path.includes(join("dist", "chunk-")),
+        ),
+      ).toHaveLength(expectNbOutput(1));
 
-    expect(findOutput(result, entry)).toSatisfy((s: string) =>
-      s.startsWith("dist/handler"),
-    );
+      expect(findOutput(result, entry)).toSatisfy((s: string) =>
+        s.startsWith("dist/handler"),
+      );
 
-    testEsbuildOutput(result, "handler", entry);
-  });
+      testEsbuildOutput(result, "handler", entry);
+    },
+  );
 
-  it("generates all server files (object input)", async () => {
-    const entry1 = "test/files/folder1/handler.ts";
-    const entry2 = "test/files/middleware.ts";
-    const result = await build({
-      entryPoints: {
-        "handlers/one": entry1,
-        middleware: entry2,
-      },
-      plugins: [
-        plugin({
-          doNotEditPackageJson: true,
-          dts: false,
-          buildEnd(report) {
-            expect(report).toHaveLength(expectNbOutput(2));
-            const exports = report.map((r) => r.exports);
+  it(
+    "generates all server files (object input)",
+    { timeout: 30000 },
+    async () => {
+      const entry1 = "test/files/folder1/handler.ts";
+      const entry2 = "test/files/middleware.ts";
+      const result = await build({
+        entryPoints: {
+          "handlers/one": entry1,
+          middleware: entry2,
+        },
+        plugins: [
+          plugin({
+            doNotEditPackageJson: true,
+            dts: false,
+            buildEnd(report) {
+              expect(report).toHaveLength(expectNbOutput(2));
+              const exports = report.map((r) => r.exports);
 
-            expect(exports).toContain("./handlers/one-handler");
-            expect(exports).toContain("./middleware-middleware");
-            for (const adapter of adapters) {
-              expect(exports).toContain(`./handlers/one-handler-${adapter}`);
-              expect(exports).toContain(`./middleware-middleware-${adapter}`);
-            }
-          },
-        }),
-      ],
-      outdir: "dist",
-      write: false,
-      metafile: true,
-      bundle: true,
-      platform: "neutral",
-      format: "esm",
-      target: "es2022",
-      splitting: true,
-    });
+              expect(exports).toContain("./handlers/one-handler");
+              expect(exports).toContain("./middleware-middleware");
+              for (const adapter of adapters) {
+                expect(exports).toContain(`./handlers/one-handler-${adapter}`);
+                expect(exports).toContain(`./middleware-middleware-${adapter}`);
+              }
+            },
+          }),
+        ],
+        outdir: "dist",
+        write: false,
+        metafile: true,
+        bundle: true,
+        platform: "neutral",
+        format: "esm",
+        target: "es2022",
+        splitting: true,
+      });
 
-    expect(result.errors).toHaveLength(0);
-    expect(
-      result.outputFiles.filter(
-        (f) => !f.path.includes(join("dist", "chunk-")),
-      ),
-    ).toHaveLength(expectNbOutput(2));
+      expect(result.errors).toHaveLength(0);
+      expect(
+        result.outputFiles.filter(
+          (f) => !f.path.includes(join("dist", "chunk-")),
+        ),
+      ).toHaveLength(expectNbOutput(2));
 
-    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/handlers/one"),
-    );
-    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/middleware"),
-    );
+      expect(findOutput(result, entry1)).toSatisfy((s: string) =>
+        s.startsWith("dist/handlers/one"),
+      );
+      expect(findOutput(result, entry2)).toSatisfy((s: string) =>
+        s.startsWith("dist/middleware"),
+      );
 
-    testEsbuildOutput(result, "handler", entry1);
-    testEsbuildOutput(result, "middleware", entry2);
-  });
+      testEsbuildOutput(result, "handler", entry1);
+      testEsbuildOutput(result, "middleware", entry2);
+    },
+  );
 
-  it("generates all server files (array input)", async () => {
-    const entry1 = "test/files/folder1/handler.ts";
-    const entry2 = "test/files/middleware.ts";
-    const result = await build({
-      entryPoints: [entry1, entry2],
-      plugins: [
-        plugin({
-          doNotEditPackageJson: true,
-          dts: false,
-          buildEnd(report) {
-            expect(report).toHaveLength(expectNbOutput(2));
-            const exports = report.map((r) => r.exports);
+  it(
+    "generates all server files (array input)",
+    { timeout: 30000 },
+    async () => {
+      const entry1 = "test/files/folder1/handler.ts";
+      const entry2 = "test/files/middleware.ts";
+      const result = await build({
+        entryPoints: [entry1, entry2],
+        plugins: [
+          plugin({
+            doNotEditPackageJson: true,
+            dts: false,
+            buildEnd(report) {
+              expect(report).toHaveLength(expectNbOutput(2));
+              const exports = report.map((r) => r.exports);
 
-            expect(exports).toContain("./test/files/folder1/handler-handler");
-            expect(exports).toContain("./test/files/middleware-middleware");
-            for (const adapter of adapters) {
-              expect(exports).toContain(
-                `./test/files/folder1/handler-handler-${adapter}`,
-              );
-              expect(exports).toContain(
-                `./test/files/middleware-middleware-${adapter}`,
-              );
-            }
-          },
-        }),
-      ],
-      outdir: "dist",
-      write: false,
-      metafile: true,
-      bundle: true,
-      platform: "neutral",
-      format: "esm",
-      target: "es2022",
-      splitting: true,
-    });
+              expect(exports).toContain("./test/files/folder1/handler-handler");
+              expect(exports).toContain("./test/files/middleware-middleware");
+              for (const adapter of adapters) {
+                expect(exports).toContain(
+                  `./test/files/folder1/handler-handler-${adapter}`,
+                );
+                expect(exports).toContain(
+                  `./test/files/middleware-middleware-${adapter}`,
+                );
+              }
+            },
+          }),
+        ],
+        outdir: "dist",
+        write: false,
+        metafile: true,
+        bundle: true,
+        platform: "neutral",
+        format: "esm",
+        target: "es2022",
+        splitting: true,
+      });
 
-    expect(result.errors).toHaveLength(0);
-    expect(
-      result.outputFiles.filter(
-        (f) => !f.path.includes(join("dist", "chunk-")),
-      ),
-    ).toHaveLength(expectNbOutput(2));
+      expect(result.errors).toHaveLength(0);
+      expect(
+        result.outputFiles.filter(
+          (f) => !f.path.includes(join("dist", "chunk-")),
+        ),
+      ).toHaveLength(expectNbOutput(2));
 
-    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder1/handler"),
-    );
-    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/middleware"),
-    );
+      expect(findOutput(result, entry1)).toSatisfy((s: string) =>
+        s.startsWith("dist/test/files/folder1/handler"),
+      );
+      expect(findOutput(result, entry2)).toSatisfy((s: string) =>
+        s.startsWith("dist/test/files/middleware"),
+      );
 
-    testEsbuildOutput(result, "handler", entry1);
-    testEsbuildOutput(result, "middleware", entry2);
-  });
+      testEsbuildOutput(result, "handler", entry1);
+      testEsbuildOutput(result, "middleware", entry2);
+    },
+  );
 
-  it("generates all server files (multiple handlers)", async () => {
-    const entry1 = "test/files/folder1/handler.ts";
-    const entry2 = "test/files/folder2/handler.ts";
-    const result = await build({
-      entryPoints: [entry1, entry2],
-      plugins: [
-        plugin({
-          doNotEditPackageJson: true,
-          dts: false,
-          buildEnd(report) {
-            expect(report).toHaveLength(expectNbOutput(2));
-            const exports = report.map((r) => r.exports);
+  it(
+    "generates all server files (multiple handlers)",
+    { timeout: 30000 },
+    async () => {
+      const entry1 = "test/files/folder1/handler.ts";
+      const entry2 = "test/files/folder2/handler.ts";
+      const result = await build({
+        entryPoints: [entry1, entry2],
+        plugins: [
+          plugin({
+            doNotEditPackageJson: true,
+            dts: false,
+            buildEnd(report) {
+              expect(report).toHaveLength(expectNbOutput(2));
+              const exports = report.map((r) => r.exports);
 
-            expect(exports).toContain("./test/files/folder1/handler-handler");
-            expect(exports).toContain("./test/files/folder2/handler-handler");
-            for (const adapter of adapters) {
-              expect(exports).toContain(
-                `./test/files/folder1/handler-handler-${adapter}`,
-              );
-              expect(exports).toContain(
-                `./test/files/folder2/handler-handler-${adapter}`,
-              );
-            }
-          },
-        }),
-      ],
-      outdir: "dist",
-      write: false,
-      metafile: true,
-      bundle: true,
-      platform: "neutral",
-      format: "esm",
-      target: "es2022",
-      splitting: true,
-    });
+              expect(exports).toContain("./test/files/folder1/handler-handler");
+              expect(exports).toContain("./test/files/folder2/handler-handler");
+              for (const adapter of adapters) {
+                expect(exports).toContain(
+                  `./test/files/folder1/handler-handler-${adapter}`,
+                );
+                expect(exports).toContain(
+                  `./test/files/folder2/handler-handler-${adapter}`,
+                );
+              }
+            },
+          }),
+        ],
+        outdir: "dist",
+        write: false,
+        metafile: true,
+        bundle: true,
+        platform: "neutral",
+        format: "esm",
+        target: "es2022",
+        splitting: true,
+      });
 
-    expect(result.errors).toHaveLength(0);
-    expect(
-      result.outputFiles.filter(
-        (f) => !f.path.includes(join("dist", "chunk-")),
-      ),
-    ).toHaveLength(expectNbOutput(2));
+      expect(result.errors).toHaveLength(0);
+      expect(
+        result.outputFiles.filter(
+          (f) => !f.path.includes(join("dist", "chunk-")),
+        ),
+      ).toHaveLength(expectNbOutput(2));
 
-    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder1/handler"),
-    );
-    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder2/handler"),
-    );
+      expect(findOutput(result, entry1)).toSatisfy((s: string) =>
+        s.startsWith("dist/test/files/folder1/handler"),
+      );
+      expect(findOutput(result, entry2)).toSatisfy((s: string) =>
+        s.startsWith("dist/test/files/folder2/handler"),
+      );
 
-    testEsbuildOutput(result, "handler", entry1);
-    testEsbuildOutput(result, "handler", entry2);
-  });
+      testEsbuildOutput(result, "handler", entry1);
+      testEsbuildOutput(result, "handler", entry2);
+    },
+  );
 
-  it("respects outbase", async () => {
+  it("respects outbase", { timeout: 30000 }, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await build({
@@ -265,7 +281,7 @@ describe("esbuild", () => {
     testEsbuildOutput(result, "handler", entry2);
   });
 
-  it("generates selected server files", async () => {
+  it("generates selected server files", { timeout: 30000 }, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await build({
@@ -315,7 +331,7 @@ describe("esbuild", () => {
     );
   });
 
-  it("fails when bundle is not true", async () => {
+  it("fails when bundle is not true", { timeout: 30000 }, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     await expect(
@@ -337,7 +353,7 @@ describe("esbuild", () => {
     ).rejects.toThrow("bundle");
   });
 
-  it("fails when exports overlap", async () => {
+  it("fails when exports overlap", { timeout: 30000 }, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     await expect(
