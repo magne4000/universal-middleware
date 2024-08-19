@@ -8,7 +8,7 @@ Supports the following adapters:
 - [Hattip](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-hattip)
 - [Webroute](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-webroute)
 - [Fastify](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-fastify)
-- TODO: h3
+- [h3](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-h3)
 - TODO: elysia
 
 ## Who is this for?

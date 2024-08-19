@@ -4,7 +4,11 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import {
+  getAdapterRuntime,
+  isBodyInit,
+  mergeHeadersInto,
+} from "@universal-middleware/core";
 import { createRequestAdapter } from "@universal-middleware/express";
 import type {
   FastifyPluginAsync,
@@ -50,19 +54,6 @@ function patchBody(response: Response) {
   return response;
 }
 
-function isBodyInit(value: unknown): value is BodyInit {
-  return (
-    value === null ||
-    typeof value === "string" ||
-    value instanceof Blob ||
-    value instanceof ArrayBuffer ||
-    ArrayBuffer.isView(value) ||
-    value instanceof FormData ||
-    value instanceof URLSearchParams ||
-    value instanceof ReadableStream
-  );
-}
-
 function getHeaders(reply: FastifyReply): Headers {
   const ret = new Headers();
   const headers = reply.getHeaders();
@@ -96,22 +87,6 @@ function getHeaders(reply: FastifyReply): Headers {
   });
 
   return ret;
-}
-
-function mergeHeadersInto(first: Headers, ...sources: Headers[]) {
-  for (const source of sources) {
-    const headers: Headers = new Headers(source);
-
-    for (const [key, value] of headers.entries()) {
-      if (key === "set-cookie") {
-        if (!first.getSetCookie().includes(value)) first.append(key, value);
-      } else {
-        if (first.get(key) !== value) first.set(key, value);
-      }
-    }
-  }
-
-  return first;
 }
 
 export function createHandler<
@@ -185,6 +160,7 @@ export function createMiddleware<
             );
           }
           request[pendingMiddlewaresSymbol] ??= [];
+          request[wrappedResponseSymbol] = false;
           // `wrapResponse` takes care of calling those middlewares right before sending the response
           request[pendingMiddlewaresSymbol].push(response);
         } else if (response instanceof Response) {
@@ -199,7 +175,7 @@ export function createMiddleware<
       });
 
       instance.addHook("onSend", async (request, reply, payload) => {
-        if (request[wrappedResponseSymbol]) return payload;
+        if (request[wrappedResponseSymbol] !== false) return payload;
         request[wrappedResponseSymbol] = true;
 
         if (payload instanceof Response) {

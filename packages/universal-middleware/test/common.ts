@@ -6,6 +6,7 @@ export const adapters = [
   "hattip",
   "webroute",
   "fastify",
+  "h3",
 ] as const;
 
 // flaky tests on Windows

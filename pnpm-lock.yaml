@@ -11,6 +11,7 @@ overrides:
   '@universal-middleware/hattip': link:./packages/adapter-hattip
   '@universal-middleware/webroute': link:./packages/adapter-webroute
   '@universal-middleware/fastify': link:./packages/adapter-fastify
+  '@universal-middleware/h3': link:./packages/adapter-h3
   universal-middleware: link:./packages/universal-middleware
   '@webroute/middleware': ^0.9.0
   esbuild: ^0.23.1
@@ -131,6 +132,9 @@ importers:
       '@universal-middleware/fastify':
         specifier: link:../../packages/adapter-fastify
         version: link:../../packages/adapter-fastify
+      '@universal-middleware/h3':
+        specifier: link:../../packages/adapter-h3
+        version: link:../../packages/adapter-h3
       '@universal-middleware/hattip':
         specifier: link:../../packages/adapter-hattip
         version: link:../../packages/adapter-hattip
@@ -233,6 +237,43 @@ importers:
       fastify-plugin:
         specifier: ^4.5.1
         version: 4.5.1
+      rimraf:
+        specifier: ^6.0.0
+        version: 6.0.1
+      tsup:
+        specifier: ^8.2.4
+        version: 8.2.4(@swc/core@1.7.11)(postcss@8.4.41)(tsx@4.17.0)(typescript@5.5.4)
+      tsx:
+        specifier: ^4.17.0
+        version: 4.17.0
+      typescript:
+        specifier: ^5.5.4
+        version: 5.5.4
+      vitest:
+        specifier: ^2.0.5
+        version: 2.0.5(@types/node@20.16.0)
+
+  packages/adapter-h3:
+    dependencies:
+      '@universal-middleware/core':
+        specifier: link:../core
+        version: link:../core
+    devDependencies:
+      '@brillout/release-me':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@swc/core':
+        specifier: ^1.7.11
+        version: 1.7.11
+      '@types/node':
+        specifier: ^20.14.10
+        version: 20.16.0
+      '@universal-middleware/tests':
+        specifier: workspace:*
+        version: link:../tests
+      h3:
+        specifier: ^1.12.0
+        version: 1.12.0
       rimraf:
         specifier: ^6.0.0
         version: 6.0.1
@@ -532,6 +573,12 @@ importers:
       '@universal-middleware/express':
         specifier: link:../../packages/adapter-express
         version: link:../../packages/adapter-express
+      '@universal-middleware/fastify':
+        specifier: link:../../packages/adapter-fastify
+        version: link:../../packages/adapter-fastify
+      '@universal-middleware/h3':
+        specifier: link:../../packages/adapter-h3
+        version: link:../../packages/adapter-h3
       '@universal-middleware/hattip':
         specifier: link:../../packages/adapter-hattip
         version: link:../../packages/adapter-hattip
@@ -544,6 +591,9 @@ importers:
       fastify:
         specifier: ^4.28.1
         version: 4.28.1
+      h3:
+        specifier: ^1.12.0
+        version: 1.12.0
       hono:
         specifier: ^4.5.6
         version: 4.5.6
