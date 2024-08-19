@@ -56,7 +56,7 @@
     "@universal-middleware/express": "^0.2.1",
     "@universal-middleware/hattip": "^0.2.1",
     "@universal-middleware/hono": "^0.2.1",
-    "@universal-middleware/webroute": "^0.2.0",
+    "@universal-middleware/webroute": "^0.2.1",
     "@universal-middleware/fastify": "^0.2.1",
     "oxc-transform": "^0.24.3",
     "package-up": "^5.0.0",
