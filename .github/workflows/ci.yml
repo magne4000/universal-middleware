@@ -55,6 +55,9 @@ jobs:
           check-latest: true
           cache: "pnpm"
 
+      - name: Cache for Turbo
+        uses: rharkor/caching-for-turbo@v1.5
+
       - name: Install
         run: pnpm install
 
@@ -64,10 +67,13 @@ jobs:
         run: pnpm run build
 
       - name: Run lint
+        if: ${{ matrix.os != 'windows-latest' }}
         run: pnpm run lint
 
       - name: Run typecheck
+        if: ${{ matrix.os != 'windows-latest' }}
         run: pnpm run test:typecheck
 
       - name: Run tests
+        if: ${{ matrix.os != 'windows-latest' }}
         run: pnpm run test

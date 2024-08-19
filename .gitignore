@@ -129,5 +129,11 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# temp
 .DS_Store
+
+# IDE
 .idea
+
+# turbo
+.turbo

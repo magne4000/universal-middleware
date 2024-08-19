@@ -1,0 +1,13 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "outputs": ["dist/**"],
+      "dependsOn": [
+        "^build",
+        "@universal-middleware/core#build",
+        "@universal-middleware/express#build"
+      ]
+    }
+  }
+}

@@ -4,11 +4,10 @@ import { describe, expect, it } from "vitest";
 import { build, type BuildResult } from "esbuild";
 import plugin from "../src/esbuild";
 import { join } from "node:path";
-
-const adapters = ["hono", "express", "hattip", "webroute"] as const;
+import { adapters, options } from "./common";
 
 describe("esbuild", () => {
-  it("generates all server files (in/out input)", async () => {
+  it("generates all server files (in/out input)", options, async () => {
     const entry = "test/files/folder1/handler.ts";
     const result = await build({
       entryPoints: [{ out: "handler", in: entry }],
@@ -52,7 +51,7 @@ describe("esbuild", () => {
     testEsbuildOutput(result, "handler", entry);
   });
 
-  it("generates all server files (object input)", async () => {
+  it("generates all server files (object input)", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/middleware.ts";
     const result = await build({
@@ -105,7 +104,7 @@ describe("esbuild", () => {
     testEsbuildOutput(result, "middleware", entry2);
   });
 
-  it("generates all server files (array input)", async () => {
+  it("generates all server files (array input)", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/middleware.ts";
     const result = await build({
@@ -159,7 +158,7 @@ describe("esbuild", () => {
     testEsbuildOutput(result, "middleware", entry2);
   });
 
-  it("generates all server files (multiple handlers)", async () => {
+  it("generates all server files (multiple handlers)", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await build({
@@ -213,7 +212,7 @@ describe("esbuild", () => {
     testEsbuildOutput(result, "handler", entry2);
   });
 
-  it("respects outbase", async () => {
+  it("respects outbase", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await build({
@@ -265,7 +264,7 @@ describe("esbuild", () => {
     testEsbuildOutput(result, "handler", entry2);
   });
 
-  it("generates selected server files", async () => {
+  it("generates selected server files", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await build({
@@ -315,7 +314,7 @@ describe("esbuild", () => {
     );
   });
 
-  it("fails when bundle is not true", async () => {
+  it("fails when bundle is not true", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     await expect(
@@ -337,7 +336,7 @@ describe("esbuild", () => {
     ).rejects.toThrow("bundle");
   });
 
-  it("fails when exports overlap", async () => {
+  it("fails when exports overlap", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     await expect(

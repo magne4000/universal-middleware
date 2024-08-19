@@ -6,11 +6,10 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import plugin from "../src/rollup";
 import { join, parse } from "node:path";
-
-const adapters = ["hono", "express", "hattip", "webroute"] as const;
+import { adapters, options } from "./common";
 
 describe("rollup", () => {
-  it("generates all server files (string input)", async () => {
+  it("generates all server files (string input)", options, async () => {
     const entry = "test/files/folder1/handler.ts";
     const result = await rollup({
       input: entry,
@@ -55,7 +54,7 @@ describe("rollup", () => {
     testRollupOutput(gen, "handler", entry);
   });
 
-  it("generates all server files (object input)", async () => {
+  it("generates all server files (object input)", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/middleware.ts";
     const result = await rollup({
@@ -109,7 +108,7 @@ describe("rollup", () => {
     testRollupOutput(gen, "middleware", entry2);
   });
 
-  it("generates all server files (array input)", async () => {
+  it("generates all server files (array input)", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/middleware.ts";
     const result = await rollup({
@@ -164,7 +163,7 @@ describe("rollup", () => {
     testRollupOutput(gen, "middleware", entry2);
   });
 
-  it("generates all server files (multiple handlers)", async () => {
+  it("generates all server files (multiple handlers)", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await rollup({
@@ -219,7 +218,7 @@ describe("rollup", () => {
     testRollupOutput(gen, "handler", entry2);
   });
 
-  it("generates selected server files", async () => {
+  it("generates selected server files", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
     const result = await rollup({
@@ -270,7 +269,7 @@ describe("rollup", () => {
     expect(handler2?.name).toEqual(join("test", "files", "folder2", "handler"));
   });
 
-  it("fails when exports overlap", async () => {
+  it("fails when exports overlap", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
 

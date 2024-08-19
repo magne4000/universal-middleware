@@ -32,7 +32,13 @@ interface BundleInfo {
   exports: string;
 }
 
-const defaultWrappers = ["hono", "express", "hattip", "webroute"] as const;
+const defaultWrappers = [
+  "hono",
+  "express",
+  "hattip",
+  "webroute",
+  "fastify",
+] as const;
 const namespace = "virtual:universal-middleware";
 const externals = defaultWrappers.map((w) => `@universal-middleware/${w}`);
 const versionRange = "^0";
@@ -190,6 +196,10 @@ const typesByServer: Record<
   hattip: {
     middleware: "HattipMiddleware",
     handler: "HattipHandler",
+  },
+  fastify: {
+    middleware: "FastifyMiddleware",
+    handler: "FastifyHandler",
   },
   webroute: {
     middleware: "WebrouteMiddleware",
