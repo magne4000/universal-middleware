@@ -1,11 +1,14 @@
-export { testRun };
-
 import { expect, fetch, getServerUrl, run, test } from "@brillout/test-e2e";
 
-function testRun(cmd: `pnpm run dev`) {
-  run(cmd, {
+export function testRun(
+  cmd: `pnpm run dev:${"hono" | "express" | "fastify" | "hattip"}`,
+  port: number,
+  serverIsReadyMessage?: string,
+) {
+  run(`${cmd} --port ${port}`, {
     doNotFailOnWarning: true,
-    serverIsReadyMessage: "ready",
+    serverUrl: `http://localhost:${port}`,
+    serverIsReadyMessage: serverIsReadyMessage ?? "Server listening",
   });
 
   test("/", async () => {
@@ -17,5 +20,3 @@ function testRun(cmd: `pnpm run dev`) {
     expect(response.headers.has("x-custom-header")).toBe(true);
   });
 }
-
-testRun("pnpm run dev");

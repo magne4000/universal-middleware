@@ -7,7 +7,10 @@
   "repository": "https://github.com/magne4000/universal-handler",
   "license": "MIT",
   "scripts": {
-    "dev": "vite --port 3000",
+    "dev:hono": "vite --port 3000",
+    "dev:express": "node --loader @swc-node/register/esm src/express-entry.ts",
+    "dev:fastify": "node --loader @swc-node/register/esm src/fastify-entry.ts",
+    "dev:hattip": "node --loader @swc-node/register/esm src/hattip-entry.ts",
     "test:e2e": "test-e2e",
     "test:types": "vitest --typecheck",
     "test": "run-s \"test:types run\" test:e2e",
@@ -16,6 +19,7 @@
   "devDependencies": {
     "@brillout/test-e2e": "^0.5.34",
     "@hono/vite-dev-server": "^0.14.0",
+    "@swc-node/register": "^1.10.9",
     "@types/node": "^20.14.10",
     "@universal-middleware-examples/tool": "workspace:*",
     "@universal-middleware/core": "workspace:*",
@@ -23,11 +27,12 @@
     "@universal-middleware/hattip": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
     "@universal-middleware/webroute": "workspace:*",
+    "fastify": "^4.28.1",
     "hono": "^4.5.6",
+    "mri": "^1.2.0",
     "npm-run-all2": "^6.2.2",
     "playwright": "^1.46.1",
     "rimraf": "^6.0.0",
-    "tsx": "^4.17.0",
     "typescript": "^5.5.4",
     "vite": "^5.4.1",
     "vitest": "^2.0.5"
