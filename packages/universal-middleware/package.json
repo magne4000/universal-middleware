@@ -54,7 +54,7 @@
   "dependencies": {
     "@universal-middleware/core": "^0.2.0",
     "@universal-middleware/express": "^0.2.0",
-    "@universal-middleware/hattip": "^0.2.0",
+    "@universal-middleware/hattip": "^0.3.0",
     "@universal-middleware/hono": "^0.2.0",
     "@universal-middleware/webroute": "^0.2.0",
     "@universal-middleware/fastify": "^0.1.1",
