@@ -12,10 +12,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "build": "turbo build",
     "test": "turbo test",
-    "test:typecheck": "turbo test:typecheck",
-    "release": "turbo release",
-    "release:minor": "turbo release:minor",
-    "release:commit": "turbo release:commit"
+    "test:typecheck": "turbo test:typecheck"
   },
   "keywords": [],
   "author": "",
