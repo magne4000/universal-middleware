@@ -38,6 +38,7 @@ const defaultWrappers = [
   "hattip",
   "webroute",
   "fastify",
+  "h3",
 ] as const;
 const namespace = "virtual:universal-middleware";
 const externals = defaultWrappers.map((w) => `@universal-middleware/${w}`);
@@ -200,6 +201,10 @@ const typesByServer: Record<
   fastify: {
     middleware: "FastifyMiddleware",
     handler: "FastifyHandler",
+  },
+  h3: {
+    middleware: "H3Middleware",
+    handler: "H3Handler",
   },
   webroute: {
     middleware: "WebrouteMiddleware",

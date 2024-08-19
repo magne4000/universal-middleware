@@ -11,6 +11,7 @@ overrides:
   '@universal-middleware/hattip': link:./packages/adapter-hattip
   '@universal-middleware/webroute': link:./packages/adapter-webroute
   '@universal-middleware/fastify': link:./packages/adapter-fastify
+  '@universal-middleware/h3': link:./packages/adapter-h3
   universal-middleware: link:./packages/universal-middleware
   '@webroute/middleware': ^0.9.0
   esbuild: ^0.23.1
@@ -131,6 +132,9 @@ importers:
       '@universal-middleware/fastify':
         specifier: link:../../packages/adapter-fastify
         version: link:../../packages/adapter-fastify
+      '@universal-middleware/h3':
+        specifier: link:../../packages/adapter-h3
+        version: link:../../packages/adapter-h3
       '@universal-middleware/hattip':
         specifier: link:../../packages/adapter-hattip
         version: link:../../packages/adapter-hattip
@@ -569,6 +573,12 @@ importers:
       '@universal-middleware/express':
         specifier: link:../../packages/adapter-express
         version: link:../../packages/adapter-express
+      '@universal-middleware/fastify':
+        specifier: link:../../packages/adapter-fastify
+        version: link:../../packages/adapter-fastify
+      '@universal-middleware/h3':
+        specifier: link:../../packages/adapter-h3
+        version: link:../../packages/adapter-h3
       '@universal-middleware/hattip':
         specifier: link:../../packages/adapter-hattip
         version: link:../../packages/adapter-hattip
@@ -581,6 +591,9 @@ importers:
       fastify:
         specifier: ^4.28.1
         version: 4.28.1
+      h3:
+        specifier: ^1.12.0
+        version: 1.12.0
       hono:
         specifier: ^4.5.6
         version: 4.5.6

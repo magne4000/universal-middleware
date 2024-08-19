@@ -62,6 +62,7 @@
       "@universal-middleware/hattip": "link:./packages/adapter-hattip",
       "@universal-middleware/webroute": "link:./packages/adapter-webroute",
       "@universal-middleware/fastify": "link:./packages/adapter-fastify",
+      "@universal-middleware/h3": "link:./packages/adapter-h3",
       "universal-middleware": "link:./packages/universal-middleware",
       "@webroute/middleware": "^0.9.0",
       "esbuild": "^0.23.1"

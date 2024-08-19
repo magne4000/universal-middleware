@@ -11,6 +11,12 @@ import hattipHandler from "@universal-middleware-examples/tool/dummy-handler-hat
 import webrouteContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-webroute";
 import webrouteHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-webroute";
 import webrouteHandler from "@universal-middleware-examples/tool/dummy-handler-webroute";
+import fastifyContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-fastify";
+import fastifyHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-fastify";
+import fastifyHandler from "@universal-middleware-examples/tool/dummy-handler-fastify";
+import h3ContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-h3";
+import h3HeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-h3";
+import h3Handler from "@universal-middleware-examples/tool/dummy-handler-h3";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware";
 import handler from "@universal-middleware-examples/tool/dummy-handler";
@@ -31,6 +37,11 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
+import type {
+  FastifyHandler,
+  FastifyMiddleware,
+} from "@universal-middleware/fastify";
+import type { H3Handler, H3Middleware } from "@universal-middleware/h3";
 
 test("hono", () => {
   expectTypeOf(honoContextMiddleware).returns.toEqualTypeOf<HonoMiddleware>();
@@ -68,6 +79,22 @@ test("webroute", () => {
   expectTypeOf(webrouteHandler).returns.toEqualTypeOf<
     WebrouteHandler<Universal.Context, Universal.Context>
   >();
+});
+
+test("fastify", () => {
+  expectTypeOf(
+    fastifyContextMiddleware,
+  ).returns.toEqualTypeOf<FastifyMiddleware>();
+  expectTypeOf(
+    fastifyHeadersMiddleware,
+  ).returns.toEqualTypeOf<FastifyMiddleware>();
+  expectTypeOf(fastifyHandler).returns.toEqualTypeOf<FastifyHandler>();
+});
+
+test("h3", () => {
+  expectTypeOf(h3ContextMiddleware).returns.toEqualTypeOf<H3Middleware>();
+  expectTypeOf(h3HeadersMiddleware).returns.toEqualTypeOf<H3Middleware>();
+  expectTypeOf(h3Handler).returns.toEqualTypeOf<H3Handler>();
 });
 
 test("generic", () => {
