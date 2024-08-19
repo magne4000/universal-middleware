@@ -15,9 +15,16 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-webroute/dist" />
       <excludeFolder url="file://$MODULE_DIR$/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/examples/tool/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-express/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-fastify/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-fastify/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-hattip/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-hono/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-webroute/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/core/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/tests/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/universal-middleware/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/tests-examples/tests-tool/.turbo" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
