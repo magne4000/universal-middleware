@@ -249,6 +249,43 @@ importers:
         specifier: ^2.0.5
         version: 2.0.5(@types/node@20.16.0)
 
+  packages/adapter-h3:
+    dependencies:
+      '@universal-middleware/core':
+        specifier: link:../core
+        version: link:../core
+    devDependencies:
+      '@brillout/release-me':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@swc/core':
+        specifier: ^1.7.11
+        version: 1.7.11
+      '@types/node':
+        specifier: ^20.14.10
+        version: 20.16.0
+      '@universal-middleware/tests':
+        specifier: workspace:*
+        version: link:../tests
+      h3:
+        specifier: ^1.12.0
+        version: 1.12.0
+      rimraf:
+        specifier: ^6.0.0
+        version: 6.0.1
+      tsup:
+        specifier: ^8.2.4
+        version: 8.2.4(@swc/core@1.7.11)(postcss@8.4.41)(tsx@4.17.0)(typescript@5.5.4)
+      tsx:
+        specifier: ^4.17.0
+        version: 4.17.0
+      typescript:
+        specifier: ^5.5.4
+        version: 5.5.4
+      vitest:
+        specifier: ^2.0.5
+        version: 2.0.5(@types/node@20.16.0)
+
   packages/adapter-hattip:
     dependencies:
       '@universal-middleware/core':

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type { OutgoingHttpHeaders, ServerResponse } from "node:http";
+import type { ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
 import {
@@ -8,6 +8,7 @@ import {
   pendingMiddlewaresSymbol,
   wrappedResponseSymbol,
 } from "./common.js";
+import { nodeHeadersToWeb } from "@universal-middleware/core";
 
 // @ts-ignore
 const deno = typeof Deno !== "undefined";
@@ -96,7 +97,7 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
           new Response(null, {
             status: nodeResponse.statusCode,
             statusText: nodeResponse.statusMessage,
-            headers: adaptHeaders(nodeResponse.getHeaders()),
+            headers: nodeHeadersToWeb(nodeResponse.getHeaders()),
           }),
         ),
       );
@@ -144,24 +145,4 @@ function setHeaders(
     // delete remaining node headers
     nodeResponseHeaders.forEach((key) => nodeResponse.removeHeader(key));
   }
-}
-
-function adaptHeaders(nodeHeaders: OutgoingHttpHeaders): [string, string][] {
-  const headers: [string, string][] = [];
-
-  const keys = Object.keys(nodeHeaders);
-  for (const key of keys) {
-    headers.push([key, normalizeHttpHeader(nodeHeaders[key])]);
-  }
-
-  return headers;
-}
-
-function normalizeHttpHeader(
-  value: string | string[] | number | undefined,
-): string {
-  if (Array.isArray(value)) {
-    return value.join(", ");
-  }
-  return (value as string) || "";
 }
