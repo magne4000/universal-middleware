@@ -96,7 +96,7 @@ export interface UniversalMiddleware<
   ):
     | Awaitable<Response>
     | Awaitable<void>
-    | Awaitable<OutContext>
+    | Awaitable<OutContext | undefined>
     | ((response: Response) => Awaitable<Response>);
 }
 
