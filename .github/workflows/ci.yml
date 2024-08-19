@@ -55,6 +55,9 @@ jobs:
           check-latest: true
           cache: "pnpm"
 
+      - name: Cache for Turbo
+        uses: rharkor/caching-for-turbo@v1.5
+
       - name: Install
         run: pnpm install
 
