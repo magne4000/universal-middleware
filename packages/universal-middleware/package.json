@@ -52,7 +52,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@universal-middleware/core": "^0.2.1",
+    "@universal-middleware/core": "^0.2.2",
     "@universal-middleware/express": "^0.2.1",
     "@universal-middleware/hattip": "^0.2.1",
     "@universal-middleware/hono": "^0.2.1",

@@ -26,7 +26,7 @@
     "release:commit": "LANG=en_US release-me commit"
   },
   "dependencies": {
-    "@universal-middleware/core": "^0.2.1"
+    "@universal-middleware/core": "^0.2.2"
   },
   "devDependencies": {
     "@brillout/release-me": "^0.4.0",
