@@ -98,6 +98,22 @@ function getHeaders(reply: FastifyReply): Headers {
   return ret;
 }
 
+function mergeHeadersInto(first: Headers, ...sources: Headers[]) {
+  for (const source of sources) {
+    const headers: Headers = new Headers(source);
+
+    for (const [key, value] of headers.entries()) {
+      if (key === "set-cookie") {
+        if (!first.getSetCookie().includes(value)) first.append(key, value);
+      } else {
+        if (first.get(key) !== value) first.set(key, value);
+      }
+    }
+  }
+
+  return first;
+}
+
 export function createHandler<
   T extends unknown[],
   InContext extends Universal.Context,
@@ -187,7 +203,7 @@ export function createMiddleware<
         request[wrappedResponseSymbol] = true;
 
         if (payload instanceof Response) {
-          // good
+          mergeHeadersInto(payload.headers, getHeaders(reply));
         } else if (isBodyInit(payload)) {
           payload = new Response(payload, {
             headers: new Headers(getHeaders(reply)),

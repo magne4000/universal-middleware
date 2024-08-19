@@ -19,7 +19,6 @@
     "test": "vitest run",
     "test:run-fastify:node": "tsx tests/entry-fastify.ts",
     "test:run-fastify:bun": "bun tests/entry-fastify.ts",
-    "test:run-fastify:deno": "deno run --unstable-byonm --unstable-sloppy-imports -A tests/entry-fastify.ts",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "release": "LANG=en_US release-me patch",
     "release:minor": "LANG=en_US release-me minor",

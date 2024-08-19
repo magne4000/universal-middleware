@@ -14,11 +14,7 @@ const runs: Run[] = [
     command: "pnpm run test:run-fastify:bun",
     port: port++,
   },
-  {
-    name: "adapter-fastify: deno",
-    command: "pnpm run test:run-fastify:deno",
-    port: port++,
-  },
+  // Fastify is NOT deno compatible
 ];
 
 runTests(runs, {
