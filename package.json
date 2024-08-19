@@ -13,9 +13,9 @@
     "build": "turbo build",
     "test": "turbo test",
     "test:typecheck": "turbo test:typecheck",
-    "release": "turbo release --ui tui",
-    "release:minor": "turbo release:minor --ui tui",
-    "release:commit": "turbo release:commit --ui tui"
+    "release": "turbo release --ui tui --env-mode loose",
+    "release:minor": "turbo release:minor --ui tui --env-mode loose",
+    "release:commit": "turbo release:commit --ui tui --env-mode loose"
   },
   "keywords": [],
   "author": "",
