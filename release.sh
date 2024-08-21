@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# TODO: Use pnpm m ls --only-projects --json
+
 # Exit immediately if a command exits with a non-zero status
 set -e
 
