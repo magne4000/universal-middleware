@@ -14,7 +14,7 @@
   "license": "MIT",
   "scripts": {
     "build": "rimraf dist && tsup",
-    "test": "vitest --typecheck",
+    "test": "vitest --typecheck run",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "release": "LANG=en_US release-me patch",
