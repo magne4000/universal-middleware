@@ -27,7 +27,7 @@ prompt_and_release() {
     local package=$1
 
     # Prompt the user with multiple choices
-    echo "Please choose an option:"
+    echo "[package: $1] Please choose an option:"
     echo "1) release"
     echo "2) release:minor"
     echo "3) release:commit"
