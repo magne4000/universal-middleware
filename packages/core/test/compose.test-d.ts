@@ -11,7 +11,7 @@ type M2 = UniversalMiddleware<{ a: 1; b: 2 }, { a: 1; b: 2; c: 3 }>;
 type M3 = UniversalMiddleware<{ a: 1; b: 2; c: 3 }, { a: 1; b: 2; c: 3 }>;
 type H1 = UniversalHandler<{ a: 1; b: 2; c: 3 }>;
 
-test("compose", () => {
+test("pipe", () => {
   const m1: M1 = {} as any;
   const m2: M2 = {} as any;
   const m3: M3 = {} as any;
