@@ -69,7 +69,7 @@
     "@universal-middleware/express": "^0.2.2",
     "@universal-middleware/hattip": "^0.2.2",
     "@universal-middleware/hono": "^0.2.2",
-    "@universal-middleware/webroute": "^0.2.1",
+    "@universal-middleware/webroute": "^0.2.2",
     "@universal-middleware/fastify": "^0.2.2",
     "oxc-transform": "^0.24.3",
     "package-up": "^5.0.0",
