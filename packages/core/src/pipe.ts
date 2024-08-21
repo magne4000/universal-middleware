@@ -33,7 +33,7 @@ type Pipe<F extends UniversalMiddleware<any, any>[]> = F extends []
         ? [...Pipe<[...X, Y]>, UniversalMiddleware<Out<Y>, D1>]
         : never;
 
-export function compose<F extends UniversalMiddleware<any, any>[]>(
+export function pipe<F extends UniversalMiddleware<any, any>[]>(
   ...a: Pipe<F>
 ): ComposeReturnType<F> {
   const middlewares = a as UniversalMiddleware[];

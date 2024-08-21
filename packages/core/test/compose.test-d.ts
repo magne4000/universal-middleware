@@ -4,7 +4,7 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { compose } from "../src/compose";
+import { pipe } from "../src/pipe";
 
 type M1 = UniversalMiddleware<{ a: 1 }, { a: 1; b: 2 }>;
 type M2 = UniversalMiddleware<{ a: 1; b: 2 }, { a: 1; b: 2; c: 3 }>;
@@ -17,21 +17,21 @@ test("compose", () => {
   const m3: M3 = {} as any;
   const h1: H1 = {} as any;
 
-  expectTypeOf(compose(m3, h1)).toEqualTypeOf<
+  expectTypeOf(pipe(m3, h1)).toEqualTypeOf<
     UniversalHandler<{ a: 1; b: 2; c: 3 }>
   >(h1);
   expectTypeOf(
-    compose(
+    pipe(
       m1,
       // @ts-expect-error
       h1,
     ),
   ).toEqualTypeOf<UniversalHandler<{ a: 1 }>>();
-  expectTypeOf(compose(m1, m2, m3, h1)).toEqualTypeOf<
+  expectTypeOf(pipe(m1, m2, m3, h1)).toEqualTypeOf<
     UniversalHandler<{ a: 1 }>
   >();
   expectTypeOf(
-    compose(
+    pipe(
       m1,
       m1,
       // @ts-expect-error
@@ -39,7 +39,7 @@ test("compose", () => {
     ),
   ).toEqualTypeOf<UniversalHandler<{ a: 1 }>>();
   expectTypeOf(
-    compose(
+    pipe(
       m1,
       // @ts-expect-error
       m3,
@@ -47,15 +47,15 @@ test("compose", () => {
     ),
   ).toEqualTypeOf<UniversalHandler<{ a: 1 }>>();
 
-  expectTypeOf(compose(m1, m2, m3)).toEqualTypeOf<
+  expectTypeOf(pipe(m1, m2, m3)).toEqualTypeOf<
     UniversalMiddleware<{ a: 1 }, { a: 1; b: 2; c: 3 }>
   >();
 
   expectTypeOf(
-    compose((_: Request) => new Response(null)),
+    pipe((_: Request) => new Response(null)),
   ).toEqualTypeOf<UniversalHandler>();
   expectTypeOf(
-    compose(
+    pipe(
       () => {
         return {
           a: "1",
