@@ -1,3 +1,7 @@
+## [0.2.2](https://github.com/magne4000/universal-handler/compare/@universal-middleware/fastify@0.2.1...@universal-middleware/fastify@0.2.2) (2024-08-21)
+
+
+
 ## [0.2.1](https://github.com/magne4000/universal-handler/compare/@universal-middleware/fastify@0.2.0...@universal-middleware/fastify@0.2.1) (2024-08-19)
 
 
