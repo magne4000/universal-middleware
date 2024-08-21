@@ -40,5 +40,16 @@
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "keywords": [
+    "hono",
+    "universal-middleware",
+    "middleware",
+    "handlers",
+    "server-adapters",
+    "hono-middleware",
+    "universal-server",
+    "context-middleware",
+    "request-handling"
+  ]
 }

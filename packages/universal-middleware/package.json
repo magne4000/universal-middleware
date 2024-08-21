@@ -12,8 +12,21 @@
     "esbuild",
     "vite",
     "rollup",
+    "tsup",
     "transform",
-    "universal-middleware"
+    "universal-middleware",
+    "middleware",
+    "handlers",
+    "server-adapters",
+    "express-middleware",
+    "hono-middleware",
+    "hattip-middleware",
+    "webroute-middleware",
+    "fastify-middleware",
+    "h3-middleware",
+    "universal-server",
+    "context-middleware",
+    "request-handling"
   ],
   "exports": {
     ".": {

@@ -10,9 +10,6 @@
     ".": "./dist/index.js"
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
-  "contributors": [
-    "Fatih Aygün <cyco130@gmail.com>"
-  ],
   "repository": "https://github.com/magne4000/universal-handler",
   "license": "MIT",
   "scripts": {
@@ -44,5 +41,16 @@
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "keywords": [
+    "express",
+    "universal-middleware",
+    "middleware",
+    "handlers",
+    "server-adapters",
+    "express-middleware",
+    "universal-server",
+    "context-middleware",
+    "request-handling"
+  ]
 }

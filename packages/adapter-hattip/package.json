@@ -46,5 +46,16 @@
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "keywords": [
+    "hattip",
+    "universal-middleware",
+    "middleware",
+    "handlers",
+    "server-adapters",
+    "hattip-middleware",
+    "universal-server",
+    "context-middleware",
+    "request-handling"
+  ]
 }

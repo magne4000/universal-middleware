@@ -40,5 +40,16 @@
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "keywords": [
+    "h3",
+    "universal-middleware",
+    "middleware",
+    "handlers",
+    "server-adapters",
+    "h3-middleware",
+    "universal-server",
+    "context-middleware",
+    "request-handling"
+  ]
 }
