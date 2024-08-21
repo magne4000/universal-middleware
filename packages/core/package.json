@@ -14,9 +14,7 @@
   "license": "MIT",
   "scripts": {
     "build": "rimraf dist && tsup",
-    "test:code": "vitest",
-    "test:types": "vitest --typecheck",
-    "test": "run-s \"test:types run\" \"test:code run\"",
+    "test": "vitest --typecheck",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "release": "LANG=en_US release-me patch",
@@ -28,7 +26,6 @@
     "@swc/core": "^1.7.11",
     "@types/bun": "^1.1.6",
     "@types/node": "^20.14.10",
-    "npm-run-all2": "^6.2.2",
     "rimraf": "^6.0.0",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",

@@ -8,10 +8,15 @@ type In<T> =
     : T extends UniversalMiddleware<infer C, any>
       ? C
       : never;
-type Last<T extends any[]> = T extends [...any[], infer X] ? X : never;
 type First<T extends any[]> = T extends [infer X, ...any[]] ? X : never;
+type Last<T extends any[]> = T extends [...any[], infer X] ? X : never;
 
-type PipeM<F extends UniversalMiddleware<any, any>[]> = F extends []
+type ComposeReturnType<T extends UniversalMiddleware<any, any>[]> =
+  Last<T> extends UniversalHandler<any>
+    ? UniversalHandler<In<First<T>>>
+    : UniversalMiddleware<In<First<T>>, In<Last<T>>>;
+
+type Pipe<F extends UniversalMiddleware<any, any>[]> = F extends []
   ? F
   : F extends [UniversalMiddleware<any, any>]
     ? F
@@ -25,27 +30,12 @@ type PipeM<F extends UniversalMiddleware<any, any>[]> = F extends []
             infer Y extends UniversalMiddleware<any, any>,
             UniversalMiddleware<any, infer D1>,
           ]
-        ? [...PipeM<[...X, Y]>, UniversalMiddleware<Out<Y>, D1>]
+        ? [...Pipe<[...X, Y]>, UniversalMiddleware<Out<Y>, D1>]
         : never;
 
-type Pipe<
-  F extends [...UniversalMiddleware<any, any>[], UniversalHandler<any>],
-> = F extends []
-  ? F
-  : F extends [UniversalHandler<any>]
-    ? F
-    : F extends [UniversalMiddleware<infer A, infer Out>, UniversalHandler<any>]
-      ? [UniversalMiddleware<A, Out>, UniversalHandler<Out>]
-      : F extends [
-            ...infer M extends UniversalMiddleware<any, any>[],
-            UniversalHandler<any>,
-          ]
-        ? [...PipeM<M>, UniversalHandler<Out<Last<M>>>]
-        : never;
-
-export function compose<
-  F extends [...UniversalMiddleware<any, any>[], UniversalHandler<any>],
->(...a: Pipe<F>): UniversalHandler<In<First<F>>> {
+export function compose<F extends UniversalMiddleware<any, any>[]>(
+  ...a: Pipe<F>
+): ComposeReturnType<F> {
   const middlewares = a as UniversalMiddleware[];
   const handler = a.pop() as UniversalHandler;
 

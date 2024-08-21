@@ -47,6 +47,10 @@ test("compose", () => {
     ),
   ).toEqualTypeOf<UniversalHandler<{ a: 1 }>>();
 
+  expectTypeOf(compose(m1, m2, m3)).toEqualTypeOf<
+    UniversalMiddleware<{ a: 1 }, { a: 1; b: 2; c: 3 }>
+  >();
+
   expectTypeOf(
     compose((_: Request) => new Response(null)),
   ).toEqualTypeOf<UniversalHandler>();
