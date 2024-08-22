@@ -94,6 +94,9 @@ export function runTests(runs: Run[], options: Options) {
         options.vitest
           .expect(response.headers.has("x-should-be-removed"))
           .toBe(false);
+        options.vitest
+          .expect(response.headers.get("content-type"))
+          .toBe("application/json; charset=utf-8");
         await options?.test?.(response);
       },
       30_000,
