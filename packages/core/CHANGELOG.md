@@ -1,3 +1,12 @@
+## [0.2.5](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.4...@universal-middleware/core@0.2.5) (2024-08-22)
+
+
+### Features
+
+* pipe universal middlewares ([#19](https://github.com/magne4000/universal-handler/issues/19)) ([c13e8f5](https://github.com/magne4000/universal-handler/commit/c13e8f54634f352a07be3d9e56b4776613ccbda5))
+
+
+
 ## [0.2.4](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.3...@universal-middleware/core@0.2.4) (2024-08-21)
 
 
