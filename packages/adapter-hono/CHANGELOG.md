@@ -1,3 +1,12 @@
+## [0.2.3](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.2...@universal-middleware/hono@0.2.3) (2024-08-22)
+
+
+### Bug Fixes
+
+* **hono:** content-type could be removed in middlewares ([460d7d5](https://github.com/magne4000/universal-handler/commit/460d7d5972d86e77781027207d7feff368290476))
+
+
+
 ## [0.2.2](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.1...@universal-middleware/hono@0.2.2) (2024-08-21)
 
 
