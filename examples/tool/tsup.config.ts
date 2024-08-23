@@ -7,6 +7,7 @@ export default defineConfig([
       dummy: "./src/handlers/handler.ts",
       "middlewares/context": "./src/middlewares/context.middleware.ts",
       "middlewares/headers": "./src/middlewares/headers.middleware.ts",
+      "middlewares/guard": "./src/middlewares/guard.middleware.ts",
     },
     format: ["esm"],
     platform: "neutral",

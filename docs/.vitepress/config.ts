@@ -18,20 +18,30 @@ export default defineConfig({
   },
   title: "universal-middleware",
   description:
-    "Write standard-based middlewares and handlers once, target all supported servers",
+    "Write universal middlewares and handlers once, target all supported servers",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Guide", link: "/guide/what-is-universal-middleware" },
-      { text: "Examples", link: "/markdown-examples" },
+      { text: "Examples", link: "/examples/context-middleware" },
     ],
 
     sidebar: [
       {
-        text: "Examples",
+        text: "Middlewares",
         items: [
-          { text: "Markdown Examples", link: "/markdown-examples" },
-          { text: "Runtime API Examples", link: "/api-examples" },
+          {
+            text: "Updating the context",
+            link: "/examples/context-middleware",
+          },
+          {
+            text: "Updating the headers",
+            link: "/examples/headers-middleware",
+          },
+          {
+            text: "Return an early response",
+            link: "/examples/guard-middleware",
+          },
         ],
       },
     ],

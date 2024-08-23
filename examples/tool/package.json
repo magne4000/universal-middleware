@@ -111,6 +111,41 @@
       "types": "./dist/middlewares/universal-h3-middleware-headers.middleware.d.ts",
       "import": "./dist/middlewares/universal-h3-middleware-headers.middleware.js",
       "default": "./dist/middlewares/universal-h3-middleware-headers.middleware.js"
+    },
+    "./middlewares/guard-middleware": {
+      "types": "./dist/middlewares/guard.d.ts",
+      "import": "./dist/middlewares/guard.js",
+      "default": "./dist/middlewares/guard.js"
+    },
+    "./middlewares/guard-middleware-hono": {
+      "types": "./dist/middlewares/universal-hono-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-hono-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-hono-middleware-guard.middleware.js"
+    },
+    "./middlewares/guard-middleware-express": {
+      "types": "./dist/middlewares/universal-express-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-express-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-express-middleware-guard.middleware.js"
+    },
+    "./middlewares/guard-middleware-hattip": {
+      "types": "./dist/middlewares/universal-hattip-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-hattip-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-hattip-middleware-guard.middleware.js"
+    },
+    "./middlewares/guard-middleware-webroute": {
+      "types": "./dist/middlewares/universal-webroute-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-webroute-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-webroute-middleware-guard.middleware.js"
+    },
+    "./middlewares/guard-middleware-fastify": {
+      "types": "./dist/middlewares/universal-fastify-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-fastify-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-fastify-middleware-guard.middleware.js"
+    },
+    "./middlewares/guard-middleware-h3": {
+      "types": "./dist/middlewares/universal-h3-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-h3-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-h3-middleware-guard.middleware.js"
     }
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",

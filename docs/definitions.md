@@ -15,21 +15,22 @@ export interface UniversalHandler<Context> {
 
 ## Middleware
 A function that alters the [Context](#context) or Response.
-Check the [middleware page](/guide/middleware) for details.
+Check the [examples](/examples/context-middleware) for details.
 
 ```ts twoslash
 export interface UniversalMiddleware<InContext, OutContext> {
   (request: Request, context: InContext):
     | Response | Promise<Response> // Can return an early Response
     | void | Promise<void> // Can return nothing
-    | OutContext | Promise <OutContext> // Can return a new context. Ensures type-safe context representation
+    | OutContext | Promise<OutContext> // Can return a new context. Ensures type-safe context representation
     | ((response: Response) => Response | Promise<Response>); // Can return a function that manipulates the Response
 }
 ```
 
 ## Context
 Some data, usually added by a middleware, with the same lifespan as a Request.
-More information about context in the [middleware page](/guide/middleware).
+
+For instance, a `{ user?: User }` context can be set by a middleware, then accessed by others.
 
 > [!NOTE]
 > Each framework as its own way to attach data related to the request,
@@ -39,7 +40,7 @@ More information about context in the [middleware page](/guide/middleware).
 > _On the other hand, a universal context is just an object, detached from the request,
 > but with the same lifespan._
 
-> [!NOTE]
+> [!TIP]
 > Each adapter provides a `getContext` helper to retrieve the universal context
 > from any non-universal middleware or handler.
 
