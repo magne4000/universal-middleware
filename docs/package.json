@@ -15,10 +15,15 @@
   "license": "MIT",
   "devDependencies": {
     "@shikijs/vitepress-twoslash": "^1.14.1",
+    "@universal-middleware-examples/tool": "workspace:*",
+    "@universal-middleware/express": "workspace:*",
+    "@universal-middleware/fastify": "workspace:*",
+    "@universal-middleware/h3": "workspace:*",
+    "@universal-middleware/hattip": "workspace:*",
+    "@universal-middleware/hono": "workspace:*",
+    "fastify": "^4.28.1",
     "typescript": "^5.5.4",
     "universal-middleware": "workspace:*",
-    "@universal-middleware/hono": "workspace:*",
-    "@universal-middleware-examples/tool": "workspace:*",
     "vitepress": "^1.3.3"
   }
 }

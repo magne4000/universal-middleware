@@ -6,8 +6,14 @@ import { args } from "./utils";
 
 const app = fastify();
 
-app.register(contextMiddleware("something"));
+// Now the universal context contains `{ hello: "World!!!" }`.
+// See /examples/context-middleware
+app.register(contextMiddleware("World!!!"));
+
+// After a Response has been returned by the handler below,
+// the `{ "X-Universal-Hello": "World!!!" }` header is appended to it
 app.register(headersMiddleware());
+
 app.get("/", handler());
 
 const port = args.port ? parseInt(args.port) : 3000;

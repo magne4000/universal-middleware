@@ -127,7 +127,7 @@ and your `package.json` will be updated with necessary `exports` config.
 Easy usage for supported servers:
 
 ```ts
-//hono-entry.ts
+// hono-entry.ts
 import { Hono } from "hono";
 // hattip users would use "some-lib/middlewares/context-middleware-hattip"
 // express users would use "some-lib/middlewares/context-middleware-express"
@@ -221,13 +221,13 @@ const headersMiddleware = (() => (request, ctx) => {
   // This is a Response Handler, and will be executed after a handler or a middleware have returned a Response
   return (response) => {
     // Add a new header, using previously set Context
-    response.headers.set("X-Custom-Header", ctx.something ?? "NONE");
+    response.headers.set("X-Universal-Hello", ctx.hello ?? "world");
     
     return response;
   }
   // Using `satisfies` to not lose return type
   // You can specify the type of the Context upon entry
-}) satisfies Get<[string], UniversalMiddleware<{ something?: string }>>;
+}) satisfies Get<[string], UniversalMiddleware<{ hello?: string }>>;
 
 // export default is mandatory
 export default headersMiddleware;
