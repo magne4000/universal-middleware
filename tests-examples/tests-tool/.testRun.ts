@@ -16,7 +16,7 @@ export function testRun(
 
     const content = await response.text();
 
-    expect(content).toContain('"something"');
+    expect(content).toContain('"World!!!"');
     expect(response.headers.has("x-universal-hello")).toBe(true);
   });
 }

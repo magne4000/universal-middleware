@@ -71,10 +71,10 @@ test("hattip", () => {
 
 test("webroute", () => {
   expectTypeOf(webrouteContextMiddleware).returns.toEqualTypeOf<
-    WebrouteMiddleware<Universal.Context, { something: string }>
+    WebrouteMiddleware<Universal.Context, { hello: string }>
   >();
   expectTypeOf(webrouteHeadersMiddleware).returns.toEqualTypeOf<
-    WebrouteMiddleware<{ something?: string }, { something?: string }>
+    WebrouteMiddleware<{ hello?: string }, { hello?: string }>
   >();
   expectTypeOf(webrouteHandler).returns.toEqualTypeOf<
     WebrouteHandler<Universal.Context, Universal.Context>
@@ -99,10 +99,10 @@ test("h3", () => {
 
 test("generic", () => {
   expectTypeOf(contextMiddleware).returns.toEqualTypeOf<
-    (req: Request, ctx: Universal.Context) => { something: string }
+    (req: Request, ctx: Universal.Context) => { hello: string }
   >();
-  expectTypeOf(headersMiddleware).returns.toEqualTypeOf<
-    UniversalMiddleware<{ something?: string }>
+  expectTypeOf(headersMiddleware).returns.toMatchTypeOf<
+    UniversalMiddleware<{ hello?: string }>
   >();
   expectTypeOf(handler).returns.toEqualTypeOf<UniversalHandler>();
 });

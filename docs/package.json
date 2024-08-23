@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "vitepress dev",
-    "build": "vitepress build",
+    "build-doc": "vitepress build",
     "preview": "vitepress preview"
   },
   "keywords": [],
