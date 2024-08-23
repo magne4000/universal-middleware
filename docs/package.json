@@ -1,0 +1,24 @@
+{
+  "name": "universal-middleware-docs",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@shikijs/vitepress-twoslash": "^1.14.1",
+    "typescript": "^5.5.4",
+    "universal-middleware": "workspace:*",
+    "@universal-middleware/hono": "workspace:*",
+    "@universal-middleware-examples/tool": "workspace:*",
+    "vitepress": "^1.3.3"
+  }
+}
