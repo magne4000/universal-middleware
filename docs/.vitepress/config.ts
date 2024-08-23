@@ -4,6 +4,7 @@ import type { ModuleResolutionKind } from "typescript";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  cleanUrls: true,
   markdown: {
     codeTransformers: [
       transformerTwoslash({

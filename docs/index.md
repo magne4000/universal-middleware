@@ -5,14 +5,14 @@ layout: home
 hero:
   name: "universal-middleware"
   text: "Write standard-based middlewares and handlers once, target all supported servers"
-  tagline: My great project tagline
+  tagline: WIP - stay tuned
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: Guide
+      link: /guide/what-is-universal-middleware
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: Examples
+      link: /examples/context-middleware
 
 features:
   - title: Feature A
