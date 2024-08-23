@@ -7,8 +7,14 @@ import { args } from "./utils";
 
 const app = createRouter();
 
-app.use(contextMiddleware("something"));
+// Now the universal context contains `{ hello: "World!!!" }`.
+// See /examples/context-middleware
+app.use(contextMiddleware("World!!!"));
+
+// After a Response has been returned by the handler below,
+// the `{ "X-Universal-Hello": "World!!!" }` header is appended to it
 app.use(headersMiddleware());
+
 app.get("/", handler());
 
 const hattipHandler = app.buildHandler();

@@ -112,8 +112,8 @@ export function createMiddleware<
   };
 }
 
-export function getContext(
-  honoContext: HonoContext<UniversalEnv>,
-): Universal.Context | undefined {
-  return honoContext.get(contextSymbol);
+export function getContext<
+  Context extends Universal.Context = Universal.Context,
+>(honoContext: HonoContext<UniversalEnv>): Context | undefined {
+  return honoContext.get(contextSymbol) as Context | undefined;
 }
