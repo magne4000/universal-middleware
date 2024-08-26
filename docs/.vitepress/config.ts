@@ -73,6 +73,10 @@ export default defineConfig({
       { text: "Supported adapters", link: "/reference/supported-adapters" },
     ],
 
+    search: {
+      provider: "local",
+    },
+
     socialLinks: [
       {
         icon: "github",
