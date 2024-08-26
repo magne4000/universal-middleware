@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "universal-middleware"
-  text: WIP - stay tuned
+  text: 
   tagline: "Write middleware once, target Hono, Express, Fastify, and more!"
   actions:
     - theme: brand

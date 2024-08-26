@@ -58,9 +58,12 @@ const guardMiddleware = ((config) => (request, ctx) => {
 export default guardMiddleware;
 ```
 
-::: info Example of usage after packaging
+::: info Example of usage with Hono after packaging
 
-After compilation (TODO link), this middleware would be used with Hono like this:
+After [bundling](/guide/packaging), this middleware would be used as follows:
+
+> [!TIP]
+> This is what your user facing documentation would contain.
 
 ```ts
 import { Hono } from "hono";
