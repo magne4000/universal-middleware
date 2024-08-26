@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "universal-middleware"
-  text: "Write middleware once, target Hono, Express, Fastify, and more"
-  tagline: WIP - stay tuned
+  text: WIP - stay tuned
+  tagline: "Write middleware once, target Hono, Express, Fastify, and more!"
   actions:
     - theme: brand
       text: Guide
@@ -15,11 +15,13 @@ hero:
       link: /examples/context-middleware
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: One middleware, multiple adapters
+    details: Automatically generate compatible middlewares for popular servers, from a single codebase
+    link: /guide/what-is-universal-middleware
+  - title: Support for popular servers
+    details: Bundle your middlewares for Hono, Express, Fastify, h3, Hattip and Webroute
+    link: /reference/supported-adapters
+  - title: Web Standards Compliance
+    details: Write middlewares following established web standards (WinterCG, WHATWG) to ensure consistency and future-proofing
 ---
 

@@ -1,4 +1,4 @@
-# Supported servers
+# Supported adapters
 
 Supports the following server adapters:
 - [Hono](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-hono)
