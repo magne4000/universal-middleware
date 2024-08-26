@@ -20,7 +20,7 @@ describe("pipe", () => {
   test("context middleware |> handler", async () => {
     const handler = pipe(
       () => ({ a: 1 }),
-      (_: Request, ctx: { a: number }) => new Response(String(ctx.a)),
+      (_, ctx: { a: number }) => new Response(String(ctx.a)),
     );
     const response = handler(request, context, runtime);
     await expect(response).resolves.toBeInstanceOf(Response);
@@ -81,7 +81,7 @@ describe("pipe", () => {
       () => ({ a: 1 }),
       (_: Request) => {
         return async (response: Response) => {
-          const body = await (await response).text();
+          const body = await response.text();
           return new Response(body + " World!");
         };
       },

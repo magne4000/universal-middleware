@@ -34,7 +34,7 @@ type Pipe<F extends UniversalMiddleware<any, any>[]> = F extends []
         : never;
 
 export function pipe<F extends UniversalMiddleware<any, any>[]>(
-  ...a: Pipe<F>
+  ...a: Pipe<F> extends F ? F : Pipe<F>
 ): ComposeReturnType<F> {
   const middlewares = a as UniversalMiddleware[];
   const handler = a.pop() as UniversalHandler;
