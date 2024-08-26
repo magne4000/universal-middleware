@@ -20,6 +20,11 @@ export default defineConfig({
   title: "universal-middleware",
   description: "Write middleware once, target Hono, Express, Fastify, and more",
   themeConfig: {
+    logo: {
+      light: "/logo.png",
+      dark: "/logo-dark.png",
+    },
+
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Guide", link: "/guide/introduction" },
