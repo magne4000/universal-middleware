@@ -22,13 +22,30 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: "Guide", link: "/guide/what-is-universal-middleware" },
+      { text: "Guide", link: "/guide/introduction" },
       { text: "Examples", link: "/examples/context-middleware" },
     ],
 
     sidebar: [
       {
-        text: "Middlewares",
+        text: "Guide",
+        items: [
+          {
+            text: "Introduction",
+            link: "/guide/introduction",
+          },
+          {
+            text: "Quick Start",
+            link: "/guide/quick-start",
+          },
+          {
+            text: "Packaging",
+            link: "/guide/packaging",
+          },
+        ],
+      },
+      {
+        text: "Examples",
         items: [
           {
             text: "Updating the context",
@@ -44,6 +61,11 @@ export default defineConfig({
           },
         ],
       },
+      {
+        text: "Definitions",
+        link: "/definitions",
+      },
+      { text: "Supported adapters", link: "/reference/supported-adapters" },
     ],
 
     socialLinks: [

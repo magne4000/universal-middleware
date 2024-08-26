@@ -63,7 +63,7 @@ export default defineConfig([
     dts: true,
     esbuildPlugins: [universalMiddleware({
       // Only generate files for selected servers. All enabled by default
-      servers?: ('hono' | 'express' | 'hattip' | 'webroute')[];
+      servers?: ('hono' | 'express' | 'hattip' | 'fastify' | 'h3' | 'webroute')[];
       // akin to esbuild `entryNames` for generated "exports" in package.json
       serversExportNames?: string;
       // akin to ebsuild `entryNames` for generated "exports" in package.json
