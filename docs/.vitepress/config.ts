@@ -18,8 +18,7 @@ export default defineConfig({
     ],
   },
   title: "universal-middleware",
-  description:
-    "Write universal middlewares and handlers once, target all supported servers",
+  description: "Write middleware once, target Hono, Express, Fastify, and more",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [

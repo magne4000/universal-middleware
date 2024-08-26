@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "universal-middleware"
-  text: "Write standard-based middlewares and handlers once, target all supported servers"
+  text: "Write middleware once, target Hono, Express, Fastify, and more"
   tagline: WIP - stay tuned
   actions:
     - theme: brand
