@@ -375,6 +375,7 @@ function testEsbuildHandler(
   type: "handler" | "middleware",
   server: string,
   f: string,
+  target?: string,
 ) {
   const output = findOutput(
     result,
@@ -402,6 +403,9 @@ function testEsbuildOutput(
   file: string,
 ) {
   for (const adapter of adapters) {
+    if (adapter === "cloudflare-pages" || adapter === "cloudflare-worker") {
+      continue;
+    }
     testEsbuildHandler(result, type, adapter, file);
   }
 }

@@ -9,7 +9,7 @@ After bundling and publishing this middleware, one can then use this middleware 
 
 ::: code-group
 
-```ts twoslash [hono-entry.ts]
+```ts twoslash [hono.ts]
 import { Hono } from "hono";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hono";
 import { getContext } from "@universal-middleware/hono";
@@ -29,7 +29,7 @@ app.get("/", (honoCtx) => {
 export default app;
 ```
 
-```ts twoslash [h3-entry.ts]
+```ts twoslash [h3.ts]
 import { createApp, createRouter, defineEventHandler } from "h3";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-h3";
 import { getContext, universalOnBeforeResponse } from "@universal-middleware/h3";
@@ -57,7 +57,7 @@ app.use(router);
 export default app;
 ```
 
-```ts twoslash [hattip-entry.ts]
+```ts twoslash [hattip.ts]
 import { createRouter } from "@hattip/router";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hattip";
 import { getContext } from "@universal-middleware/hattip";
@@ -79,7 +79,41 @@ const hattipHandler = app.buildHandler();
 export default hattipHandler;
 ```
 
-```ts twoslash [express-entry.ts]
+```ts twoslash [cloudflare-worker.ts]
+import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
+import { createHandler } from "@universal-middleware/cloudflare";
+import { pipe } from "@universal-middleware/core";
+
+// Cloudflare Workers have no internal way of representing a middleware
+// Instead, we use the universal `pipe` operator
+const wrapped = pipe(
+  contextMiddleware("world"),
+  (request, context) => {
+    return new Response(`Hello ${context.hello}`);
+  }
+);
+
+export default createHandler(() => wrapped)();
+```
+
+```ts [cloudflare-pages]
+// functions/index.ts
+import { getContext } from "@universal-middleware/cloudflare";
+
+export const onRequest = (request, env, ctx) => {
+  const universalCtx = getContext<{ hello: string }>(env)!;
+  return new Response(`Hello ${universalCtx.hello}`);
+};
+
+// functions/_middlewares.ts
+// See https://developers.cloudflare.com/pages/functions/middleware/
+
+import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-cloudflare-pages";
+
+export const onRequest = contextMiddleware("world");
+```
+
+```ts twoslash [express.ts]
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-express";
 import express from "express";
 import { getContext } from "@universal-middleware/express";
@@ -99,7 +133,7 @@ app.get("/", (req, res) => {
 export default app;
 ```
 
-```ts twoslash [fastify-entry.ts]
+```ts twoslash [fastify.ts]
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-fastify";
 import fastify from "fastify";
 import { getContext } from "@universal-middleware/fastify";

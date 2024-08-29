@@ -1,28 +1,5 @@
-import { createHandler, createMiddleware } from "../src/index.js";
-import { cors } from "@hattip/cors";
-import {
-  args,
-  bun,
-  deno,
-  handler,
-  middlewares,
-} from "@universal-middleware/tests";
-import { createRouter } from "@hattip/router";
-import type { Get, UniversalMiddleware } from "@universal-middleware/core";
-
-const app = createRouter();
-
-// standard hattip middleware
-app.use(cors());
-
-middlewares.forEach((middleware) =>
-  app.use(createMiddleware(middleware as Get<[], UniversalMiddleware>)()),
-);
-
-// universal handler
-app.get("/", createHandler(handler)());
-
-const hattipHandler = app.buildHandler();
+import { args, bun, deno } from "@universal-middleware/tests";
+import hattipHandler from "./hattip";
 
 const port = args.port ? parseInt(args.port) : 3000;
 

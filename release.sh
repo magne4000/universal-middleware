@@ -56,6 +56,7 @@ prompt_and_release() {
 
 prompt_and_release "core"
 prompt_and_release "adapter-express"
+prompt_and_release "adapter-cloudflare"
 prompt_and_release "adapter-fastify"
 prompt_and_release "adapter-h3"
 prompt_and_release "adapter-hattip"

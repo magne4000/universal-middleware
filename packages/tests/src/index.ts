@@ -1,19 +1,22 @@
 import { kill } from "zx";
 import { type ChildProcess, spawn } from "node:child_process";
 import waitPort from "wait-port";
-import type { Get, UniversalMiddleware } from "@universal-middleware/core";
-import type { UniversalHandler } from "../../../playground/types";
 import mri from "mri";
 
 export interface Run {
   name: string;
   command: string;
   port: number;
+  waitUntilType?: "undefined" | "function";
 }
 
 export interface Options {
   vitest: typeof import("vitest");
-  test?: (response: Response) => void | Promise<void>;
+  test?: (
+    response: Response,
+    body: Record<string, unknown>,
+    run: Run,
+  ) => void | Promise<void>;
 }
 
 declare global {
@@ -78,15 +81,16 @@ export function runTests(runs: Run[], options: Options) {
       "middlewares",
       async () => {
         const response = await fetch(host);
-        const text = await response.text();
+        const body = JSON.parse(await response.text());
         options.vitest.expect(response.status).toBe(200);
-        options.vitest.expect(JSON.parse(text)).toEqual({
+        options.vitest.expect(body).toEqual({
           something: {
             a: 1,
           },
           somethingElse: {
             b: 2,
           },
+          waitUntil: run.waitUntilType ?? "undefined",
         });
         options.vitest
           .expect(response.headers.get("x-test-value"))
@@ -97,57 +101,12 @@ export function runTests(runs: Run[], options: Options) {
         options.vitest
           .expect(response.headers.get("content-type"))
           .toBe("application/json; charset=utf-8");
-        await options?.test?.(response);
+        await options?.test?.(response, body, run);
       },
       30_000,
     );
   });
 }
-
-export const middlewares = [
-  // universal middleware that updates the context synchronously
-  () => () => {
-    return {
-      something: {
-        a: 1,
-        c: 3,
-      },
-    };
-  },
-  // universal middleware that update the response headers asynchronously
-  () => () => {
-    return async (response: Response) => {
-      response.headers.set("x-test-value", "universal-middleware");
-      response.headers.delete("x-should-be-removed");
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      return response;
-    };
-  },
-  // universal middleware that updates the context asynchronously
-  () => async (_request: Request, context: Universal.Context) => {
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    return {
-      something: {
-        a: context.something?.a,
-      },
-      somethingElse: {
-        b: 2,
-      },
-    };
-  },
-] as const satisfies Get<[], UniversalMiddleware>[];
-
-export const handler: Get<[], UniversalHandler> = () => (_request, context) => {
-  return new Response(JSON.stringify(context, null, 2), {
-    headers: {
-      "x-should-be-removed": "universal-middleware",
-      "content-type": "application/json; charset=utf-8",
-    },
-  });
-};
 
 export const args = mri<{ port: string }>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

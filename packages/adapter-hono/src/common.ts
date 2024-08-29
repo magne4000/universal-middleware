@@ -12,8 +12,12 @@ import type {
 import { getAdapterRuntime } from "@universal-middleware/core";
 
 interface UniversalEnv {
-  Bindings: Env["Bindings"];
-  Variables: Env["Variables"] & Record<symbol, Universal.Context>;
+  Bindings: Env["Bindings"] & {
+    [contextSymbol]?: Universal.Context;
+  };
+  Variables: Env["Variables"] & {
+    [contextSymbol]?: Universal.Context;
+  };
 }
 
 export type HonoHandler = Handler<UniversalEnv>;
@@ -39,11 +43,7 @@ export function createHandler<T extends unknown[]>(
     const handler = handlerFactory(...args);
 
     return (honoContext) => {
-      let context: Universal.Context = honoContext.get(contextSymbol);
-      if (typeof context !== "object") {
-        context = {};
-        honoContext.set(contextSymbol, context);
-      }
+      const context = initContext(honoContext);
       return handler(
         honoContext.req.raw,
         context,
@@ -74,11 +74,8 @@ export function createMiddleware<
     const middleware = middlewareFactory(...args);
 
     return async (honoContext, next) => {
-      let context = honoContext.get(contextSymbol) as InContext;
-      if (typeof context !== "object") {
-        context = {} as InContext;
-        honoContext.set(contextSymbol, context);
-      }
+      const context = initContext<InContext>(honoContext);
+
       const response = await middleware(
         honoContext.req.raw,
         context,
@@ -103,7 +100,7 @@ export function createMiddleware<
           return response;
         }
         // Update context
-        honoContext.set(contextSymbol, response);
+        setContext(honoContext, response);
         return next();
       } else {
         return next();
@@ -112,8 +109,29 @@ export function createMiddleware<
   };
 }
 
+function initContext<Context extends Universal.Context = Universal.Context>(
+  honoContext: HonoContext<UniversalEnv>,
+): Context {
+  let ctx = getContext<Context>(honoContext);
+  if (ctx === undefined) {
+    ctx = {} as Context;
+    setContext(honoContext, ctx);
+  }
+  return ctx;
+}
+
+function setContext<Context extends Universal.Context = Universal.Context>(
+  honoContext: HonoContext<UniversalEnv>,
+  value: Context,
+): void {
+  honoContext.set(contextSymbol, value);
+  honoContext.env[contextSymbol] = value;
+}
+
 export function getContext<
   Context extends Universal.Context = Universal.Context,
 >(honoContext: HonoContext<UniversalEnv>): Context | undefined {
-  return honoContext.get(contextSymbol) as Context | undefined;
+  return (honoContext.get(contextSymbol) ?? honoContext.env[contextSymbol]) as
+    | Context
+    | undefined;
 }

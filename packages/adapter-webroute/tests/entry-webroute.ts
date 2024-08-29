@@ -1,13 +1,8 @@
 import { createHandler, createMiddleware } from "../src/index.js";
 import { Hono, type MiddlewareHandler } from "hono";
 import { secureHeaders } from "hono/secure-headers";
-import {
-  args,
-  bun,
-  deno,
-  handler,
-  middlewares,
-} from "@universal-middleware/tests";
+import { args, bun, deno } from "@universal-middleware/tests";
+import { handler, middlewares } from "@universal-middleware/tests/utils";
 import { route } from "@webroute/route";
 import { createAdapter } from "@webroute/middleware";
 

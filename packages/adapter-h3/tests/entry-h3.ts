@@ -4,13 +4,8 @@ import {
   universalOnBeforeResponse,
 } from "../src/index.js";
 import { createApp, createRouter, toNodeListener, toWebHandler } from "h3";
-import {
-  args,
-  bun,
-  deno,
-  handler,
-  middlewares,
-} from "@universal-middleware/tests";
+import { args, bun, deno } from "@universal-middleware/tests";
+import { handler, middlewares } from "@universal-middleware/tests/utils";
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 const app = createApp({

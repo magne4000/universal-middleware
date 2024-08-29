@@ -39,9 +39,19 @@ const defaultWrappers = [
   "webroute",
   "fastify",
   "h3",
+  "cloudflare-worker",
+  "cloudflare-pages",
 ] as const;
+const externals = [
+  "@universal-middleware/hono",
+  "@universal-middleware/express",
+  "@universal-middleware/hattip",
+  "@universal-middleware/webroute",
+  "@universal-middleware/fastify",
+  "@universal-middleware/h3",
+  "@universal-middleware/cloudflare",
+];
 const namespace = "virtual:universal-middleware";
-const externals = defaultWrappers.map((w) => `@universal-middleware/${w}`);
 const versionRange = "^0";
 
 function getVirtualInputs(
@@ -165,25 +175,17 @@ function applyOutbase(input: Record<string, string>, outbase: string) {
   );
 }
 
-function load(id: string, resolve?: (handler: string, type: string) => string) {
-  const [, , server, type, handler] = id.split(":");
-
-  const fn = type === "handler" ? "createHandler" : "createMiddleware";
-  const code = `import { ${fn} } from "@universal-middleware/${server}";
-import ${type} from "${resolve ? resolve(handler, type) : handler}";
-export default ${fn}(${type});
-`;
-  return { code };
-}
-
 const typesByServer: Record<
   (typeof defaultWrappers)[number],
   {
-    middleware: string;
-    handler: string;
+    middleware?: string;
+    handler?: string;
     selfImports?: string[];
     outContext?: (type: string) => string;
     genericParameters?: string;
+    typeHandler?: string;
+    typeMiddleware?: string;
+    target?: string;
   }
 > = {
   hono: {
@@ -214,20 +216,53 @@ const typesByServer: Record<
     genericParameters:
       "<InContext, void extends OutContext ? InContext : OutContext>",
   },
+  ["cloudflare-worker"]: {
+    handler: "CloudflareHandler",
+    target: "cloudflare",
+  },
+  ["cloudflare-pages"]: {
+    middleware: "CloudflarePagesFunction",
+    handler: "CloudflarePagesFunction",
+    genericParameters: "<InContext>",
+    typeHandler: "createPagesFunction",
+    typeMiddleware: "createPagesFunction",
+    target: "cloudflare",
+  },
 };
+
+function load(id: string, resolve?: (handler: string, type: string) => string) {
+  const [, , target, type, handler] = id.split(":");
+
+  const info = typesByServer[target as (typeof defaultWrappers)[number]];
+
+  const fn =
+    type === "handler"
+      ? (info.typeHandler ?? "createHandler")
+      : (info.typeMiddleware ?? "createMiddleware");
+  const code = `import { ${fn} } from "@universal-middleware/${info.target ?? target}";
+import ${type} from "${resolve ? resolve(handler, type) : handler}";
+export default ${fn}(${type});
+`;
+  return { code };
+}
 
 function loadDts(
   id: string,
   resolve?: (handler: string, type: string) => string,
 ) {
-  const [, , server, type, handler] = id.split(":");
+  const [, , target, type, handler] = id.split(":");
 
-  const fn = type === "handler" ? "createHandler" : "createMiddleware";
-  const info = typesByServer[server as (typeof defaultWrappers)[number]];
+  const info = typesByServer[target as (typeof defaultWrappers)[number]];
+  const fn =
+    type === "handler"
+      ? (info.typeHandler ?? "createHandler")
+      : (info.typeMiddleware ?? "createMiddleware");
   const t = info[type as "middleware" | "handler"];
+  if (t === undefined) return;
+
   const selfImports = [fn, `type ${t}`, ...(info.selfImports ?? [])];
   const code = `import { type UniversalMiddleware } from 'universal-middleware';
-import { ${selfImports.join(", ")} } from "@universal-middleware/${server}";
+import { ${selfImports.join(", ")} } from "@universal-middleware/${info.target ?? target}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
 type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<infer X> ? X : {};
@@ -359,12 +394,12 @@ async function genDts(bundle: Record<string, BundleInfo>, options?: Options) {
   for (const value of Object.values(bundle)) {
     if (!value.in.startsWith(namespace)) continue;
 
-    await generateDts(
-      loadDts(value.in, (handler) =>
-        posix.relative(value.dts, bundle[handler].dts).replace(/^\.\./, "."),
-      ).code,
-      value.dts,
+    const res = loadDts(value.in, (handler) =>
+      posix.relative(value.dts, bundle[handler].dts).replace(/^\.\./, "."),
     );
+    if (!res) continue;
+
+    await generateDts(res.code, value.dts);
   }
 }
 

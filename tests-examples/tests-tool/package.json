@@ -8,10 +8,12 @@
   "license": "MIT",
   "scripts": {
     "dev:hono": "vite --port 3000",
-    "dev:express": "node --loader @swc-node/register/esm src/express-entry.ts",
-    "dev:fastify": "node --loader @swc-node/register/esm src/fastify-entry.ts",
-    "dev:hattip": "node --loader @swc-node/register/esm src/hattip-entry.ts",
-    "dev:h3": "node --loader @swc-node/register/esm src/h3-entry.ts",
+    "dev:express": "node --import @swc-node/register/esm-register src/express-entry.ts",
+    "dev:fastify": "node --import @swc-node/register/esm-register src/fastify-entry.ts",
+    "dev:hattip": "node --import @swc-node/register/esm-register src/hattip-entry.ts",
+    "dev:h3": "node --import @swc-node/register/esm-register src/h3-entry.ts",
+    "dev:pages": "wrangler pages dev",
+    "dev:worker": "wrangler dev src/cloudflare-worker-entry.ts",
     "test:e2e": "test-e2e",
     "test:types": "vitest --typecheck",
     "test": "run-s \"test:types run\" test:e2e",
@@ -23,13 +25,14 @@
     "@swc-node/register": "^1.10.9",
     "@types/node": "^20.14.10",
     "@universal-middleware-examples/tool": "workspace:*",
+    "@universal-middleware/cloudflare": "workspace:*",
     "@universal-middleware/core": "workspace:*",
     "@universal-middleware/express": "workspace:*",
+    "@universal-middleware/fastify": "workspace:*",
+    "@universal-middleware/h3": "workspace:*",
     "@universal-middleware/hattip": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
     "@universal-middleware/webroute": "workspace:*",
-    "@universal-middleware/fastify": "workspace:*",
-    "@universal-middleware/h3": "workspace:*",
     "fastify": "^4.28.1",
     "h3": "^1.12.0",
     "hono": "^4.5.6",
@@ -39,7 +42,8 @@
     "rimraf": "^6.0.0",
     "typescript": "^5.5.4",
     "vite": "^5.4.1",
-    "vitest": "^2.0.5"
+    "vitest": "^2.0.5",
+    "wrangler": "^3.72.3"
   },
   "sideEffects": false
 }

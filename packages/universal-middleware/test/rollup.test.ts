@@ -320,6 +320,9 @@ function testRollupOutput(
   f: string,
 ) {
   for (const adapter of adapters) {
+    if (adapter === "cloudflare-pages" || adapter === "cloudflare-worker") {
+      continue;
+    }
     testRollupHandler(gen, type, adapter, f);
   }
 }

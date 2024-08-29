@@ -46,12 +46,12 @@
     "@hattip/router": "^0.0.47",
     "@hono/node-server": "^1.12.0",
     "express": "^4.19.2",
-    "h3": "~1.12.0",
+    "h3": "^1.12.0",
     "hattip": "^0.0.33",
     "helmet": "^7.1.0",
     "hono": "^4.5.6",
     "serve-static": "^1.15.0",
-    "tsx": "^4.17.0",
+    "tsx": "^4.19.0",
     "vite": "^5.4.1"
   },
   "pnpm": {
@@ -63,6 +63,7 @@
       "@universal-middleware/webroute": "link:./packages/adapter-webroute",
       "@universal-middleware/fastify": "link:./packages/adapter-fastify",
       "@universal-middleware/h3": "link:./packages/adapter-h3",
+      "@universal-middleware/cloudflare": "link:./packages/adapter-cloudflare",
       "universal-middleware": "link:./packages/universal-middleware",
       "@webroute/middleware": "^0.9.0",
       "esbuild": "^0.23.1"
