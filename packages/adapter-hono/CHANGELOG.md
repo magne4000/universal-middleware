@@ -1,3 +1,12 @@
+## [0.2.5](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.4...@universal-middleware/hono@0.2.5) (2024-08-29)
+
+
+### Features
+
+* **hono:** add getRuntime helper ([99ba12d](https://github.com/magne4000/universal-handler/commit/99ba12d86f89bd6ac1b651f3fa7092aabc9e3474))
+
+
+
 ## [0.2.4](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.3...@universal-middleware/hono@0.2.4) (2024-08-29)
 
 

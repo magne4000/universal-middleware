@@ -69,7 +69,7 @@
     "@universal-middleware/core": "^0.2.6",
     "@universal-middleware/express": "^0.2.2",
     "@universal-middleware/hattip": "^0.2.4",
-    "@universal-middleware/hono": "^0.2.4",
+    "@universal-middleware/hono": "^0.2.5",
     "@universal-middleware/webroute": "^0.2.2",
     "@universal-middleware/fastify": "^0.2.2",
     "@universal-middleware/cloudflare": "^0.2.1",
