@@ -1,3 +1,12 @@
+## [0.2.4](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hattip@0.2.3...@universal-middleware/hattip@0.2.4) (2024-08-29)
+
+
+### Features
+
+* **hattip:** add getRuntime helper ([96a164b](https://github.com/magne4000/universal-handler/commit/96a164b02180b5de2e46f7fef3f6837d67a3a02d))
+
+
+
 ## [0.2.3](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hattip@0.2.2...@universal-middleware/hattip@0.2.3) (2024-08-29)
 
 
