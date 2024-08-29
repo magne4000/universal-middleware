@@ -19,6 +19,12 @@ const runs: Run[] = [
     command: "pnpm run test:run-hattip:deno",
     port: port++,
   },
+  {
+    name: "adapter-hattip: cloudflare worker",
+    command: `pnpm run test:run-hattip:worker --inspector-port ${port++ + 10000}`,
+    port: port,
+    waitUntilType: "function",
+  },
 ];
 
 runTests(runs, {

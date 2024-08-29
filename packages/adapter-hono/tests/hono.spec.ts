@@ -21,8 +21,8 @@ const runs: Run[] = [
   },
   {
     name: "adapter-hono: wrangler",
-    command: "pnpm run test:run-hono:wrangler",
-    port: port++,
+    command: `pnpm run test:run-hono:wrangler --inspector-port ${port++ + 10000}`,
+    port: port,
     waitUntilType: "function",
   },
 ];

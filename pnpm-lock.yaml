@@ -203,7 +203,7 @@ importers:
         specifier: link:../../packages/universal-middleware
         version: link:../../packages/universal-middleware
 
-  packages/adapter-cloudflare-pages:
+  packages/adapter-cloudflare:
     dependencies:
       '@universal-middleware/core':
         specifier: link:../core
@@ -378,6 +378,9 @@ importers:
       '@hattip/adapter-bun':
         specifier: ^0.0.47
         version: 0.0.47
+      '@hattip/adapter-cloudflare-workers':
+        specifier: ^0.0.47
+        version: 0.0.47
       '@hattip/adapter-deno':
         specifier: ^0.0.47
         version: 0.0.47
@@ -420,6 +423,9 @@ importers:
       vitest:
         specifier: ^2.0.5
         version: 2.0.5(@types/node@20.16.0)
+      wrangler:
+        specifier: ^3.72.3
+        version: 3.72.3(@cloudflare/workers-types@4.20240821.1)
 
   packages/adapter-hono:
     dependencies:
@@ -1096,6 +1102,9 @@ packages:
 
   '@hattip/adapter-bun@0.0.47':
     resolution: {integrity: sha512-QwQbnZ1RVBEPathn8vPU2AGH0LtMfTMDYKGHhA3QjRntdTySv6vpBtGKDA9A+qpU/b/cx4u9ZZ+yMNsblQkZsA==}
+
+  '@hattip/adapter-cloudflare-workers@0.0.47':
+    resolution: {integrity: sha512-3B6gM0dsDhDgnig91AQIo3M9LcpDy+WRUHN4XhaG2uNHzAE9pxlFvNru3Kryd/ht5KpBIX07FrbFd9j4qi3spw==}
 
   '@hattip/adapter-deno@0.0.47':
     resolution: {integrity: sha512-evaL45aZthrZjMIhRSCFkyEIlT/4N8EuBjcLE6AlIqDA+BmhvVTbZk8ucxo8ybAqRAhVDyLFCgEqTR2jgLekSQ==}
@@ -4583,6 +4592,12 @@ snapshots:
     dependencies:
       '@hattip/core': 0.0.47
       bun-types: 1.1.24
+
+  '@hattip/adapter-cloudflare-workers@0.0.47':
+    dependencies:
+      '@cloudflare/kv-asset-handler': 0.3.4
+      '@cloudflare/workers-types': 4.20240821.1
+      '@hattip/core': 0.0.47
 
   '@hattip/adapter-deno@0.0.47':
     dependencies:
