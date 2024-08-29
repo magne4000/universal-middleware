@@ -8,12 +8,13 @@ import type {
   EventContext,
   ExportedHandlerFetchHandler,
   PagesFunction,
-  Request as CloudflareRequest,
   Response as CloudflareResponse,
 } from "@cloudflare/workers-types";
 
 export type CloudflareHandler<C extends Universal.Context> = {
-  fetch: ExportedHandlerFetchHandler<C>;
+  fetch: ExportedHandlerFetchHandler<{
+    [contextSymbol]: C;
+  }>;
 };
 
 export const contextSymbol = Symbol("unContext");
@@ -29,7 +30,7 @@ export function createHandler<T extends unknown[], C extends Universal.Context>(
 
     return {
       async fetch(request, env, ctx) {
-        const universalContext = initContext<C>(request);
+        const universalContext = initContext<C>(env);
         const response = await handler(
           request as unknown as Request,
           universalContext,
@@ -112,61 +113,50 @@ export function createPageFunction<
 }
 
 function initContext<Context extends Universal.Context = Universal.Context>(
-  request:
-    | Request
-    | CloudflareRequest
-    | EventContext<{}, string, { [contextSymbol]?: Context }>,
+  env:
+    | { [contextSymbol]?: Context }
+    | EventContext<{ [contextSymbol]?: Context }, string, unknown>,
 ): Context {
-  if (request instanceof Request || contextSymbol in request) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (request as any)[contextSymbol] ??= {};
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (request as any)[contextSymbol];
+  if (contextSymbol in env) {
+    env[contextSymbol] ??= {} as Context;
+    return env[contextSymbol];
   }
-  if ("data" in request) {
-    request.data[contextSymbol] ??= {} as Context;
-    return request.data[contextSymbol];
+  if ("env" in env) {
+    env.env[contextSymbol] ??= {} as Context;
+    return env.env[contextSymbol];
   }
-  throw new TypeError(
-    "initContext argument must be a Request or an EventContext",
-  );
+  throw new TypeError("initContext argument must be an Env or an EventContext");
 }
 
 export function getContext<
   Context extends Universal.Context = Universal.Context,
 >(
-  request:
-    | Request
-    | CloudflareRequest
-    | EventContext<{}, string, { [contextSymbol]?: Context }>,
+  env:
+    | { [contextSymbol]?: Context }
+    | EventContext<{ [contextSymbol]?: Context }, string, unknown>,
 ): Context | undefined {
-  if (request instanceof Request || contextSymbol in request) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (request as any)[contextSymbol] as Context | undefined;
+  if (contextSymbol in env) {
+    return env[contextSymbol] as Context | undefined;
   }
-  if ("data" in request) {
-    return request.data[contextSymbol];
+  if ("env" in env) {
+    return env.env[contextSymbol];
   }
-  throw new TypeError(
-    "getContext argument must be a Request or an EventContext",
-  );
+  throw new TypeError("getContext argument must be an Env or an EventContext");
 }
 
 function setContext<Context extends Universal.Context = Universal.Context>(
-  request:
-    | Request
-    | CloudflareRequest
-    | EventContext<{}, string, { [contextSymbol]?: Context }>,
+  env:
+    | { [contextSymbol]?: Context }
+    | EventContext<{ [contextSymbol]?: Context }, string, unknown>,
   value: Context,
 ): void {
-  if (request instanceof Request || contextSymbol in request) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (request as any)[contextSymbol] = value;
-  } else if ("data" in request) {
-    request.data[contextSymbol] = value;
+  if (contextSymbol in env) {
+    env[contextSymbol] = value;
+  } else if ("env" in env) {
+    env.env[contextSymbol] = value;
   } else {
     throw new TypeError(
-      "setContext argument must be a Request or an EventContext",
+      "setContext argument must be an Env or an EventContext",
     );
   }
 }
