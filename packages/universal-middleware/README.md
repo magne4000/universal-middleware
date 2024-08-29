@@ -3,6 +3,7 @@
 Write middlewares and handlers once, target
 [Hono](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-hono),
 [Express](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-express),
+[Cloudflare](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-cloudflare),
 [Hattip](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-hattip),
 [Webroute](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-webroute),
 [Fastify](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-fastify),
