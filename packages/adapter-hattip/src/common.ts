@@ -2,6 +2,7 @@ import type { AdapterRequestContext, HattipHandler } from "@hattip/core";
 import type { RequestHandler } from "@hattip/compose";
 import type {
   Get,
+  RuntimeAdapter,
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
@@ -29,20 +30,7 @@ export function createHandler<T extends unknown[]>(
 
     return (context) => {
       const ctx = initContext(context);
-      return handler(
-        context.request,
-        ctx,
-        getAdapterRuntime(
-          "other",
-          {},
-          {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            env: (context.platform as any)?.env,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ctx: (context.platform as any)?.context,
-          },
-        ),
-      );
+      return handler(context.request, ctx, getRuntime(context));
     };
   };
 }
@@ -65,16 +53,7 @@ export function createMiddleware<
       const response = await middleware(
         context.request,
         ctx,
-        getAdapterRuntime(
-          "other",
-          {},
-          {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            env: (context.platform as any)?.env,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ctx: (context.platform as any)?.context,
-          },
-        ),
+        getRuntime(context),
       );
 
       if (typeof response === "function") {
@@ -104,4 +83,17 @@ export function getContext<
   InContext extends Universal.Context = Universal.Context,
 >(context: AdapterRequestContext): InContext | undefined {
   return context[contextSymbol] as InContext | undefined;
+}
+
+export function getRuntime(context: AdapterRequestContext): RuntimeAdapter {
+  return getAdapterRuntime(
+    "other",
+    {},
+    {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      env: (context.platform as any)?.env,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ctx: (context.platform as any)?.context,
+    },
+  );
 }
