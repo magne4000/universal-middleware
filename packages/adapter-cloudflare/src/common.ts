@@ -1,14 +1,17 @@
 import type {
   Get,
+  RuntimeAdapter,
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
 import type {
+  EventContext,
   ExportedHandlerFetchHandler,
   PagesFunction,
   Response as CloudflareResponse,
 } from "@cloudflare/workers-types";
+import type { ExecutionContext } from "hono";
 
 export type CloudflareHandler<C extends Universal.Context> = {
   fetch: ExportedHandlerFetchHandler<{
@@ -38,14 +41,7 @@ export function createHandler<T extends unknown[], C extends Universal.Context>(
         const response = await handler(
           request as unknown as Request,
           universalContext,
-          getAdapterRuntime(
-            "other",
-            {},
-            {
-              env,
-              ctx,
-            },
-          ),
+          getRuntime(env, ctx),
         );
 
         return response as unknown as CloudflareResponse;
@@ -85,17 +81,7 @@ export function createPagesFunction<
       const response = await middleware(
         context.request as unknown as Request,
         universalContext,
-        getAdapterRuntime(
-          "other",
-          {},
-          {
-            env: context.env,
-            ctx: {
-              waitUntil: context.waitUntil,
-              passThroughOnException: context.passThroughOnException,
-            },
-          },
-        ),
+        getRuntime(context),
       );
 
       if (typeof response === "function") {
@@ -135,4 +121,30 @@ function setContext<Context extends Universal.Context = Universal.Context>(
   value: Context,
 ): void {
   env[contextSymbol] = value;
+}
+
+export function getRuntime(env: unknown, ctx: ExecutionContext): RuntimeAdapter;
+export function getRuntime(
+  context: EventContext<unknown, string, unknown>,
+): RuntimeAdapter;
+export function getRuntime(
+  ...args:
+    | [EventContext<unknown, string, unknown>]
+    | [unknown, ExecutionContext]
+): RuntimeAdapter {
+  const isContext = args.length === 1;
+
+  return getAdapterRuntime(
+    "other",
+    {},
+    {
+      env: isContext ? args[0].env : args[0],
+      ctx: {
+        waitUntil: isContext ? args[0].waitUntil : args[1].waitUntil,
+        passThroughOnException: isContext
+          ? args[0].passThroughOnException
+          : args[1].passThroughOnException,
+      },
+    },
+  );
 }
