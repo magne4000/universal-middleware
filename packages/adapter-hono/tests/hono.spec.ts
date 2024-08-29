@@ -23,17 +23,19 @@ const runs: Run[] = [
     name: "adapter-hono: wrangler",
     command: "pnpm run test:run-hono:wrangler",
     port: port++,
+    waitUntilType: "function",
   },
 ];
 
 runTests(runs, {
   vitest,
-  test(response, run) {
-    if (run.name === "adapter-hono: wrangler") return;
-    // added by hono/secure-headers
-    vitest
-      .expect(response.headers.has("cross-origin-opener-policy"))
-      .toBe(true);
-    vitest.expect(response.headers.has("x-xss-protection")).toBe(true);
+  test(response, body, run) {
+    if (run.name !== "adapter-hono: wrangler") {
+      // added by hono/secure-headers
+      vitest
+        .expect(response.headers.has("cross-origin-opener-policy"))
+        .toBe(true);
+      vitest.expect(response.headers.has("x-xss-protection")).toBe(true);
+    }
   },
 });

@@ -1,4 +1,5 @@
 import type {
+  CloudflareWorkerdRuntime,
   Get,
   UniversalHandler,
   UniversalMiddleware,
@@ -26,7 +27,7 @@ export const middlewares = [
     };
   },
   // universal middleware that updates the context asynchronously
-  () => async (_request: Request, context: Universal.Context) => {
+  () => async (_request: Request, context: Universal.Context, runtime) => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     return {
@@ -36,6 +37,7 @@ export const middlewares = [
       somethingElse: {
         b: 2,
       },
+      waitUntil: typeof (runtime as CloudflareWorkerdRuntime)?.ctx?.waitUntil,
     };
   },
 ] as const satisfies Get<[], UniversalMiddleware>[];

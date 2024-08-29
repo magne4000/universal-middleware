@@ -8,6 +8,7 @@ const runs: Run[] = [
     name: "adapter-cloudflare: wrangler",
     command: "pnpm run test:run-cloudflare:wrangler",
     port: port++,
+    waitUntilType: "function",
   },
 ];
 

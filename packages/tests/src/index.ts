@@ -7,11 +7,16 @@ export interface Run {
   name: string;
   command: string;
   port: number;
+  waitUntilType?: "undefined" | "function";
 }
 
 export interface Options {
   vitest: typeof import("vitest");
-  test?: (response: Response, run: Run) => void | Promise<void>;
+  test?: (
+    response: Response,
+    body: Record<string, unknown>,
+    run: Run,
+  ) => void | Promise<void>;
 }
 
 declare global {
@@ -76,15 +81,16 @@ export function runTests(runs: Run[], options: Options) {
       "middlewares",
       async () => {
         const response = await fetch(host);
-        const text = await response.text();
+        const body = JSON.parse(await response.text());
         options.vitest.expect(response.status).toBe(200);
-        options.vitest.expect(JSON.parse(text)).toEqual({
+        options.vitest.expect(body).toEqual({
           something: {
             a: 1,
           },
           somethingElse: {
             b: 2,
           },
+          waitUntil: run.waitUntilType ?? "undefined",
         });
         options.vitest
           .expect(response.headers.get("x-test-value"))
@@ -95,7 +101,7 @@ export function runTests(runs: Run[], options: Options) {
         options.vitest
           .expect(response.headers.get("content-type"))
           .toBe("application/json; charset=utf-8");
-        await options?.test?.(response, run);
+        await options?.test?.(response, body, run);
       },
       30_000,
     );
