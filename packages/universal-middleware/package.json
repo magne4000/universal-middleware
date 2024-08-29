@@ -72,7 +72,7 @@
     "@universal-middleware/hono": "^0.2.3",
     "@universal-middleware/webroute": "^0.2.2",
     "@universal-middleware/fastify": "^0.2.2",
-    "@universal-middleware/cloudflare": "^0.1.0",
+    "@universal-middleware/cloudflare": "^0.2.0",
     "oxc-transform": "^0.24.3",
     "package-up": "^5.0.0",
     "unplugin": "^1.12.2"
