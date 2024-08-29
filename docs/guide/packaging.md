@@ -103,7 +103,7 @@ The bundler plugin also accepts the following options:
 ```ts
 universalMiddleware({
   // Only generate files for selected servers. All enabled by default
-  servers?: ('hono' | 'express' | 'hattip' | 'fastify' | 'h3' | 'webroute')[];
+  servers?: ('hono' | 'express' | 'hattip' | 'fastify' | 'h3' | 'webroute' | 'cloudflare')[];
   // akin to esbuild `entryNames` for generated "exports" in package.json
   serversExportNames?: string;
   // akin to ebsuild `entryNames` for generated "exports" in package.json

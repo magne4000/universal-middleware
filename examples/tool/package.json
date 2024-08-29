@@ -146,6 +146,66 @@
       "types": "./dist/middlewares/universal-h3-middleware-guard.middleware.d.ts",
       "import": "./dist/middlewares/universal-h3-middleware-guard.middleware.js",
       "default": "./dist/middlewares/universal-h3-middleware-guard.middleware.js"
+    },
+    "./dummy-handler-cloudflare": {
+      "types": "./dist/handlers/universal-cloudflare-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-cloudflare-handler-handler.js",
+      "default": "./dist/handlers/universal-cloudflare-handler-handler.js"
+    },
+    "./middlewares/context-middleware-cloudflare": {
+      "types": "./dist/middlewares/universal-cloudflare-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-cloudflare-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-cloudflare-middleware-context.middleware.js"
+    },
+    "./middlewares/headers-middleware-cloudflare": {
+      "types": "./dist/middlewares/universal-cloudflare-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-cloudflare-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-cloudflare-middleware-headers.middleware.js"
+    },
+    "./middlewares/guard-middleware-cloudflare": {
+      "types": "./dist/middlewares/universal-cloudflare-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-cloudflare-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-cloudflare-middleware-guard.middleware.js"
+    },
+    "./dummy-handler-cloudflare-worker": {
+      "types": "./dist/handlers/universal-cloudflare-worker-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-cloudflare-worker-handler-handler.js",
+      "default": "./dist/handlers/universal-cloudflare-worker-handler-handler.js"
+    },
+    "./dummy-handler-cloudflare-pages": {
+      "types": "./dist/handlers/universal-cloudflare-pages-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-cloudflare-pages-handler-handler.js",
+      "default": "./dist/handlers/universal-cloudflare-pages-handler-handler.js"
+    },
+    "./middlewares/context-middleware-cloudflare-worker": {
+      "types": "./dist/middlewares/universal-cloudflare-worker-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-cloudflare-worker-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-cloudflare-worker-middleware-context.middleware.js"
+    },
+    "./middlewares/context-middleware-cloudflare-pages": {
+      "types": "./dist/middlewares/universal-cloudflare-pages-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-cloudflare-pages-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-cloudflare-pages-middleware-context.middleware.js"
+    },
+    "./middlewares/headers-middleware-cloudflare-worker": {
+      "types": "./dist/middlewares/universal-cloudflare-worker-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-cloudflare-worker-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-cloudflare-worker-middleware-headers.middleware.js"
+    },
+    "./middlewares/headers-middleware-cloudflare-pages": {
+      "types": "./dist/middlewares/universal-cloudflare-pages-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-cloudflare-pages-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-cloudflare-pages-middleware-headers.middleware.js"
+    },
+    "./middlewares/guard-middleware-cloudflare-worker": {
+      "types": "./dist/middlewares/universal-cloudflare-worker-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-cloudflare-worker-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-cloudflare-worker-middleware-guard.middleware.js"
+    },
+    "./middlewares/guard-middleware-cloudflare-pages": {
+      "types": "./dist/middlewares/universal-cloudflare-pages-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-cloudflare-pages-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-cloudflare-pages-middleware-guard.middleware.js"
     }
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
@@ -171,7 +231,8 @@
     "@universal-middleware/hono": "^0",
     "@universal-middleware/webroute": "^0",
     "@universal-middleware/fastify": "^0",
-    "@universal-middleware/h3": "^0"
+    "@universal-middleware/h3": "^0",
+    "@universal-middleware/cloudflare": "^0"
   },
   "sideEffects": false,
   "peerDependencies": {

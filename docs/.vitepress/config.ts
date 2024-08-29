@@ -18,7 +18,8 @@ export default defineConfig({
     ],
   },
   title: "universal-middleware",
-  description: "Write middleware once, target Hono, Express, Fastify, and more",
+  description:
+    "Write middleware once, target Hono, Express, Cloudflare, and more",
   themeConfig: {
     logo: {
       light: "/logo.png",

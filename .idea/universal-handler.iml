@@ -34,6 +34,8 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare/.wrangler" />
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-hattip/.wrangler" />
+      <excludeFolder url="file://$MODULE_DIR$/tests-examples/tests-tool/.wrangler" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

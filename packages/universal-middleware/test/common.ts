@@ -7,6 +7,8 @@ export const adapters = [
   "webroute",
   "fastify",
   "h3",
+  "cloudflare-pages",
+  "cloudflare-worker",
 ] as const;
 
 // flaky tests on Windows

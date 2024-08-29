@@ -16,6 +16,11 @@ export type CloudflareHandler<C extends Universal.Context> = {
   }>;
 };
 
+export type CloudflarePagesFunction<C extends Universal.Context> =
+  PagesFunction<{
+    [contextSymbol]: C;
+  }>;
+
 export const contextSymbol = Symbol("unContext");
 
 /**
@@ -52,41 +57,26 @@ export function createHandler<T extends unknown[], C extends Universal.Context>(
 /**
  * Creates a function handler for Cloudflare Pages
  */
-export function createPageFunction<
+export function createPagesFunction<
   T extends unknown[],
   InContext extends Universal.Context,
 >(
   middlewareFactory: Get<T, UniversalHandler<InContext>>,
-): Get<
-  T,
-  PagesFunction<{
-    [contextSymbol]: InContext;
-  }>
->;
-export function createPageFunction<
+): Get<T, CloudflarePagesFunction<InContext>>;
+export function createPagesFunction<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
 >(
   middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
-): Get<
-  T,
-  PagesFunction<{
-    [contextSymbol]: InContext;
-  }>
->;
-export function createPageFunction<
+): Get<T, CloudflarePagesFunction<InContext>>;
+export function createPagesFunction<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
 >(
   middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
-): Get<
-  T,
-  PagesFunction<{
-    [contextSymbol]: InContext;
-  }>
-> {
+): Get<T, CloudflarePagesFunction<InContext>> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 

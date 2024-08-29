@@ -1,8 +1,8 @@
 import { middlewares } from "@universal-middleware/tests/utils";
-import { createPageFunction } from "../src/index.js";
+import { createPagesFunction } from "../src/index.js";
 
 export const onRequest = [
-  createPageFunction(middlewares[0])(),
-  createPageFunction(middlewares[1])(),
-  createPageFunction(middlewares[2])(),
+  createPagesFunction(middlewares[0])(),
+  createPagesFunction(middlewares[1])(),
+  createPagesFunction(middlewares[2])(),
 ];
