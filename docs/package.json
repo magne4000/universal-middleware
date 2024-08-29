@@ -21,6 +21,8 @@
     "@universal-middleware/h3": "workspace:*",
     "@universal-middleware/hattip": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
+    "@universal-middleware/core": "workspace:*",
+    "@universal-middleware/cloudflare": "workspace:*",
     "fastify": "^4.28.1",
     "typescript": "^5.5.4",
     "universal-middleware": "workspace:*",

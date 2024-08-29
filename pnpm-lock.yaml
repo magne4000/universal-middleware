@@ -133,6 +133,12 @@ importers:
       '@universal-middleware-examples/tool':
         specifier: workspace:*
         version: link:../examples/tool
+      '@universal-middleware/cloudflare':
+        specifier: link:../packages/adapter-cloudflare
+        version: link:../packages/adapter-cloudflare
+      '@universal-middleware/core':
+        specifier: link:../packages/core
+        version: link:../packages/core
       '@universal-middleware/express':
         specifier: link:../packages/adapter-express
         version: link:../packages/adapter-express

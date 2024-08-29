@@ -8,7 +8,7 @@ After bundling and publishing this middleware, one can then use this middleware 
 
 ::: code-group
 
-```ts twoslash [hono-entry.ts]
+```ts twoslash [hono.ts]
 import { Hono } from "hono";
 import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware-hono";
 
@@ -19,7 +19,7 @@ app.use(guardMiddleware());
 export default app;
 ```
 
-```ts twoslash [h3-entry.ts]
+```ts twoslash [h3.ts]
 import { createApp } from "h3";
 import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware-h3";
 import { universalOnBeforeResponse } from "@universal-middleware/h3";
@@ -34,7 +34,7 @@ app.use(guardMiddleware());
 export default app;
 ```
 
-```ts twoslash [hattip-entry.ts]
+```ts twoslash [hattip.ts]
 import { createRouter } from "@hattip/router";
 import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware-hattip";
 
@@ -47,7 +47,33 @@ const hattipHandler = app.buildHandler();
 export default hattipHandler;
 ```
 
-```ts twoslash [express-entry.ts]
+```ts twoslash [cloudflare-worker.ts]
+import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware";
+import { createHandler } from "@universal-middleware/cloudflare";
+import { pipe } from "@universal-middleware/core";
+
+// Cloudflare Workers have no internal way of representing a middleware
+// Instead, we use the universal `pipe` operator
+const wrapped = pipe(
+  guardMiddleware(),
+  () => {
+    return new Response("OK");
+  }
+);
+
+export default createHandler(() => wrapped)();
+```
+
+```ts twoslash [cloudflare-pages]
+// functions/_middlewares.ts
+// See https://developers.cloudflare.com/pages/functions/middleware/
+
+import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware-cloudflare-pages";
+
+export const onRequest = guardMiddleware();
+```
+
+```ts twoslash [express.ts]
 import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware-express";
 import express from "express";
 
@@ -58,7 +84,7 @@ app.use(guardMiddleware());
 export default app;
 ```
 
-```ts twoslash [fastify-entry.ts]
+```ts twoslash [fastify.ts]
 import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware-fastify";
 import fastify from "fastify";
 

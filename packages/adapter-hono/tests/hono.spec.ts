@@ -1,7 +1,7 @@
 import { type Run, runTests } from "@universal-middleware/tests";
 import * as vitest from "vitest";
 
-const port = 3000;
+const port = 3050;
 
 const runs: Run[] = [
   {
