@@ -19,11 +19,17 @@ const runs: Run[] = [
     command: "pnpm run test:run-hono:deno",
     port: port++,
   },
+  {
+    name: "adapter-hono: wrangler",
+    command: "pnpm run test:run-hono:wrangler",
+    port: port++,
+  },
 ];
 
 runTests(runs, {
   vitest,
-  test(response) {
+  test(response, run) {
+    if (run.name === "adapter-hono: wrangler") return;
     // added by hono/secure-headers
     vitest
       .expect(response.headers.has("cross-origin-opener-policy"))

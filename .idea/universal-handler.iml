@@ -33,6 +33,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare-pages/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare-pages/.wrangler" />
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare-pages/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-hono/.wrangler" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

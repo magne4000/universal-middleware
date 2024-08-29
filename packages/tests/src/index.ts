@@ -11,7 +11,7 @@ export interface Run {
 
 export interface Options {
   vitest: typeof import("vitest");
-  test?: (response: Response) => void | Promise<void>;
+  test?: (response: Response, run: Run) => void | Promise<void>;
 }
 
 declare global {
@@ -95,7 +95,7 @@ export function runTests(runs: Run[], options: Options) {
         options.vitest
           .expect(response.headers.get("content-type"))
           .toBe("application/json; charset=utf-8");
-        await options?.test?.(response);
+        await options?.test?.(response, run);
       },
       30_000,
     );
