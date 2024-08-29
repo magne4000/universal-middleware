@@ -5,7 +5,6 @@ import type {
 } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
 import type {
-  EventContext,
   ExportedHandlerFetchHandler,
   PagesFunction,
   Response as CloudflareResponse,
@@ -58,26 +57,41 @@ export function createPageFunction<
   InContext extends Universal.Context,
 >(
   middlewareFactory: Get<T, UniversalHandler<InContext>>,
-): Get<T, PagesFunction<InContext>>;
+): Get<
+  T,
+  PagesFunction<{
+    [contextSymbol]: InContext;
+  }>
+>;
 export function createPageFunction<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
 >(
   middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
-): Get<T, PagesFunction<InContext>>;
+): Get<
+  T,
+  PagesFunction<{
+    [contextSymbol]: InContext;
+  }>
+>;
 export function createPageFunction<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
 >(
   middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
-): Get<T, PagesFunction<InContext>> {
+): Get<
+  T,
+  PagesFunction<{
+    [contextSymbol]: InContext;
+  }>
+> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
     return async (context) => {
-      const universalContext = initContext<InContext>(context);
+      const universalContext = initContext<InContext>(context.env);
       const response = await middleware(
         context.request as unknown as Request,
         universalContext,
@@ -103,7 +117,8 @@ export function createPageFunction<
           return response as unknown as CloudflareResponse;
         }
         // Update context
-        setContext(context, response);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setContext(context.env, response as any);
         return await context.next();
       }
 
@@ -112,51 +127,22 @@ export function createPageFunction<
   };
 }
 
-function initContext<Context extends Universal.Context = Universal.Context>(
-  env:
-    | { [contextSymbol]?: Context }
-    | EventContext<{ [contextSymbol]?: Context }, string, unknown>,
-): Context {
-  if (contextSymbol in env) {
-    env[contextSymbol] ??= {} as Context;
-    return env[contextSymbol];
-  }
-  if ("env" in env) {
-    env.env[contextSymbol] ??= {} as Context;
-    return env.env[contextSymbol];
-  }
-  throw new TypeError("initContext argument must be an Env or an EventContext");
+function initContext<
+  Context extends Universal.Context = Universal.Context,
+>(env: { [contextSymbol]?: Context }): Context {
+  env[contextSymbol] ??= {} as Context;
+  return env[contextSymbol];
 }
 
 export function getContext<
   Context extends Universal.Context = Universal.Context,
->(
-  env:
-    | { [contextSymbol]?: Context }
-    | EventContext<{ [contextSymbol]?: Context }, string, unknown>,
-): Context | undefined {
-  if (contextSymbol in env) {
-    return env[contextSymbol] as Context | undefined;
-  }
-  if ("env" in env) {
-    return env.env[contextSymbol];
-  }
-  throw new TypeError("getContext argument must be an Env or an EventContext");
+>(env: { [contextSymbol]?: Context }): Context | undefined {
+  return env[contextSymbol] as Context | undefined;
 }
 
 function setContext<Context extends Universal.Context = Universal.Context>(
-  env:
-    | { [contextSymbol]?: Context }
-    | EventContext<{ [contextSymbol]?: Context }, string, unknown>,
+  env: { [contextSymbol]?: Context },
   value: Context,
 ): void {
-  if (contextSymbol in env) {
-    env[contextSymbol] = value;
-  } else if ("env" in env) {
-    env.env[contextSymbol] = value;
-  } else {
-    throw new TypeError(
-      "setContext argument must be an Env or an EventContext",
-    );
-  }
+  env[contextSymbol] = value;
 }

@@ -30,10 +30,10 @@
       <excludeFolder url="file://$MODULE_DIR$/docs/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/docs/.vitepress/cache" />
       <excludeFolder url="file://$MODULE_DIR$/docs/.vitepress/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare-pages/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare-pages/.wrangler" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare-pages/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-hono/.wrangler" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare/.wrangler" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

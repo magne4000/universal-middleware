@@ -1,5 +1,5 @@
 {
-  "name": "@universal-middleware/cloudflare-pages",
+  "name": "@universal-middleware/cloudflare",
   "version": "0.2.3",
   "type": "module",
   "description": "Cloudflare Pages adapter for universal middlewares",
@@ -17,7 +17,8 @@
     "dev": "tsup --watch",
     "prepack": "pnpm build",
     "test": "vitest run",
-    "test:run-cloudflare:wrangler": "wrangler pages dev",
+    "test:run-cloudflare:pages": "wrangler pages dev",
+    "test:run-cloudflare:worker": "wrangler dev tests/worker-entry.ts",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "release": "LANG=en_US release-me patch",
     "release:minor": "LANG=en_US release-me minor",
