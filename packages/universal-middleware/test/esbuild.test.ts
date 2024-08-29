@@ -375,7 +375,6 @@ function testEsbuildHandler(
   type: "handler" | "middleware",
   server: string,
   f: string,
-  target?: string,
 ) {
   const output = findOutput(
     result,

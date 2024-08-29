@@ -6,6 +6,7 @@ import type {
 } from "hono";
 import type {
   Get,
+  RuntimeAdapter,
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
@@ -44,18 +45,7 @@ export function createHandler<T extends unknown[]>(
 
     return (honoContext) => {
       const context = initContext(honoContext);
-      return handler(
-        honoContext.req.raw,
-        context,
-        getAdapterRuntime(
-          "other",
-          {},
-          {
-            env: honoContext.env,
-            ctx: getExecutionCtx(honoContext),
-          },
-        ),
-      );
+      return handler(honoContext.req.raw, context, getRuntime(honoContext));
     };
   };
 }
@@ -79,14 +69,7 @@ export function createMiddleware<
       const response = await middleware(
         honoContext.req.raw,
         context,
-        getAdapterRuntime(
-          "other",
-          {},
-          {
-            env: honoContext.env,
-            ctx: getExecutionCtx(honoContext),
-          },
-        ),
+        getRuntime(honoContext),
       );
 
       if (typeof response === "function") {
@@ -134,4 +117,15 @@ export function getContext<
   return (honoContext.get(contextSymbol) ?? honoContext.env[contextSymbol]) as
     | Context
     | undefined;
+}
+
+export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
+  return getAdapterRuntime(
+    "other",
+    {},
+    {
+      env: honoContext.env,
+      ctx: getExecutionCtx(honoContext),
+    },
+  );
 }
