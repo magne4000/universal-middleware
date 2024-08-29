@@ -66,7 +66,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@universal-middleware/core": "^0.2.5",
+    "@universal-middleware/core": "^0.2.6",
     "@universal-middleware/express": "^0.2.2",
     "@universal-middleware/hattip": "^0.2.2",
     "@universal-middleware/hono": "^0.2.3",

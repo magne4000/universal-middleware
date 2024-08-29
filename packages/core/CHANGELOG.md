@@ -1,3 +1,12 @@
+## [0.2.6](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.5...@universal-middleware/core@0.2.6) (2024-08-29)
+
+
+### Features
+
+* adapter-cloudflare ([#23](https://github.com/magne4000/universal-handler/issues/23)) ([e6129e3](https://github.com/magne4000/universal-handler/commit/e6129e35bce87af34d45ed361140fb69ed822ffa))
+
+
+
 ## [0.2.5](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.4...@universal-middleware/core@0.2.5) (2024-08-22)
 
 
