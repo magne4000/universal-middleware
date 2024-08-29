@@ -1,12 +1,7 @@
 import { createHandler, createMiddleware } from "../src/index.js";
 import { cors } from "@hattip/cors";
-import {
-  args,
-  bun,
-  deno,
-  handler,
-  middlewares,
-} from "@universal-middleware/tests";
+import { args, bun, deno } from "@universal-middleware/tests";
+import { handler, middlewares } from "@universal-middleware/tests/utils";
 import { createRouter } from "@hattip/router";
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 

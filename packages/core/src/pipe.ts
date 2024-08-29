@@ -37,34 +37,37 @@ export function pipe<F extends UniversalMiddleware<any, any>[]>(
   ...a: Pipe<F> extends F ? F : Pipe<F>
 ): ComposeReturnType<F> {
   const middlewares = a as UniversalMiddleware[];
-  const handler = a.pop() as UniversalHandler;
 
   return async (request, context, runtime) => {
     const pending: ((response: Response) => Awaitable<Response>)[] = [];
 
+    let _response: Response | undefined = undefined;
     for (const m of middlewares) {
-      const response = await m(request, context, runtime);
+      const response = await m(request, context ?? {}, runtime);
 
       if (typeof response === "function") {
         pending.push(response);
       } else if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
-          return response;
+          _response = response;
+          break;
         }
         // Update context
         context = response as any;
       }
     }
 
-    let response = await handler(request, context, runtime);
+    if (!_response) {
+      throw new Error("No Response found");
+    }
 
     for (const m of pending) {
-      const r = await m(response);
+      const r = await m(_response);
       if (r) {
-        response = r;
+        _response = r;
       }
     }
 
-    return response;
+    return _response;
   };
 }

@@ -1,0 +1,54 @@
+{
+  "name": "@universal-middleware/cloudflare-pages",
+  "version": "0.2.3",
+  "type": "module",
+  "description": "Cloudflare Pages adapter for universal middlewares",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "repository": "https://github.com/magne4000/universal-handler",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsup",
+    "dev": "tsup --watch",
+    "prepack": "pnpm build",
+    "test": "vitest run",
+    "test:run-cloudflare:wrangler": "wrangler pages dev",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit",
+    "release": "LANG=en_US release-me patch",
+    "release:minor": "LANG=en_US release-me minor",
+    "release:commit": "LANG=en_US release-me commit"
+  },
+  "dependencies": {
+    "@universal-middleware/core": "^0.2.5"
+  },
+  "devDependencies": {
+    "@brillout/release-me": "^0.4.0",
+    "@cloudflare/workers-types": "^4.20240821.1",
+    "@swc/core": "^1.7.11",
+    "@types/node": "^20.14.10",
+    "@universal-middleware/tests": "workspace:*",
+    "rimraf": "^6.0.0",
+    "tsup": "^8.2.4",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5",
+    "wrangler": "^3.72.3"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "cloudflare",
+    "universal-middleware",
+    "middleware",
+    "handlers",
+    "server-adapters",
+    "cloudflare-middleware",
+    "universal-server",
+    "context-middleware",
+    "request-handling"
+  ]
+}

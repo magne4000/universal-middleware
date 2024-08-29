@@ -1,13 +1,8 @@
 import { createHandler, createMiddleware } from "../src/index.js";
 import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
-import {
-  args,
-  bun,
-  deno,
-  handler,
-  middlewares,
-} from "@universal-middleware/tests";
+import { args, bun, deno } from "@universal-middleware/tests";
+import { handler, middlewares } from "@universal-middleware/tests/utils";
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 const app = new Hono();

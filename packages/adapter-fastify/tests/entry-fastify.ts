@@ -1,6 +1,7 @@
 import { createHandler, createMiddleware } from "../src/index.js";
 import fastify from "fastify";
-import { args, handler, middlewares } from "@universal-middleware/tests";
+import { args } from "@universal-middleware/tests";
+import { handler, middlewares } from "@universal-middleware/tests/utils";
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 import helmet from "@fastify/helmet";
 
