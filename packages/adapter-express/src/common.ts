@@ -50,6 +50,7 @@ export interface DecoratedRequest<
   protocol?: string;
   socket?: PossiblyEncryptedSocket;
   rawBody?: Buffer | null;
+  originalUrl?: string;
   [contextSymbol]?: C;
   [requestSymbol]?: Request;
 }

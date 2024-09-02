@@ -86,13 +86,16 @@ export function createRequestAdapter(
       host = "localhost";
     }
 
-    const request = new Request(protocol + "://" + host + req.url, {
-      method: req.method,
-      headers,
-      body: convertBody(req),
-      // @ts-ignore
-      duplex: "half",
-    });
+    const request = new Request(
+      protocol + "://" + host + (req.originalUrl ?? req.url),
+      {
+        method: req.method,
+        headers,
+        body: convertBody(req),
+        // @ts-ignore
+        duplex: "half",
+      },
+    );
 
     req[requestSymbol] = request;
 
