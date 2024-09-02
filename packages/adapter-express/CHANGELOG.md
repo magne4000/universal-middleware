@@ -1,3 +1,17 @@
+## [0.2.3](https://github.com/magne4000/universal-handler/compare/@universal-middleware/express@0.2.2...@universal-middleware/express@0.2.3) (2024-09-02)
+
+
+### Bug Fixes
+
+* request path fix with express request adapter ([d0f8cac](https://github.com/magne4000/universal-handler/commit/d0f8cacce296f9c856fdb3c3525ee52d3abded1f))
+
+
+### Features
+
+* adapter-cloudflare ([#23](https://github.com/magne4000/universal-handler/issues/23)) ([e6129e3](https://github.com/magne4000/universal-handler/commit/e6129e35bce87af34d45ed361140fb69ed822ffa))
+
+
+
 ## [0.2.2](https://github.com/magne4000/universal-handler/compare/@universal-middleware/express@0.2.1...@universal-middleware/express@0.2.2) (2024-08-21)
 
 
