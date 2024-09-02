@@ -1,3 +1,12 @@
+## [0.3.1](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.3.0...universal-middleware@0.3.1) (2024-09-02)
+
+
+### Features
+
+* **hono:** add getRuntime helper ([99ba12d](https://github.com/magne4000/universal-handler/commit/99ba12d86f89bd6ac1b651f3fa7092aabc9e3474))
+
+
+
 # [0.3.0](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.2.4...universal-middleware@0.3.0) (2024-08-29)
 
 
