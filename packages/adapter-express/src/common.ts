@@ -143,7 +143,7 @@ export function createMiddleware<
         const request = requestAdapter(req);
         const response = await middleware(
           request,
-          getContext(req)!,
+          getContext(req),
           getAdapterRuntime("node", {
             req: req as IncomingMessage,
             res,
@@ -190,6 +190,6 @@ export function createMiddleware<
 
 export function getContext<
   InContext extends Universal.Context = Universal.Context,
->(req: DecoratedRequest): InContext | undefined {
-  return req[contextSymbol] as InContext | undefined;
+>(req: DecoratedRequest): InContext {
+  return req[contextSymbol] as InContext;
 }

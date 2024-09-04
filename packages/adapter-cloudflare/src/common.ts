@@ -112,8 +112,8 @@ function initContext<
 
 export function getContext<
   Context extends Universal.Context = Universal.Context,
->(env: { [contextSymbol]?: Context }): Context | undefined {
-  return env[contextSymbol] as Context | undefined;
+>(env: { [contextSymbol]: Context }): Context {
+  return env[contextSymbol] as Context;
 }
 
 function setContext<Context extends Universal.Context = Universal.Context>(

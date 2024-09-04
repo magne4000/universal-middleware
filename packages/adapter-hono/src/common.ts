@@ -113,10 +113,9 @@ function setContext<Context extends Universal.Context = Universal.Context>(
 
 export function getContext<
   Context extends Universal.Context = Universal.Context,
->(honoContext: HonoContext<UniversalEnv>): Context | undefined {
-  return (honoContext.get(contextSymbol) ?? honoContext.env[contextSymbol]) as
-    | Context
-    | undefined;
+>(honoContext: HonoContext<UniversalEnv>): Context {
+  return (honoContext.get(contextSymbol) ??
+    honoContext.env[contextSymbol]) as Context;
 }
 
 export function getRuntime(honoContext: HonoContext): RuntimeAdapter {

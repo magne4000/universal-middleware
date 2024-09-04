@@ -22,7 +22,7 @@ app.use(contextMiddleware("world"));
 app.get("/", (honoCtx) => {
   // The universal context can be retrieved through `getContext` helper
   // outside of universal middlewares and handlers
-  const universalCtx = getContext<{ hello: string }>(honoCtx)!;
+  const universalCtx = getContext<{ hello: string }>(honoCtx);
   return new Response(`Hello ${universalCtx.hello}`);
 });
 
@@ -47,7 +47,7 @@ const router = createRouter();
 router.get("/", defineEventHandler((event) => {
   // The universal context can be retrieved through `getContext` helper
   // outside of universal middlewares and handlers
-  const universalCtx = getContext<{ hello: string }>(event)!;
+  const universalCtx = getContext<{ hello: string }>(event);
   
   return `Hello ${universalCtx.hello}`;
 }));
@@ -70,7 +70,7 @@ app.use(contextMiddleware("world"));
 app.get("/", (honoCtx) => {
   // The universal context can be retrieved through `getContext` helper
   // outside of universal middlewares and handlers
-  const universalCtx = getContext<{ hello: string }>(honoCtx)!;
+  const universalCtx = getContext<{ hello: string }>(honoCtx);
   return new Response(`Hello ${universalCtx.hello}`);
 });
 
@@ -101,7 +101,7 @@ export default createHandler(() => wrapped)();
 import { getContext } from "@universal-middleware/cloudflare";
 
 export const onRequest = (request, env, ctx) => {
-  const universalCtx = getContext<{ hello: string }>(env)!;
+  const universalCtx = getContext<{ hello: string }>(env);
   return new Response(`Hello ${universalCtx.hello}`);
 };
 
@@ -126,7 +126,7 @@ app.use(contextMiddleware("world"));
 app.get("/", (req, res) => {
   // The universal context can be retrieved through `getContext` helper
   // outside of universal middlewares and handlers
-  const universalCtx = getContext<{ hello: string }>(req)!;
+  const universalCtx = getContext<{ hello: string }>(req);
   res.send(`Hello ${universalCtx.hello}`);
 });
 
@@ -146,7 +146,7 @@ app.register(contextMiddleware("world"));
 app.get("/", (req, reply) => {
   // The universal context can be retrieved through `getContext` helper
   // outside of universal middlewares and handlers
-  const universalCtx = getContext<{ hello: string }>(req)!;
+  const universalCtx = getContext<{ hello: string }>(req);
   reply.send(`Hello ${universalCtx.hello}`);
 });
 

@@ -218,7 +218,7 @@ function initContext<InContext extends Universal.Context = Universal.Context>(
 
 export function getContext<
   InContext extends Universal.Context = Universal.Context,
->(req: FastifyRequest): InContext | undefined {
+>(req: FastifyRequest): InContext {
   const config = req.routeOptions.config;
   return config[contextSymbol] as InContext;
 }

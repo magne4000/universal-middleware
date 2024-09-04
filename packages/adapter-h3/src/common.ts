@@ -143,6 +143,6 @@ export function initContext<Context extends Universal.Context>(
 
 export function getContext<Context extends Universal.Context>(
   event: H3Event,
-): Context | undefined {
+): Context {
   return event.context[contextSymbol] as Context;
 }
