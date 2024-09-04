@@ -81,8 +81,8 @@ export function initContext<
 
 export function getContext<
   InContext extends Universal.Context = Universal.Context,
->(context: AdapterRequestContext): InContext | undefined {
-  return context[contextSymbol] as InContext | undefined;
+>(context: AdapterRequestContext): InContext {
+  return context[contextSymbol] as InContext;
 }
 
 export function getRuntime(context: AdapterRequestContext): RuntimeAdapter {
