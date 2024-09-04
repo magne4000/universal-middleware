@@ -17,6 +17,7 @@ export interface Options {
     body: Record<string, unknown>,
     run: Run,
   ) => void | Promise<void>;
+  testPost?: boolean;
 }
 
 declare global {
@@ -105,6 +106,24 @@ export function runTests(runs: Run[], options: Options) {
       },
       30_000,
     );
+
+    if (options?.testPost) {
+      options.vitest.test(
+        "post",
+        async () => {
+          const response = await fetch(`${host}/post`, {
+            method: "POST",
+            body: JSON.stringify({ something: true }),
+          });
+          const body = JSON.parse(await response.text());
+          options.vitest.expect(response.status).toBe(200);
+          options.vitest.expect(body).toEqual({
+            ok: true,
+          });
+        },
+        30_000,
+      );
+    }
   });
 }
 

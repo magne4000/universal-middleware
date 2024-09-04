@@ -2,9 +2,13 @@ import contextMiddleware from "@universal-middleware-examples/tool/middlewares/c
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-fastify";
 import handler from "@universal-middleware-examples/tool/dummy-handler-fastify";
 import fastify from "fastify";
+import rawBody from "fastify-raw-body";
 import { args } from "./utils";
 
 const app = fastify();
+
+// /!\ Mandatory if you need to access the request body in any Universal Middleware or Handler
+await app.register(rawBody);
 
 // Now the universal context contains `{ hello: "World!!!" }`.
 // See /examples/context-middleware
