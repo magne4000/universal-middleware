@@ -17,7 +17,7 @@ export interface Options {
     body: Record<string, unknown>,
     run: Run,
   ) => void | Promise<void>;
-  testPost: boolean;
+  testPost?: boolean;
 }
 
 declare global {
