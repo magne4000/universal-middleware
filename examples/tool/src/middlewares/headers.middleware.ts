@@ -1,3 +1,5 @@
+// src/middlewares/headers.middleware.ts
+
 import type { Get, UniversalMiddleware } from "universal-middleware";
 
 // This middleware will add a `X-Universal-Hello` header to all responses

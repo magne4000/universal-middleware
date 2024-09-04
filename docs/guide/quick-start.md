@@ -30,8 +30,6 @@ In this step, we will create a simple middleware that returns an early response 
 > All middleware files must include `.middleware.` in their name,
 > and handlers `.handler.`.
 > Without it, the bundler will not generate any adapter.
-> 
-> FIXME: merge both
 
 ```ts twoslash
 // src/middlewares/demo.middleware.ts
