@@ -9,7 +9,10 @@ import {
   isBodyInit,
   mergeHeadersInto,
 } from "@universal-middleware/core";
-import { createRequestAdapter } from "@universal-middleware/express";
+import {
+  createRequestAdapter,
+  type DecoratedRequest,
+} from "@universal-middleware/express";
 import type {
   FastifyPluginAsync,
   FastifyReply,
@@ -89,6 +92,32 @@ function getHeaders(reply: FastifyReply): Headers {
   return ret;
 }
 
+function getRawRequest(req: FastifyRequest): DecoratedRequest {
+  if (!req.body || "rawBody" in req.raw) return req.raw as DecoratedRequest;
+  if ("rawBody" in req) {
+    Object.defineProperty(req.raw, "rawBody", {
+      get() {
+        console.log(req.rawBody);
+        return req.rawBody;
+      },
+      configurable: true,
+      enumerable: true,
+    });
+  } else {
+    Object.defineProperty(req.raw, "rawBody", {
+      get() {
+        throw new Error(
+          "rawBody not Found. Please install fastify-raw-body plugin: https://github.com/Eomm/fastify-raw-body",
+        );
+      },
+      configurable: true,
+      enumerable: true,
+    });
+  }
+
+  return req.raw;
+}
+
 export function createHandler<
   T extends unknown[],
   InContext extends Universal.Context,
@@ -101,7 +130,7 @@ export function createHandler<
     return async function (request, reply) {
       const ctx = initContext<InContext>(request);
       const response = await handler(
-        requestAdapter(request.raw),
+        requestAdapter(getRawRequest(request)),
         ctx,
         getAdapterRuntime("node", {
           req: request.raw as IncomingMessage,
@@ -133,17 +162,10 @@ export function createMiddleware<
     const middleware = middlewareFactory(...args);
 
     return fp(async (instance) => {
-      // Disable pre-parsing body
-      // TODO can this be avoided?
-      instance.removeAllContentTypeParsers();
-      instance.addContentTypeParser("*", function (_request, _payload, done) {
-        done(null, "");
-      });
-
-      instance.addHook("onRequest", async (request, reply) => {
+      instance.addHook("preHandler", async (request, reply) => {
         const ctx = initContext<InContext>(request);
         const response = await middleware(
-          requestAdapter(request.raw),
+          requestAdapter(getRawRequest(request)),
           ctx,
           getAdapterRuntime("node", {
             req: request.raw as IncomingMessage,

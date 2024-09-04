@@ -301,6 +301,9 @@ importers:
       '@universal-middleware/express':
         specifier: link:../adapter-express
         version: link:../adapter-express
+      fastify-raw-body:
+        specifier: ^4.3.0
+        version: 4.3.0
     devDependencies:
       '@brillout/release-me':
         specifier: ^0.4.0
@@ -2507,6 +2510,10 @@ packages:
 
   fastify-plugin@4.5.1:
     resolution: {integrity: sha512-stRHYGeuqpEZTL1Ef0Ovr2ltazUT9g844X5z/zEBFLG8RYlpDiOCIG+ATvYEp+/zmc7sN29mcIMp8gvYplYPIQ==}
+
+  fastify-raw-body@4.3.0:
+    resolution: {integrity: sha512-F4o8ZIMVx4YoxGfwrZys6wyjl40gF3Yv6AWWRy62ozFAyZBSS831/uyyCAqKYw3tR73g180ryG98yih6To1PUQ==}
+    engines: {node: '>= 10'}
 
   fastify@4.28.1:
     resolution: {integrity: sha512-kFWUtpNr4i7t5vY2EJPCN2KgMVpuqfU4NjnJNCgiNB900oiDeYqaNDRcAfeBbOF5hGixixxcKnOU4KN9z6QncQ==}
@@ -6155,6 +6162,12 @@ snapshots:
   fast-uri@3.0.1: {}
 
   fastify-plugin@4.5.1: {}
+
+  fastify-raw-body@4.3.0:
+    dependencies:
+      fastify-plugin: 4.5.1
+      raw-body: 2.5.2
+      secure-json-parse: 2.7.0
 
   fastify@4.28.1:
     dependencies:
