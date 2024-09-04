@@ -71,7 +71,7 @@
     "@universal-middleware/hattip": "^0.2.4",
     "@universal-middleware/hono": "^0.2.5",
     "@universal-middleware/webroute": "^0.2.2",
-    "@universal-middleware/fastify": "^0.2.3",
+    "@universal-middleware/fastify": "^0.3.0",
     "@universal-middleware/cloudflare": "^0.2.1",
     "oxc-transform": "^0.24.3",
     "package-up": "^5.0.0",

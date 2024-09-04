@@ -1,3 +1,17 @@
+# [0.3.0](https://github.com/magne4000/universal-handler/compare/@universal-middleware/fastify@0.2.3...@universal-middleware/fastify@0.3.0) (2024-09-04)
+
+
+### Bug Fixes
+
+* impose usage of fastify-raw-body instead of overriding `contentTypeParser` ([#25](https://github.com/magne4000/universal-handler/issues/25)) ([96aa087](https://github.com/magne4000/universal-handler/commit/96aa087d0dd3c6f384524475bda0613cfc101aaa))
+
+
+### Features
+
+* getContext returns Context without undefined ([f3f0977](https://github.com/magne4000/universal-handler/commit/f3f0977781da43131ad6b60bc63a25d913d8758c))
+
+
+
 ## [0.2.3](https://github.com/magne4000/universal-handler/compare/@universal-middleware/fastify@0.2.2...@universal-middleware/fastify@0.2.3) (2024-09-02)
 
 
