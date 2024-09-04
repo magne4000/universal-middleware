@@ -3,7 +3,7 @@
 ## Handler
 A function that returns a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response).
 
-It will usually be associated to a _route_.
+It will usually be associated with a _route_.
 
 ```ts twoslash
 export interface UniversalHandler<Context> {
@@ -18,7 +18,7 @@ export interface UniversalHandler<Context> {
 ## Middleware
 A function that alters the [Context](#context) or Response. Can also return an early Response.
 
-It will usually _NOT_ be associated to a _route_.
+It will usually _NOT_ be associated with a _route_.
 
 Check the [examples](/examples/context-middleware) for details.
 
