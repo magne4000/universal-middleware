@@ -1,5 +1,4 @@
 export type * from "./types.js";
-export * from "./runtime.js";
-export * from "./adapter.js";
-export * from "./utils.js";
-export * from "./pipe.js";
+export { getAdapterRuntime } from "./adapter.js";
+export { mergeHeadersInto, nodeHeadersToWeb, isBodyInit } from "./utils.js";
+export { pipe } from "./pipe.js";
