@@ -39,9 +39,15 @@ importers:
 
   docs:
     devDependencies:
+      '@hattip/router':
+        specifier: ^0.0.48
+        version: 0.0.48
       '@shikijs/vitepress-twoslash':
         specifier: ^1.14.1
         version: 1.16.2(typescript@5.5.4)
+      '@types/express':
+        specifier: ^4.17.21
+        version: 4.17.21
       '@universal-middleware-examples/tool':
         specifier: workspace:*
         version: link:../examples/tool
@@ -69,6 +75,12 @@ importers:
       fastify:
         specifier: ^4.28.1
         version: 4.28.1
+      h3:
+        specifier: ^1.12.0
+        version: 1.12.0
+      hono:
+        specifier: ^4.5.11
+        version: 4.5.11
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
