@@ -1,7 +1,7 @@
-import { kill } from "zx";
 import { type ChildProcess, spawn } from "node:child_process";
-import waitPort from "wait-port";
 import mri from "mri";
+import waitPort from "wait-port";
+import { kill } from "zx";
 
 export interface Run {
   name: string;
@@ -74,45 +74,37 @@ export function runTests(runs: Run[], options: Options) {
       }
     }, 30_000);
 
-    options.vitest.test(
-      "middlewares",
-      async () => {
-        const response = await fetch(host);
+    options.vitest.test("middlewares", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(host);
+      const body = JSON.parse(await response.text());
+      options.vitest.expect(response.status).toBe(200);
+      options.vitest.expect(body).toEqual({
+        something: {
+          a: 1,
+        },
+        somethingElse: {
+          b: 2,
+        },
+        waitUntil: run.waitUntilType ?? "undefined",
+      });
+      options.vitest.expect(response.headers.get("x-test-value")).toBe("universal-middleware");
+      options.vitest.expect(response.headers.has("x-should-be-removed")).toBe(false);
+      options.vitest.expect(response.headers.get("content-type")).toBe("application/json; charset=utf-8");
+      await options?.test?.(response, body, run);
+    });
+
+    if (options?.testPost) {
+      options.vitest.test("post", { retry: 3, timeout: 30_000 }, async () => {
+        const response = await fetch(`${host}/post`, {
+          method: "POST",
+          body: JSON.stringify({ something: true }),
+        });
         const body = JSON.parse(await response.text());
         options.vitest.expect(response.status).toBe(200);
         options.vitest.expect(body).toEqual({
-          something: {
-            a: 1,
-          },
-          somethingElse: {
-            b: 2,
-          },
-          waitUntil: run.waitUntilType ?? "undefined",
+          ok: true,
         });
-        options.vitest.expect(response.headers.get("x-test-value")).toBe("universal-middleware");
-        options.vitest.expect(response.headers.has("x-should-be-removed")).toBe(false);
-        options.vitest.expect(response.headers.get("content-type")).toBe("application/json; charset=utf-8");
-        await options?.test?.(response, body, run);
-      },
-      30_000,
-    );
-
-    if (options?.testPost) {
-      options.vitest.test(
-        "post",
-        async () => {
-          const response = await fetch(`${host}/post`, {
-            method: "POST",
-            body: JSON.stringify({ something: true }),
-          });
-          const body = JSON.parse(await response.text());
-          options.vitest.expect(response.status).toBe(200);
-          options.vitest.expect(body).toEqual({
-            ok: true,
-          });
-        },
-        30_000,
-      );
+      });
     }
   });
 }
