@@ -32,9 +32,7 @@ runTests(runs, {
   test(response, body, run) {
     if (run.name !== "adapter-hono: wrangler") {
       // added by hono/secure-headers
-      vitest
-        .expect(response.headers.has("cross-origin-opener-policy"))
-        .toBe(true);
+      vitest.expect(response.headers.has("cross-origin-opener-policy")).toBe(true);
       vitest.expect(response.headers.has("x-xss-protection")).toBe(true);
     }
   },

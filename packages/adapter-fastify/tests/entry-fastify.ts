@@ -14,9 +14,7 @@ await app.register(helmet);
 await app.register(rawBody);
 
 for (const middleware of middlewares) {
-  await app.register(
-    createMiddleware(middleware as Get<[], UniversalMiddleware>)(),
-  );
+  await app.register(createMiddleware(middleware as Get<[], UniversalMiddleware>)());
 }
 
 app.post(

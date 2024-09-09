@@ -13,8 +13,7 @@ const _getRuntimeKey = (): Runtime["runtime"] => {
   const global = globalThis as any;
 
   // check if the current runtime supports navigator.userAgent
-  const userAgentSupported =
-    typeof navigator !== "undefined" && typeof navigator.userAgent === "string";
+  const userAgentSupported = typeof navigator !== "undefined" && typeof navigator.userAgent === "string";
 
   // if supported, check the user agent
   if (userAgentSupported) {

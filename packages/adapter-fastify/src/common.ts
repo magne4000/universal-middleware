@@ -1,24 +1,8 @@
 import type { IncomingMessage } from "node:http";
-import type {
-  Get,
-  UniversalHandler,
-  UniversalMiddleware,
-} from "@universal-middleware/core";
-import {
-  getAdapterRuntime,
-  isBodyInit,
-  mergeHeadersInto,
-} from "@universal-middleware/core";
-import {
-  createRequestAdapter,
-  type DecoratedRequest,
-} from "@universal-middleware/express";
-import type {
-  FastifyPluginAsync,
-  FastifyReply,
-  FastifyRequest,
-  RouteHandlerMethod,
-} from "fastify";
+import type { Get, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import { getAdapterRuntime, isBodyInit, mergeHeadersInto } from "@universal-middleware/core";
+import { createRequestAdapter, type DecoratedRequest } from "@universal-middleware/express";
+import type { FastifyPluginAsync, FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import fp from "fastify-plugin";
 
 export const contextSymbol = Symbol("unContext");
@@ -81,9 +65,7 @@ function getHeaders(reply: FastifyReply): Headers {
       if (value.length === 1) {
         ret.set(key, value[0]);
       } else if (value.length > 1) {
-        console.warn(
-          `Header "${key}" should not be an array. Only last value will be sent`,
-        );
+        console.warn(`Header "${key}" should not be an array. Only last value will be sent`);
         // biome-ignore lint/style/noNonNullAssertion: <explanation>
         ret.set(key, value.at(-1)!);
       }
@@ -119,10 +101,9 @@ function getRawRequest(req: FastifyRequest): DecoratedRequest {
   return req.raw;
 }
 
-export function createHandler<
-  T extends unknown[],
-  InContext extends Universal.Context,
->(handlerFactory: Get<T, UniversalHandler>): Get<T, FastifyHandler> {
+export function createHandler<T extends unknown[], InContext extends Universal.Context>(
+  handlerFactory: Get<T, UniversalHandler>,
+): Get<T, FastifyHandler> {
   const requestAdapter = createRequestAdapter();
 
   return (...args) => {
@@ -154,9 +135,7 @@ export function createMiddleware<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
->(
-  middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
-): Get<T, FastifyMiddleware> {
+>(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, FastifyMiddleware> {
   const requestAdapter = createRequestAdapter();
 
   return (...args) => {
@@ -211,9 +190,7 @@ export function createMiddleware<
             status: reply.statusCode,
           });
         } else {
-          throw new TypeError(
-            "Payload is not a Response or BodyInit compatible",
-          );
+          throw new TypeError("Payload is not a Response or BodyInit compatible");
         }
 
         const middlewares = request[pendingMiddlewaresSymbol];
@@ -233,24 +210,21 @@ export function createMiddleware<
   };
 }
 
-function initContext<InContext extends Universal.Context = Universal.Context>(
-  req: FastifyRequest,
-): InContext {
+function initContext<InContext extends Universal.Context = Universal.Context>(req: FastifyRequest): InContext {
   const config = req.routeOptions.config;
   config[contextSymbol] ??= {};
   return config[contextSymbol] as InContext;
 }
 
-export function getContext<
-  InContext extends Universal.Context = Universal.Context,
->(req: FastifyRequest): InContext {
+export function getContext<InContext extends Universal.Context = Universal.Context>(req: FastifyRequest): InContext {
   const config = req.routeOptions.config;
   return config[contextSymbol] as InContext;
 }
 
-export function setContext<
-  InContext extends Universal.Context = Universal.Context,
->(req: FastifyRequest, newContext: InContext): void {
+export function setContext<InContext extends Universal.Context = Universal.Context>(
+  req: FastifyRequest,
+  newContext: InContext,
+): void {
   const config = req.routeOptions.config;
   config[contextSymbol] = newContext;
 }

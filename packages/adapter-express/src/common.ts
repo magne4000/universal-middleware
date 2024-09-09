@@ -1,16 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Socket } from "node:net";
-import {
-  createRequestAdapter,
-  type NodeRequestAdapterOptions,
-} from "./request.js";
+import { createRequestAdapter, type NodeRequestAdapterOptions } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
-import type {
-  Awaitable,
-  Get,
-  UniversalHandler,
-  UniversalMiddleware,
-} from "@universal-middleware/core";
+import type { Awaitable, Get, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
 
 export const contextSymbol = Symbol("unContext");
@@ -21,18 +13,8 @@ export const wrappedResponseSymbol = Symbol("unWrappedResponse");
 export const env: Record<string, string | undefined> =
   typeof globalThis.process?.env !== "undefined"
     ? globalThis.process.env
-    : typeof (
-          import.meta as unknown as Record<
-            "env",
-            Record<string, string | undefined>
-          >
-        )?.env !== "undefined"
-      ? (
-          import.meta as unknown as Record<
-            "env",
-            Record<string, string | undefined>
-          >
-        ).env
+    : typeof (import.meta as unknown as Record<"env", Record<string, string | undefined>>)?.env !== "undefined"
+      ? (import.meta as unknown as Record<"env", Record<string, string | undefined>>).env
       : {};
 
 export interface PossiblyEncryptedSocket extends Socket {
@@ -43,9 +25,8 @@ export interface PossiblyEncryptedSocket extends Socket {
  * `IncomingMessage` possibly augmented by Express-specific
  * `ip` and `protocol` properties.
  */
-export interface DecoratedRequest<
-  C extends Universal.Context = Universal.Context,
-> extends Omit<IncomingMessage, "socket"> {
+export interface DecoratedRequest<C extends Universal.Context = Universal.Context>
+  extends Omit<IncomingMessage, "socket"> {
   ip?: string;
   protocol?: string;
   socket?: PossiblyEncryptedSocket;
@@ -67,13 +48,11 @@ export type NodeMiddleware<C extends Universal.Context = Universal.Context> = (
   next?: (err?: unknown) => void,
 ) => void;
 
-export type NodeHandler<C extends Universal.Context = Universal.Context> =
-  NodeMiddleware<C>;
+export type NodeHandler<C extends Universal.Context = Universal.Context> = NodeMiddleware<C>;
 
 /** Adapter options */
 export interface NodeAdapterHandlerOptions extends NodeRequestAdapterOptions {}
-export interface NodeAdapterMiddlewareOptions
-  extends NodeRequestAdapterOptions {}
+export interface NodeAdapterMiddlewareOptions extends NodeRequestAdapterOptions {}
 
 /**
  * Creates a request handler to be passed to http.createServer() or used as a
@@ -152,7 +131,8 @@ export function createMiddleware<
 
         if (!response) {
           return next?.();
-        }if (typeof response === "function") {
+        }
+        if (typeof response === "function") {
           if (res.headersSent) {
             throw new Error(
               "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-handler",
@@ -163,7 +143,8 @@ export function createMiddleware<
           // `wrapResponse` takes care of calling those middlewares right before sending the response
           res[pendingMiddlewaresSymbol].push(response);
           return next?.();
-        }if (response instanceof Response) {
+        }
+        if (response instanceof Response) {
           await sendResponse(response, res);
         } else {
           req[contextSymbol] = response;
@@ -188,8 +169,6 @@ export function createMiddleware<
   };
 }
 
-export function getContext<
-  InContext extends Universal.Context = Universal.Context,
->(req: DecoratedRequest): InContext {
+export function getContext<InContext extends Universal.Context = Universal.Context>(req: DecoratedRequest): InContext {
   return req[contextSymbol] as InContext;
 }

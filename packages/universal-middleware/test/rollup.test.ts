@@ -22,9 +22,7 @@ describe("rollup", () => {
             expect(exports).toContain("./test/files/folder1/handler-handler");
 
             for (const adapter of adapters) {
-              expect(exports).toContain(
-                `./test/files/folder1/handler-handler-${adapter}`,
-              );
+              expect(exports).toContain(`./test/files/folder1/handler-handler-${adapter}`);
             }
           },
         }),
@@ -40,13 +38,9 @@ describe("rollup", () => {
 
     const gen = await result.generate({});
 
-    expect(
-      gen.output.filter((f) => f.type === "chunk" && f.isEntry),
-    ).toHaveLength(expectNbOutput(1));
+    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(1));
 
-    const handler = gen.output.find((f: any) => f.facadeModuleId === entry) as
-      | OutputChunk
-      | undefined;
+    const handler = gen.output.find((f: any) => f.facadeModuleId === entry) as OutputChunk | undefined;
     expect(handler?.name).toEqual(join("test", "files", "folder1", "handler"));
 
     testRollupOutput(gen, "handler", entry);
@@ -88,18 +82,12 @@ describe("rollup", () => {
 
     const gen = await result.generate({});
 
-    expect(
-      gen.output.filter((f) => f.type === "chunk" && f.isEntry),
-    ).toHaveLength(expectNbOutput(2));
+    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(2));
 
-    const handler = gen.output.find((f: any) => f.facadeModuleId === entry1) as
-      | OutputChunk
-      | undefined;
+    const handler = gen.output.find((f: any) => f.facadeModuleId === entry1) as OutputChunk | undefined;
     expect(handler?.name).toEqual("h");
 
-    const middleware = gen.output.find(
-      (f: any) => f.facadeModuleId === entry2,
-    ) as OutputChunk | undefined;
+    const middleware = gen.output.find((f: any) => f.facadeModuleId === entry2) as OutputChunk | undefined;
     expect(middleware?.name).toEqual("m");
 
     testRollupOutput(gen, "handler", entry1);
@@ -122,12 +110,8 @@ describe("rollup", () => {
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/middleware-middleware");
             for (const adapter of adapters) {
-              expect(exports).toContain(
-                `./test/files/folder1/handler-handler-${adapter}`,
-              );
-              expect(exports).toContain(
-                `./test/files/middleware-middleware-${adapter}`,
-              );
+              expect(exports).toContain(`./test/files/folder1/handler-handler-${adapter}`);
+              expect(exports).toContain(`./test/files/middleware-middleware-${adapter}`);
             }
           },
         }),
@@ -143,18 +127,12 @@ describe("rollup", () => {
 
     const gen = await result.generate({});
 
-    expect(
-      gen.output.filter((f) => f.type === "chunk" && f.isEntry),
-    ).toHaveLength(expectNbOutput(2));
+    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(2));
 
-    const handler = gen.output.find((f: any) => f.facadeModuleId === entry1) as
-      | OutputChunk
-      | undefined;
+    const handler = gen.output.find((f: any) => f.facadeModuleId === entry1) as OutputChunk | undefined;
     expect(handler?.name).toEqual(join("test", "files", "folder1", "handler"));
 
-    const middleware = gen.output.find(
-      (f: any) => f.facadeModuleId === entry2,
-    ) as OutputChunk | undefined;
+    const middleware = gen.output.find((f: any) => f.facadeModuleId === entry2) as OutputChunk | undefined;
     expect(middleware?.name).toEqual(join("test", "files", "middleware"));
 
     testRollupOutput(gen, "handler", entry1);
@@ -177,12 +155,8 @@ describe("rollup", () => {
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/folder2/handler-handler");
             for (const adapter of adapters) {
-              expect(exports).toContain(
-                `./test/files/folder1/handler-handler-${adapter}`,
-              );
-              expect(exports).toContain(
-                `./test/files/folder2/handler-handler-${adapter}`,
-              );
+              expect(exports).toContain(`./test/files/folder1/handler-handler-${adapter}`);
+              expect(exports).toContain(`./test/files/folder2/handler-handler-${adapter}`);
             }
           },
         }),
@@ -198,18 +172,12 @@ describe("rollup", () => {
 
     const gen = await result.generate({});
 
-    expect(
-      gen.output.filter((f) => f.type === "chunk" && f.isEntry),
-    ).toHaveLength(expectNbOutput(2));
+    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(2));
 
-    const handler1 = gen.output.find(
-      (f: any) => f.facadeModuleId === entry1,
-    ) as OutputChunk | undefined;
+    const handler1 = gen.output.find((f: any) => f.facadeModuleId === entry1) as OutputChunk | undefined;
     expect(handler1?.name).toEqual(join("test", "files", "folder1", "handler"));
 
-    const handler2 = gen.output.find(
-      (f: any) => f.facadeModuleId === entry2,
-    ) as OutputChunk | undefined;
+    const handler2 = gen.output.find((f: any) => f.facadeModuleId === entry2) as OutputChunk | undefined;
     expect(handler2?.name).toEqual(join("test", "files", "folder2", "handler"));
 
     testRollupOutput(gen, "handler", entry1);
@@ -232,12 +200,8 @@ describe("rollup", () => {
 
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/folder2/handler-handler");
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hono",
-            );
-            expect(exports).toContain(
-              "./test/files/folder2/handler-handler-hono",
-            );
+            expect(exports).toContain("./test/files/folder1/handler-handler-hono");
+            expect(exports).toContain("./test/files/folder2/handler-handler-hono");
           },
         }),
         nodeResolve(),
@@ -252,18 +216,12 @@ describe("rollup", () => {
 
     const gen = await result.generate({});
 
-    expect(
-      gen.output.filter((f) => f.type === "chunk" && f.isEntry),
-    ).toHaveLength(4);
+    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(4);
 
-    const handler1 = gen.output.find(
-      (f: any) => f.facadeModuleId === entry1,
-    ) as OutputChunk | undefined;
+    const handler1 = gen.output.find((f: any) => f.facadeModuleId === entry1) as OutputChunk | undefined;
     expect(handler1?.name).toEqual(join("test", "files", "folder1", "handler"));
 
-    const handler2 = gen.output.find(
-      (f: any) => f.facadeModuleId === entry2,
-    ) as OutputChunk | undefined;
+    const handler2 = gen.output.find((f: any) => f.facadeModuleId === entry2) as OutputChunk | undefined;
     expect(handler2?.name).toEqual(join("test", "files", "folder2", "handler"));
   });
 
@@ -289,34 +247,19 @@ describe("rollup", () => {
       },
     });
 
-    await expect(result.generate({})).rejects.toThrow(
-      "The following files have overlapping exports",
-    );
+    await expect(result.generate({})).rejects.toThrow("The following files have overlapping exports");
   });
 });
 
-function testRollupHandler(
-  gen: RollupOutput,
-  type: "handler" | "middleware",
-  server: string,
-  f: string,
-) {
+function testRollupHandler(gen: RollupOutput, type: "handler" | "middleware", server: string, f: string) {
   const parsed = parse(f);
   const res = gen.output.find(
-    (file: any) =>
-      file.facadeModuleId ===
-      `virtual:universal-middleware:${server}:${type}:${f}`,
+    (file: any) => file.facadeModuleId === `virtual:universal-middleware:${server}:${type}:${f}`,
   ) as OutputChunk | undefined;
-  expect(res?.name.replaceAll("\\", "/")).toEqual(
-    `${parsed.dir}/universal-${server}-${type}-${parsed.name}`,
-  );
+  expect(res?.name.replaceAll("\\", "/")).toEqual(`${parsed.dir}/universal-${server}-${type}-${parsed.name}`);
 }
 
-function testRollupOutput(
-  gen: RollupOutput,
-  type: "handler" | "middleware",
-  f: string,
-) {
+function testRollupOutput(gen: RollupOutput, type: "handler" | "middleware", f: string) {
   for (const adapter of adapters) {
     if (adapter === "cloudflare-pages" || adapter === "cloudflare-worker") {
       continue;

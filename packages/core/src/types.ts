@@ -5,9 +5,7 @@ export type Awaitable<T> = T | Promise<T>;
 
 // Runtimes
 
-export interface CloudflareWorkerdRuntime<
-  Env extends Record<string, any> = Record<string, unknown>,
-> {
+export interface CloudflareWorkerdRuntime<Env extends Record<string, any> = Record<string, unknown>> {
   runtime: "workerd";
 
   /**
@@ -97,9 +95,7 @@ export type UniversalMiddleware<
   | Awaitable<OutContext | undefined>
   | ((response: Response) => Awaitable<Response>);
 
-export type UniversalHandler<
-  InContext extends Universal.Context = Universal.Context,
-> = (
+export type UniversalHandler<InContext extends Universal.Context = Universal.Context> = (
   request: Request,
   context: InContext,
   runtime: RuntimeAdapter,

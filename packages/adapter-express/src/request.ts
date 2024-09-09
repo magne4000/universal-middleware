@@ -30,15 +30,11 @@ export interface NodeRequestAdapterOptions {
 }
 
 /** Create a function that converts a Node HTTP request into a fetch API `Request` object */
-export function createRequestAdapter(
-  options: NodeRequestAdapterOptions = {},
-): (req: DecoratedRequest) => Request {
+export function createRequestAdapter(options: NodeRequestAdapterOptions = {}): (req: DecoratedRequest) => Request {
   const { origin = env.ORIGIN, trustProxy = env.TRUST_PROXY === "1" } = options;
 
   // eslint-disable-next-line prefer-const
-  let { protocol: protocolOverride, host: hostOverride } = origin
-    ? new URL(origin)
-    : ({} as Record<string, undefined>);
+  let { protocol: protocolOverride, host: hostOverride } = origin ? new URL(origin) : ({} as Record<string, undefined>);
 
   if (protocolOverride) {
     protocolOverride = protocolOverride.slice(0, -1);
@@ -60,9 +56,7 @@ export function createRequestAdapter(
     let headers = req.headers as Record<string, string>;
     // Filter out pseudo-headers
     if (headers[":method"]) {
-      headers = Object.fromEntries(
-        Object.entries(headers).filter(([key]) => !key.startsWith(":")),
-      );
+      headers = Object.fromEntries(Object.entries(headers).filter(([key]) => !key.startsWith(":")));
     }
 
     const protocol =
@@ -72,10 +66,7 @@ export function createRequestAdapter(
       (req.socket?.encrypted && "https") ||
       "http";
 
-    let host =
-      hostOverride ||
-      (trustProxy && parseForwardedHeader("host")) ||
-      headers.host;
+    let host = hostOverride || (trustProxy && parseForwardedHeader("host")) || headers.host;
 
     if (!host && !warned) {
       console.warn(
@@ -86,16 +77,13 @@ export function createRequestAdapter(
       host = "localhost";
     }
 
-    const request = new Request(
-      `${protocol}://${host}${req.originalUrl ?? req.url}`,
-      {
-        method: req.method,
-        headers,
-        body: convertBody(req),
-        // @ts-ignore
-        duplex: "half",
-      },
-    );
+    const request = new Request(`${protocol}://${host}${req.originalUrl ?? req.url}`, {
+      method: req.method,
+      headers,
+      body: convertBody(req),
+      // @ts-ignore
+      duplex: "half",
+    });
 
     req[requestSymbol] = request;
 

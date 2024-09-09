@@ -36,15 +36,9 @@ describe("esbuild", () => {
     });
 
     expect(result.errors).toHaveLength(0);
-    expect(
-      result.outputFiles.filter(
-        (f) => !f.path.includes(join("dist", "chunk-")),
-      ),
-    ).toHaveLength(expectNbOutput(1));
+    expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(expectNbOutput(1));
 
-    expect(findOutput(result, entry)).toSatisfy((s: string) =>
-      s.startsWith("dist/handler"),
-    );
+    expect(findOutput(result, entry)).toSatisfy((s: string) => s.startsWith("dist/handler"));
 
     testEsbuildOutput(result, "handler", entry);
   });
@@ -85,18 +79,10 @@ describe("esbuild", () => {
     });
 
     expect(result.errors).toHaveLength(0);
-    expect(
-      result.outputFiles.filter(
-        (f) => !f.path.includes(join("dist", "chunk-")),
-      ),
-    ).toHaveLength(expectNbOutput(2));
+    expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(expectNbOutput(2));
 
-    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/handlers/one"),
-    );
-    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/middleware"),
-    );
+    expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/handlers/one"));
+    expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/middleware"));
 
     testEsbuildOutput(result, "handler", entry1);
     testEsbuildOutput(result, "middleware", entry2);
@@ -118,12 +104,8 @@ describe("esbuild", () => {
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/middleware-middleware");
             for (const adapter of adapters) {
-              expect(exports).toContain(
-                `./test/files/folder1/handler-handler-${adapter}`,
-              );
-              expect(exports).toContain(
-                `./test/files/middleware-middleware-${adapter}`,
-              );
+              expect(exports).toContain(`./test/files/folder1/handler-handler-${adapter}`);
+              expect(exports).toContain(`./test/files/middleware-middleware-${adapter}`);
             }
           },
         }),
@@ -139,18 +121,10 @@ describe("esbuild", () => {
     });
 
     expect(result.errors).toHaveLength(0);
-    expect(
-      result.outputFiles.filter(
-        (f) => !f.path.includes(join("dist", "chunk-")),
-      ),
-    ).toHaveLength(expectNbOutput(2));
+    expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(expectNbOutput(2));
 
-    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder1/handler"),
-    );
-    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/middleware"),
-    );
+    expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/test/files/folder1/handler"));
+    expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/test/files/middleware"));
 
     testEsbuildOutput(result, "handler", entry1);
     testEsbuildOutput(result, "middleware", entry2);
@@ -172,12 +146,8 @@ describe("esbuild", () => {
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/folder2/handler-handler");
             for (const adapter of adapters) {
-              expect(exports).toContain(
-                `./test/files/folder1/handler-handler-${adapter}`,
-              );
-              expect(exports).toContain(
-                `./test/files/folder2/handler-handler-${adapter}`,
-              );
+              expect(exports).toContain(`./test/files/folder1/handler-handler-${adapter}`);
+              expect(exports).toContain(`./test/files/folder2/handler-handler-${adapter}`);
             }
           },
         }),
@@ -193,18 +163,10 @@ describe("esbuild", () => {
     });
 
     expect(result.errors).toHaveLength(0);
-    expect(
-      result.outputFiles.filter(
-        (f) => !f.path.includes(join("dist", "chunk-")),
-      ),
-    ).toHaveLength(expectNbOutput(2));
+    expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(expectNbOutput(2));
 
-    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder1/handler"),
-    );
-    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder2/handler"),
-    );
+    expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/test/files/folder1/handler"));
+    expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/test/files/folder2/handler"));
 
     testEsbuildOutput(result, "handler", entry1);
     testEsbuildOutput(result, "handler", entry2);
@@ -245,18 +207,10 @@ describe("esbuild", () => {
     });
 
     expect(result.errors).toHaveLength(0);
-    expect(
-      result.outputFiles.filter(
-        (f) => !f.path.includes(join("dist", "chunk-")),
-      ),
-    ).toHaveLength(expectNbOutput(2));
+    expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(expectNbOutput(2));
 
-    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/folder1/handler"),
-    );
-    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/folder2/handler"),
-    );
+    expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/folder1/handler"));
+    expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/folder2/handler"));
 
     testEsbuildOutput(result, "handler", entry1);
     testEsbuildOutput(result, "handler", entry2);
@@ -278,12 +232,8 @@ describe("esbuild", () => {
 
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/folder2/handler-handler");
-            expect(exports).toContain(
-              "./test/files/folder1/handler-handler-hono",
-            );
-            expect(exports).toContain(
-              "./test/files/folder2/handler-handler-hono",
-            );
+            expect(exports).toContain("./test/files/folder1/handler-handler-hono");
+            expect(exports).toContain("./test/files/folder2/handler-handler-hono");
           },
         }),
       ],
@@ -298,18 +248,10 @@ describe("esbuild", () => {
     });
 
     expect(result.errors).toHaveLength(0);
-    expect(
-      result.outputFiles.filter(
-        (f) => !f.path.includes(join("dist", "chunk-")),
-      ),
-    ).toHaveLength(4);
+    expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(4);
 
-    expect(findOutput(result, entry1)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder1/handler"),
-    );
-    expect(findOutput(result, entry2)).toSatisfy((s: string) =>
-      s.startsWith("dist/test/files/folder2/handler"),
-    );
+    expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/test/files/folder1/handler"));
+    expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/test/files/folder2/handler"));
   });
 
   it("fails when bundle is not true", options, async () => {
@@ -359,13 +301,8 @@ describe("esbuild", () => {
   });
 });
 
-function findOutput(
-  result: BuildResult<{ metafile: true; write: false }>,
-  entry: string,
-) {
-  return Object.entries(result.metafile.outputs).find(
-    ([, value]) => value.entryPoint === entry,
-  )?.[0];
+function findOutput(result: BuildResult<{ metafile: true; write: false }>, entry: string) {
+  return Object.entries(result.metafile.outputs).find(([, value]) => value.entryPoint === entry)?.[0];
 }
 
 function testEsbuildHandler(
@@ -374,23 +311,14 @@ function testEsbuildHandler(
   server: string,
   f: string,
 ) {
-  const output = findOutput(
-    result,
-    `virtual:universal-middleware:virtual:universal-middleware:${server}:${type}:${f}`,
-  );
+  const output = findOutput(result, `virtual:universal-middleware:virtual:universal-middleware:${server}:${type}:${f}`);
   expect(output).toBeTruthy();
 
-  const file = result.outputFiles.find((f) =>
-    f.path.includes(`universal-${server}-${type}`),
-  );
+  const file = result.outputFiles.find((f) => f.path.includes(`universal-${server}-${type}`));
   if (type === "handler") {
-    expect(file?.text).toContain(
-      `import { createHandler } from "@universal-middleware/${server}"`,
-    );
+    expect(file?.text).toContain(`import { createHandler } from "@universal-middleware/${server}"`);
   } else {
-    expect(file?.text).toContain(
-      `import { createMiddleware } from "@universal-middleware/${server}"`,
-    );
+    expect(file?.text).toContain(`import { createMiddleware } from "@universal-middleware/${server}"`);
   }
 }
 

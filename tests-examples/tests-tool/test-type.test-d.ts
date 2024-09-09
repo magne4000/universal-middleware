@@ -21,26 +21,11 @@ import contextMiddleware from "@universal-middleware-examples/tool/middlewares/c
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware";
 import handler from "@universal-middleware-examples/tool/dummy-handler";
 import type { HonoHandler, HonoMiddleware } from "@universal-middleware/hono";
-import type {
-  HattipHandler,
-  HattipMiddleware,
-} from "@universal-middleware/hattip";
-import type {
-  NodeHandler,
-  NodeMiddleware,
-} from "@universal-middleware/express";
-import type {
-  WebrouteHandler,
-  WebrouteMiddleware,
-} from "@universal-middleware/webroute";
-import type {
-  UniversalHandler,
-  UniversalMiddleware,
-} from "@universal-middleware/core";
-import type {
-  FastifyHandler,
-  FastifyMiddleware,
-} from "@universal-middleware/fastify";
+import type { HattipHandler, HattipMiddleware } from "@universal-middleware/hattip";
+import type { NodeHandler, NodeMiddleware } from "@universal-middleware/express";
+import type { WebrouteHandler, WebrouteMiddleware } from "@universal-middleware/webroute";
+import type { UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type { FastifyHandler, FastifyMiddleware } from "@universal-middleware/fastify";
 import type { H3Handler, H3Middleware } from "@universal-middleware/h3";
 
 test("hono", () => {
@@ -50,22 +35,14 @@ test("hono", () => {
 });
 
 test("express", () => {
-  expectTypeOf(
-    expressContextMiddleware,
-  ).returns.toEqualTypeOf<NodeMiddleware>();
-  expectTypeOf(
-    expressHeadersMiddleware,
-  ).returns.toEqualTypeOf<NodeMiddleware>();
+  expectTypeOf(expressContextMiddleware).returns.toEqualTypeOf<NodeMiddleware>();
+  expectTypeOf(expressHeadersMiddleware).returns.toEqualTypeOf<NodeMiddleware>();
   expectTypeOf(expressHandler).returns.toEqualTypeOf<NodeHandler>();
 });
 
 test("hattip", () => {
-  expectTypeOf(
-    hattipContextMiddleware,
-  ).returns.toEqualTypeOf<HattipMiddleware>();
-  expectTypeOf(
-    hattipHeadersMiddleware,
-  ).returns.toEqualTypeOf<HattipMiddleware>();
+  expectTypeOf(hattipContextMiddleware).returns.toEqualTypeOf<HattipMiddleware>();
+  expectTypeOf(hattipHeadersMiddleware).returns.toEqualTypeOf<HattipMiddleware>();
   expectTypeOf(hattipHandler).returns.toEqualTypeOf<HattipHandler>();
 });
 
@@ -76,18 +53,12 @@ test("webroute", () => {
   expectTypeOf(webrouteHeadersMiddleware).returns.toEqualTypeOf<
     WebrouteMiddleware<{ hello?: string }, { hello?: string }>
   >();
-  expectTypeOf(webrouteHandler).returns.toEqualTypeOf<
-    WebrouteHandler<Universal.Context, Universal.Context>
-  >();
+  expectTypeOf(webrouteHandler).returns.toEqualTypeOf<WebrouteHandler<Universal.Context, Universal.Context>>();
 });
 
 test("fastify", () => {
-  expectTypeOf(
-    fastifyContextMiddleware,
-  ).returns.toEqualTypeOf<FastifyMiddleware>();
-  expectTypeOf(
-    fastifyHeadersMiddleware,
-  ).returns.toEqualTypeOf<FastifyMiddleware>();
+  expectTypeOf(fastifyContextMiddleware).returns.toEqualTypeOf<FastifyMiddleware>();
+  expectTypeOf(fastifyHeadersMiddleware).returns.toEqualTypeOf<FastifyMiddleware>();
   expectTypeOf(fastifyHandler).returns.toEqualTypeOf<FastifyHandler>();
 });
 
@@ -98,11 +69,7 @@ test("h3", () => {
 });
 
 test("generic", () => {
-  expectTypeOf(contextMiddleware).returns.toEqualTypeOf<
-    (req: Request, ctx: Universal.Context) => { hello: string }
-  >();
-  expectTypeOf(headersMiddleware).returns.toMatchTypeOf<
-    UniversalMiddleware<{ hello?: string }>
-  >();
+  expectTypeOf(contextMiddleware).returns.toEqualTypeOf<(req: Request, ctx: Universal.Context) => { hello: string }>();
+  expectTypeOf(headersMiddleware).returns.toMatchTypeOf<UniversalMiddleware<{ hello?: string }>>();
   expectTypeOf(handler).returns.toEqualTypeOf<UniversalHandler>();
 });

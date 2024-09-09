@@ -1,9 +1,4 @@
-import type {
-  CloudflareWorkerdRuntime,
-  Get,
-  UniversalHandler,
-  UniversalMiddleware,
-} from "@universal-middleware/core";
+import type { CloudflareWorkerdRuntime, Get, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 
 export const middlewares = [
   // universal middleware that updates the context synchronously

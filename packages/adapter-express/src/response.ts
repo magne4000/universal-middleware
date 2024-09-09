@@ -1,11 +1,7 @@
 import type { ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
-import {
-  type DecoratedServerResponse,
-  pendingMiddlewaresSymbol,
-  wrappedResponseSymbol,
-} from "./common.js";
+import { type DecoratedServerResponse, pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./common.js";
 import { nodeHeadersToWeb } from "@universal-middleware/core";
 
 // @ts-ignore
@@ -14,10 +10,7 @@ const deno = typeof Deno !== "undefined";
 /**
  * Send a fetch API Response into a Node.js HTTP response stream.
  */
-export async function sendResponse(
-  fetchResponse: Response,
-  nodeResponse: DecoratedServerResponse,
-): Promise<void> {
+export async function sendResponse(fetchResponse: Response, nodeResponse: DecoratedServerResponse): Promise<void> {
   const fetchBody: unknown = fetchResponse.body;
 
   let body: Readable | null = null;
@@ -56,11 +49,7 @@ export async function sendResponse(
   }
 }
 
-function override<T extends DecoratedServerResponse>(
-  nodeResponse: T,
-  key: keyof T,
-  callback: () => Promise<unknown>,
-) {
+function override<T extends DecoratedServerResponse>(nodeResponse: T, key: keyof T, callback: () => Promise<unknown>) {
   const original: any = nodeResponse[key];
 
   (nodeResponse as any)[key] = async (...args: any) => {
@@ -102,9 +91,7 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
       );
 
       if (response.body) {
-        throw new Error(
-          "Replacing the Response body is currently not supported for connect-like servers",
-        );
+        throw new Error("Replacing the Response body is currently not supported for connect-like servers");
       }
 
       setHeaders(response, nodeResponse, true);
@@ -118,11 +105,7 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
   }
 }
 
-function setHeaders(
-  fetchResponse: Response,
-  nodeResponse: ServerResponse,
-  mirror = false,
-) {
+function setHeaders(fetchResponse: Response, nodeResponse: ServerResponse, mirror = false) {
   nodeResponse.statusCode = fetchResponse.status;
   if (fetchResponse.statusText) {
     nodeResponse.statusMessage = fetchResponse.statusText;

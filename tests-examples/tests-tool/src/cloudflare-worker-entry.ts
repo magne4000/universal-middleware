@@ -6,10 +6,6 @@ import { pipe } from "@universal-middleware/core";
 
 // Cloudflare Workers have no internal way of representing a middleware
 // Instead, we use the universal `pipe` operator
-const wrapped = pipe(
-  contextMiddleware("World!!!"),
-  headersMiddleware(),
-  handler(),
-);
+const wrapped = pipe(contextMiddleware("World!!!"), headersMiddleware(), handler());
 
 export default createHandler(() => wrapped)();

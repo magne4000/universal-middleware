@@ -50,8 +50,7 @@ describe("pipe", () => {
           b: 2,
         };
       },
-      (_: Request, ctx: { a: number; b: number }) =>
-        new Response(String(ctx.a + ctx.b)),
+      (_: Request, ctx: { a: number; b: number }) => new Response(String(ctx.a + ctx.b)),
     );
     const response = handler(request, context, runtime);
     await expect(response).resolves.toBeInstanceOf(Response);

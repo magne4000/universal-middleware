@@ -1,9 +1,5 @@
 import type { RequestCtx } from "@webroute/route";
-import type {
-  Get,
-  UniversalHandler,
-  UniversalMiddleware,
-} from "@universal-middleware/core";
+import type { Get, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
 import type { DataResult, MiddlewareFn } from "@webroute/middleware";
 
@@ -18,10 +14,7 @@ export type WebrouteMiddleware<
   THeaders = unknown,
   TState extends InContext = InContext,
   TProviders = unknown,
-> = MiddlewareFn<
-  TResult,
-  [ctx: RequestCtx<TParams, TQuery, TBody, THeaders, TState, TProviders>]
->;
+> = MiddlewareFn<TResult, [ctx: RequestCtx<TParams, TQuery, TBody, THeaders, TState, TProviders>]>;
 
 export type WebrouteHandler<
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
@@ -34,24 +27,12 @@ export type WebrouteHandler<
   THeaders = unknown,
   TState extends InContext = InContext,
   TProviders = unknown,
-> = WebrouteMiddleware<
-  InContext,
-  TResult,
-  TParams,
-  TQuery,
-  TBody,
-  THeaders,
-  TState,
-  TProviders
->;
+> = WebrouteMiddleware<InContext, TResult, TParams, TQuery, TBody, THeaders, TState, TProviders>;
 
 /**
  * Creates a request handler to be passed to app.all() or any other route function
  */
-export function createHandler<
-  T extends unknown[],
-  InContext extends Universal.Context,
->(
+export function createHandler<T extends unknown[], InContext extends Universal.Context>(
   handlerFactory: Get<T, UniversalHandler>,
 ): Get<T, WebrouteHandler<InContext>> {
   return (...args) => {
@@ -70,13 +51,13 @@ type ExtractVoid<T, U> = T extends U ? T : void;
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 type MiddlewareFactoryReturnType<T extends (...args: any) => any> =
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  ReturnType<T> extends UniversalMiddleware<any, any>
-    ? Awaited<ReturnType<ReturnType<T>>>
-    : never;
+  ReturnType<T> extends UniversalMiddleware<any, any> ? Awaited<ReturnType<ReturnType<T>>> : never;
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type MiddlewareFactoryDataResult<T extends (...args: any) => any> =
-  ExtractVoid<MiddlewareFactoryReturnType<T>, DataResult>;
+export type MiddlewareFactoryDataResult<T extends (...args: any) => any> = ExtractVoid<
+  MiddlewareFactoryReturnType<T>,
+  DataResult
+>;
 
 /**
  * Creates a middleware to be passed to app.use() or any route function
@@ -87,23 +68,14 @@ export function createMiddleware<
   OutContext extends Universal.Context,
 >(
   middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
-): Get<
-  T,
-  WebrouteMiddleware<
-    InContext,
-    MiddlewareFactoryDataResult<typeof middlewareFactory>
-  >
-> {
+): Get<T, WebrouteMiddleware<InContext, MiddlewareFactoryDataResult<typeof middlewareFactory>>> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
     return ((request, ctx) => {
       const context = initContext(ctx);
       return middleware(request, context, getAdapterRuntime("other", {}));
-    }) as WebrouteMiddleware<
-      InContext,
-      MiddlewareFactoryDataResult<typeof middlewareFactory>
-    >;
+    }) as WebrouteMiddleware<InContext, MiddlewareFactoryDataResult<typeof middlewareFactory>>;
   };
 }
 

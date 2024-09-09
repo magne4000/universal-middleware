@@ -1,28 +1,19 @@
 import type { Awaitable, UniversalHandler, UniversalMiddleware } from "./types";
 
 type Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
-type In<T> =
-  T extends UniversalHandler<infer C>
-    ? C
-    : T extends UniversalMiddleware<infer C, any>
-      ? C
-      : never;
+type In<T> = T extends UniversalHandler<infer C> ? C : T extends UniversalMiddleware<infer C, any> ? C : never;
 type First<T extends any[]> = T extends [infer X, ...any[]] ? X : never;
 type Last<T extends any[]> = T extends [...any[], infer X] ? X : never;
 
-type ComposeReturnType<T extends UniversalMiddleware<any, any>[]> =
-  Last<T> extends UniversalHandler<any>
-    ? UniversalHandler<In<First<T>>>
-    : UniversalMiddleware<In<First<T>>, In<Last<T>>>;
+type ComposeReturnType<T extends UniversalMiddleware<any, any>[]> = Last<T> extends UniversalHandler<any>
+  ? UniversalHandler<In<First<T>>>
+  : UniversalMiddleware<In<First<T>>, In<Last<T>>>;
 
 type Pipe<F extends UniversalMiddleware<any, any>[]> = F extends []
   ? F
   : F extends [UniversalMiddleware<any, any>]
     ? F
-    : F extends [
-          UniversalMiddleware<infer A, infer B>,
-          UniversalMiddleware<any, infer D>,
-        ]
+    : F extends [UniversalMiddleware<infer A, infer B>, UniversalMiddleware<any, infer D>]
       ? [UniversalMiddleware<A, B>, UniversalMiddleware<B, D>]
       : F extends [
             ...infer X extends UniversalMiddleware<any, any>[],

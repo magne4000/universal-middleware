@@ -1,14 +1,5 @@
-import type {
-  Get,
-  UniversalHandler,
-  UniversalMiddleware,
-} from "@universal-middleware/core";
-import {
-  getAdapterRuntime,
-  isBodyInit,
-  mergeHeadersInto,
-  nodeHeadersToWeb,
-} from "@universal-middleware/core";
+import type { Get, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import { getAdapterRuntime, isBodyInit, mergeHeadersInto, nodeHeadersToWeb } from "@universal-middleware/core";
 import {
   defineResponseMiddleware,
   eventHandler,
@@ -41,9 +32,7 @@ declare module "h3" {
 /**
  * Creates a request handler to be passed to app.all() or any other route function
  */
-export function createHandler<T extends unknown[]>(
-  handlerFactory: Get<T, UniversalHandler>,
-): Get<T, H3Handler> {
+export function createHandler<T extends unknown[]>(handlerFactory: Get<T, UniversalHandler>): Get<T, H3Handler> {
   return (...args) => {
     const handler = handlerFactory(...args);
 
@@ -66,10 +55,7 @@ export const universalOnBeforeResponse = defineResponseMiddleware(
     event.context[wrappedResponseSymbol] = true;
 
     if (response.body instanceof Response) {
-      mergeHeadersInto(
-        response.body.headers,
-        nodeHeadersToWeb(getResponseHeaders(event)),
-      );
+      mergeHeadersInto(response.body.headers, nodeHeadersToWeb(getResponseHeaders(event)));
     } else if (isBodyInit(response.body)) {
       response.body = new Response(response.body, {
         headers: nodeHeadersToWeb(getResponseHeaders(event)),
@@ -104,19 +90,13 @@ export function createMiddleware<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
->(
-  middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
-): Get<T, H3Middleware> {
+>(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, H3Middleware> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
     return eventHandler(async (event) => {
       const ctx = initContext<InContext>(event);
-      const response = await middleware(
-        toWebRequest(event),
-        ctx,
-        getAdapterRuntime("other", {}),
-      );
+      const response = await middleware(toWebRequest(event), ctx, getAdapterRuntime("other", {}));
 
       if (typeof response === "function") {
         event.context[pendingMiddlewaresSymbol] ??= [];
@@ -134,15 +114,11 @@ export function createMiddleware<
   };
 }
 
-export function initContext<Context extends Universal.Context>(
-  event: H3Event,
-): Context {
+export function initContext<Context extends Universal.Context>(event: H3Event): Context {
   event.context[contextSymbol] ??= {};
   return event.context[contextSymbol] as Context;
 }
 
-export function getContext<Context extends Universal.Context>(
-  event: H3Event,
-): Context {
+export function getContext<Context extends Universal.Context>(event: H3Event): Context {
   return event.context[contextSymbol] as Context;
 }

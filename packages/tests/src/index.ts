@@ -12,11 +12,7 @@ export interface Run {
 
 export interface Options {
   vitest: typeof import("vitest");
-  test?: (
-    response: Response,
-    body: Record<string, unknown>,
-    run: Run,
-  ) => void | Promise<void>;
+  test?: (response: Response, body: Record<string, unknown>, run: Run) => void | Promise<void>;
   testPost?: boolean;
 }
 
@@ -93,15 +89,9 @@ export function runTests(runs: Run[], options: Options) {
           },
           waitUntil: run.waitUntilType ?? "undefined",
         });
-        options.vitest
-          .expect(response.headers.get("x-test-value"))
-          .toBe("universal-middleware");
-        options.vitest
-          .expect(response.headers.has("x-should-be-removed"))
-          .toBe(false);
-        options.vitest
-          .expect(response.headers.get("content-type"))
-          .toBe("application/json; charset=utf-8");
+        options.vitest.expect(response.headers.get("x-test-value")).toBe("universal-middleware");
+        options.vitest.expect(response.headers.has("x-should-be-removed")).toBe(false);
+        options.vitest.expect(response.headers.get("content-type")).toBe("application/json; charset=utf-8");
         await options?.test?.(response, body, run);
       },
       30_000,

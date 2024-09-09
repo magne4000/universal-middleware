@@ -68,10 +68,7 @@ function getVirtualInputs(
       return `${namespace}:${this.server}:${this.type}:${this.handler}`;
     },
     get key() {
-      return join(
-        parsed.dir,
-        `universal-${this.server}-${this.type}-${parsed.name}`,
-      );
+      return join(parsed.dir, `universal-${this.server}-${this.type}-${parsed.name}`);
     },
   }));
 }
@@ -87,12 +84,7 @@ function filterInput(input: string) {
 }
 
 function normalizeInput(
-  input:
-    | undefined
-    | string
-    | string[]
-    | Record<string, string>
-    | { in: string; out: string }[],
+  input: undefined | string | string[] | Record<string, string> | { in: string; out: string }[],
   options?: Options,
 ) {
   const keys = new Set<string>();
@@ -130,9 +122,7 @@ function normalizeInput(
     );
 
     if (!options?.ignoreRecommendations && i >= 2) {
-      console.warn(
-        "Prefer using an object for esbuild `entryPoints` instead of an array",
-      );
+      console.warn("Prefer using an object for esbuild `entryPoints` instead of an array");
     }
 
     return res;
@@ -160,10 +150,7 @@ function appendVirtualInputs(
 function applyOutbase(input: Record<string, string>, outbase: string) {
   if (!outbase) return input;
 
-  const re = new RegExp(
-    `^(${outbase.replaceAll("\\\\", "/")}|${outbase.replaceAll("/", "\\\\")})/?`,
-    "gu",
-  );
+  const re = new RegExp(`^(${outbase.replaceAll("\\\\", "/")}|${outbase.replaceAll("/", "\\\\")})/?`, "gu");
 
   return Object.keys(input).reduce(
     (acc, key) => {
@@ -212,8 +199,7 @@ const typesByServer: Record<
     handler: "WebrouteHandler",
     selfImports: ["type MiddlewareFactoryDataResult"],
     outContext: (type) => `MiddlewareFactoryDataResult<typeof ${type}>`,
-    genericParameters:
-      "<InContext, void extends OutContext ? InContext : OutContext>",
+    genericParameters: "<InContext, void extends OutContext ? InContext : OutContext>",
   },
   "cloudflare-worker": {
     handler: "CloudflareHandler",
@@ -234,10 +220,7 @@ function load(id: string, resolve?: (handler: string, type: string) => string) {
 
   const info = typesByServer[target as (typeof defaultWrappers)[number]];
 
-  const fn =
-    type === "handler"
-      ? (info.typeHandler ?? "createHandler")
-      : (info.typeMiddleware ?? "createMiddleware");
+  const fn = type === "handler" ? info.typeHandler ?? "createHandler" : info.typeMiddleware ?? "createMiddleware";
   const code = `import { ${fn} } from "@universal-middleware/${info.target ?? target}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 export default ${fn}(${type});
@@ -245,17 +228,11 @@ export default ${fn}(${type});
   return { code };
 }
 
-function loadDts(
-  id: string,
-  resolve?: (handler: string, type: string) => string,
-) {
+function loadDts(id: string, resolve?: (handler: string, type: string) => string) {
   const [, , target, type, handler] = id.split(":");
 
   const info = typesByServer[target as (typeof defaultWrappers)[number]];
-  const fn =
-    type === "handler"
-      ? (info.typeHandler ?? "createHandler")
-      : (info.typeMiddleware ?? "createMiddleware");
+  const fn = type === "handler" ? info.typeHandler ?? "createHandler" : info.typeMiddleware ?? "createMiddleware";
   const t = info[type as "middleware" | "handler"];
   if (t === undefined) return;
 
@@ -311,10 +288,7 @@ function formatDuplicatesForErrorMessage(duplicates: Map<string, Report[]>) {
   return formattedMessage;
 }
 
-function genBundleInfo(
-  input: Record<string, string>,
-  findDest: (path: string) => string,
-): Record<string, BundleInfo> {
+function genBundleInfo(input: Record<string, string>, findDest: (path: string) => string): Record<string, BundleInfo> {
   const entries = Object.entries(input);
 
   return Object.fromEntries(
@@ -345,12 +319,7 @@ function fixBundleExports(
   for (const [k, v] of Object.entries(bundle)) {
     if (!k.startsWith(namespace)) {
       v.exports = `./${posix
-        .normalize(
-          options.entryExportNames
-            .replace("[dir]", v.dir)
-            .replace("[name]", v.name)
-            .replace("[type]", v.type),
-        )
+        .normalize(options.entryExportNames.replace("[dir]", v.dir).replace("[name]", v.name).replace("[type]", v.type))
         .replaceAll("\\", "/")}`;
     }
   }
@@ -391,9 +360,7 @@ async function genDts(bundle: Record<string, BundleInfo>, options?: Options) {
   for (const value of Object.values(bundle)) {
     if (!value.in.startsWith(namespace)) continue;
 
-    const res = loadDts(value.in, (handler) =>
-      posix.relative(value.dts, bundle[handler].dts).replace(/^\.\./, "."),
-    );
+    const res = loadDts(value.in, (handler) => posix.relative(value.dts, bundle[handler].dts).replace(/^\.\./, "."));
     if (!res) continue;
 
     await generateDts(res.code, value.dts);
@@ -459,11 +426,8 @@ export async function readAndEditPackageJson(reports: Report[]) {
   };
 }
 
-const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
-  options?: Options,
-) => {
-  const serversExportNames =
-    options?.serversExportNames ?? "./[dir]/[name]-[type]-[server]";
+const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (options?: Options) => {
+  const serversExportNames = options?.serversExportNames ?? "./[dir]/[name]-[type]-[server]";
   const entryExportNames = options?.entryExportNames ?? "./[dir]/[name]-[type]";
 
   let normalizedInput: Record<string, string> | null = null;
@@ -513,8 +477,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
               // biome-ignore lint/style/noNonNullAssertion: <explanation>
               const cleanEntry = value.facadeModuleId!;
               return (
-                posix.relative(cleanEntry, cleanV) === "" ||
-                posix.relative(cleanEntry, `${namespace}:${cleanV}`) === ""
+                posix.relative(cleanEntry, cleanV) === "" || posix.relative(cleanEntry, `${namespace}:${cleanV}`) === ""
               );
             }
 
@@ -555,9 +518,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
     esbuild: {
       setup(builder) {
         if (builder.initialOptions.bundle !== true) {
-          throw new Error(
-            "`bundle` options must be `true` for universal-middleware to work properly",
-          );
+          throw new Error("`bundle` options must be `true` for universal-middleware to work properly");
         }
 
         if (!options?.ignoreRecommendations) {
@@ -571,24 +532,17 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
             );
           }
           if (!builder.initialOptions.splitting) {
-            console.warn(
-              "enable esbuild `splitting` option to reduce bundle size",
-            );
+            console.warn("enable esbuild `splitting` option to reduce bundle size");
           }
         }
 
         builder.initialOptions.metafile = true;
 
         if (builder.initialOptions.bundle) {
-          builder.initialOptions.external = [
-            ...(builder.initialOptions.external ?? []),
-            ...externals,
-          ];
+          builder.initialOptions.external = [...(builder.initialOptions.external ?? []), ...externals];
         }
 
-        const normalizedInput = normalizeInput(
-          builder.initialOptions.entryPoints,
-        );
+        const normalizedInput = normalizeInput(builder.initialOptions.entryPoints);
 
         if (!normalizedInput) return;
 
@@ -596,38 +550,26 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
         const outdir = builder.initialOptions.outdir ?? "dist";
 
         builder.initialOptions.entryPoints = normalizedInput;
-        appendVirtualInputs(
-          builder.initialOptions.entryPoints,
-          options?.servers,
-        );
-        builder.initialOptions.entryPoints = applyOutbase(
-          builder.initialOptions.entryPoints,
-          outbase,
-        );
+        appendVirtualInputs(builder.initialOptions.entryPoints, options?.servers);
+        builder.initialOptions.entryPoints = applyOutbase(builder.initialOptions.entryPoints, outbase);
 
-        builder.onResolve(
-          { filter: /^virtual:universal-middleware/ },
-          (args) => {
-            // console.log("onResolve:virtual", args);
-            return {
-              path: args.path,
-              namespace: namespace,
-              pluginData: {
-                resolveDir: args.resolveDir,
-              },
-            };
-          },
-        );
+        builder.onResolve({ filter: /^virtual:universal-middleware/ }, (args) => {
+          // console.log("onResolve:virtual", args);
+          return {
+            path: args.path,
+            namespace: namespace,
+            pluginData: {
+              resolveDir: args.resolveDir,
+            },
+          };
+        });
 
-        builder.onResolve(
-          { filter: /(^|\.|\/|\\\\)(handler|middleware)\./ },
-          (args) => {
-            // console.log("onResolve:?", args);
-            return {
-              path: resolve(args.path),
-            };
-          },
-        );
+        builder.onResolve({ filter: /(^|\.|\/|\\\\)(handler|middleware)\./ }, (args) => {
+          // console.log("onResolve:?", args);
+          return {
+            path: resolve(args.path),
+          };
+        });
 
         builder.onLoad({ filter: /.*/, namespace: namespace }, async (args) => {
           // console.log("onLoad", args);

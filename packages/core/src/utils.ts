@@ -40,9 +40,7 @@ export function nodeHeadersToWeb(nodeHeaders: OutgoingHttpHeaders): Headers {
   return new Headers(headers);
 }
 
-function normalizeHttpHeader(
-  value: string | string[] | number | undefined,
-): string {
+function normalizeHttpHeader(value: string | string[] | number | undefined): string {
   if (Array.isArray(value)) {
     return value.join(", ");
   }
