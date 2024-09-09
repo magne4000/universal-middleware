@@ -1,3 +1,12 @@
+## [0.2.7](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.6...@universal-middleware/core@0.2.7) (2024-09-09)
+
+
+### Bug Fixes
+
+* UniversalMiddleware type fix. Fixes [#26](https://github.com/magne4000/universal-handler/issues/26) ([99feb35](https://github.com/magne4000/universal-handler/commit/99feb35526015ab63583d625ade1b4413025e4e6))
+
+
+
 ## [0.2.6](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.5...@universal-middleware/core@0.2.6) (2024-08-29)
 
 
