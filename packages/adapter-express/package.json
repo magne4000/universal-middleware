@@ -31,6 +31,7 @@
   "devDependencies": {
     "@brillout/release-me": "^0.4.0",
     "@swc/core": "^1.7.11",
+    "@types/express": "^4.17.21",
     "@types/node": "^20.14.10",
     "@universal-middleware/tests": "workspace:*",
     "express": "^4.19.2",

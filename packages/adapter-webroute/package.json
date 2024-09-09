@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@brillout/release-me": "^0.4.0",
+    "@hono/node-server": "^1.12.2",
     "@swc/core": "^1.7.11",
     "@types/node": "^20.14.10",
     "@universal-middleware/hono": "workspace:*",

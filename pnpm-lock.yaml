@@ -14,7 +14,7 @@ overrides:
   '@universal-middleware/h3': link:./packages/adapter-h3
   '@universal-middleware/cloudflare': link:./packages/adapter-cloudflare
   universal-middleware: link:./packages/universal-middleware
-  '@webroute/middleware': ^0.9.0
+  '@webroute/middleware': ^0.10.0
   esbuild: ^0.23.1
 
 importers:
@@ -180,6 +180,9 @@ importers:
       '@swc/core':
         specifier: ^1.7.11
         version: 1.7.24
+      '@types/express':
+        specifier: ^4.17.21
+        version: 4.17.21
       '@types/node':
         specifier: ^20.14.10
         version: 20.16.5
@@ -422,6 +425,9 @@ importers:
       '@brillout/release-me':
         specifier: ^0.4.0
         version: 0.4.0
+      '@hono/node-server':
+        specifier: ^1.12.2
+        version: 1.12.2(hono@4.5.11)
       '@swc/core':
         specifier: ^1.7.11
         version: 1.7.24
@@ -435,8 +441,8 @@ importers:
         specifier: workspace:*
         version: link:../tests
       '@webroute/middleware':
-        specifier: ^0.9.0
-        version: 0.9.0
+        specifier: ^0.10.0
+        version: 0.10.0
       '@webroute/route':
         specifier: ^0.8.0
         version: 0.8.0
@@ -1126,14 +1132,8 @@ packages:
   '@hattip/adapter-node@0.0.48':
     resolution: {integrity: sha512-4Oblq0NOOmjjbI6Di9Gb9dEtjaLEIfWnT5aDZIODnvT8/EjRTTylHzJPCXTXoNyFg73ehjlNWAgs8ZPbH9wLcQ==}
 
-  '@hattip/compose@0.0.45':
-    resolution: {integrity: sha512-Xrxk2kx6htAoR/fBQEnhhqfjBdHFBi2UtiFuhD6qSSwEaD2jTGkyDzYAmVqPIO0ZSvIlIBBpGKdXip4JhdBMww==}
-
   '@hattip/compose@0.0.48':
     resolution: {integrity: sha512-4Hdk6JBk7Cb65BpgodcK69OdiXqBQ0CM4WRRzzcA1gPRkfBucmv06Wx/q5v6ZtkfwCIqTP09KSi+HmIPj7935A==}
-
-  '@hattip/core@0.0.45':
-    resolution: {integrity: sha512-4BK9dPU7sLvmP9sUq048uSaKFvQY2Qa6D0xQteQBIiDYuTdbopcUQLETM1sdkUeUtFxHPwPu/NclfJAC5INarw==}
 
   '@hattip/core@0.0.48':
     resolution: {integrity: sha512-rx28E2Ofl2GpJ73Uw011d1kM3kLyuFTijcBZjRWZn6cZ6qmFI194BZLtsvvO3ocBgyUUVv4JPC9PdH5FGA/ZoA==}
@@ -1788,8 +1788,8 @@ packages:
   '@webroute/common@1.0.0':
     resolution: {integrity: sha512-JQ1+RDjQuwtbXJg46EaZvh6NqgHEKObfQHq3YwUYGiZ9TsfnP+zbaNUYi0mpQfZZjZl18O54vC13s2Hc6dDNuw==}
 
-  '@webroute/middleware@0.9.0':
-    resolution: {integrity: sha512-KECzsFrxadVRpZYfA4W4xElANOAucOigrAN8g/7BEHTFL8tIcT2xZ0SzxpSY07foGbBbipq7GLC0hrfauNuoKQ==}
+  '@webroute/middleware@0.10.0':
+    resolution: {integrity: sha512-285RwsPEdolb6anbB81qrWjSm59ExSeo3f0GpSXYWcf9uelP8Ih88IKavPXao+QLvVWRow5drbGy/SuULEkjBg==}
 
   '@webroute/route@0.8.0':
     resolution: {integrity: sha512-FG9JQisT86E70I0ggyUKzb/fyKpYYd5XEBWfqZmCtHSHGd1uOzgEr4XmpmXfiZxpsg+GCbGiL/KTodyxDjloMQ==}
@@ -4295,17 +4295,9 @@ snapshots:
       '@hattip/polyfills': 0.0.48
       '@hattip/walk': 0.0.48
 
-  '@hattip/compose@0.0.45':
-    dependencies:
-      '@hattip/core': 0.0.45
-    optional: true
-
   '@hattip/compose@0.0.48':
     dependencies:
       '@hattip/core': 0.0.48
-
-  '@hattip/core@0.0.45':
-    optional: true
 
   '@hattip/core@0.0.48': {}
 
@@ -4964,17 +4956,16 @@ snapshots:
 
   '@webroute/common@1.0.0': {}
 
-  '@webroute/middleware@0.9.0':
+  '@webroute/middleware@0.10.0':
     dependencies:
       '@webroute/common': 1.0.0
     optionalDependencies:
-      '@hattip/compose': 0.0.45
       hono: 4.5.11
 
   '@webroute/route@0.8.0':
     dependencies:
       '@webroute/common': 1.0.0
-      '@webroute/middleware': 0.9.0
+      '@webroute/middleware': 0.10.0
       '@webroute/schema': 0.5.0
       debug: 4.3.7
     transitivePeerDependencies:
