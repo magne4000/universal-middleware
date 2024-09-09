@@ -1,3 +1,7 @@
+## [0.2.5](https://github.com/magne4000/universal-handler/compare/@universal-middleware/express@0.2.4...@universal-middleware/express@0.2.5) (2024-09-09)
+
+
+
 ## [0.2.4](https://github.com/magne4000/universal-handler/compare/@universal-middleware/express@0.2.3...@universal-middleware/express@0.2.4) (2024-09-09)
 
 
