@@ -1,3 +1,13 @@
+## [0.2.2](https://github.com/magne4000/universal-handler/compare/@universal-middleware/h3@0.2.1...@universal-middleware/h3@0.2.2) (2024-09-09)
+
+
+### Features
+
+* adapter-cloudflare ([#23](https://github.com/magne4000/universal-handler/issues/23)) ([e6129e3](https://github.com/magne4000/universal-handler/commit/e6129e35bce87af34d45ed361140fb69ed822ffa))
+* getContext returns Context without undefined ([f3f0977](https://github.com/magne4000/universal-handler/commit/f3f0977781da43131ad6b60bc63a25d913d8758c))
+
+
+
 ## [0.2.1](https://github.com/magne4000/universal-handler/compare/@universal-middleware/h3@0.2.0...@universal-middleware/h3@0.2.1) (2024-08-21)
 
 
