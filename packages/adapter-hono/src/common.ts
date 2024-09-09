@@ -1,6 +1,6 @@
-import type { Context as HonoContext, Env, Handler, MiddlewareHandler } from "hono";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
+import type { Env, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
 
 export const contextSymbol = Symbol("unContext");
 
@@ -101,8 +101,10 @@ export function getContext<Context extends Universal.Context = Universal.Context
 
 export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
   return getAdapterRuntime(
-    "other",
-    {},
+    "hono",
+    {
+      params: honoContext.req.param(),
+    },
     {
       env: honoContext.env,
       ctx: getExecutionCtx(honoContext),

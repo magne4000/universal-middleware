@@ -1,7 +1,7 @@
-import type { RequestCtx } from "@webroute/route";
-import type { Get, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
 import type { DataResult, MiddlewareFn } from "@webroute/middleware";
+import type { RequestCtx } from "@webroute/route";
 
 export type WebrouteMiddleware<
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
@@ -40,7 +40,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
 
     return (request, ctx) => {
       const context = initContext(ctx);
-      return handler(request, context, getAdapterRuntime("other", {}));
+      return handler(request, context, getRuntime());
     };
   };
 }
@@ -74,7 +74,7 @@ export function createMiddleware<
 
     return ((request, ctx) => {
       const context = initContext(ctx);
-      return middleware(request, context, getAdapterRuntime("other", {}));
+      return middleware(request, context, getRuntime());
     }) as WebrouteMiddleware<InContext, MiddlewareFactoryDataResult<typeof middlewareFactory>>;
   };
 }
@@ -84,4 +84,16 @@ function initContext<Context extends Universal.Context = Universal.Context>(
 ): Context {
   ctx.state ??= {} as Context;
   return ctx.state;
+}
+
+export function getContext<Context extends Universal.Context = Universal.Context>(
+  ctx: RequestCtx<unknown, unknown, unknown, unknown, Context>,
+): Context {
+  return ctx.state;
+}
+
+export function getRuntime(): RuntimeAdapter {
+  return getAdapterRuntime("other", {
+    params: undefined,
+  });
 }

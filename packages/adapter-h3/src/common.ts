@@ -1,13 +1,13 @@
-import type { Get, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime, isBodyInit, mergeHeadersInto, nodeHeadersToWeb } from "@universal-middleware/core";
 import {
+  type EventHandler,
+  type H3Event,
   defineResponseMiddleware,
   eventHandler,
-  type EventHandler,
   getResponseHeaders,
   getResponseStatus,
   getResponseStatusText,
-  type H3Event,
   sendWebResponse,
   toWebRequest,
 } from "h3";
@@ -38,7 +38,7 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
 
     return eventHandler((event) => {
       const ctx = initContext(event);
-      return handler(toWebRequest(event), ctx, getAdapterRuntime("other", {}));
+      return handler(toWebRequest(event), ctx, getRuntime(event));
     });
   };
 }
@@ -96,7 +96,7 @@ export function createMiddleware<
 
     return eventHandler(async (event) => {
       const ctx = initContext<InContext>(event);
-      const response = await middleware(toWebRequest(event), ctx, getAdapterRuntime("other", {}));
+      const response = await middleware(toWebRequest(event), ctx, getRuntime(event));
 
       if (typeof response === "function") {
         event.context[pendingMiddlewaresSymbol] ??= [];
@@ -121,4 +121,10 @@ export function initContext<Context extends Universal.Context>(event: H3Event): 
 
 export function getContext<Context extends Universal.Context>(event: H3Event): Context {
   return event.context[contextSymbol] as Context;
+}
+
+export function getRuntime(event: H3Event): RuntimeAdapter {
+  return getAdapterRuntime("h3", {
+    params: event.context.params,
+  });
 }

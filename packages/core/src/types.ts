@@ -70,16 +70,56 @@ export type Runtime =
 
 export interface NodeAdapter {
   adapter: "node";
+  params: undefined;
 
   req: IncomingMessage;
   res: ServerResponse;
 }
 
-export interface OtherAdapter {
-  adapter: "other";
+export interface ExpressAdapter {
+  adapter: "express";
+  params: Record<string, string> | undefined;
+
+  req: IncomingMessage;
+  res: ServerResponse;
 }
 
-export type Adapter = NodeAdapter | OtherAdapter;
+export interface FastifyAdapter {
+  adapter: "fastify";
+  params: Record<string, string> | undefined;
+
+  req: IncomingMessage;
+  res: ServerResponse;
+}
+
+export interface HonoAdapter {
+  adapter: "hono";
+  params: Record<string, string>;
+}
+
+export interface HattipAdapter {
+  adapter: "hattip";
+  params: Record<string, string> | undefined;
+}
+
+export interface H3Adapter {
+  adapter: "h3";
+  params: Record<string, string> | undefined;
+}
+
+export interface OtherAdapter {
+  adapter: "other";
+  params: undefined;
+}
+
+export type Adapter =
+  | NodeAdapter
+  | ExpressAdapter
+  | FastifyAdapter
+  | HonoAdapter
+  | HattipAdapter
+  | H3Adapter
+  | OtherAdapter;
 export type RuntimeAdapter = Runtime & Adapter;
 
 export type UniversalMiddleware<

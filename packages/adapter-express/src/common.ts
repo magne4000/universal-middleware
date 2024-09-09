@@ -1,9 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Socket } from "node:net";
-import { createRequestAdapter, type NodeRequestAdapterOptions } from "./request.js";
-import { sendResponse, wrapResponse } from "./response.js";
-import type { Awaitable, Get, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type { Awaitable, Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
+import { type NodeRequestAdapterOptions, createRequestAdapter } from "./request.js";
+import { sendResponse, wrapResponse } from "./response.js";
 
 export const contextSymbol = Symbol("unContext");
 export const requestSymbol = Symbol("unRequest");
@@ -32,6 +32,7 @@ export interface DecoratedRequest<C extends Universal.Context = Universal.Contex
   socket?: PossiblyEncryptedSocket;
   rawBody?: Buffer | null;
   originalUrl?: string;
+  params?: Record<string, string>;
   [contextSymbol]?: C;
   [requestSymbol]?: Request;
 }
@@ -71,14 +72,7 @@ export function createHandler<T extends unknown[]>(
       try {
         req[contextSymbol] ??= {};
         const request = requestAdapter(req);
-        const response = await handler(
-          request,
-          req[contextSymbol],
-          getAdapterRuntime("node", {
-            req: req as IncomingMessage,
-            res,
-          }),
-        );
+        const response = await handler(request, req[contextSymbol], getRuntime(req, res));
 
         await sendResponse(response, res);
       } catch (error) {
@@ -120,14 +114,7 @@ export function createMiddleware<
       try {
         req[contextSymbol] ??= {} as OutContext;
         const request = requestAdapter(req);
-        const response = await middleware(
-          request,
-          getContext(req),
-          getAdapterRuntime("node", {
-            req: req as IncomingMessage,
-            res,
-          }),
-        );
+        const response = await middleware(request, getContext(req), getRuntime(req, res));
 
         if (!response) {
           return next?.();
@@ -171,4 +158,12 @@ export function createMiddleware<
 
 export function getContext<InContext extends Universal.Context = Universal.Context>(req: DecoratedRequest): InContext {
   return req[contextSymbol] as InContext;
+}
+
+export function getRuntime(request: DecoratedRequest, response: DecoratedServerResponse): RuntimeAdapter {
+  return getAdapterRuntime("express", {
+    params: request.params,
+    req: request as IncomingMessage,
+    res: response,
+  });
 }

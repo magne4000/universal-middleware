@@ -1,12 +1,12 @@
-import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
 import type {
+  Response as CloudflareResponse,
   EventContext,
   ExecutionContext,
   ExportedHandlerFetchHandler,
   PagesFunction,
-  Response as CloudflareResponse,
 } from "@cloudflare/workers-types";
+import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import { getAdapterRuntime } from "@universal-middleware/core";
 
 export const contextSymbol = Symbol("unContext");
 
@@ -112,7 +112,9 @@ export function getRuntime(
 
   return getAdapterRuntime(
     "other",
-    {},
+    {
+      params: undefined,
+    },
     {
       env: isContext ? args[0].env : args[0],
       ctx: {
