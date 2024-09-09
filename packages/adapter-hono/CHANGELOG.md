@@ -1,3 +1,12 @@
+## [0.2.6](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.5...@universal-middleware/hono@0.2.6) (2024-09-09)
+
+
+### Features
+
+* getContext returns Context without undefined ([f3f0977](https://github.com/magne4000/universal-handler/commit/f3f0977781da43131ad6b60bc63a25d913d8758c))
+
+
+
 ## [0.2.5](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.4...@universal-middleware/hono@0.2.5) (2024-08-29)
 
 
