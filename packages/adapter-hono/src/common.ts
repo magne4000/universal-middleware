@@ -100,10 +100,14 @@ export function getContext<Context extends Universal.Context = Universal.Context
 }
 
 export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
+  let params: Record<string, string> | undefined = undefined;
+  try {
+    params = honoContext.req.param();
+  } catch {}
   return getAdapterRuntime(
     "hono",
     {
-      params: honoContext.req.param(),
+      params,
     },
     {
       env: honoContext.env,

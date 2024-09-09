@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { pipe } from "../src/pipe";
 import type { RuntimeAdapter, UniversalMiddleware } from "../src/index";
+import { pipe } from "../src/pipe";
 
 describe("pipe", () => {
   const request = new Request("http://localhost");
@@ -8,6 +8,7 @@ describe("pipe", () => {
   const runtime: RuntimeAdapter = {
     runtime: "other",
     adapter: "other",
+    params: undefined,
   };
 
   test("handler", async () => {
