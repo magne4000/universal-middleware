@@ -1,3 +1,12 @@
+## [0.2.5](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hattip@0.2.4...@universal-middleware/hattip@0.2.5) (2024-09-09)
+
+
+### Features
+
+* getContext returns Context without undefined ([1ba2692](https://github.com/magne4000/universal-handler/commit/1ba269265d162863cd866f80ee4cd1b190c864ad))
+
+
+
 ## [0.2.4](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hattip@0.2.3...@universal-middleware/hattip@0.2.4) (2024-08-29)
 
 
