@@ -25,8 +25,8 @@
     "release:commit": "LANG=en_US release-me commit"
   },
   "dependencies": {
-    "@universal-middleware/core": "^0.2.6",
-    "@universal-middleware/express": "^0.2.3",
+    "@universal-middleware/core": "link:packages/core",
+    "@universal-middleware/express": "link:packages/adapter-express",
     "fastify-raw-body": "^4.3.0"
   },
   "devDependencies": {
@@ -41,6 +41,7 @@
     "tsup": "^8.2.4",
     "tsx": "^4.19.0",
     "typescript": "^5.5.4",
+    "vite": "^5.4.3",
     "vitest": "^2.0.5"
   },
   "sideEffects": false,

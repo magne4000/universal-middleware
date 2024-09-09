@@ -16,16 +16,16 @@
   "devDependencies": {
     "@shikijs/vitepress-twoslash": "^1.14.1",
     "@universal-middleware-examples/tool": "workspace:*",
-    "@universal-middleware/express": "workspace:*",
-    "@universal-middleware/fastify": "workspace:*",
-    "@universal-middleware/h3": "workspace:*",
-    "@universal-middleware/hattip": "workspace:*",
-    "@universal-middleware/hono": "workspace:*",
-    "@universal-middleware/core": "workspace:*",
-    "@universal-middleware/cloudflare": "workspace:*",
+    "@universal-middleware/cloudflare": "link:packages/adapter-cloudflare",
+    "@universal-middleware/core": "link:packages/core",
+    "@universal-middleware/express": "link:packages/adapter-express",
+    "@universal-middleware/fastify": "link:packages/adapter-fastify",
+    "@universal-middleware/h3": "link:packages/adapter-h3",
+    "@universal-middleware/hattip": "link:packages/adapter-hattip",
+    "@universal-middleware/hono": "link:packages/adapter-hono",
     "fastify": "^4.28.1",
     "typescript": "^5.5.4",
-    "universal-middleware": "workspace:*",
+    "universal-middleware": "link:packages/universal-middleware",
     "vitepress": "^1.3.3"
   }
 }

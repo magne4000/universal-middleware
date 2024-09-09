@@ -25,7 +25,7 @@
     "release:commit": "LANG=en_US release-me commit"
   },
   "dependencies": {
-    "@universal-middleware/core": "^0.2.6"
+    "@universal-middleware/core": "link:packages/core"
   },
   "devDependencies": {
     "@brillout/release-me": "^0.4.0",
@@ -37,6 +37,7 @@
     "tsup": "^8.2.4",
     "tsx": "^4.19.0",
     "typescript": "^5.5.4",
+    "vite": "^5.4.3",
     "vitest": "^2.0.5",
     "wrangler": "^3.72.3"
   },

@@ -381,11 +381,13 @@ function fixBundleExports(
 async function generateDts(content: string, outFile: string) {
   const { isolatedDeclaration } = await import("oxc-transform");
 
-  const code = isolatedDeclaration("file.ts", content);
+  const code = isolatedDeclaration("file.ts", content, {
+    sourcemap: false,
+  });
 
   await mkdir(dirname(outFile), { recursive: true });
 
-  await writeFile(outFile, code.sourceText);
+  await writeFile(outFile, code.code);
 }
 
 async function genDts(bundle: Record<string, BundleInfo>, options?: Options) {

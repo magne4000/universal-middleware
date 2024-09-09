@@ -66,14 +66,14 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@universal-middleware/core": "^0.2.6",
-    "@universal-middleware/express": "^0.2.3",
-    "@universal-middleware/hattip": "^0.2.4",
-    "@universal-middleware/hono": "^0.2.5",
-    "@universal-middleware/webroute": "^0.2.2",
-    "@universal-middleware/fastify": "^0.3.0",
-    "@universal-middleware/cloudflare": "^0.2.1",
-    "oxc-transform": "^0.24.3",
+    "@universal-middleware/cloudflare": "link:packages/adapter-cloudflare",
+    "@universal-middleware/core": "link:packages/core",
+    "@universal-middleware/express": "link:packages/adapter-express",
+    "@universal-middleware/fastify": "link:packages/adapter-fastify",
+    "@universal-middleware/hattip": "link:packages/adapter-hattip",
+    "@universal-middleware/hono": "link:packages/adapter-hono",
+    "@universal-middleware/webroute": "link:packages/adapter-webroute",
+    "oxc-transform": "^0.27.0",
     "package-up": "^5.0.0",
     "unplugin": "^1.12.2"
   },
@@ -87,12 +87,12 @@
     "rollup": "^4.21.0",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
-    "vite": "^5.4.1",
+    "vite": "^5.4.3",
     "vitest": "^2.0.5"
   },
   "peerDependencies": {
     "@rollup/plugin-node-resolve": "^15",
-    "esbuild": "*",
+    "esbuild": "^0.23.1",
     "rollup": "^4",
     "vite": ">=5"
   },

@@ -26,21 +26,22 @@
     "release:commit": "LANG=en_US release-me commit"
   },
   "dependencies": {
-    "@universal-middleware/core": "^0.2.6"
+    "@universal-middleware/core": "link:packages/core"
   },
   "devDependencies": {
     "@brillout/release-me": "^0.4.0",
     "@swc/core": "^1.7.11",
     "@types/node": "^20.14.10",
-    "@universal-middleware/hono": "workspace:*",
+    "@universal-middleware/hono": "link:packages/adapter-hono",
     "@universal-middleware/tests": "workspace:*",
-    "@webroute/middleware": "^0.9.0",
-    "@webroute/route": "^0.6.0",
+    "@webroute/middleware": "^0.10.0",
+    "@webroute/route": "^0.8.0",
     "hono": "^4.5.6",
     "rimraf": "^6.0.0",
     "tsup": "^8.2.4",
     "tsx": "^4.19.0",
     "typescript": "^5.5.4",
+    "vite": "^5.4.3",
     "vitest": "^2.0.5"
   },
   "sideEffects": false,

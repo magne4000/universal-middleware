@@ -7,11 +7,11 @@ import type {
 import { getAdapterRuntime } from "@universal-middleware/core";
 import type {
   EventContext,
+  ExecutionContext,
   ExportedHandlerFetchHandler,
   PagesFunction,
   Response as CloudflareResponse,
 } from "@cloudflare/workers-types";
-import type { ExecutionContext } from "hono";
 
 export type CloudflareHandler<C extends Universal.Context> = {
   fetch: ExportedHandlerFetchHandler<{
