@@ -31,7 +31,7 @@
     "@brillout/release-me": "^0.4.0",
     "@cloudflare/workers-types": "^4.20240821.1",
     "@swc/core": "^1.7.11",
-    "@types/node": "^20.14.10",
+    "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "rimraf": "^6.0.0",
     "tsup": "^8.2.4",

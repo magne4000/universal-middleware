@@ -31,9 +31,9 @@
   "devDependencies": {
     "@brillout/release-me": "^0.4.0",
     "@swc/core": "^1.7.11",
-    "@types/node": "^20.14.10",
+    "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
-    "h3": "^1.12.0",
+    "h3": "catalog:",
     "rimraf": "^6.0.0",
     "tsup": "^8.2.4",
     "tsx": "^4.19.0",

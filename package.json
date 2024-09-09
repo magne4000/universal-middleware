@@ -15,7 +15,8 @@
   "author": "",
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
-    "@types/node": "^18.19.14",
+    "@types/node": "catalog:",
+    "playwright": "^1.47.0",
     "prettier": "^3.3.2",
     "turbo": "^2.1.1",
     "typescript": "^5.5.4"
@@ -35,5 +36,5 @@
       "esbuild": "^0.23.1"
     }
   },
-  "packageManager": "pnpm@9.4.0"
+  "packageManager": "pnpm@9.7.1"
 }

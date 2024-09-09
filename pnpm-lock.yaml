@@ -4,6 +4,30 @@ settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@hattip/router':
+      specifier: ^0.0.48
+      version: 0.0.48
+    '@types/express':
+      specifier: ^4.17.21
+      version: 4.17.21
+    '@types/node':
+      specifier: ^20.16.5
+      version: 20.16.5
+    express:
+      specifier: ^4.19.2
+      version: 4.19.2
+    fastify:
+      specifier: ^4.28.1
+      version: 4.28.1
+    h3:
+      specifier: ^1.12.0
+      version: 1.12.0
+    hono:
+      specifier: ^4.5.11
+      version: 4.5.11
+
 overrides:
   '@universal-middleware/core': link:./packages/core
   '@universal-middleware/express': link:./packages/adapter-express
@@ -25,8 +49,11 @@ importers:
         specifier: ^1.8.3
         version: 1.8.3
       '@types/node':
-        specifier: ^18.19.14
-        version: 18.19.50
+        specifier: 'catalog:'
+        version: 20.16.5
+      playwright:
+        specifier: ^1.47.0
+        version: 1.47.0
       prettier:
         specifier: ^3.3.2
         version: 3.3.3
@@ -40,13 +67,13 @@ importers:
   docs:
     devDependencies:
       '@hattip/router':
-        specifier: ^0.0.48
+        specifier: 'catalog:'
         version: 0.0.48
       '@shikijs/vitepress-twoslash':
         specifier: ^1.14.1
         version: 1.16.2(typescript@5.5.4)
       '@types/express':
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       '@universal-middleware-examples/tool':
         specifier: workspace:*
@@ -73,13 +100,13 @@ importers:
         specifier: link:../packages/adapter-hono
         version: link:../packages/adapter-hono
       fastify:
-        specifier: ^4.28.1
+        specifier: 'catalog:'
         version: 4.28.1
       h3:
-        specifier: ^1.12.0
+        specifier: 'catalog:'
         version: 1.12.0
       hono:
-        specifier: ^4.5.11
+        specifier: 'catalog:'
         version: 4.5.11
       typescript:
         specifier: ^5.5.4
@@ -122,7 +149,7 @@ importers:
         specifier: ^1.7.11
         version: 1.7.24
       '@types/node':
-        specifier: ^20.14.10
+        specifier: 'catalog:'
         version: 20.16.5
       rimraf:
         specifier: ^6.0.0
@@ -153,7 +180,7 @@ importers:
         specifier: ^1.7.11
         version: 1.7.24
       '@types/node':
-        specifier: ^20.14.10
+        specifier: 'catalog:'
         version: 20.16.5
       '@universal-middleware/tests':
         specifier: workspace:*
@@ -193,16 +220,16 @@ importers:
         specifier: ^1.7.11
         version: 1.7.24
       '@types/express':
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       '@types/node':
-        specifier: ^20.14.10
+        specifier: 'catalog:'
         version: 20.16.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
       express:
-        specifier: ^4.19.2
+        specifier: 'catalog:'
         version: 4.19.2
       helmet:
         specifier: ^7.1.0
@@ -248,13 +275,13 @@ importers:
         specifier: ^1.7.11
         version: 1.7.24
       '@types/node':
-        specifier: ^20.14.10
+        specifier: 'catalog:'
         version: 20.16.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
       fastify:
-        specifier: ^4.28.1
+        specifier: 'catalog:'
         version: 4.28.1
       fastify-plugin:
         specifier: ^4.5.1
@@ -291,13 +318,13 @@ importers:
         specifier: ^1.7.11
         version: 1.7.24
       '@types/node':
-        specifier: ^20.14.10
+        specifier: 'catalog:'
         version: 20.16.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
       h3:
-        specifier: ^1.12.0
+        specifier: 'catalog:'
         version: 1.12.0
       rimraf:
         specifier: ^6.0.0
@@ -349,13 +376,13 @@ importers:
         specifier: ^0.0.48
         version: 0.0.48
       '@hattip/router':
-        specifier: ^0.0.48
+        specifier: 'catalog:'
         version: 0.0.48
       '@swc/core':
         specifier: ^1.7.11
         version: 1.7.24
       '@types/node':
-        specifier: ^20.14.10
+        specifier: 'catalog:'
         version: 20.16.5
       '@universal-middleware/tests':
         specifier: workspace:*
@@ -398,13 +425,13 @@ importers:
         specifier: ^1.7.11
         version: 1.7.24
       '@types/node':
-        specifier: ^20.14.10
+        specifier: 'catalog:'
         version: 20.16.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
       hono:
-        specifier: ^4.5.6
+        specifier: 'catalog:'
         version: 4.5.11
       rimraf:
         specifier: ^6.0.0
@@ -444,7 +471,7 @@ importers:
         specifier: ^1.7.11
         version: 1.7.24
       '@types/node':
-        specifier: ^20.14.10
+        specifier: 'catalog:'
         version: 20.16.5
       '@universal-middleware/hono':
         specifier: link:../adapter-hono
@@ -459,7 +486,7 @@ importers:
         specifier: ^0.8.0
         version: 0.8.0
       hono:
-        specifier: ^4.5.6
+        specifier: 'catalog:'
         version: 4.5.11
       rimraf:
         specifier: ^6.0.0
@@ -492,7 +519,7 @@ importers:
         specifier: ^1.1.6
         version: 1.1.8
       '@types/node':
-        specifier: ^20.14.10
+        specifier: 'catalog:'
         version: 20.16.5
       rimraf:
         specifier: ^6.0.0
@@ -526,7 +553,7 @@ importers:
         specifier: ^1.7.11
         version: 1.7.24
       '@types/node':
-        specifier: ^20.14.10
+        specifier: 'catalog:'
         version: 20.16.5
       '@universal-middleware/core':
         specifier: link:../core
@@ -617,13 +644,13 @@ importers:
   tests-examples/tests-tool:
     devDependencies:
       '@brillout/test-e2e':
-        specifier: ^0.5.34
+        specifier: ^0.5.35
         version: 0.5.35
       '@hattip/adapter-node':
         specifier: ^0.0.48
         version: 0.0.48
       '@hattip/router':
-        specifier: ^0.0.48
+        specifier: 'catalog:'
         version: 0.0.48
       '@hono/vite-dev-server':
         specifier: ^0.16.0
@@ -632,10 +659,10 @@ importers:
         specifier: ^1.10.9
         version: 1.10.9(@swc/core@1.7.24)(@swc/types@0.1.12)(typescript@5.5.4)
       '@types/express':
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       '@types/node':
-        specifier: ^20.14.10
+        specifier: 'catalog:'
         version: 20.16.5
       '@universal-middleware-examples/tool':
         specifier: workspace:*
@@ -665,19 +692,19 @@ importers:
         specifier: link:../../packages/adapter-webroute
         version: link:../../packages/adapter-webroute
       express:
-        specifier: ^4.19.2
+        specifier: 'catalog:'
         version: 4.19.2
       fastify:
-        specifier: ^4.28.1
+        specifier: 'catalog:'
         version: 4.28.1
       fastify-raw-body:
         specifier: ^4.3.0
         version: 4.3.0
       h3:
-        specifier: ^1.12.0
+        specifier: 'catalog:'
         version: 1.12.0
       hono:
-        specifier: ^4.5.6
+        specifier: 'catalog:'
         version: 4.5.11
       mri:
         specifier: ^1.2.0
@@ -686,7 +713,7 @@ importers:
         specifier: ^6.2.2
         version: 6.2.2
       playwright:
-        specifier: ^1.46.1
+        specifier: ^1.47.0
         version: 1.47.0
       rimraf:
         specifier: ^6.0.0
@@ -1622,9 +1649,6 @@ packages:
 
   '@types/node-forge@1.3.11':
     resolution: {integrity: sha512-FQx220y22OKNTqaByeBGqHWYz4cl94tpcxeFdvBo3wjG6XPBuZ0BNgNZRV5J5TFmmcsJ4IzsLkmGRiQbnYsBEQ==}
-
-  '@types/node@18.19.50':
-    resolution: {integrity: sha512-xonK+NRrMBRtkL1hVCc3G+uXtjh1Al4opBLjqVmipe5ZAaBYWW6cNAiBVZ1BvmkBhep698rP3UM3aRAdSALuhg==}
 
   '@types/node@20.12.14':
     resolution: {integrity: sha512-scnD59RpYD91xngrQQLGkE+6UrHUPzeKZWhhjBSa3HSkwjbQc38+q3RoIVEwxQGRw3M+j5hpNAM+lgV3cVormg==}
@@ -4753,10 +4777,6 @@ snapshots:
   '@types/node-forge@1.3.11':
     dependencies:
       '@types/node': 20.16.5
-
-  '@types/node@18.19.50':
-    dependencies:
-      undici-types: 5.26.5
 
   '@types/node@20.12.14':
     dependencies:
