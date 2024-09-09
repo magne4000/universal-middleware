@@ -19,7 +19,7 @@ app.get("/", handler());
 
 const hattipHandler = app.buildHandler();
 
-const port = args.port ? parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port) : 3000;
 
 createServer(hattipHandler).listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`);

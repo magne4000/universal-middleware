@@ -1,0 +1,39 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "ignore": ["dist/", "package.json"]
+  },
+  "formatter": {
+    "indentWidth": 2,
+    "indentStyle": "space"
+  },
+  "javascript": {
+    "formatter": {
+      "lineWidth": 120
+    }
+  },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git"
+  },
+  "overrides": [
+    {
+      "include": [
+        "packages/core/src/pipe.ts",
+        "packages/adapter-express/src/response.ts",
+        "packages/core/src/types.ts",
+        "**/*.test.ts",
+        "**/*.test-d.ts"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": {
+              "level": "off"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

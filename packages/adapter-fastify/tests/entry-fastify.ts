@@ -38,7 +38,7 @@ app.get("/", createHandler(handler)());
 
 await app.ready();
 
-const port = args.port ? parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port) : 3000;
 
 app.listen({ port, host: "localhost" }, () => {
   console.log(`Server listening on http://localhost:${port}`);

@@ -12,7 +12,7 @@ export function testRun(
   });
 
   test("/", async () => {
-    const response = await fetch(getServerUrl() + "/");
+    const response = await fetch(`${getServerUrl()}/`);
 
     const content = await response.text();
 

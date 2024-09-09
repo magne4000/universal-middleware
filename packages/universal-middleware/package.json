@@ -66,13 +66,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@universal-middleware/cloudflare": "link:packages/adapter-cloudflare",
-    "@universal-middleware/core": "link:packages/core",
-    "@universal-middleware/express": "link:packages/adapter-express",
-    "@universal-middleware/fastify": "link:packages/adapter-fastify",
-    "@universal-middleware/hattip": "link:packages/adapter-hattip",
-    "@universal-middleware/hono": "link:packages/adapter-hono",
-    "@universal-middleware/webroute": "link:packages/adapter-webroute",
+    "@universal-middleware/cloudflare": "workspace:*",
+    "@universal-middleware/core": "workspace:*",
+    "@universal-middleware/express": "workspace:*",
+    "@universal-middleware/fastify": "workspace:*",
+    "@universal-middleware/hattip": "workspace:*",
+    "@universal-middleware/hono": "workspace:*",
+    "@universal-middleware/webroute": "workspace:*",
     "oxc-transform": "^0.27.0",
     "package-up": "^5.0.0",
     "unplugin": "^1.12.2"

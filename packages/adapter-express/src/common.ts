@@ -152,7 +152,7 @@ export function createMiddleware<
 
         if (!response) {
           return next?.();
-        } else if (typeof response === "function") {
+        }if (typeof response === "function") {
           if (res.headersSent) {
             throw new Error(
               "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-handler",
@@ -163,7 +163,7 @@ export function createMiddleware<
           // `wrapResponse` takes care of calling those middlewares right before sending the response
           res[pendingMiddlewaresSymbol].push(response);
           return next?.();
-        } else if (response instanceof Response) {
+        }if (response instanceof Response) {
           await sendResponse(response, res);
         } else {
           req[contextSymbol] = response;

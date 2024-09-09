@@ -12,6 +12,8 @@ import type {
 } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
 
+export const contextSymbol = Symbol("unContext");
+
 interface UniversalEnv {
   Bindings: Env["Bindings"] & {
     [contextSymbol]?: Universal.Context;
@@ -23,8 +25,6 @@ interface UniversalEnv {
 
 export type HonoHandler = Handler<UniversalEnv>;
 export type HonoMiddleware = MiddlewareHandler<UniversalEnv>;
-
-export const contextSymbol = Symbol("unContext");
 
 function getExecutionCtx(honoContext: HonoContext) {
   try {

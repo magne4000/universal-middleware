@@ -27,7 +27,7 @@
   "devDependencies": {
     "@swc/core": "^1.7.11",
     "@types/node": "^20.14.10",
-    "@universal-middleware/core": "link:packages/core",
+    "@universal-middleware/core": "workspace:*",
     "rimraf": "^6.0.0",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expectTypeOf, test } from "vitest";
 import type {
   UniversalHandler,

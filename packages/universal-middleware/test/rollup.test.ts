@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { describe, expect, it } from "vitest";
 import { type OutputChunk, rollup, type RollupOutput } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
@@ -309,7 +307,7 @@ function testRollupHandler(
       file.facadeModuleId ===
       `virtual:universal-middleware:${server}:${type}:${f}`,
   ) as OutputChunk | undefined;
-  expect(res!.name.replaceAll("\\", "/")).toEqual(
+  expect(res?.name.replaceAll("\\", "/")).toEqual(
     `${parsed.dir}/universal-${server}-${type}-${parsed.name}`,
   );
 }

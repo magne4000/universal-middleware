@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Awaitable, UniversalHandler, UniversalMiddleware } from "./types";
 
 type Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
@@ -53,6 +52,7 @@ export function pipe<F extends UniversalMiddleware<any, any>[]>(
           break;
         }
         // Update context
+        // biome-ignore lint/style/noParameterAssign: <explanation>
         context = response as any;
       }
     }

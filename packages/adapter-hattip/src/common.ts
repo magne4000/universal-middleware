@@ -59,7 +59,8 @@ export function createMiddleware<
       if (typeof response === "function") {
         const res = await context.next();
         return response(res);
-      } else if (response !== null && typeof response === "object") {
+      }
+      if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
           return response;
         }
@@ -90,9 +91,9 @@ export function getRuntime(context: AdapterRequestContext): RuntimeAdapter {
     "other",
     {},
     {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       env: (context.platform as any)?.env,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       ctx: (context.platform as any)?.context,
     },
   );

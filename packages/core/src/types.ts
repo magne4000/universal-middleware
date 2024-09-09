@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Server as BunServer } from "bun";
 
@@ -85,29 +84,25 @@ export interface OtherAdapter {
 export type Adapter = NodeAdapter | OtherAdapter;
 export type RuntimeAdapter = Runtime & Adapter;
 
-export interface UniversalMiddleware<
+export type UniversalMiddleware<
   InContext extends Universal.Context = Universal.Context,
   OutContext extends Universal.Context = Universal.Context,
-> {
-  (
-    request: Request,
-    context: InContext,
-    runtime: RuntimeAdapter,
-  ):
-    | Awaitable<Response | undefined>
-    | Awaitable<void | undefined>
-    | Awaitable<OutContext | undefined>
-    | ((response: Response) => Awaitable<Response>);
-}
+> = (
+  request: Request,
+  context: InContext,
+  runtime: RuntimeAdapter,
+) =>
+  | Awaitable<Response | undefined>
+  | Awaitable<undefined | undefined>
+  | Awaitable<OutContext | undefined>
+  | ((response: Response) => Awaitable<Response>);
 
-export interface UniversalHandler<
+export type UniversalHandler<
   InContext extends Universal.Context = Universal.Context,
-> {
-  (
-    request: Request,
-    context: InContext,
-    runtime: RuntimeAdapter,
-  ): Awaitable<Response>;
-}
+> = (
+  request: Request,
+  context: InContext,
+  runtime: RuntimeAdapter,
+) => Awaitable<Response>;
 
 export type Get<T extends unknown[], U> = (...args: T) => U;

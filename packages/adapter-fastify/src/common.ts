@@ -71,8 +71,8 @@ function getHeaders(reply: FastifyReply): Headers {
     }
   }
 
-  Object.entries(headers).forEach(([key, value]) => {
-    if (key === "set-cookie") return;
+  for (const [key, value] of Object.entries(headers)) {
+    if (key === "set-cookie") continue;
     if (typeof value === "string") {
       ret.set(key, value);
     } else if (typeof value === "number") {
@@ -84,10 +84,11 @@ function getHeaders(reply: FastifyReply): Headers {
         console.warn(
           `Header "${key}" should not be an array. Only last value will be sent`,
         );
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
         ret.set(key, value.at(-1)!);
       }
     }
-  });
+  }
 
   return ret;
 }
@@ -127,7 +128,7 @@ export function createHandler<
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return async function (request, reply) {
+    return async (request, reply) => {
       const ctx = initContext<InContext>(request);
       const response = await handler(
         requestAdapter(getRawRequest(request)),
@@ -175,7 +176,8 @@ export function createMiddleware<
 
         if (!response) {
           return;
-        } else if (typeof response === "function") {
+        }
+        if (typeof response === "function") {
           if (reply.sent) {
             throw new Error(
               "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-handler",
@@ -203,6 +205,7 @@ export function createMiddleware<
         if (payload instanceof Response) {
           mergeHeadersInto(payload.headers, getHeaders(reply));
         } else if (isBodyInit(payload)) {
+          // biome-ignore lint/style/noParameterAssign: <explanation>
           payload = new Response(payload, {
             headers: new Headers(getHeaders(reply)),
             status: reply.statusCode,

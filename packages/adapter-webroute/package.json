@@ -26,13 +26,13 @@
     "release:commit": "LANG=en_US release-me commit"
   },
   "dependencies": {
-    "@universal-middleware/core": "link:packages/core"
+    "@universal-middleware/core": "workspace:^"
   },
   "devDependencies": {
     "@brillout/release-me": "^0.4.0",
     "@swc/core": "^1.7.11",
     "@types/node": "^20.14.10",
-    "@universal-middleware/hono": "link:packages/adapter-hono",
+    "@universal-middleware/hono": "workspace:*",
     "@universal-middleware/tests": "workspace:*",
     "@webroute/middleware": "^0.10.0",
     "@webroute/route": "^0.8.0",

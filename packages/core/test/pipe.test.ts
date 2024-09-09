@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, test } from "vitest";
 import { pipe } from "../src/pipe";
 import type { RuntimeAdapter, UniversalMiddleware } from "../src/index";
@@ -82,7 +81,7 @@ describe("pipe", () => {
       (_: Request) => {
         return async (response: Response) => {
           const body = await response.text();
-          return new Response(body + " World!");
+          return new Response(`${body} World!`);
         };
       },
       (_: Request) => new Response("Hello"),

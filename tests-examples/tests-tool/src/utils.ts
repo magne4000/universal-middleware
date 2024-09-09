@@ -1,6 +1,6 @@
 import mri from "mri";
 
 export const args = mri<{ port: string }>(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   (globalThis as any).Deno?.args ?? globalThis.process.argv.slice(2),
 );

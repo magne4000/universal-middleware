@@ -54,7 +54,7 @@ export function createRequestAdapter(
 
     // TODO: Support the newer `Forwarded` standard header
     function parseForwardedHeader(name: string) {
-      return (headers["x-forwarded-" + name] || "").split(",", 1)[0].trim();
+      return (headers[`x-forwarded-${name}`] || "").split(",", 1)[0].trim();
     }
 
     let headers = req.headers as Record<string, string>;
@@ -87,7 +87,7 @@ export function createRequestAdapter(
     }
 
     const request = new Request(
-      protocol + "://" + host + (req.originalUrl ?? req.url),
+      `${protocol}://${host}${req.originalUrl ?? req.url}`,
       {
         method: req.method,
         headers,

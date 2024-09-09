@@ -20,7 +20,7 @@ app.register(headersMiddleware());
 
 app.get("/", handler());
 
-const port = args.port ? parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port) : 3000;
 
 app.listen(
   {

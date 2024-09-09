@@ -1,5 +1,5 @@
 import { dirname, join, parse, posix, resolve } from "node:path";
-import { type UnpluginFactory } from "unplugin";
+import type { UnpluginFactory } from "unplugin";
 import { packageUp } from "package-up";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 
@@ -100,9 +100,8 @@ function normalizeInput(
   function getTuple(key: string, value: string) {
     if (keys.has(key)) {
       throw new Error(`Conflict on entry ${key}: ${value}`);
-    } else {
-      keys.add(key);
     }
+    keys.add(key);
     return [key, value] as const;
   }
 
@@ -147,15 +146,15 @@ function appendVirtualInputs(
   input: Record<string, string>,
   wrappers: ReadonlyArray<(typeof defaultWrappers)[number]> = defaultWrappers,
 ) {
-  Object.values(input).forEach((v) => {
+  for (const v of Object.values(input)) {
     const filtered = filterInput(v);
     if (filtered) {
       const virtualInputs = getVirtualInputs(filtered, v, wrappers);
-      virtualInputs.forEach((vinput) => {
+      for (const vinput of virtualInputs) {
         input[vinput.key] = vinput.value;
-      });
+      }
     }
-  });
+  }
 }
 
 function applyOutbase(input: Record<string, string>, outbase: string) {
@@ -216,11 +215,11 @@ const typesByServer: Record<
     genericParameters:
       "<InContext, void extends OutContext ? InContext : OutContext>",
   },
-  ["cloudflare-worker"]: {
+  "cloudflare-worker": {
     handler: "CloudflareHandler",
     target: "cloudflare",
   },
-  ["cloudflare-pages"]: {
+  "cloudflare-pages": {
     middleware: "CloudflarePagesFunction",
     handler: "CloudflarePagesFunction",
     genericParameters: "<InContext>",
@@ -279,19 +278,19 @@ function findDuplicateReports(reports: Report[]): Map<string, Report[]> {
   const duplicates = new Map<string, Report[]>();
 
   // Count occurrences of each 'exports' value
-  reports.forEach((report) => {
+  for (const report of reports) {
     exportCounts[report.exports] = (exportCounts[report.exports] || 0) + 1;
-  });
+  }
 
   // Collect reports that have duplicates
-  reports.forEach((report) => {
+  for (const report of reports) {
     if (exportCounts[report.exports] > 1) {
       if (!duplicates.has(report.exports)) {
         duplicates.set(report.exports, []);
       }
-      duplicates.get(report.exports)!.push(report);
+      duplicates.get(report.exports)?.push(report);
     }
-  });
+  }
 
   return duplicates;
 }
@@ -301,9 +300,9 @@ function formatDuplicatesForErrorMessage(duplicates: Map<string, Report[]>) {
 
   duplicates.forEach((reports, exportValue) => {
     formattedMessage += `exports: ${exportValue}\n`;
-    reports.forEach((report) => {
+    for (const report of reports) {
       formattedMessage += `  in: ${report.in}, out: ${report.out}\n`;
-    });
+    }
   });
 
   formattedMessage +=
@@ -321,17 +320,17 @@ function genBundleInfo(
   return Object.fromEntries(
     entries.map(([k, v]) => {
       const dest = findDest(v);
-      const parsed = parse(dest!);
+      const parsed = parse(dest);
       return [
         v,
         {
           in: v,
-          out: dest!,
-          dts: dest!.replace(/\.js$/, ".d.ts"),
+          out: dest,
+          dts: dest.replace(/\.js$/, ".d.ts"),
           id: k,
           dir: parsed.dir,
           name: parsed.name,
-          type: filterInput(v)! as "handler" | "middleware",
+          type: filterInput(v) as "handler" | "middleware",
           exports: "",
         },
       ];
@@ -343,37 +342,33 @@ function fixBundleExports(
   bundle: Record<string, BundleInfo>,
   options: { entryExportNames: string; serversExportNames: string },
 ) {
-  Object.entries(bundle).forEach(([k, v]) => {
+  for (const [k, v] of Object.entries(bundle)) {
     if (!k.startsWith(namespace)) {
-      v.exports =
-        "./" +
-        posix
-          .normalize(
-            options.entryExportNames
-              .replace("[dir]", v.dir)
-              .replace("[name]", v.name)
-              .replace("[type]", v.type),
-          )
-          .replaceAll("\\", "/");
+      v.exports = `./${posix
+        .normalize(
+          options.entryExportNames
+            .replace("[dir]", v.dir)
+            .replace("[name]", v.name)
+            .replace("[type]", v.type),
+        )
+        .replaceAll("\\", "/")}`;
     }
-  });
+  }
 
-  Object.entries(bundle).forEach(([k, v]) => {
+  for (const [k, v] of Object.entries(bundle)) {
     if (k.startsWith(namespace)) {
       const [, , server, type, handler] = k.split(":");
-      v.exports =
-        "./" +
-        posix
-          .normalize(
-            options.serversExportNames
-              .replace("[name]", bundle[handler].name)
-              .replace("[dir]", bundle[handler].dir)
-              .replace("[type]", type)
-              .replace("[server]", server),
-          )
-          .replaceAll("\\", "/");
+      v.exports = `./${posix
+        .normalize(
+          options.serversExportNames
+            .replace("[name]", bundle[handler].name)
+            .replace("[dir]", bundle[handler].dir)
+            .replace("[type]", type)
+            .replace("[server]", server),
+        )
+        .replaceAll("\\", "/")}`;
     }
-  });
+  }
 
   return bundle;
 }
@@ -452,9 +447,9 @@ export async function readAndEditPackageJson(reports: Report[]) {
   for (const report of reports) {
     // No CJS support
     packageJson.exports[report.exports] = {
-      types: report.dts ? "./" + report.dts : undefined,
-      import: "./" + report.out,
-      default: "./" + report.out,
+      types: report.dts ? `./${report.dts}` : undefined,
+      import: `./${report.out}`,
+      default: `./${report.out}`,
     };
   }
 
@@ -515,10 +510,11 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
         let mapping = genBundleInfo(normalizedInput, (cleanV) => {
           const found = outputs.find(([, value]) => {
             if (value.type === "chunk" && value.isEntry) {
+              // biome-ignore lint/style/noNonNullAssertion: <explanation>
               const cleanEntry = value.facadeModuleId!;
               return (
                 posix.relative(cleanEntry, cleanV) === "" ||
-                posix.relative(cleanEntry, namespace + ":" + cleanV) === ""
+                posix.relative(cleanEntry, `${namespace}:${cleanV}`) === ""
               );
             }
 
@@ -538,10 +534,10 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
         });
 
         // Add dist folder to `out` and `dts`
-        Object.values(mapping).forEach((v) => {
+        for (const v of Object.values(mapping)) {
           v.out = join(out, v.out);
           v.dts = join(out, v.dts);
-        });
+        }
 
         await genDts(mapping, options);
 
@@ -645,7 +641,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
         });
 
         builder.onEnd(async (result) => {
-          const outputs = Object.entries(result.metafile!.outputs);
+          const outputs = Object.entries(result.metafile?.outputs ?? {});
 
           let mapping = genBundleInfo(normalizedInput, (cleanV) => {
             const found = outputs.find(([, value]) => {
@@ -653,7 +649,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
                 const cleanEntry = value.entryPoint;
                 return (
                   posix.relative(cleanEntry, cleanV) === "" ||
-                  posix.relative(cleanEntry, namespace + ":" + cleanV) === ""
+                  posix.relative(cleanEntry, `${namespace}:${cleanV}`) === ""
                 );
               }
 
@@ -673,9 +669,9 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (
           });
 
           // Remove dist folder from `exports`
-          Object.values(mapping).forEach(
-            (v) => (v.exports = "./" + posix.relative(outdir, v.exports)),
-          );
+          for (const v of Object.values(mapping)) {
+            v.exports = `./${posix.relative(outdir, v.exports)}`;
+          }
 
           await genDts(mapping, options);
 

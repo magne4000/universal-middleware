@@ -223,7 +223,7 @@
     "rimraf": "^6.0.0",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
-    "universal-middleware": "link:packages/universal-middleware"
+    "universal-middleware": "workspace:*"
   },
   "optionalDependencies": {
     "@universal-middleware/cloudflare": "^0",
@@ -234,11 +234,5 @@
     "@universal-middleware/hono": "^0",
     "@universal-middleware/webroute": "^0"
   },
-  "sideEffects": false,
-  "peerDependencies": {
-    "@universal-middleware/express": "link:packages/adapter-express",
-    "@universal-middleware/hattip": "link:packages/adapter-hattip",
-    "@universal-middleware/hono": "link:packages/adapter-hono",
-    "@universal-middleware/webroute": "link:packages/adapter-webroute"
-  }
+  "sideEffects": false
 }

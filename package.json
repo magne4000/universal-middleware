@@ -5,19 +5,17 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "build": "turbo build",
     "test": "turbo test",
-    "test:typecheck": "turbo test:typecheck"
+    "test:typecheck": "turbo test:typecheck",
+    "format": "biome format --write .",
+    "lint": "biome lint ."
   },
   "keywords": [],
   "author": "",
   "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
     "@types/node": "^18.19.14",
-    "@typescript-eslint/eslint-plugin": "^7.15.0",
-    "@typescript-eslint/parser": "^7.15.0",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
     "prettier": "^3.3.2",
     "turbo": "^2.1.1",
     "typescript": "^5.5.4"

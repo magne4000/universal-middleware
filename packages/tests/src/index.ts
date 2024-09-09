@@ -46,12 +46,12 @@ export function runTests(runs: Run[], options: Options) {
 
       // Wait until server is ready
       await new Promise((resolve, reject) => {
-        server!.on("error", (error) => {
+        server?.on("error", (error) => {
           server = undefined;
           reject(error);
         });
 
-        server!.on("exit", (code) => {
+        server?.on("exit", (code) => {
           if (code !== 0) {
             server = undefined;
             reject(new Error(`Process exited with code ${code}`));
@@ -128,7 +128,7 @@ export function runTests(runs: Run[], options: Options) {
 }
 
 export const args = mri<{ port: string }>(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   (globalThis as any).Deno?.args ?? globalThis.process.argv.slice(2),
 );
 

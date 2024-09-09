@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { describe, expect, it } from "vitest";
 import { build, type BuildResult } from "esbuild";
 import plugin from "../src/esbuild";

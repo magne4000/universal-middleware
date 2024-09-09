@@ -13,6 +13,8 @@ import type {
   Response as CloudflareResponse,
 } from "@cloudflare/workers-types";
 
+export const contextSymbol = Symbol("unContext");
+
 export type CloudflareHandler<C extends Universal.Context> = {
   fetch: ExportedHandlerFetchHandler<{
     [contextSymbol]: C;
@@ -23,8 +25,6 @@ export type CloudflarePagesFunction<C extends Universal.Context> =
   PagesFunction<{
     [contextSymbol]: C;
   }>;
-
-export const contextSymbol = Symbol("unContext");
 
 /**
  * Creates a request handler for Cloudflare Pages. Should be used as dist/_worker.js
@@ -88,12 +88,13 @@ export function createPagesFunction<
         const cloudflareResponse = await context.next();
         const res = await response(cloudflareResponse as unknown as Response);
         return (res ?? cloudflareResponse) as unknown as CloudflareResponse;
-      } else if (response !== null && typeof response === "object") {
+      }
+      if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
           return response as unknown as CloudflareResponse;
         }
         // Update context
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         setContext(context.env, response as any);
         return await context.next();
       }

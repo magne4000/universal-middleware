@@ -24,7 +24,7 @@ router.get("/", handler());
 
 app.use(router);
 
-const port = args.port ? parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port) : 3000;
 
 const { createServer } = await import("node:http");
 createServer(toNodeListener(app)).listen(port, "localhost", () => {

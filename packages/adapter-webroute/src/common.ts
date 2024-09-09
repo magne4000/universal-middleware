@@ -5,10 +5,12 @@ import type {
   UniversalMiddleware,
 } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
-import { type DataResult, type MiddlewareFn } from "@webroute/middleware";
+import type { DataResult, MiddlewareFn } from "@webroute/middleware";
 
 export type WebrouteMiddleware<
+  // biome-ignore lint/complexity/noBannedTypes: <explanation>
   InContext extends object = {},
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   TResult extends DataResult | void = void,
   TParams = unknown,
   TQuery = unknown,
@@ -22,7 +24,9 @@ export type WebrouteMiddleware<
 >;
 
 export type WebrouteHandler<
+  // biome-ignore lint/complexity/noBannedTypes: <explanation>
   InContext extends object = {},
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   TResult extends DataResult | void = void,
   TParams = unknown,
   TQuery = unknown,
@@ -60,16 +64,17 @@ export function createHandler<
   };
 }
 
+// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
 type ExtractVoid<T, U> = T extends U ? T : void;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 type MiddlewareFactoryReturnType<T extends (...args: any) => any> =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   ReturnType<T> extends UniversalMiddleware<any, any>
     ? Awaited<ReturnType<ReturnType<T>>>
     : never;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export type MiddlewareFactoryDataResult<T extends (...args: any) => any> =
   ExtractVoid<MiddlewareFactoryReturnType<T>, DataResult>;
 

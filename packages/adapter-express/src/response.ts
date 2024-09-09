@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import type { ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
@@ -85,6 +83,7 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
     override(nodeResponse, "writeHead", triggerPendingMiddlewares),
   ];
   let resolve: () => void;
+  // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
   const pendingResponse: Promise<void> = new Promise((r) => (resolve = r));
 
   async function triggerPendingMiddlewares() {
@@ -111,6 +110,7 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
       setHeaders(response, nodeResponse, true);
 
       resolve();
+      // biome-ignore lint/complexity/noForEach: <explanation>
       restore.forEach((r) => r());
     } else {
       await pendingResponse;
@@ -143,6 +143,7 @@ function setHeaders(
 
   if (mirror) {
     // delete remaining node headers
+    // biome-ignore lint/complexity/noForEach: <explanation>
     nodeResponseHeaders.forEach((key) => nodeResponse.removeHeader(key));
   }
 }

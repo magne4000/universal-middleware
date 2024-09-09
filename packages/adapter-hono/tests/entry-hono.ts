@@ -10,14 +10,14 @@ const app = new Hono();
 // standard Hono middleware
 app.use(secureHeaders());
 
-middlewares.forEach((middleware) =>
-  app.use(createMiddleware(middleware as Get<[], UniversalMiddleware>)()),
-);
+for (const middleware of middlewares) {
+  app.use(createMiddleware(middleware as Get<[], UniversalMiddleware>)());
+}
 
 // universal handler
 app.get("/", createHandler(handler)());
 
-const port = args.port ? parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port) : 3000;
 
 if (deno) {
   // @ts-ignore

@@ -12,9 +12,9 @@ const app = createApp({
   onBeforeResponse: universalOnBeforeResponse,
 });
 
-middlewares.forEach((middleware) =>
-  app.use(createMiddleware(middleware as Get<[], UniversalMiddleware>)()),
-);
+for (const middleware of middlewares) {
+  app.use(createMiddleware(middleware as Get<[], UniversalMiddleware>)());
+}
 
 const router = createRouter();
 
@@ -22,7 +22,7 @@ router.get("/", createHandler(handler)());
 
 app.use(router);
 
-const port = args.port ? parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port) : 3000;
 
 if (deno) {
   // @ts-ignore

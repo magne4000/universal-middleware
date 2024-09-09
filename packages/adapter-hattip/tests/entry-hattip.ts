@@ -1,7 +1,7 @@
 import { args, bun, deno } from "@universal-middleware/tests";
 import hattipHandler from "./hattip";
 
-const port = args.port ? parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port) : 3000;
 
 let bunHandler: unknown;
 if (deno) {

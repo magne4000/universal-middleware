@@ -9,7 +9,7 @@ const knownUserAgents: Partial<Record<Runtime["runtime"], string>> = {
 };
 
 const _getRuntimeKey = (): Runtime["runtime"] => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const global = globalThis as any;
 
   // check if the current runtime supports navigator.userAgent
