@@ -89,11 +89,8 @@ export type UniversalMiddleware<
   request: Request,
   context: InContext,
   runtime: RuntimeAdapter,
-) =>
-  | Awaitable<Response | undefined>
-  | Awaitable<undefined | undefined>
-  | Awaitable<OutContext | undefined>
-  | ((response: Response) => Awaitable<Response>);
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+) => Awaitable<Response | OutContext | ((response: Response) => Awaitable<Response>) | void | undefined>;
 
 export type UniversalHandler<InContext extends Universal.Context = Universal.Context> = (
   request: Request,
