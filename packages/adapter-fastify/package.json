@@ -30,7 +30,7 @@
     "fastify-raw-body": "^4.3.0"
   },
   "devDependencies": {
-    "@brillout/release-me": "^0.4.0",
+    "@brillout/release-me": "catalog:",
     "@fastify/helmet": "^11.1.1",
     "@swc/core": "^1.7.11",
     "@types/node": "catalog:",

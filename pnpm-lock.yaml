@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    '@brillout/release-me':
+      specifier: ^0.4.1
+      version: 0.4.1
     '@hattip/router':
       specifier: ^0.0.48
       version: 0.0.48
@@ -171,8 +174,8 @@ importers:
         version: link:../core
     devDependencies:
       '@brillout/release-me':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: 'catalog:'
+        version: 0.4.1
       '@cloudflare/workers-types':
         specifier: ^4.20240821.1
         version: 4.20240903.0
@@ -214,8 +217,8 @@ importers:
         version: link:../core
     devDependencies:
       '@brillout/release-me':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: 'catalog:'
+        version: 0.4.1
       '@swc/core':
         specifier: ^1.7.11
         version: 1.7.24
@@ -266,8 +269,8 @@ importers:
         version: 4.3.0
     devDependencies:
       '@brillout/release-me':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: 'catalog:'
+        version: 0.4.1
       '@fastify/helmet':
         specifier: ^11.1.1
         version: 11.1.1
@@ -312,8 +315,8 @@ importers:
         version: link:../core
     devDependencies:
       '@brillout/release-me':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: 'catalog:'
+        version: 0.4.1
       '@swc/core':
         specifier: ^1.7.11
         version: 1.7.24
@@ -352,8 +355,8 @@ importers:
         version: link:../core
     devDependencies:
       '@brillout/release-me':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: 'catalog:'
+        version: 0.4.1
       '@hattip/adapter-bun':
         specifier: ^0.0.48
         version: 0.0.48
@@ -416,8 +419,8 @@ importers:
         version: link:../core
     devDependencies:
       '@brillout/release-me':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: 'catalog:'
+        version: 0.4.1
       '@hono/node-server':
         specifier: ^1.12.2
         version: 1.12.2(hono@4.5.11)
@@ -462,8 +465,8 @@ importers:
         version: link:../core
     devDependencies:
       '@brillout/release-me':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: 'catalog:'
+        version: 0.4.1
       '@hono/node-server':
         specifier: ^1.12.2
         version: 1.12.2(hono@4.5.11)
@@ -510,8 +513,8 @@ importers:
   packages/core:
     devDependencies:
       '@brillout/release-me':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: 'catalog:'
+        version: 0.4.1
       '@swc/core':
         specifier: ^1.7.11
         version: 1.7.24
@@ -608,8 +611,8 @@ importers:
         version: 1.13.1
     devDependencies:
       '@brillout/release-me':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: 'catalog:'
+        version: 0.4.1
       '@rollup/plugin-node-resolve':
         specifier: ^15.2.3
         version: 15.2.3(rollup@4.21.2)
@@ -886,8 +889,8 @@ packages:
   '@brillout/picocolors@1.0.14':
     resolution: {integrity: sha512-XhyZY3/FUh56mDuLIjv5kN9qy+oQj7A/d2uQ6cJJ4uVv55+velua3abcrM5WIvs2RHZGA3EE7S9FWo+TjF10ew==}
 
-  '@brillout/release-me@0.4.0':
-    resolution: {integrity: sha512-V4YwITguHK3zOy9B4606lc9PQiFDp3p3Ifeq4KF7V8o9fs7OmcrfTWBE0EWFtiLhG2JeKb2RzM0t6Y4tLgXd6w==}
+  '@brillout/release-me@0.4.1':
+    resolution: {integrity: sha512-T+V05oyoXpl3b6H3Ahea7cFK+PCgkjSjwWFX/UozaFOclJTpHojfGxn7uG0r6hdyHKZSjJp8tRsYWb4t7J98Rw==}
     hasBin: true
 
   '@brillout/test-e2e@0.5.35':
@@ -4098,7 +4101,7 @@ snapshots:
 
   '@brillout/picocolors@1.0.14': {}
 
-  '@brillout/release-me@0.4.0':
+  '@brillout/release-me@0.4.1':
     dependencies:
       '@brillout/picocolors': 1.0.14
       commander: 11.1.0

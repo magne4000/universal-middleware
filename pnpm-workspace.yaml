@@ -12,3 +12,4 @@ catalog:
   "h3": "^1.12.0"
   "hono": "^4.5.11"
   "@types/node": "^20.16.5"
+  "@brillout/release-me": "^0.4.1"
