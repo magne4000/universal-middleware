@@ -20,7 +20,7 @@ A function that alters the [Context](#context) or Response. Can also return an e
 
 It will usually _NOT_ be associated with a _route_.
 
-Check the [examples](/examples/context-middleware) for details.
+Check the [recipes](/recipes/context-middleware) for details.
 
 ```ts twoslash
 export interface UniversalMiddleware<InContext, OutContext> {

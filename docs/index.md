@@ -11,8 +11,8 @@ hero:
       text: Guide
       link: /guide/introduction
     - theme: alt
-      text: Examples
-      link: /examples/context-middleware
+      text: Recipes
+      link: /recipes/context-middleware
 
 features:
   - title: One middleware, multiple adapters

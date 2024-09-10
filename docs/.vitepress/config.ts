@@ -1,6 +1,6 @@
-import { defineConfig } from "vitepress";
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
 import type { ModuleResolutionKind } from "typescript";
+import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -28,7 +28,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Guide", link: "/guide/introduction" },
-      { text: "Examples", link: "/examples/context-middleware" },
+      { text: "Recipes", link: "/recipes/context-middleware" },
     ],
 
     sidebar: [
@@ -50,19 +50,19 @@ export default defineConfig({
         ],
       },
       {
-        text: "Examples",
+        text: "Recipes",
         items: [
           {
             text: "Updating the context",
-            link: "/examples/context-middleware",
+            link: "/recipes/context-middleware",
           },
           {
             text: "Updating the headers",
-            link: "/examples/headers-middleware",
+            link: "/recipes/headers-middleware",
           },
           {
             text: "Return an early response",
-            link: "/examples/guard-middleware",
+            link: "/recipes/guard-middleware",
           },
         ],
       },
