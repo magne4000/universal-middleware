@@ -34,7 +34,7 @@ In this step, we will create a simple middleware that returns an early response 
 ```ts twoslash
 // src/middlewares/demo.middleware.ts
 
-import type { Get, UniversalMiddleware } from "universal-middleware";
+import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 interface Config {
   header: string;

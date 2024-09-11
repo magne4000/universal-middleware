@@ -118,7 +118,7 @@ importers:
         specifier: link:../packages/universal-middleware
         version: link:../packages/universal-middleware
       vitepress:
-        specifier: ^1.3.3
+        specifier: ^1.3.4
         version: 1.3.4(@algolia/client-search@4.24.0)(@types/node@20.16.5)(postcss@8.4.45)(typescript@5.5.4)
 
   examples/tool:

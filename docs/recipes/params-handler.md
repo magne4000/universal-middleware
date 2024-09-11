@@ -5,31 +5,7 @@ Most adapters natively support route parameters (also called _parametric path_ o
 
 We recommend to follow this next example when using route parameters:
 
-```ts twoslash
-// src/handlers/params.handler.ts
-
-import { params, type UniversalHandler } from "@universal-middleware/core";
-
-interface Options {
-  route?: string;
-}
-
-const myHandler = ((options?) => (request, ctx, runtime) => {
-  const myParams = params(request, runtime, options?.route);
-    
-  if (myParams === null || !myParams.name) {
-    // Provide a useful error message to the user
-    throw new Error("A route parameter named `:name` is required. " +
-    "You can set your server route as `/user/:name`, or use the `route` option of this middleware " +
-    "to achieve the same purpose.");
-  }
-  
-  // ...
-  return new Response(`User name is: ${myParams.name}`);
-}) satisfies ((options?: Options) => UniversalHandler);
-
-export default myHandler;
-```
+<<< @/../examples/tool/src/handlers/params.handler.ts
 
 > [!NOTE]
 > For servers supporting route parameters (`app.get("/user/:name", myHandler())`), the parameters are available under `runtime.params`.
@@ -41,9 +17,9 @@ After bundling and publishing this middleware, one can then use this middleware 
 
 ::: code-group
 
-```ts [hono.ts]
+```ts twoslash [hono.ts]
 import { Hono } from "hono";
-import paramHandler from "@example/handlers/params-handler-hono";
+import paramHandler from "@universal-middleware-examples/tool/params-handler-hono";
 
 const app = new Hono();
 
@@ -52,9 +28,9 @@ app.get("/user/:name", paramHandler());
 export default app;
 ```
 
-```ts [h3.ts]
-import { createApp } from "h3";
-import paramHandler from "@example/handlers/params-handler-h3";
+```ts twoslash [h3.ts]
+import { createApp, createRouter } from "h3";
+import paramHandler from "@universal-middleware-examples/tool/params-handler-h3";
 import { universalOnBeforeResponse } from "@universal-middleware/h3";
 
 const app = createApp({
@@ -62,14 +38,18 @@ const app = createApp({
   onBeforeResponse: universalOnBeforeResponse,
 });
 
-app.get("/user/:name", paramHandler());
+const router = createRouter();
+
+router.get("/user/:name", paramHandler());
+
+app.use(router);
 
 export default app;
 ```
 
-```ts [hattip.ts]
+```ts twoslash [hattip.ts]
 import { createRouter } from "@hattip/router";
-import paramHandler from "@example/handlers/params-handler-hattip";
+import paramHandler from "@universal-middleware-examples/tool/params-handler-hattip";
 
 const app = createRouter();
 
@@ -80,32 +60,58 @@ const hattipHandler = app.buildHandler();
 export default hattipHandler;
 ```
 
-```ts [cloudflare-pages]
+```ts twoslash [cloudflare-worker.ts]
+import paramsHandler from "@universal-middleware-examples/tool/params-handler";
+import { createHandler } from "@universal-middleware/cloudflare";
+import { pipe } from "@universal-middleware/core";
+
+const paramsHandlerInstance = paramsHandler({
+  // Mandatory when targeting Cloudflare Worker
+  route: "/user/:name",
+});
+
+// Cloudflare Workers have no native routing support.
+// We recommend using Hono as it fully supports Cloudflare Worker.
+const wrapped = pipe(
+  (request, ctx, runtime) => {
+    const url = new URL(request.url);
+    // intercept `/user/*` routes with this handler
+    if (url.pathname.startsWith("/user/")) {
+      return paramsHandlerInstance(request, ctx, runtime);
+    }
+  },
+  // Other handlers
+);
+
+export default createHandler(() => wrapped)();
+```
+
+```ts twoslash [cloudflare-pages]
 // functions/user/[name].ts
 
-import paramHandler from "@example/handlers/params-handler-cloudflare-pages";
+import paramHandler from "@universal-middleware-examples/tool/params-handler-cloudflare-pages";
 
 export const onRequest = paramHandler();
 ```
 
-```ts [express.ts]
-import paramHandler from "@example/handlers/params-handler-express";
+```ts twoslash [express.ts]
+import paramHandler from "@universal-middleware-examples/tool/params-handler-express";
 import express from "express";
 
 const app = express();
 
-app.get("/user/:name", guardMiddleware());
+app.get("/user/:name", paramHandler());
 
 export default app;
 ```
 
-```ts [fastify.ts]
-import paramHandler from "@example/handlers/params-handler-fastify";
+```ts twoslash [fastify.ts]
+import paramHandler from "@universal-middleware-examples/tool/params-handler-fastify";
 import fastify from "fastify";
 
 const app = fastify();
 
-app.get("/user/:name", guardMiddleware());
+app.get("/user/:name", paramHandler());
 
 export default app;
 ```

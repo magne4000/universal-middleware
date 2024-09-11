@@ -20,7 +20,7 @@ A middleware that returns an early response if some header is missing.
 ```ts
 // src/middlewares/demo.middleware.ts
 
-import type { Get, UniversalMiddleware } from "universal-middleware";
+import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 interface Config {
   header: string;
