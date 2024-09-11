@@ -1,10 +1,10 @@
-import { createHandler, createMiddleware } from "../src/index.js";
-import fastify from "fastify";
-import { args } from "@universal-middleware/tests";
-import { handler, middlewares } from "@universal-middleware/tests/utils";
-import rawBody from "fastify-raw-body";
 import helmet from "@fastify/helmet";
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
+import { args } from "@universal-middleware/tests";
+import { handler, middlewares, routeParamHandler } from "@universal-middleware/tests/utils";
+import fastify from "fastify";
+import rawBody from "fastify-raw-body";
+import { createHandler, createMiddleware } from "../src/index.js";
 
 const app = fastify();
 
@@ -30,6 +30,9 @@ app.post(
     });
   })(),
 );
+
+// route params handler
+app.get("/user/:name", createHandler(routeParamHandler)());
 
 // universal handler
 app.get("/", createHandler(handler)());
