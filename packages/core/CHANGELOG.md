@@ -1,3 +1,12 @@
+## [0.2.9](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.8...@universal-middleware/core@0.2.9) (2024-09-11)
+
+
+### Features
+
+* access route parameters ([#29](https://github.com/magne4000/universal-handler/issues/29)) ([3a7d500](https://github.com/magne4000/universal-handler/commit/3a7d500abe579f1d2387de038a7a437091be9e0d))
+
+
+
 ## [0.2.8](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.7...@universal-middleware/core@0.2.8) (2024-09-09)
 
 
