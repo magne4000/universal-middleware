@@ -1,6 +1,6 @@
 // src/middlewares/guard.middleware.ts
 
-import type { Get, UniversalMiddleware } from "universal-middleware";
+import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 interface User {
   id: string;

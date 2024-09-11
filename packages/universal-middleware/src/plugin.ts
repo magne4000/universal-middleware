@@ -1,7 +1,7 @@
-import { dirname, join, parse, posix, resolve } from "node:path";
-import type { UnpluginFactory } from "unplugin";
-import { packageUp } from "package-up";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { dirname, join, parse, posix, resolve } from "node:path";
+import { packageUp } from "package-up";
+import type { UnpluginFactory } from "unplugin";
 
 export interface Options {
   servers?: (typeof defaultWrappers)[number][];
@@ -241,7 +241,7 @@ function loadDts(id: string, resolve?: (handler: string, type: string) => string
 import { ${selfImports.join(", ")} } from "@universal-middleware/${info.target ?? target}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
-type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<infer X> ? X : {};
+type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<infer X> ? unknown extends X ? Universal.Context : X : {};
 export type InContext = ExtractInContext<typeof ${type}>;
 export type OutContext = ${info.outContext?.(type) ?? "unknown"};
 export default ${fn}(${type}) as (...args: ExtractT<typeof ${type}>) => ${t}${info.genericParameters ?? ""};

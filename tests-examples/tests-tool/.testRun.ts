@@ -19,4 +19,12 @@ export function testRun(
     expect(content).toContain('"World!!!"');
     expect(response.headers.has("x-universal-hello")).toBe(true);
   });
+
+  test("/user/:name", async () => {
+    const response = await fetch(`${getServerUrl()}/user/magne4000`);
+
+    const content = await response.text();
+
+    expect(content).toBe("User name is: magne4000");
+  });
 }

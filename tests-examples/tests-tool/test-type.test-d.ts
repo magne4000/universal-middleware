@@ -1,32 +1,32 @@
-import { expectTypeOf, test } from "vitest";
-import honoContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hono";
-import honoHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hono";
-import honoHandler from "@universal-middleware-examples/tool/dummy-handler-hono";
-import expressContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-express";
-import expressHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-express";
-import expressHandler from "@universal-middleware-examples/tool/dummy-handler-express";
-import hattipContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hattip";
-import hattipHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hattip";
-import hattipHandler from "@universal-middleware-examples/tool/dummy-handler-hattip";
-import webrouteContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-webroute";
-import webrouteHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-webroute";
-import webrouteHandler from "@universal-middleware-examples/tool/dummy-handler-webroute";
-import fastifyContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-fastify";
-import fastifyHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-fastify";
-import fastifyHandler from "@universal-middleware-examples/tool/dummy-handler-fastify";
-import h3ContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-h3";
-import h3HeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-h3";
-import h3Handler from "@universal-middleware-examples/tool/dummy-handler-h3";
-import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
-import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware";
 import handler from "@universal-middleware-examples/tool/dummy-handler";
-import type { HonoHandler, HonoMiddleware } from "@universal-middleware/hono";
-import type { HattipHandler, HattipMiddleware } from "@universal-middleware/hattip";
-import type { NodeHandler, NodeMiddleware } from "@universal-middleware/express";
-import type { WebrouteHandler, WebrouteMiddleware } from "@universal-middleware/webroute";
+import expressHandler from "@universal-middleware-examples/tool/dummy-handler-express";
+import fastifyHandler from "@universal-middleware-examples/tool/dummy-handler-fastify";
+import h3Handler from "@universal-middleware-examples/tool/dummy-handler-h3";
+import hattipHandler from "@universal-middleware-examples/tool/dummy-handler-hattip";
+import honoHandler from "@universal-middleware-examples/tool/dummy-handler-hono";
+import webrouteHandler from "@universal-middleware-examples/tool/dummy-handler-webroute";
+import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
+import expressContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-express";
+import fastifyContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-fastify";
+import h3ContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-h3";
+import hattipContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hattip";
+import honoContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hono";
+import webrouteContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-webroute";
+import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware";
+import expressHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-express";
+import fastifyHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-fastify";
+import h3HeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-h3";
+import hattipHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hattip";
+import honoHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hono";
+import webrouteHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-webroute";
 import type { UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type { NodeHandler, NodeMiddleware } from "@universal-middleware/express";
 import type { FastifyHandler, FastifyMiddleware } from "@universal-middleware/fastify";
 import type { H3Handler, H3Middleware } from "@universal-middleware/h3";
+import type { HattipHandler, HattipMiddleware } from "@universal-middleware/hattip";
+import type { HonoHandler, HonoMiddleware } from "@universal-middleware/hono";
+import type { WebrouteHandler, WebrouteMiddleware } from "@universal-middleware/webroute";
+import { expectTypeOf, test } from "vitest";
 
 test("hono", () => {
   expectTypeOf(honoContextMiddleware).returns.toEqualTypeOf<HonoMiddleware>();
@@ -51,7 +51,7 @@ test("webroute", () => {
     WebrouteMiddleware<Universal.Context, { hello: string }>
   >();
   expectTypeOf(webrouteHeadersMiddleware).returns.toEqualTypeOf<
-    WebrouteMiddleware<{ hello?: string }, { hello?: string }>
+    WebrouteMiddleware<Universal.Context, Universal.Context>
   >();
   expectTypeOf(webrouteHandler).returns.toEqualTypeOf<WebrouteHandler<Universal.Context, Universal.Context>>();
 });
