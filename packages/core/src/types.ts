@@ -117,6 +117,11 @@ export interface CloudflareWorkerAdapter {
   params: undefined;
 }
 
+export interface WebrouteAdapter {
+  adapter: "webroute";
+  params: Record<string, string> | undefined;
+}
+
 export interface OtherAdapter {
   adapter: "other";
   params: undefined;
@@ -131,6 +136,7 @@ export type Adapter =
   | H3Adapter
   | CloudflarePagesAdapter
   | CloudflareWorkerAdapter
+  | WebrouteAdapter
   | OtherAdapter;
 export type RuntimeAdapter = Runtime & Adapter;
 

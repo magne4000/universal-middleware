@@ -38,9 +38,9 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return (request, ctx) => {
+    return async (request, ctx) => {
       const context = initContext(ctx);
-      return handler(request, context, getRuntime());
+      return handler(request, context, await getRuntime(ctx));
     };
   };
 }
@@ -72,9 +72,9 @@ export function createMiddleware<
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
-    return ((request, ctx) => {
+    return (async (request, ctx) => {
       const context = initContext(ctx);
-      return middleware(request, context, getRuntime());
+      return middleware(request, context, await getRuntime(ctx));
     }) as WebrouteMiddleware<InContext, MiddlewareFactoryDataResult<typeof middlewareFactory>>;
   };
 }
@@ -92,8 +92,12 @@ export function getContext<Context extends Universal.Context = Universal.Context
   return ctx.state;
 }
 
-export function getRuntime(): RuntimeAdapter {
-  return getAdapterRuntime("other", {
-    params: undefined,
+export async function getRuntime(ctx: RequestCtx | undefined): Promise<RuntimeAdapter> {
+  const parsed = await ctx?.parse();
+
+  const params = (parsed?.params as Record<string, string>) ?? undefined;
+
+  return getAdapterRuntime("webroute", {
+    params,
   });
 }

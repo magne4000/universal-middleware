@@ -488,6 +488,9 @@ importers:
       '@webroute/route':
         specifier: ^0.8.0
         version: 0.8.0
+      '@webroute/router':
+        specifier: ^0.4.0
+        version: 0.4.0
       hono:
         specifier: 'catalog:'
         version: 4.5.11
@@ -1837,6 +1840,9 @@ packages:
   '@webroute/route@0.8.0':
     resolution: {integrity: sha512-FG9JQisT86E70I0ggyUKzb/fyKpYYd5XEBWfqZmCtHSHGd1uOzgEr4XmpmXfiZxpsg+GCbGiL/KTodyxDjloMQ==}
     engines: {node: ^20.0.0}
+
+  '@webroute/router@0.4.0':
+    resolution: {integrity: sha512-A//kx4i1NQPYSNj6vY79fAU2LtFYWcQCsYl/9q1ewZGnqqVETTBJ3STC54zwhCD8vfTX/kLRDxVbqq/tgOQw4g==}
 
   '@webroute/schema@0.5.0':
     resolution: {integrity: sha512-35ye3JQEZLpXpCbeMOjpOzJtITdkVGJqe/7ziWb7ZLCHtXYATV11TfL8mcYWO+9r/UT0njt2ROKC1csL2PHFYQ==}
@@ -5013,6 +5019,11 @@ snapshots:
       debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
+
+  '@webroute/router@0.4.0':
+    dependencies:
+      radix3: 1.1.2
+      urlpattern-polyfill: 10.0.0
 
   '@webroute/schema@0.5.0':
     optionalDependencies:

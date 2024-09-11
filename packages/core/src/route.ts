@@ -61,14 +61,7 @@ export function params(
   runtime: RuntimeAdapter,
   path: string | undefined,
 ): null | Record<string, string> {
-  console.log({
-    path,
-  });
   if (typeof path === "string") {
-    console.log({
-      path,
-      res: paramsFromRequest(request, path),
-    });
     return paramsFromRequest(request, path);
   }
   return runtime.params ?? null;

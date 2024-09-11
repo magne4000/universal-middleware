@@ -1,10 +1,11 @@
-import { createHandler, createMiddleware } from "../src/index.js";
+import { args, bun, deno } from "@universal-middleware/tests";
+import { handler, middlewares, routeParamHandler } from "@universal-middleware/tests/utils";
+import { createAdapter } from "@webroute/middleware";
+import { Route, route } from "@webroute/route";
+import { createRadixRouter } from "@webroute/router";
 import { Hono, type MiddlewareHandler } from "hono";
 import { secureHeaders } from "hono/secure-headers";
-import { args, bun, deno } from "@universal-middleware/tests";
-import { handler, middlewares } from "@universal-middleware/tests/utils";
-import { route } from "@webroute/route";
-import { createAdapter } from "@webroute/middleware";
+import { createHandler, createMiddleware } from "../src/index.js";
 
 const app = new Hono();
 
@@ -12,20 +13,20 @@ const m1 = middlewares[0];
 const m2 = middlewares[1];
 const m3 = middlewares[2];
 
-const router = route()
-  // `createMiddleware(m1)()` or `m1()` are roughly equivalant (if not using the second parameter).
-  // The former allows better extraction of typings.
-  .use(m1())
-  .use((_request, ctx) => {
-    console.log("something BEFORE", ctx.state.something);
-  })
-  .use(createMiddleware(m2)())
-  .use(createMiddleware(m3)())
-  .use((_request, ctx) => {
-    console.log("something", ctx.state.something);
-    console.log("somethingElse", ctx.state.somethingElse);
-  })
-  .handle(createHandler(handler)());
+const router = createRadixRouter([
+  Route.normalise(route("/user/:name").method("get").handle(createHandler(routeParamHandler)())),
+  // @ts-ignore
+  Route.normalise(
+    route("/")
+      .method("get")
+      // `createMiddleware(m1)()` or `m1()` are roughly equivalant is some cases (if not using the context or runtime).
+      // Usually prefer wrapping in `createMiddleware` for better compatibility
+      .use(m1())
+      .use(createMiddleware(m2)())
+      .use(createMiddleware(m3)())
+      .handle(createHandler(handler)()),
+  ),
+]);
 
 // standard Hono middleware
 app.use(secureHeaders());
@@ -34,10 +35,10 @@ const toHono = createAdapter<MiddlewareHandler>((c, next) => {
   return {
     async onData(data) {
       c.set("state", { ...c.get("state"), ...data });
-      next();
+      await next();
     },
     async onEmpty() {
-      next();
+      await next();
     },
     async onResponse(response) {
       return response;
@@ -53,7 +54,11 @@ const toHono = createAdapter<MiddlewareHandler>((c, next) => {
 app.use(
   "*",
   toHono((c) => {
-    return router(c.req.raw);
+    const handler = router.match(c.req.raw);
+    if (handler) {
+      return handler(c.req.raw);
+    }
+    return new Response("NOT FOUND", { status: 404 });
   }),
 );
 

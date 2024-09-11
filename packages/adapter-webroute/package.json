@@ -37,6 +37,7 @@
     "@universal-middleware/tests": "workspace:*",
     "@webroute/middleware": "^0.10.0",
     "@webroute/route": "^0.8.0",
+    "@webroute/router": "^0.4.0",
     "hono": "catalog:",
     "rimraf": "^6.0.0",
     "tsup": "^8.2.4",
