@@ -107,6 +107,16 @@ export interface H3Adapter {
   params: Record<string, string> | undefined;
 }
 
+export interface CloudflarePagesAdapter {
+  adapter: "cloudflare-pages";
+  params: Record<string, string> | undefined;
+}
+
+export interface CloudflareWorkerAdapter {
+  adapter: "cloudflare-worker";
+  params: undefined;
+}
+
 export interface OtherAdapter {
   adapter: "other";
   params: undefined;
@@ -119,6 +129,8 @@ export type Adapter =
   | HonoAdapter
   | HattipAdapter
   | H3Adapter
+  | CloudflarePagesAdapter
+  | CloudflareWorkerAdapter
   | OtherAdapter;
 export type RuntimeAdapter = Runtime & Adapter;
 

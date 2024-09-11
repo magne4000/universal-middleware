@@ -8,16 +8,16 @@ function exec(
     pattern: RegExp;
   },
 ) {
-  let i = 0;
   const out: Record<string, string> = {};
   const matches = result.pattern.exec(path);
   if (!matches) return null;
 
-  while (i < result.keys.length) {
-    if (matches[++i]) {
-      out[result.keys[i]] = matches[i];
+  for (let i = 0; i < result.keys.length; i++) {
+    if (matches[i + 1]) {
+      out[result.keys[i]] = matches[i + 1];
     }
   }
+
   return out;
 }
 
@@ -61,7 +61,14 @@ export function params(
   runtime: RuntimeAdapter,
   path: string | undefined,
 ): null | Record<string, string> {
+  console.log({
+    path,
+  });
   if (typeof path === "string") {
+    console.log({
+      path,
+      res: paramsFromRequest(request, path),
+    });
     return paramsFromRequest(request, path);
   }
   return runtime.params ?? null;
