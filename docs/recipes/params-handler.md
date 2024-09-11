@@ -12,10 +12,10 @@ interface Options {
   route?: string;
 }
 
-const myMiddleware = ((options?) => (request, ctx, runtime) => {
+const myHandler = ((options?) => (request, ctx, runtime) => {
   const myParams = params(request, runtime, options?.route);
     
-  if (myParams === null) {
+  if (myParams === null || !myParams.name) {
     // Provide a useful error message to the user
     throw new Error("A route parameter named `:name` is required. " +
     "You can set your server route as `/user/:name`, or use the `route` option of this middleware " +
@@ -23,14 +23,14 @@ const myMiddleware = ((options?) => (request, ctx, runtime) => {
   }
   
   // ...
-  return new Response("OK");
+  return new Response(`User name is: ${myParams.name}`);
 }) satisfies ((options?: Options) => UniversalHandler);
 
-export default myMiddleware;
+export default myHandler;
 ```
 
 > [!NOTE]
-> For servers supporting route parameters (`app.get("/user/:name", myMiddleware())`), the parameters are available under `runtime.params`.
+> For servers supporting route parameters (`app.get("/user/:name", myHandler())`), the parameters are available under `runtime.params`.
 > 
-> For other adapters (`app.get("/user/*", myMiddleware({ route: "/user/:name" }))`), the 3rd argument of `params` helper must be present and not _undefined_.
+> For other adapters (`app.get("/user/*", myHandler({ route: "/user/:name" }))`), the 3rd argument of `params` helper must be present and not _undefined_.
 > Then parameters are extracted with [regexparam](https://github.com/lukeed/regexparam).

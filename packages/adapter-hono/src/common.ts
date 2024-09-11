@@ -101,9 +101,15 @@ export function getContext<Context extends Universal.Context = Universal.Context
 
 export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
   let params: Record<string, string> | undefined = undefined;
+  const ctx = getExecutionCtx(honoContext);
   try {
     params = honoContext.req.param();
-  } catch {}
+  } catch {
+    // Retrieve Cloudflare Pages potential params
+    if (ctx) {
+      params = (ctx as { params?: Record<string, string> }).params ?? undefined;
+    }
+  }
   return getAdapterRuntime(
     "hono",
     {
@@ -111,7 +117,7 @@ export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
     },
     {
       env: honoContext.env,
-      ctx: getExecutionCtx(honoContext),
+      ctx,
     },
   );
 }
