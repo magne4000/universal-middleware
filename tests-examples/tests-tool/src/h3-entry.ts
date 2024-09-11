@@ -1,8 +1,9 @@
-import { createApp, createRouter, toNodeListener } from "h3";
+import handler from "@universal-middleware-examples/tool/dummy-handler-h3";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-h3";
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-h3";
-import handler from "@universal-middleware-examples/tool/dummy-handler-h3";
+import paramsHandler from "@universal-middleware-examples/tool/params-handler-h3";
 import { universalOnBeforeResponse } from "@universal-middleware/h3";
+import { createApp, createRouter, toNodeListener } from "h3";
 import { args } from "./utils";
 
 const app = createApp({
@@ -19,6 +20,8 @@ app.use(contextMiddleware("World!!!"));
 app.use(headersMiddleware());
 
 const router = createRouter();
+
+router.get("/user/:name", paramsHandler());
 
 router.get("/", handler());
 

@@ -6,7 +6,7 @@ A function that returns a [Response](https://developer.mozilla.org/en-US/docs/We
 It will usually be associated with a _route_.
 
 ```ts twoslash
-export interface UniversalHandler<Context> {
+interface UniversalHandler<Context> {
   (request: Request, context: Context): Response | Promise<Response>;
 }
 ```
@@ -20,15 +20,19 @@ A function that alters the [Context](#context) or Response. Can also return an e
 
 It will usually _NOT_ be associated with a _route_.
 
-Check the [examples](/examples/context-middleware) for details.
+Check the [recipes](/recipes/context-middleware) for details.
 
 ```ts twoslash
-export interface UniversalMiddleware<InContext, OutContext> {
+type Awaitable<T> = T | Promise<T>;
+
+interface UniversalMiddleware<InContext, OutContext> { // [!code focus:9]
   (request: Request, context: InContext):
-    | Response | Promise<Response> // Can return an early Response
-    | void | Promise<void> // Can return nothing
-    | OutContext | Promise<OutContext> // Can return a new context. Ensures type-safe context representation
-    | ((response: Response) => Response | Promise<Response>); // Can return a function that manipulates the Response
+    Awaitable<
+    | Response // Can return an early Response
+    | OutContext // Can return a new context. Ensures type-safe context representation
+    | ((response: Response) => Awaitable<Response>) // Can return a function that manipulates the Response
+    | void | undefined // Can return nothing
+    >;
 }
 ```
 

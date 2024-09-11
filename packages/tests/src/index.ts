@@ -8,6 +8,7 @@ export interface Run {
   command: string;
   port: number;
   waitUntilType?: "undefined" | "function";
+  delay?: number;
 }
 
 export interface Options {
@@ -28,7 +29,7 @@ declare global {
 export function runTests(runs: Run[], options: Options) {
   options.vitest.describe.concurrent.each(runs)("$name", (run) => {
     let server: ChildProcess | undefined = undefined;
-    const { command, port } = run;
+    const { command, port, delay } = run;
     let host = `http://localhost:${port}`;
 
     options.vitest.beforeAll(async () => {
@@ -63,6 +64,10 @@ export function runTests(runs: Run[], options: Options) {
           })
           .catch(reject);
       });
+
+      if (delay) {
+        await new Promise((r) => setTimeout(r, delay));
+      }
     }, 30_000);
 
     options.vitest.afterAll(async () => {
@@ -91,6 +96,13 @@ export function runTests(runs: Run[], options: Options) {
       options.vitest.expect(response.headers.has("x-should-be-removed")).toBe(false);
       options.vitest.expect(response.headers.get("content-type")).toBe("application/json; charset=utf-8");
       await options?.test?.(response, body, run);
+    });
+
+    options.vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}/user/magne4000`);
+      const body = await response.text();
+      options.vitest.expect(response.status).toBe(200);
+      options.vitest.expect(body).toBe("User name is: magne4000");
     });
 
     if (options?.testPost) {

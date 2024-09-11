@@ -1,12 +1,12 @@
-import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
 import type {
+  Response as CloudflareResponse,
   EventContext,
   ExecutionContext,
   ExportedHandlerFetchHandler,
   PagesFunction,
-  Response as CloudflareResponse,
 } from "@cloudflare/workers-types";
+import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import { getAdapterRuntime } from "@universal-middleware/core";
 
 export const contextSymbol = Symbol("unContext");
 
@@ -21,7 +21,7 @@ export type CloudflarePagesFunction<C extends Universal.Context> = PagesFunction
 }>;
 
 /**
- * Creates a request handler for Cloudflare Pages. Should be used as dist/_worker.js
+ * Creates a request handler for Cloudflare Worker. Should be used as dist/_worker.js
  */
 export function createHandler<T extends unknown[], C extends Universal.Context>(
   handlerFactory: Get<T, UniversalHandler>,
@@ -111,8 +111,10 @@ export function getRuntime(
   const isContext = args.length === 1;
 
   return getAdapterRuntime(
-    "other",
-    {},
+    isContext ? "cloudflare-pages" : "cloudflare-worker",
+    {
+      params: isContext ? (args[0].params as Record<string, string>) ?? undefined : undefined,
+    },
     {
       env: isContext ? args[0].env : args[0],
       ctx: {

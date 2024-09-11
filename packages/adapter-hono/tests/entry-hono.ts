@@ -1,9 +1,9 @@
-import { createHandler, createMiddleware } from "../src/index.js";
+import type { Get, UniversalMiddleware } from "@universal-middleware/core";
+import { args, bun, deno } from "@universal-middleware/tests";
+import { handler, middlewares, routeParamHandler } from "@universal-middleware/tests/utils";
 import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
-import { args, bun, deno } from "@universal-middleware/tests";
-import { handler, middlewares } from "@universal-middleware/tests/utils";
-import type { Get, UniversalMiddleware } from "@universal-middleware/core";
+import { createHandler, createMiddleware } from "../src/index.js";
 
 const app = new Hono();
 
@@ -13,6 +13,9 @@ app.use(secureHeaders());
 for (const middleware of middlewares) {
   app.use(createMiddleware(middleware as Get<[], UniversalMiddleware>)());
 }
+
+// route params handler
+app.get("/user/:name", createHandler(routeParamHandler)());
 
 // universal handler
 app.get("/", createHandler(handler)());

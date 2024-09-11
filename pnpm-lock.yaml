@@ -118,7 +118,7 @@ importers:
         specifier: link:../packages/universal-middleware
         version: link:../packages/universal-middleware
       vitepress:
-        specifier: ^1.3.3
+        specifier: ^1.3.4
         version: 1.3.4(@algolia/client-search@4.24.0)(@types/node@20.16.5)(postcss@8.4.45)(typescript@5.5.4)
 
   examples/tool:
@@ -154,6 +154,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 20.16.5
+      '@universal-middleware/core':
+        specifier: link:../../packages/core
+        version: link:../../packages/core
       rimraf:
         specifier: ^6.0.0
         version: 6.0.1
@@ -488,6 +491,9 @@ importers:
       '@webroute/route':
         specifier: ^0.8.0
         version: 0.8.0
+      '@webroute/router':
+        specifier: ^0.4.0
+        version: 0.4.0
       hono:
         specifier: 'catalog:'
         version: 4.5.11
@@ -511,6 +517,10 @@ importers:
         version: 2.0.5(@types/node@20.16.5)
 
   packages/core:
+    dependencies:
+      regexparam:
+        specifier: ^3.0.0
+        version: 3.0.0
     devDependencies:
       '@brillout/release-me':
         specifier: 'catalog:'
@@ -1833,6 +1843,9 @@ packages:
   '@webroute/route@0.8.0':
     resolution: {integrity: sha512-FG9JQisT86E70I0ggyUKzb/fyKpYYd5XEBWfqZmCtHSHGd1uOzgEr4XmpmXfiZxpsg+GCbGiL/KTodyxDjloMQ==}
     engines: {node: ^20.0.0}
+
+  '@webroute/router@0.4.0':
+    resolution: {integrity: sha512-A//kx4i1NQPYSNj6vY79fAU2LtFYWcQCsYl/9q1ewZGnqqVETTBJ3STC54zwhCD8vfTX/kLRDxVbqq/tgOQw4g==}
 
   '@webroute/schema@0.5.0':
     resolution: {integrity: sha512-35ye3JQEZLpXpCbeMOjpOzJtITdkVGJqe/7ziWb7ZLCHtXYATV11TfL8mcYWO+9r/UT0njt2ROKC1csL2PHFYQ==}
@@ -3237,6 +3250,10 @@ packages:
   real-require@0.2.0:
     resolution: {integrity: sha512-57frrGM/OCTLqLOAh0mhVA9VBMHd+9U7Zb2THMGdBUoZVOtGbJzjxsYGDJ3A9AYYCP4hn6y1TVbaOfzWtm5GFg==}
     engines: {node: '>= 12.13.0'}
+
+  regexparam@3.0.0:
+    resolution: {integrity: sha512-RSYAtP31mvYLkAHrOlh25pCNQ5hWnT106VukGaaFfuJrZFkGRX5GhUAdPqpSDXxOhA2c4akmRuplv1mRqnBn6Q==}
+    engines: {node: '>=8'}
 
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
@@ -5006,6 +5023,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@webroute/router@0.4.0':
+    dependencies:
+      radix3: 1.1.2
+      urlpattern-polyfill: 10.0.0
+
   '@webroute/schema@0.5.0':
     optionalDependencies:
       '@sinclair/typebox': 0.32.35
@@ -6579,6 +6601,8 @@ snapshots:
       picomatch: 2.3.1
 
   real-require@0.2.0: {}
+
+  regexparam@3.0.0: {}
 
   require-from-string@2.0.2: {}
 

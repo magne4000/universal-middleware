@@ -1,5 +1,5 @@
-import type { AdapterRequestContext, HattipHandler } from "@hattip/core";
 import type { RequestHandler } from "@hattip/compose";
+import type { AdapterRequestContext, HattipHandler } from "@hattip/core";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
 
@@ -75,8 +75,10 @@ export function getContext<InContext extends Universal.Context = Universal.Conte
 
 export function getRuntime(context: AdapterRequestContext): RuntimeAdapter {
   return getAdapterRuntime(
-    "other",
-    {},
+    "hattip",
+    {
+      params: "params" in context ? (context.params as Record<string, string>) : undefined,
+    },
     {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       env: (context.platform as any)?.env,

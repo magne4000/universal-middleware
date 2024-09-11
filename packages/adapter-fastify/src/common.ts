@@ -1,7 +1,7 @@
 import type { IncomingMessage } from "node:http";
-import type { Get, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime, isBodyInit, mergeHeadersInto } from "@universal-middleware/core";
-import { createRequestAdapter, type DecoratedRequest } from "@universal-middleware/express";
+import { type DecoratedRequest, createRequestAdapter } from "@universal-middleware/express";
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import fp from "fastify-plugin";
 
@@ -111,14 +111,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
 
     return async (request, reply) => {
       const ctx = initContext<InContext>(request);
-      const response = await handler(
-        requestAdapter(getRawRequest(request)),
-        ctx,
-        getAdapterRuntime("node", {
-          req: request.raw as IncomingMessage,
-          res: reply.raw,
-        }),
-      );
+      const response = await handler(requestAdapter(getRawRequest(request)), ctx, getRuntime(request, reply));
 
       if (response) {
         if (!response.body) {
@@ -144,14 +137,7 @@ export function createMiddleware<
     return fp(async (instance) => {
       instance.addHook("preHandler", async (request, reply) => {
         const ctx = initContext<InContext>(request);
-        const response = await middleware(
-          requestAdapter(getRawRequest(request)),
-          ctx,
-          getAdapterRuntime("node", {
-            req: request.raw as IncomingMessage,
-            res: reply.raw,
-          }),
-        );
+        const response = await middleware(requestAdapter(getRawRequest(request)), ctx, getRuntime(request, reply));
 
         if (!response) {
           return;
@@ -227,4 +213,12 @@ export function setContext<InContext extends Universal.Context = Universal.Conte
 ): void {
   const config = req.routeOptions.config;
   config[contextSymbol] = newContext;
+}
+
+export function getRuntime(request: FastifyRequest, reply: FastifyReply): RuntimeAdapter {
+  return getAdapterRuntime("fastify", {
+    params: request.params as Record<string, string> | undefined,
+    req: request.raw as IncomingMessage,
+    res: reply.raw,
+  });
 }

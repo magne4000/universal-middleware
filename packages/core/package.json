@@ -32,5 +32,8 @@
     "vite": "^5.4.3",
     "vitest": "^2.0.5"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "dependencies": {
+    "regexparam": "^3.0.0"
+  }
 }

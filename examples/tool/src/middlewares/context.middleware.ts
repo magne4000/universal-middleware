@@ -1,6 +1,6 @@
 // src/middlewares/context.middleware.ts
 
-import type { Get, UniversalMiddleware } from "universal-middleware";
+import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 const contextMiddleware = ((value) => (request, ctx) => {
   // Return the new universal context, thus keeping complete type safety

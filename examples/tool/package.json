@@ -206,6 +206,51 @@
       "types": "./dist/middlewares/universal-cloudflare-pages-middleware-guard.middleware.d.ts",
       "import": "./dist/middlewares/universal-cloudflare-pages-middleware-guard.middleware.js",
       "default": "./dist/middlewares/universal-cloudflare-pages-middleware-guard.middleware.js"
+    },
+    "./params-handler": {
+      "types": "./dist/params.d.ts",
+      "import": "./dist/params.js",
+      "default": "./dist/params.js"
+    },
+    "./params-handler-hono": {
+      "types": "./dist/handlers/universal-hono-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-hono-handler-params.handler.js",
+      "default": "./dist/handlers/universal-hono-handler-params.handler.js"
+    },
+    "./params-handler-express": {
+      "types": "./dist/handlers/universal-express-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-express-handler-params.handler.js",
+      "default": "./dist/handlers/universal-express-handler-params.handler.js"
+    },
+    "./params-handler-hattip": {
+      "types": "./dist/handlers/universal-hattip-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-hattip-handler-params.handler.js",
+      "default": "./dist/handlers/universal-hattip-handler-params.handler.js"
+    },
+    "./params-handler-webroute": {
+      "types": "./dist/handlers/universal-webroute-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-webroute-handler-params.handler.js",
+      "default": "./dist/handlers/universal-webroute-handler-params.handler.js"
+    },
+    "./params-handler-fastify": {
+      "types": "./dist/handlers/universal-fastify-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-fastify-handler-params.handler.js",
+      "default": "./dist/handlers/universal-fastify-handler-params.handler.js"
+    },
+    "./params-handler-h3": {
+      "types": "./dist/handlers/universal-h3-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-h3-handler-params.handler.js",
+      "default": "./dist/handlers/universal-h3-handler-params.handler.js"
+    },
+    "./params-handler-cloudflare-worker": {
+      "types": "./dist/handlers/universal-cloudflare-worker-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-cloudflare-worker-handler-params.handler.js",
+      "default": "./dist/handlers/universal-cloudflare-worker-handler-params.handler.js"
+    },
+    "./params-handler-cloudflare-pages": {
+      "types": "./dist/handlers/universal-cloudflare-pages-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-cloudflare-pages-handler-params.handler.js",
+      "default": "./dist/handlers/universal-cloudflare-pages-handler-params.handler.js"
     }
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
@@ -220,6 +265,7 @@
     "@hono/node-server": "^1.12.0",
     "@swc/core": "^1.7.11",
     "@types/node": "catalog:",
+    "@universal-middleware/core": "workspace:*",
     "rimraf": "^6.0.0",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",

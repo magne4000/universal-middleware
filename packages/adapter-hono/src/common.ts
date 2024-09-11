@@ -1,6 +1,6 @@
-import type { Context as HonoContext, Env, Handler, MiddlewareHandler } from "hono";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
+import type { Env, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
 
 export const contextSymbol = Symbol("unContext");
 
@@ -100,12 +100,24 @@ export function getContext<Context extends Universal.Context = Universal.Context
 }
 
 export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
+  let params: Record<string, string> | undefined = undefined;
+  const ctx = getExecutionCtx(honoContext);
+  try {
+    params = honoContext.req.param();
+  } catch {
+    // Retrieve Cloudflare Pages potential params
+    if (ctx) {
+      params = (ctx as { params?: Record<string, string> }).params ?? undefined;
+    }
+  }
   return getAdapterRuntime(
-    "other",
-    {},
+    "hono",
+    {
+      params,
+    },
     {
       env: honoContext.env,
-      ctx: getExecutionCtx(honoContext),
+      ctx,
     },
   );
 }

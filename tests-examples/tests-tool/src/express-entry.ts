@@ -1,6 +1,7 @@
+import handler from "@universal-middleware-examples/tool/dummy-handler-express";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-express";
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-express";
-import handler from "@universal-middleware-examples/tool/dummy-handler-express";
+import paramsHandler from "@universal-middleware-examples/tool/params-handler-express";
 import express from "express";
 import { args } from "./utils";
 
@@ -13,6 +14,8 @@ app.use(contextMiddleware("World!!!"));
 // After a Response has been returned by the handler below,
 // the `{ "X-Universal-Hello": "World!!!" }` header is appended to it
 app.use(headersMiddleware());
+
+app.get("/user/:name", paramsHandler());
 
 app.get("/", handler());
 

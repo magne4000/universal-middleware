@@ -1,8 +1,8 @@
-import { createHandler, createMiddleware, universalOnBeforeResponse } from "../src/index.js";
-import { createApp, createRouter, toNodeListener, toWebHandler } from "h3";
-import { args, bun, deno } from "@universal-middleware/tests";
-import { handler, middlewares } from "@universal-middleware/tests/utils";
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
+import { args, bun, deno } from "@universal-middleware/tests";
+import { handler, middlewares, routeParamHandler } from "@universal-middleware/tests/utils";
+import { createApp, createRouter, toNodeListener, toWebHandler } from "h3";
+import { createHandler, createMiddleware, universalOnBeforeResponse } from "../src/index.js";
 
 const app = createApp({
   onBeforeResponse: universalOnBeforeResponse,
@@ -13,6 +13,8 @@ for (const middleware of middlewares) {
 }
 
 const router = createRouter();
+
+router.get("/user/:name", createHandler(routeParamHandler)());
 
 router.get("/", createHandler(handler)());
 
