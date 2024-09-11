@@ -24,6 +24,7 @@ const runs: Run[] = [
     command: `pnpm run test:run-hattip:worker --inspector-port ${port + 10000 + 3}`,
     port: port + 3,
     waitUntilType: "function",
+    delay: 1000,
   },
 ];
 

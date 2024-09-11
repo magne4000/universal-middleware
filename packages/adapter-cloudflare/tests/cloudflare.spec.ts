@@ -9,12 +9,14 @@ const runs: Run[] = [
     port: port,
     command: `pnpm run test:run-cloudflare:pages --inspector-port ${port + 10000}`,
     waitUntilType: "function",
+    delay: 1000,
   },
   {
     name: "adapter-cloudflare: worker",
     port: port + 1,
     command: `pnpm run test:run-cloudflare:worker --inspector-port ${port + 10000 + 1}`,
     waitUntilType: "function",
+    delay: 1000,
   },
 ];
 

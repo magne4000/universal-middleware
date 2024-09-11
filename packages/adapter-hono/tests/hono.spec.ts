@@ -24,6 +24,7 @@ const runs: Run[] = [
     command: `pnpm run test:run-hono:wrangler --inspector-port ${port + 10000 + 3}`,
     port: port + 3,
     waitUntilType: "function",
+    delay: 1000,
   },
 ];
 
