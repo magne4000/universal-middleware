@@ -35,7 +35,7 @@ function paramsFromRequest(request: Request, path: string): null | Record<string
  * this next example.
  *
  * @example
- * import { params, type Get, type UniversalHandler } from `@universal-middleware/core`
+ * import { params, type Get, type UniversalHandler } from "@universal-middleware/core";
  *
  * interface Options {
  *   route?: string;

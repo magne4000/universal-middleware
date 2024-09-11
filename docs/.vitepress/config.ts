@@ -64,6 +64,10 @@ export default defineConfig({
             text: "Return an early response",
             link: "/recipes/guard-middleware",
           },
+          {
+            text: "Using route parameters",
+            link: "/recipes/params-handler",
+          },
         ],
       },
       {
