@@ -1,12 +1,14 @@
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
-import type { Env, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
+import type { Env, ExecutionContext, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
 
 export const contextSymbol = Symbol("unContext");
 
 interface UniversalEnv {
   Bindings: Env["Bindings"] & {
     [contextSymbol]?: Universal.Context;
+    // biome-ignore lint/suspicious/noExplicitAny: avoid hono/cloudflare-pages typing conflict
+    eventContext: any;
   };
   Variables: Env["Variables"] & {
     [contextSymbol]?: Universal.Context;
@@ -16,7 +18,7 @@ interface UniversalEnv {
 export type HonoHandler = Handler<UniversalEnv>;
 export type HonoMiddleware = MiddlewareHandler<UniversalEnv>;
 
-function getExecutionCtx(honoContext: HonoContext) {
+function getExecutionCtx(honoContext: HonoContext): ExecutionContext | undefined {
   try {
     return honoContext.executionCtx;
   } catch {
@@ -91,12 +93,17 @@ function setContext<Context extends Universal.Context = Universal.Context>(
 ): void {
   honoContext.set(contextSymbol, value);
   honoContext.env[contextSymbol] = value;
+  if (honoContext.env?.eventContext?.env) {
+    honoContext.env.eventContext.env[contextSymbol] = value;
+  }
 }
 
 export function getContext<Context extends Universal.Context = Universal.Context>(
   honoContext: HonoContext<UniversalEnv>,
 ): Context {
-  return (honoContext.get(contextSymbol) ?? honoContext.env[contextSymbol]) as Context;
+  return (honoContext.get(contextSymbol) ??
+    honoContext.env[contextSymbol] ??
+    honoContext.env?.eventContext?.env[contextSymbol]) as Context;
 }
 
 export function getRuntime(honoContext: HonoContext): RuntimeAdapter {

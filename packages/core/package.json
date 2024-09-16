@@ -23,14 +23,14 @@
   },
   "devDependencies": {
     "@brillout/release-me": "catalog:",
-    "@swc/core": "^1.7.11",
-    "@types/bun": "^1.1.6",
+    "@swc/core": "catalog:",
+    "@types/bun": "^1.1.9",
     "@types/node": "catalog:",
-    "rimraf": "^6.0.0",
-    "tsup": "^8.2.4",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.3",
-    "vitest": "^2.0.5"
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   },
   "sideEffects": false,
   "dependencies": {

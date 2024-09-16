@@ -31,18 +31,18 @@
   },
   "devDependencies": {
     "@brillout/release-me": "catalog:",
-    "@hono/node-server": "^1.12.2",
-    "@swc/core": "^1.7.11",
+    "@hono/node-server": "^1.13.0",
+    "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "hono": "catalog:",
-    "rimraf": "^6.0.0",
-    "tsup": "^8.2.4",
-    "tsx": "^4.19.0",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.3",
-    "vitest": "^2.0.5",
-    "wrangler": "^3.72.3"
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "wrangler": "catalog:"
   },
   "sideEffects": false,
   "keywords": [
