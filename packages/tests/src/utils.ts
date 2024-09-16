@@ -30,7 +30,6 @@ export const middlewares = [
   // universal middleware that updates the context asynchronously
   () => async (_request: Request, context: Universal.Context, runtime) => {
     await new Promise((resolve) => setTimeout(resolve, 100));
-    console.log("MID");
 
     return {
       something: {
@@ -45,7 +44,6 @@ export const middlewares = [
 ] as const satisfies Get<[], UniversalMiddleware>[];
 
 export const handler: Get<[], UniversalHandler> = () => (_request, context) => {
-  console.log("HAN");
   return new Response(JSON.stringify(context, null, 2), {
     headers: {
       "x-should-be-removed": "universal-middleware",
