@@ -61,7 +61,7 @@ jobs:
       - name: Install
         run: pnpm install
 
-      - run: pnpm exec playwright install chromium
+      - run: pnpm playwright install chromium
 
       - name: Build
         run: pnpm run build
