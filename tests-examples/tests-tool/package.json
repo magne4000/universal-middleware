@@ -42,13 +42,13 @@
     "h3": "catalog:",
     "hono": "catalog:",
     "mri": "^1.2.0",
-    "npm-run-all2": "^6.2.2",
-    "playwright": "^1.47.0",
-    "rimraf": "^6.0.0",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.3",
-    "vitest": "^2.0.5",
-    "wrangler": "^3.72.3"
+    "npm-run-all2": "^6.2.3",
+    "playwright": "^1.47.1",
+    "rimraf": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "wrangler": "catalog:"
   },
   "sideEffects": false
 }

@@ -73,22 +73,22 @@
     "@universal-middleware/hattip": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
     "@universal-middleware/webroute": "workspace:*",
-    "oxc-transform": "^0.27.0",
+    "oxc-transform": "^0.29.0",
     "package-up": "^5.0.0",
-    "unplugin": "^1.12.2"
+    "unplugin": "^1.14.1"
   },
   "devDependencies": {
     "@brillout/release-me": "catalog:",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@swc/core": "^1.7.11",
+    "@swc/core": "catalog:",
     "esbuild": "^0.23.1",
-    "rimraf": "^6.0.1",
-    "rollup": "^4.21.0",
-    "tsup": "^8.2.4",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.3",
-    "vitest": "^2.0.5"
+    "rimraf": "catalog:",
+    "rollup": "^4.21.3",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "@rollup/plugin-node-resolve": "^15",

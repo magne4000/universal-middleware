@@ -68,6 +68,10 @@ export default defineConfig({
             text: "Using route parameters",
             link: "/recipes/params-handler",
           },
+          {
+            text: "Using env variables",
+            link: "/recipes/env-helper",
+          },
         ],
       },
       {

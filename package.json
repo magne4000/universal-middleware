@@ -14,26 +14,25 @@
   "keywords": [],
   "author": "",
   "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
+    "@biomejs/biome": "^1.9.1",
     "@types/node": "catalog:",
-    "playwright": "^1.47.0",
-    "prettier": "^3.3.2",
-    "turbo": "^2.1.1",
-    "typescript": "^5.5.4"
+    "playwright": "^1.47.1",
+    "turbo": "^2.1.2",
+    "typescript": "^5.6.2"
   },
   "pnpm": {
     "overrides": {
+      "@universal-middleware/cloudflare": "link:./packages/adapter-cloudflare",
       "@universal-middleware/core": "link:./packages/core",
       "@universal-middleware/express": "link:./packages/adapter-express",
-      "@universal-middleware/hono": "link:./packages/adapter-hono",
-      "@universal-middleware/hattip": "link:./packages/adapter-hattip",
-      "@universal-middleware/webroute": "link:./packages/adapter-webroute",
       "@universal-middleware/fastify": "link:./packages/adapter-fastify",
       "@universal-middleware/h3": "link:./packages/adapter-h3",
-      "@universal-middleware/cloudflare": "link:./packages/adapter-cloudflare",
-      "universal-middleware": "link:./packages/universal-middleware",
+      "@universal-middleware/hattip": "link:./packages/adapter-hattip",
+      "@universal-middleware/hono": "link:./packages/adapter-hono",
+      "@universal-middleware/webroute": "link:./packages/adapter-webroute",
       "@webroute/middleware": "^0.10.0",
-      "esbuild": "^0.23.1"
+      "esbuild": "^0.23.1",
+      "universal-middleware": "link:./packages/universal-middleware"
     }
   },
   "packageManager": "pnpm@9.7.1"

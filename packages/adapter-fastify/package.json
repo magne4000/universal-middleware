@@ -32,17 +32,17 @@
   "devDependencies": {
     "@brillout/release-me": "catalog:",
     "@fastify/helmet": "^11.1.1",
-    "@swc/core": "^1.7.11",
+    "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "fastify": "catalog:",
     "fastify-plugin": "^4.5.1",
-    "rimraf": "^6.0.0",
-    "tsup": "^8.2.4",
-    "tsx": "^4.19.0",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.3",
-    "vitest": "^2.0.5"
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   },
   "sideEffects": false,
   "keywords": [
