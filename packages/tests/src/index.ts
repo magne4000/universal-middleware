@@ -54,7 +54,7 @@ export function runTests(runs: Run[], options: Options) {
           }
         });
 
-        retry(40, 250, async () => {
+        retry(40, process.env.CI ? 500 : 250, async () => {
           try {
             await fetch(host);
           } catch {
