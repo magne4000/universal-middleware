@@ -1,4 +1,4 @@
-import type { CloudflareWorkerdRuntime, RuntimeAdapter } from "./types";
+import type { RuntimeAdapter } from "./types";
 
 export function env<T extends Record<string, unknown>>(runtime: RuntimeAdapter): T {
   switch (runtime.runtime) {
@@ -10,7 +10,7 @@ export function env<T extends Record<string, unknown>>(runtime: RuntimeAdapter):
       // @ts-ignore
       return Deno.env.toObject() as T;
     case "workerd":
-      return ((runtime as CloudflareWorkerdRuntime).env ?? {}) as T;
+      return (runtime.env ?? {}) as T;
     default:
       return {} as T;
   }
