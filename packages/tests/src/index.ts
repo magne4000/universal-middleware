@@ -1,7 +1,6 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import mri from "mri";
-import waitPort from "wait-port";
-import { kill } from "zx";
+import { kill, retry } from "zx";
 
 export interface Run {
   name: string;
@@ -55,13 +54,15 @@ export function runTests(runs: Run[], options: Options) {
           }
         });
 
-        waitPort({ port, interval: 250, timeout: 10_000 })
-          .then((res) => {
-            if (res.ipVersion === 4) {
-              host = `http://127.0.0.1:${port}`;
-            }
-            resolve(undefined);
-          })
+        retry(40, 250, async () => {
+          try {
+            await fetch(host);
+          } catch {
+            await fetch(`http://127.0.0.1:${port}`);
+            host = `http://127.0.0.1:${port}`;
+          }
+        })
+          .then(resolve)
           .catch(reject);
       });
 
