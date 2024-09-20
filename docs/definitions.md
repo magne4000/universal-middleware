@@ -42,7 +42,7 @@ Some data, usually added by a middleware, with the same lifespan as a Request.
 For instance, a `{ user: User }` context can be set by a middleware, then accessed by others.
 
 > [!NOTE]
-> Each framework as its own way to attach data related to the request,
+> Each framework has its own way to attach data related to the request,
 > either by attaching values to their internal request representation (like Express),
 > or by having their own context encapsulating the request (like Hono).
 > 

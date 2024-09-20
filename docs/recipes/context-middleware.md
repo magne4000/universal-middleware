@@ -1,6 +1,6 @@
 # Updating the Context
 
-In this example, we're creating a middleware that adds a `hello` property to the context.
+In this example, we're creating a middleware that adds a `hello` property to the [context](/definitions#context).
 This property will then be accessible to any subsequent middleware or handler.
 
 <<< @/../examples/tool/src/middlewares/context.middleware.ts
