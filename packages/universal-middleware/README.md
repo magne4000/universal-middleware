@@ -55,7 +55,7 @@ import demoMiddleware from "some-lib/middlewares/demo-middleware-hono";
 const app = new Hono();
 
 app.use(demoMiddleware({ header: 'X-Universal-Demo' }));
-app.get("/", () => return new Response('ok')));
+app.get("/", () => new Response('ok')));
 
 export default app;
 ```
