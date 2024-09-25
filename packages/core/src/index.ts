@@ -1,3 +1,9 @@
+declare global {
+  namespace Universal {
+    interface Context extends Record<string | number | symbol, unknown> {}
+  }
+}
+
 export type * from "./types.js";
 export { getAdapterRuntime } from "./adapter.js";
 export { mergeHeadersInto, nodeHeadersToWeb, isBodyInit } from "./utils.js";
