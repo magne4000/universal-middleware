@@ -27,16 +27,16 @@
   "dependencies": {
     "@universal-middleware/core": "workspace:^",
     "@universal-middleware/express": "workspace:^",
-    "fastify-raw-body": "^4.3.0"
+    "fastify-raw-body": "^5.0.0"
   },
   "devDependencies": {
     "@brillout/release-me": "catalog:",
-    "@fastify/helmet": "^11.1.1",
+    "@fastify/helmet": "^12.0.1",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "fastify": "catalog:",
-    "fastify-plugin": "^4.5.1",
+    "fastify-plugin": "^5.0.1",
     "rimraf": "catalog:",
     "tsup": "catalog:",
     "tsx": "catalog:",
