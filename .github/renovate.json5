@@ -13,7 +13,7 @@
   "postUpdateOptions": ["pnpmDedupe"],
   "packageRules": [
     {
-      "matchPackageNames": ["fastify", "/^@fastify/"],
+      "matchPackageNames": ["fastify", "/^@fastify/", "/^fastify-/"],
       "groupName": "fastify"
     }
   ]
