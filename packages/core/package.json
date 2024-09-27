@@ -7,7 +7,8 @@
     "dist"
   ],
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./cookie": "./dist/cookie.js"
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
   "repository": "https://github.com/magne4000/universal-handler",
@@ -34,6 +35,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "regexparam": "^3.0.0"
+    "regexparam": "^3.0.0",
+    "tough-cookie": "^5.0.0"
   }
 }
