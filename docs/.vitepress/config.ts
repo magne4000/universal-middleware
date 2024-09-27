@@ -75,6 +75,19 @@ export default defineConfig({
         ],
       },
       {
+        text: "Helpers",
+        items: [
+          {
+            text: "Route parameters",
+            link: "/helpers/route-parameters",
+          },
+          {
+            text: "Cookie",
+            link: "/helpers/cookie",
+          },
+        ],
+      },
+      {
         text: "Definitions",
         link: "/definitions",
       },
