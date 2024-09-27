@@ -1,3 +1,12 @@
+## [0.2.11](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.10...@universal-middleware/core@0.2.11) (2024-09-27)
+
+
+### Features
+
+* cookie helpers using tough-cookie ([#36](https://github.com/magne4000/universal-handler/issues/36)) ([4ee350b](https://github.com/magne4000/universal-handler/commit/4ee350b97bee459adceb36ddba2b2fb126a74e9f))
+
+
+
 ## [0.2.10](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.9...@universal-middleware/core@0.2.10) (2024-09-16)
 
 
