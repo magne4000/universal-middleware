@@ -5,19 +5,19 @@
 ::: code-group
 
 ```sh [npm]
-npm install -D universal-middleware
+npm install -D universal-middleware @universal-middleware/core
 ```
 
 ```sh [yarn]
-yarn add -D universal-middleware
+yarn add -D universal-middleware @universal-middleware/core
 ```
 
 ```sh [pnpm]
-pnpm add -D universal-middleware
+pnpm add -D universal-middleware @universal-middleware/core
 ```
 
 ```sh [bun]
-bun add -D universal-middleware
+bun add -D universal-middleware @universal-middleware/core
 ```
 
 :::
