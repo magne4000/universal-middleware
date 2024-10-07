@@ -1,9 +1,0 @@
-{
-  "imports": {
-    "@universal-middleware/tests": "../tests/dist",
-    "@universal-middleware/core": "../core/dist",
-    "mri": "npm:mri",
-    "zx": "npm:zx"
-  },
-  "lock": false
-}

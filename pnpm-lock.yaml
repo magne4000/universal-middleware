@@ -246,6 +246,9 @@ importers:
       '@brillout/release-me':
         specifier: 'catalog:'
         version: 0.4.2
+      '@cloudflare/workers-types':
+        specifier: ^4.20241004.0
+        version: 4.20241004.0
       '@swc/core':
         specifier: 'catalog:'
         version: 1.7.28

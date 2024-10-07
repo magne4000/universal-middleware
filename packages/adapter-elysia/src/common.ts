@@ -47,11 +47,7 @@ export function createMiddleware<
     return new Elysia()
       .use(initPlugin<InContext>())
       .onBeforeHandle({ as: "global" }, async (elysiaContext) => {
-        const response = await middleware(
-          elysiaContext.request,
-          elysiaContext[contextSymbol],
-          getRuntime(elysiaContext),
-        );
+        const response = await middleware(elysiaContext.request, elysiaContext.getContext(), getRuntime(elysiaContext));
 
         if (typeof response === "function") {
           elysiaContext[pendingSymbol].push(response);
@@ -60,9 +56,7 @@ export function createMiddleware<
             return response;
           }
           // Update context
-          Object.defineProperty(elysiaContext, contextSymbol, {
-            value: response,
-          });
+          elysiaContext.setContext(response);
         }
       })
       .onAfterHandle({ as: "global" }, async (elysiaContext) => {
@@ -83,51 +77,50 @@ export function createMiddleware<
 }
 
 function initPlugin<Context extends Universal.Context = Universal.Context>() {
-  return new Elysia({ name: "universal-middleware-context" }).resolve({ as: "global" }, () => {
-    return {
-      [contextSymbol]: {} as Context,
-      [pendingSymbol]: [] as ((response: Response) => Awaitable<Response>)[],
-      [pendingHandledSymbol]: false as boolean,
-    };
-  });
+  return new Elysia({ name: "universal-middleware-context" })
+    .derive({ as: "global" }, () => {
+      return {
+        [contextSymbol]: {} as Context,
+        [pendingSymbol]: [] as ((response: Response) => Awaitable<Response>)[],
+        [pendingHandledSymbol]: false as boolean,
+      };
+    })
+    .derive({ as: "global" }, (elysiaContext) => {
+      return {
+        getContext() {
+          return elysiaContext[contextSymbol];
+        },
+        setContext<NewContext extends Universal.Context = Universal.Context>(value: NewContext) {
+          Object.defineProperty(elysiaContext, contextSymbol, {
+            value,
+          });
+        },
+      };
+    });
 }
 
-// function setContext<Context extends Universal.Context = Universal.Context>(
-//   elysiaContext: Parameters<ReturnType<typeof initPlugin<Context>>['onBeforeHandle']>[1],
-//   value: Context,
-// ): void {
-//   elysiaContext.store[contextSymbol].set(elysiaContext.request, value);
-// }
-//
-// export function getContext<Context extends Universal.Context = Universal.Context>(
-//   elysiaContext: ReturnType<typeof initPlugin<Context>>,
-// ): Context {
-//   return elysiaContext.store[contextSymbol].set(elysiaContext.request, value);
-// }
-
 export function getRuntime(elysiaContext: ElysiaContext): RuntimeAdapter {
-  let params: Record<string, string> | undefined = undefined;
-  // TODO: cloudflare context
-  // const ctx = getExecutionCtx(elysiaContext);
+  let params: Record<string, string> | undefined = elysiaContext.params;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const elysiaContextAny = elysiaContext as any;
 
-  params = elysiaContext.params;
+  const cloudflareContext =
+    elysiaContextAny.env && elysiaContextAny.ctx
+      ? {
+          env: elysiaContextAny.env,
+          ctx: elysiaContextAny.ctx,
+        }
+      : {};
 
-  // try {
-  //   params = elysiaContext.params;
-  // } catch {
-  //   // Retrieve Cloudflare Pages potential params
-  //   if (ctx) {
-  //     params = (ctx as { params?: Record<string, string> }).params ?? undefined;
-  //   }
-  // }
+  if (cloudflareContext.ctx) {
+    params = (cloudflareContext.ctx as { params?: Record<string, string> }).params ?? params;
+  }
+
   return getAdapterRuntime(
     "elysia",
     {
       params,
     },
-    {
-      // env: elysiaContext.env,
-      // ctx,
-    },
+    cloudflareContext,
   );
 }
