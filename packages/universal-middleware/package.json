@@ -84,7 +84,7 @@
     "@swc/core": "catalog:",
     "esbuild": "^0.24.0",
     "rimraf": "catalog:",
-    "rollup": "^4.22.5",
+    "rollup": "^4.24.0",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
@@ -93,7 +93,7 @@
   "peerDependencies": {
     "@rollup/plugin-node-resolve": "^15.3.0",
     "esbuild": "^0.24.0",
-    "rollup": "^4.22.5",
+    "rollup": "^4.24.0",
     "vite": ">=5.4.8"
   },
   "peerDependenciesMeta": {
