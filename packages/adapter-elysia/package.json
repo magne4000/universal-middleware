@@ -1,0 +1,58 @@
+{
+  "name": "@universal-middleware/elysia",
+  "version": "0.2.8",
+  "type": "module",
+  "description": "Elysia adapter for universal middlewares",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "repository": "https://github.com/magne4000/universal-handler",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsup",
+    "dev": "tsup --watch",
+    "prepack": "pnpm build",
+    "test": "vitest run",
+    "test:run-elysia:node": "tsx tests/entry-elysia.ts",
+    "test:run-elysia:bun": "bun tests/entry-elysia.ts",
+    "test:run-elysia:wrangler": "wrangler pages dev",
+    "test:run-elysia:deno": "deno run --unstable-byonm --unstable-sloppy-imports -A tests/entry-elysia.ts",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit",
+    "release": "LANG=en_US release-me patch",
+    "release:minor": "LANG=en_US release-me minor",
+    "release:commit": "LANG=en_US release-me commit"
+  },
+  "dependencies": {
+    "@universal-middleware/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@brillout/release-me": "catalog:",
+    "@swc/core": "catalog:",
+    "@types/node": "catalog:",
+    "@universal-middleware/tests": "workspace:*",
+    "elysia": "catalog:",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "wrangler": "catalog:"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "elysia",
+    "universal-middleware",
+    "middleware",
+    "handlers",
+    "server-adapters",
+    "elysia-middleware",
+    "universal-server",
+    "context-middleware",
+    "request-handling"
+  ]
+}

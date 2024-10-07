@@ -36,6 +36,8 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-cloudflare/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-hattip/.wrangler" />
       <excludeFolder url="file://$MODULE_DIR$/tests-examples/tests-tool/.wrangler" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-elysia/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/adapter-elysia/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
