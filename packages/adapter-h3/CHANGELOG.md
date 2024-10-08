@@ -1,3 +1,12 @@
+## [0.2.5](https://github.com/magne4000/universal-handler/compare/@universal-middleware/h3@0.2.4...@universal-middleware/h3@0.2.5) (2024-10-08)
+
+
+### Features
+
+* add env() helper ([#32](https://github.com/magne4000/universal-handler/issues/32)) ([9fc051f](https://github.com/magne4000/universal-handler/commit/9fc051f6423aac20a5a3c676893c88f9813a3069))
+
+
+
 ## [0.2.4](https://github.com/magne4000/universal-handler/compare/@universal-middleware/h3@0.2.3...@universal-middleware/h3@0.2.4) (2024-09-11)
 
 
