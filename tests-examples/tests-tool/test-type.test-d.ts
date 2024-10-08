@@ -48,10 +48,12 @@ test("hattip", () => {
 
 test("webroute", () => {
   expectTypeOf(webrouteContextMiddleware).returns.toEqualTypeOf<
-    WebrouteMiddleware<Universal.Context, { hello: string }>
+    // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+    WebrouteMiddleware<Universal.Context, void | { hello: string }>
   >();
   expectTypeOf(webrouteHeadersMiddleware).returns.toEqualTypeOf<
-    WebrouteMiddleware<Universal.Context, Universal.Context>
+    // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+    WebrouteMiddleware<Universal.Context, void | Universal.Context>
   >();
   expectTypeOf(webrouteHandler).returns.toEqualTypeOf<WebrouteHandler<Universal.Context, Universal.Context>>();
 });

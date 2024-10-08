@@ -41,6 +41,7 @@ const defaultWrappers = [
   "h3",
   "cloudflare-worker",
   "cloudflare-pages",
+  "elysia",
 ] as const;
 const externals = [
   "@universal-middleware/hono",
@@ -50,6 +51,7 @@ const externals = [
   "@universal-middleware/fastify",
   "@universal-middleware/h3",
   "@universal-middleware/cloudflare",
+  "@universal-middleware/elysia",
 ];
 const namespace = "virtual:universal-middleware";
 const versionRange = "^0";
@@ -168,7 +170,6 @@ const typesByServer: Record<
     handler?: string;
     selfImports?: string[];
     outContext?: (type: string) => string;
-    genericParameters?: string;
     typeHandler?: string;
     typeMiddleware?: string;
     target?: string;
@@ -199,7 +200,6 @@ const typesByServer: Record<
     handler: "WebrouteHandler",
     selfImports: ["type MiddlewareFactoryDataResult"],
     outContext: (type) => `MiddlewareFactoryDataResult<typeof ${type}>`,
-    genericParameters: "<InContext, void extends OutContext ? InContext : OutContext>",
   },
   "cloudflare-worker": {
     handler: "CloudflareHandler",
@@ -208,10 +208,13 @@ const typesByServer: Record<
   "cloudflare-pages": {
     middleware: "CloudflarePagesFunction",
     handler: "CloudflarePagesFunction",
-    genericParameters: "<InContext>",
     typeHandler: "createPagesFunction",
     typeMiddleware: "createPagesFunction",
     target: "cloudflare",
+  },
+  elysia: {
+    handler: "ElysiaHandler",
+    middleware: "ElysiaMiddleware",
   },
 };
 
@@ -220,7 +223,7 @@ function load(id: string, resolve?: (handler: string, type: string) => string) {
 
   const info = typesByServer[target as (typeof defaultWrappers)[number]];
 
-  const fn = type === "handler" ? info.typeHandler ?? "createHandler" : info.typeMiddleware ?? "createMiddleware";
+  const fn = type === "handler" ? (info.typeHandler ?? "createHandler") : (info.typeMiddleware ?? "createMiddleware");
   const code = `import { ${fn} } from "@universal-middleware/${info.target ?? target}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 export default ${fn}(${type});
@@ -232,19 +235,21 @@ function loadDts(id: string, resolve?: (handler: string, type: string) => string
   const [, , target, type, handler] = id.split(":");
 
   const info = typesByServer[target as (typeof defaultWrappers)[number]];
-  const fn = type === "handler" ? info.typeHandler ?? "createHandler" : info.typeMiddleware ?? "createMiddleware";
+  const fn = type === "handler" ? (info.typeHandler ?? "createHandler") : (info.typeMiddleware ?? "createMiddleware");
   const t = info[type as "middleware" | "handler"];
   if (t === undefined) return;
 
   const selfImports = [fn, `type ${t}`, ...(info.selfImports ?? [])];
-  const code = `import { type UniversalMiddleware } from 'universal-middleware';
+  const code = `import { type UniversalMiddleware } from '@universal-middleware/core';
 import { ${selfImports.join(", ")} } from "@universal-middleware/${info.target ?? target}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
 type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<infer X> ? unknown extends X ? Universal.Context : X : {};
 export type InContext = ExtractInContext<typeof ${type}>;
 export type OutContext = ${info.outContext?.(type) ?? "unknown"};
-export default ${fn}(${type}) as (...args: ExtractT<typeof ${type}>) => ${t}${info.genericParameters ?? ""};
+export type Args = ExtractT<typeof middleware>;
+export type Middleware = ReturnType<ReturnType<typeof createMiddleware<T, InContext, OutContext>>>;
+export default ${fn}(${type}) as (...args: Args) => Middleware;
 `;
 
   return { code };

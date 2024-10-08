@@ -95,4 +95,13 @@ app.register(guardMiddleware());
 export default app;
 ```
 
+```ts twoslash [elysia.ts]
+import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware-elysia";
+import Elysia from "elysia";
+
+const app = new Elysia().use(guardMiddleware());
+
+export default app;
+```
+
 :::

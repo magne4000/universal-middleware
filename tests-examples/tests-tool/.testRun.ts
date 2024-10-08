@@ -1,7 +1,7 @@
 import { expect, fetch, getServerUrl, run, test } from "@brillout/test-e2e";
 
 export function testRun(
-  cmd: `pnpm run dev:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker"}${string}`,
+  cmd: `pnpm run dev:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia"}${string}`,
   port: number,
   serverIsReadyMessage?: string,
 ) {

@@ -113,7 +113,7 @@ export function getRuntime(
   return getAdapterRuntime(
     isContext ? "cloudflare-pages" : "cloudflare-worker",
     {
-      params: isContext ? (args[0].params as Record<string, string>) ?? undefined : undefined,
+      params: isContext ? ((args[0].params as Record<string, string>) ?? undefined) : undefined,
     },
     {
       env: isContext ? args[0].env : args[0],

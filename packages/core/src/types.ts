@@ -117,6 +117,11 @@ export interface CloudflareWorkerAdapter {
   params: undefined;
 }
 
+export interface ElysiaAdapter {
+  adapter: "elysia";
+  params: Record<string, string> | undefined;
+}
+
 export interface WebrouteAdapter {
   adapter: "webroute";
   params: Record<string, string> | undefined;
@@ -136,6 +141,7 @@ export type Adapter =
   | H3Adapter
   | CloudflarePagesAdapter
   | CloudflareWorkerAdapter
+  | ElysiaAdapter
   | WebrouteAdapter
   | OtherAdapter;
 export type RuntimeAdapter = Runtime & Adapter;

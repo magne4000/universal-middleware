@@ -8,7 +8,7 @@ Write middlewares and handlers once, target
 [Webroute](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-webroute),
 [Fastify](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-fastify),
 [h3](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-h3),
-TODO: elysia
+[Elysia](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-elysia), (and more on the way!).
 
 ## Documentation
 
