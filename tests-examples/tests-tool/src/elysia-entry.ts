@@ -12,4 +12,6 @@ new Elysia()
   .use(headersMiddleware())
   .get("/user/:name", paramsHandler())
   .get("/", handler())
-  .listen(port);
+  .listen(port, () => {
+    console.log(`Server listening on http://localhost:${port}`);
+  });
