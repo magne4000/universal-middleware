@@ -116,4 +116,13 @@ app.get("/user/:name", paramHandler());
 export default app;
 ```
 
+```ts twoslash [elysia.ts]
+import paramHandler from "@universal-middleware-examples/tool/params-handler-elysia";
+import Elysia from "elysia";
+
+const app = new Elysia().get("/user/:name", paramHandler());
+
+export default app;
+```
+
 :::

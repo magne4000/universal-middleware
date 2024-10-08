@@ -112,6 +112,9 @@ importers:
       '@universal-middleware/core':
         specifier: link:../packages/core
         version: link:../packages/core
+      '@universal-middleware/elysia':
+        specifier: link:../packages/adapter-elysia
+        version: link:../packages/adapter-elysia
       '@universal-middleware/express':
         specifier: link:../packages/adapter-express
         version: link:../packages/adapter-express
@@ -127,6 +130,9 @@ importers:
       '@universal-middleware/hono':
         specifier: link:../packages/adapter-hono
         version: link:../packages/adapter-hono
+      elysia:
+        specifier: 'catalog:'
+        version: 1.1.19(typescript@5.6.2)
       fastify:
         specifier: 'catalog:'
         version: 5.0.0

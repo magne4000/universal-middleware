@@ -8,4 +8,4 @@ Supports the following server adapters:
 - [Fastify](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-fastify)
 - [h3](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-h3)
 - [Cloudflare](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-cloudflare)
-- TODO: elysia
+- [Elysia](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-elysia)

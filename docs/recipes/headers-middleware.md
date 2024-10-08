@@ -40,4 +40,6 @@ export const onRequest = [contextMiddleware("World!!!"), headersMiddleware()];
 
 <<< @/../tests-examples/tests-tool/src/fastify-entry.ts
 
+<<< @/../tests-examples/tests-tool/src/elysia-entry.ts
+
 :::

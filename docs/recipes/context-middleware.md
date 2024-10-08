@@ -153,4 +153,22 @@ app.get("/", (req, reply) => {
 export default app;
 ```
 
+```ts twoslash [elysia.ts]
+import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-elysia";
+import Elysia from "elysia";
+
+const app = new Elysia()
+  // Now the universal context contains `{ hello: "world" }`.
+  .use(contextMiddleware("world"))
+  .get("/", ({ getContext }) => {
+    // The universal context can be retrieved through `getContext` helper
+    // outside of universal middlewares and handlers
+    const universalCtx = getContext();
+    
+    return `Hello ${universalCtx.hello}`;
+  });
+
+export default app;
+```
+
 :::
