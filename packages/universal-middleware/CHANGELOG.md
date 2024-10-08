@@ -1,3 +1,13 @@
+## [0.3.6](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.3.5...universal-middleware@0.3.6) (2024-10-08)
+
+
+### Features
+
+* add env() helper ([#32](https://github.com/magne4000/universal-handler/issues/32)) ([9fc051f](https://github.com/magne4000/universal-handler/commit/9fc051f6423aac20a5a3c676893c88f9813a3069))
+* elysia adapter ([#39](https://github.com/magne4000/universal-handler/issues/39)) ([348a7fd](https://github.com/magne4000/universal-handler/commit/348a7fd8cb832aecd24f955d24ee076abf069bd7))
+
+
+
 ## [0.3.5](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.3.4...universal-middleware@0.3.5) (2024-09-11)
 
 
