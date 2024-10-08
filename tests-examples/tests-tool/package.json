@@ -36,6 +36,7 @@
     "@universal-middleware/hattip": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
     "@universal-middleware/webroute": "workspace:*",
+    "elysia": "catalog:",
     "express": "catalog:",
     "fastify": "catalog:",
     "fastify-raw-body": "^5.0.0",

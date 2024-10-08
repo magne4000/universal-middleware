@@ -30,6 +30,7 @@
       "@universal-middleware/hattip": "link:./packages/adapter-hattip",
       "@universal-middleware/hono": "link:./packages/adapter-hono",
       "@universal-middleware/webroute": "link:./packages/adapter-webroute",
+      "@universal-middleware/elysia": "link:./packages/adapter-elysia",
       "@webroute/middleware": "^0.10.0",
       "esbuild": "^0.24.0",
       "universal-middleware": "link:./packages/universal-middleware"

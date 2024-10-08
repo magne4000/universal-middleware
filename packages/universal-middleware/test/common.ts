@@ -9,6 +9,7 @@ export const adapters = [
   "h3",
   "cloudflare-pages",
   "cloudflare-worker",
+  "elysia",
 ] as const;
 
 // flaky tests on Windows

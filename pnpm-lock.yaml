@@ -67,6 +67,7 @@ overrides:
   '@universal-middleware/hattip': link:./packages/adapter-hattip
   '@universal-middleware/hono': link:./packages/adapter-hono
   '@universal-middleware/webroute': link:./packages/adapter-webroute
+  '@universal-middleware/elysia': link:./packages/adapter-elysia
   '@webroute/middleware': ^0.10.0
   esbuild: ^0.24.0
   universal-middleware: link:./packages/universal-middleware
@@ -150,6 +151,9 @@ importers:
       '@universal-middleware/cloudflare':
         specifier: link:../../packages/adapter-cloudflare
         version: link:../../packages/adapter-cloudflare
+      '@universal-middleware/elysia':
+        specifier: link:../../packages/adapter-elysia
+        version: link:../../packages/adapter-elysia
       '@universal-middleware/express':
         specifier: link:../../packages/adapter-express
         version: link:../../packages/adapter-express
@@ -774,6 +778,9 @@ importers:
       '@universal-middleware/webroute':
         specifier: link:../../packages/adapter-webroute
         version: link:../../packages/adapter-webroute
+      elysia:
+        specifier: 'catalog:'
+        version: 1.1.19(typescript@5.6.2)
       express:
         specifier: 'catalog:'
         version: 4.21.0

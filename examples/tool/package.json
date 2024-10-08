@@ -251,6 +251,31 @@
       "types": "./dist/handlers/universal-cloudflare-pages-handler-params.handler.d.ts",
       "import": "./dist/handlers/universal-cloudflare-pages-handler-params.handler.js",
       "default": "./dist/handlers/universal-cloudflare-pages-handler-params.handler.js"
+    },
+    "./dummy-handler-elysia": {
+      "types": "./dist/handlers/universal-elysia-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-elysia-handler-handler.js",
+      "default": "./dist/handlers/universal-elysia-handler-handler.js"
+    },
+    "./params-handler-elysia": {
+      "types": "./dist/handlers/universal-elysia-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-elysia-handler-params.handler.js",
+      "default": "./dist/handlers/universal-elysia-handler-params.handler.js"
+    },
+    "./middlewares/context-middleware-elysia": {
+      "types": "./dist/middlewares/universal-elysia-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-elysia-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-elysia-middleware-context.middleware.js"
+    },
+    "./middlewares/headers-middleware-elysia": {
+      "types": "./dist/middlewares/universal-elysia-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-elysia-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-elysia-middleware-headers.middleware.js"
+    },
+    "./middlewares/guard-middleware-elysia": {
+      "types": "./dist/middlewares/universal-elysia-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-elysia-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-elysia-middleware-guard.middleware.js"
     }
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
@@ -278,7 +303,8 @@
     "@universal-middleware/h3": "^0",
     "@universal-middleware/hattip": "^0",
     "@universal-middleware/hono": "^0",
-    "@universal-middleware/webroute": "^0"
+    "@universal-middleware/webroute": "^0",
+    "@universal-middleware/elysia": "^0"
   },
   "sideEffects": false
 }
