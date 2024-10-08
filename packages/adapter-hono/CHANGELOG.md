@@ -1,3 +1,12 @@
+## [0.2.9](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.8...@universal-middleware/hono@0.2.9) (2024-10-08)
+
+
+### Features
+
+* add env() helper ([#32](https://github.com/magne4000/universal-handler/issues/32)) ([9fc051f](https://github.com/magne4000/universal-handler/commit/9fc051f6423aac20a5a3c676893c88f9813a3069))
+
+
+
 ## [0.2.8](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.7...@universal-middleware/hono@0.2.8) (2024-09-11)
 
 
