@@ -247,8 +247,8 @@ type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
 type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<infer X> ? unknown extends X ? Universal.Context : X : {};
 export type InContext = ExtractInContext<typeof ${type}>;
 export type OutContext = ${info.outContext?.(type) ?? "unknown"};
-export type Args = ExtractT<typeof middleware>;
-export type Middleware = ReturnType<ReturnType<typeof createMiddleware<T, InContext, OutContext>>>;
+export type Args = ExtractT<typeof ${type}>;
+export type Middleware = ReturnType<ReturnType<typeof ${fn}<Args, InContext, OutContext>>>;
 export default ${fn}(${type}) as (...args: Args) => Middleware;
 `;
 
