@@ -1,3 +1,7 @@
+## [0.2.9](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hattip@0.2.8...@universal-middleware/hattip@0.2.9) (2024-10-09)
+
+
+
 ## [0.2.8](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hattip@0.2.7...@universal-middleware/hattip@0.2.8) (2024-10-08)
 
 
