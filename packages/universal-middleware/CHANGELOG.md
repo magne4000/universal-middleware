@@ -1,3 +1,13 @@
+## [0.3.7](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.3.6...universal-middleware@0.3.7) (2024-10-09)
+
+
+### Bug Fixes
+
+* auto typing generation ([e19a15c](https://github.com/magne4000/universal-handler/commit/e19a15cb72dd4aa32c64c9782f2684824aa14924))
+* typings ([a2c3747](https://github.com/magne4000/universal-handler/commit/a2c3747e41fed5b6e166a5a617c4ca428a04b280))
+
+
+
 ## [0.3.6](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.3.5...universal-middleware@0.3.6) (2024-10-08)
 
 
