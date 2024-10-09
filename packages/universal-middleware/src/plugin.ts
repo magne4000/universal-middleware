@@ -170,6 +170,7 @@ const typesByServer: Record<
     handler?: string;
     selfImports?: string[];
     outContext?: (type: string) => string;
+    generics?: (type: string) => string;
     typeHandler?: string;
     typeMiddleware?: string;
     target?: string;
@@ -190,6 +191,7 @@ const typesByServer: Record<
   fastify: {
     middleware: "FastifyMiddleware",
     handler: "FastifyHandler",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   h3: {
     middleware: "H3Middleware",
@@ -200,6 +202,7 @@ const typesByServer: Record<
     handler: "WebrouteHandler",
     selfImports: ["type MiddlewareFactoryDataResult"],
     outContext: (type) => `MiddlewareFactoryDataResult<typeof ${type}>`,
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   "cloudflare-worker": {
     handler: "CloudflareHandler",
@@ -237,6 +240,7 @@ function loadDts(id: string, resolve?: (handler: string, type: string) => string
   const info = typesByServer[target as (typeof defaultWrappers)[number]];
   const fn = type === "handler" ? (info.typeHandler ?? "createHandler") : (info.typeMiddleware ?? "createMiddleware");
   const t = info[type as "middleware" | "handler"];
+  const generics = info.generics ? info.generics(type) : type === "handler" ? "Args" : "Args, InContext, OutContext";
   if (t === undefined) return;
 
   const selfImports = [fn, `type ${t}`, ...(info.selfImports ?? [])];
@@ -248,7 +252,7 @@ type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<inf
 export type InContext = ExtractInContext<typeof ${type}>;
 export type OutContext = ${info.outContext?.(type) ?? "unknown"};
 export type Args = ExtractT<typeof ${type}>;
-export type Middleware = ReturnType<ReturnType<typeof ${fn}<Args, InContext, OutContext>>>;
+export type Middleware = ReturnType<ReturnType<typeof ${fn}<${generics}>>>;
 export default ${fn}(${type}) as (...args: Args) => Middleware;
 `;
 

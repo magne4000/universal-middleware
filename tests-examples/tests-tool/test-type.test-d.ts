@@ -55,7 +55,7 @@ test("webroute", () => {
     // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
     WebrouteMiddleware<Universal.Context, void | Universal.Context>
   >();
-  expectTypeOf(webrouteHandler).returns.toEqualTypeOf<WebrouteHandler<Universal.Context, Universal.Context>>();
+  expectTypeOf(webrouteHandler).returns.toEqualTypeOf<WebrouteHandler<Universal.Context, void>>();
 });
 
 test("fastify", () => {
