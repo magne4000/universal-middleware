@@ -1,3 +1,7 @@
+## [0.2.7](https://github.com/magne4000/universal-handler/compare/@universal-middleware/webroute@0.2.6...@universal-middleware/webroute@0.2.7) (2024-10-09)
+
+
+
 ## [0.2.6](https://github.com/magne4000/universal-handler/compare/@universal-middleware/webroute@0.2.5...@universal-middleware/webroute@0.2.6) (2024-10-08)
 
 
