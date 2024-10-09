@@ -1,3 +1,7 @@
+## [0.2.10](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.9...@universal-middleware/hono@0.2.10) (2024-10-09)
+
+
+
 ## [0.2.9](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.8...@universal-middleware/hono@0.2.9) (2024-10-08)
 
 
