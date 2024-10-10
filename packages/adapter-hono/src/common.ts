@@ -125,6 +125,8 @@ export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
     {
       env: honoContext.env,
       ctx,
+      req: honoContext.env?.incoming,
+      res: honoContext.env?.outgoing,
     },
   );
 }

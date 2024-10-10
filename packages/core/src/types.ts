@@ -95,6 +95,9 @@ export interface FastifyAdapter {
 export interface HonoAdapter {
   adapter: "hono";
   params: Record<string, string> | undefined;
+
+  req?: IncomingMessage;
+  res?: ServerResponse;
 }
 
 export interface HattipAdapter {
