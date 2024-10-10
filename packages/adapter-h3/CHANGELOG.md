@@ -1,3 +1,12 @@
+## [0.2.7](https://github.com/magne4000/universal-handler/compare/@universal-middleware/h3@0.2.6...@universal-middleware/h3@0.2.7) (2024-10-10)
+
+
+### Features
+
+* add req and res to h3 runtime ([495424b](https://github.com/magne4000/universal-handler/commit/495424b349209ef9b77fe4c5ace117633f3fc740))
+
+
+
 ## [0.2.6](https://github.com/magne4000/universal-handler/compare/@universal-middleware/h3@0.2.5...@universal-middleware/h3@0.2.6) (2024-10-09)
 
 
