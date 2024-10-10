@@ -1,3 +1,12 @@
+## [0.2.10](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hattip@0.2.9...@universal-middleware/hattip@0.2.10) (2024-10-10)
+
+
+### Features
+
+* add req and res to hattip runtime ([5b88b72](https://github.com/magne4000/universal-handler/commit/5b88b72bdd822569f2ec2740fb308b5fd55f6ceb))
+
+
+
 ## [0.2.9](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hattip@0.2.8...@universal-middleware/hattip@0.2.9) (2024-10-09)
 
 
