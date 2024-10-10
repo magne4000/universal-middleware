@@ -84,6 +84,10 @@ export function getRuntime(context: AdapterRequestContext): RuntimeAdapter {
       env: (context.platform as any)?.env,
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       ctx: (context.platform as any)?.context,
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      req: (context.platform as any)?.request,
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      res: (context.platform as any)?.response,
     },
   );
 }

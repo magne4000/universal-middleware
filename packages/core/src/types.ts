@@ -100,6 +100,9 @@ export interface HonoAdapter {
 export interface HattipAdapter {
   adapter: "hattip";
   params: Record<string, string> | undefined;
+
+  req?: IncomingMessage;
+  res?: ServerResponse;
 }
 
 export interface H3Adapter {
