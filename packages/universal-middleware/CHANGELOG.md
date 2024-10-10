@@ -1,3 +1,7 @@
+## [0.3.8](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.3.7...universal-middleware@0.3.8) (2024-10-10)
+
+
+
 ## [0.3.7](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.3.6...universal-middleware@0.3.7) (2024-10-09)
 
 
