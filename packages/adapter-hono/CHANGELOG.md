@@ -1,3 +1,12 @@
+## [0.2.11](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.10...@universal-middleware/hono@0.2.11) (2024-10-10)
+
+
+### Features
+
+* add req and res to hono runtime ([c441d95](https://github.com/magne4000/universal-handler/commit/c441d954c2dcf6a37a1f6865f7c0df27dcff5325))
+
+
+
 ## [0.2.10](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.9...@universal-middleware/hono@0.2.10) (2024-10-09)
 
 
