@@ -124,7 +124,14 @@ export function getContext<Context extends Universal.Context>(event: H3Event): C
 }
 
 export function getRuntime(event: H3Event): RuntimeAdapter {
-  return getAdapterRuntime("h3", {
-    params: event.context.params,
-  });
+  return getAdapterRuntime(
+    "h3",
+    {
+      params: event.context.params,
+    },
+    {
+      req: event.node.req,
+      res: event.node.res,
+    },
+  );
 }

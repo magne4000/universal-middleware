@@ -105,6 +105,9 @@ export interface HattipAdapter {
 export interface H3Adapter {
   adapter: "h3";
   params: Record<string, string> | undefined;
+
+  req?: IncomingMessage;
+  res?: ServerResponse;
 }
 
 export interface CloudflarePagesAdapter {
