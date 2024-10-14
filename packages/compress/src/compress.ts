@@ -1,7 +1,8 @@
-import { COMPRESSIBLE_CONTENT_TYPE_REGEX } from "./const";
+import { COMPRESSIBLE_CONTENT_TYPE_REGEX, type SUPPORTED_ENCODINGS } from "./const";
 import { chooseBestEncoding } from "./encoding-header";
+import type { CompressionOptions } from "./types";
 
-const cacheControlNoTransformRegExp = /(?:^|,)\s*?no-transform\s*?(?:,|$)/;
+const cacheControlNoTransformRegExp = /(?:^|,)\s*?no-transform\s*?(?:,|$)/i;
 let zlibAvailable = false;
 
 import("node:zlib")
@@ -12,33 +13,39 @@ import("node:zlib")
     zlibAvailable = false;
   });
 
-interface Options {
-  threshold: number;
-  compressionMethod?: "auto" | "zlib" | "stream";
-}
-
-function availableEncodings(options?: Options) {
+function availableEncodings(options?: CompressionOptions) {
   if (zlibAvailable && options?.compressionMethod !== "stream") {
     return ["br", "gzip", "deflate"];
   }
   return ["gzip", "deflate"];
 }
 
-export function compressEncoding(request: Request, options?: Options, response?: Response) {
-  const cacheControl = request.headers.get("Cache-Control");
+export function guessEncoding(
+  request: Request,
+  options?: CompressionOptions,
+  response?: Response,
+): (typeof SUPPORTED_ENCODINGS)[number] | null {
   const threshold = options?.threshold ?? 1024;
 
   if (request.method === "HEAD") {
     return null;
   }
 
-  // Don't compress for Cache-Control: no-transform
-  // https://tools.ietf.org/html/rfc7234#section-5.2.2.4
-  if (!cacheControl || !cacheControlNoTransformRegExp.test(cacheControl)) {
-    return null;
+  {
+    // Don't compress for Cache-Control: no-transform
+    // https://tools.ietf.org/html/rfc7234#section-5.2.2.4
+    const cacheControl = request.headers.get("Cache-Control");
+    if (cacheControl && cacheControlNoTransformRegExp.test(cacheControl)) {
+      return null;
+    }
   }
 
   if (response) {
+    const cacheControl = response.headers.get("Cache-Control");
+    if (cacheControl && cacheControlNoTransformRegExp.test(cacheControl)) {
+      return null;
+    }
+
     // content-length below threshold
     const contentLength = response.headers.get("Content-Length");
     if (contentLength && Number.parseInt(contentLength, 10) < threshold) {
@@ -63,5 +70,5 @@ export function compressEncoding(request: Request, options?: Options, response?:
     return null;
   }
 
-  return chosenEncoding;
+  return chosenEncoding as (typeof SUPPORTED_ENCODINGS)[number];
 }

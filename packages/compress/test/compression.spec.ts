@@ -1,30 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { handleCompression } from "../src/response";
+import { decompressResponse } from "./utils";
 
 const hugeStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".repeat(2 * 1024 * 1024);
-
-async function readableStreamToString(stream: ReadableStream<Uint8Array>): Promise<string> {
-  const decoder = new TextDecoder();
-  const reader = stream.getReader();
-  let result = "";
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    result += decoder.decode(value, { stream: true });
-  }
-  result += decoder.decode(); // End the decoding
-  return result;
-}
-
-async function decompressStream(
-  compressedStream: ReadableStream<Uint8Array>,
-  algorithm: "gzip" | "deflate",
-): Promise<string> {
-  const decompressionStream = new DecompressionStream(algorithm);
-
-  return await readableStreamToString(compressedStream.pipeThrough(decompressionStream));
-}
 
 describe.each([
   { encoding: "gzip", compressionMethod: "auto" },
@@ -61,8 +39,7 @@ describe.each([
       expect(output.headers.get("Content-Length")).toBeNull();
 
       if (encoding !== "br") {
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        await expect(decompressStream(output.body!, encoding)).resolves.toBe("Test Response");
+        await expect(decompressResponse(output, encoding)).resolves.toBe("Test Response");
       }
     });
 
@@ -133,8 +110,7 @@ describe.each([
       expect(output.headers.get("Content-Length")).toBeNull();
 
       if (encoding !== "br") {
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        await expect(decompressStream(output.body!, encoding)).resolves.toBe(hugeStr);
+        await expect(decompressResponse(output, encoding)).resolves.toBe(hugeStr);
       }
     });
   },

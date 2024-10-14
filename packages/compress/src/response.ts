@@ -29,7 +29,6 @@ export const handleCompression = async (
 ): Promise<Response> => {
   // set/append Vary header with Accept-Encoding
   if (!input.headers.get("Vary")?.includes("Accept-Encoding")) input.headers.append("Vary", "Accept-Encoding");
-  // do not double encode
   if (input.headers.get("Content-Encoding")) return input;
 
   const { headers, ...optionsRest } = options || {};

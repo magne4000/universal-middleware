@@ -4,4 +4,5 @@ export type Compressor = (
 export type CompressionAlgorithm = "br" | "gzip" | "deflate";
 export interface CompressionOptions extends ResponseInit {
   compressionMethod?: "auto" | "zlib" | "stream";
+  threshold?: number;
 }
