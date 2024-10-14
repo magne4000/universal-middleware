@@ -6,6 +6,10 @@ export function compressStream(
     return input;
   }
 
+  if ((algorithm as string) === "br") {
+    throw new Error(`{ compressionMethod: "stream" } does not support "br" encoding`);
+  }
+
   const compressionStream = new CompressionStream(algorithm);
 
   return input.pipeThrough(compressionStream);
