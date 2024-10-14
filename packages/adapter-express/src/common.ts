@@ -122,7 +122,7 @@ export function createMiddleware<
         if (typeof response === "function") {
           if (res.headersSent) {
             throw new Error(
-              "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-handler",
+              "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-middleware",
             );
           }
           wrapResponse(res);

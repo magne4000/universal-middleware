@@ -11,7 +11,7 @@
     "./cookie": "./dist/cookie.js"
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
-  "repository": "https://github.com/magne4000/universal-handler",
+  "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
     "build": "rimraf dist && tsup",

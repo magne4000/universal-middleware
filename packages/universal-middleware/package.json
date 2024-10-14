@@ -4,9 +4,9 @@
   "version": "0.3.8",
   "description": "",
   "license": "MIT",
-  "repository": "https://github.com/magne4000/universal-handler",
+  "repository": "https://github.com/magne4000/universal-middleware",
   "bugs": {
-    "url": "https://github.com/magne4000/universal-handler/issues"
+    "url": "https://github.com/magne4000/universal-middleware/issues"
   },
   "keywords": [
     "esbuild",

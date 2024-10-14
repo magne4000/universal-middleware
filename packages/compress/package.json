@@ -1,57 +1,48 @@
 {
-  "name": "@universal-middleware/elysia",
-  "version": "0.2.1",
+  "name": "@universal-middleware/compress",
+  "version": "0.1.0",
   "type": "module",
-  "description": "Elysia adapter for universal middlewares",
+  "description": "Universal compress middleware",
   "files": [
     "dist"
   ],
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
     "build": "rimraf dist && tsup",
-    "dev": "tsup --watch",
+    "test": "vitest --typecheck run",
     "prepack": "pnpm build",
-    "test": "vitest run",
-    "test:run-elysia:bun": "bun tests/entry-elysia.ts",
-    "test:run-elysia:worker": "wrangler dev tests/entry-elysia-cloudflare.ts",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "release": "LANG=en_US release-me patch",
     "release:minor": "LANG=en_US release-me minor",
     "release:commit": "LANG=en_US release-me commit"
   },
-  "dependencies": {
-    "@universal-middleware/core": "workspace:^"
-  },
   "devDependencies": {
     "@brillout/release-me": "catalog:",
-    "@cloudflare/workers-types": "^4.20241011.0",
     "@swc/core": "catalog:",
+    "@types/bun": "^1.1.10",
     "@types/node": "catalog:",
-    "@universal-middleware/tests": "workspace:*",
-    "elysia": "catalog:",
     "rimraf": "catalog:",
     "tsup": "catalog:",
-    "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:",
-    "wrangler": "catalog:"
+    "vitest": "catalog:"
   },
   "sideEffects": false,
   "keywords": [
-    "elysia",
     "universal-middleware",
-    "middleware",
-    "handlers",
-    "server-adapters",
-    "elysia-middleware",
-    "universal-server",
-    "context-middleware",
-    "request-handling"
+    "compress-middleware",
+    "compress",
+    "express-middleware",
+    "hono-middleware",
+    "hattip-middleware",
+    "webroute-middleware",
+    "cloudflare-middleware",
+    "fastify-middleware",
+    "h3-middleware"
   ]
 }
