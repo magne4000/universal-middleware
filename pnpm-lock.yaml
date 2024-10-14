@@ -596,6 +596,36 @@ importers:
         specifier: 'catalog:'
         version: 2.1.2(@types/node@20.16.10)
 
+  packages/compress:
+    devDependencies:
+      '@brillout/release-me':
+        specifier: 'catalog:'
+        version: 0.4.2
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.7.28
+      '@types/bun':
+        specifier: ^1.1.10
+        version: 1.1.11
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.16.10
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      tsup:
+        specifier: 'catalog:'
+        version: 8.3.0(@swc/core@1.7.28)(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.6.2
+      vite:
+        specifier: 'catalog:'
+        version: 5.4.8(@types/node@20.16.10)
+      vitest:
+        specifier: 'catalog:'
+        version: 2.1.2(@types/node@20.16.10)
+
   packages/core:
     dependencies:
       regexparam:
