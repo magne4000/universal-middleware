@@ -3,6 +3,6 @@ export type Compressor = (
 ) => ReadableStream<Uint8Array> | null | Promise<ReadableStream<Uint8Array> | null>;
 export type CompressionAlgorithm = "br" | "gzip" | "deflate";
 export interface CompressionOptions {
-  compressionMethod?: "auto" | "zlib" | "stream";
+  // compressionMethod?: "auto" | "zlib" | "stream";
   threshold?: number;
 }

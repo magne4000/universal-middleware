@@ -61,7 +61,7 @@ function parseEncoding(str: string) {
   };
 }
 
-export function chooseBestEncoding(request: Request, availableEncodings: string[]) {
+export function chooseBestEncoding(request: Request, availableEncodings: readonly string[]) {
   let bestEncoding: AcceptEncoding | null = null;
 
   const header = request.headers.get("Accept-Encoding");

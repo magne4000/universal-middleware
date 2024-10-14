@@ -1,26 +1,10 @@
-import { COMPRESSIBLE_CONTENT_TYPE_REGEX, type SUPPORTED_ENCODINGS } from "./const";
+import { COMPRESSIBLE_CONTENT_TYPE_REGEX, SUPPORTED_ENCODINGS } from "./const";
 import { chooseBestEncoding } from "./encoding-header";
 import type { CompressionOptions } from "./types";
 
 type SupportedEncodings = (typeof SUPPORTED_ENCODINGS)[number];
 
 const cacheControlNoTransformRegExp = /(?:^|,)\s*?no-transform\s*?(?:,|$)/i;
-let zlibAvailable = false;
-
-import("node:zlib")
-  .then(() => {
-    zlibAvailable = true;
-  })
-  .catch(() => {
-    zlibAvailable = false;
-  });
-
-function availableEncodings(options?: CompressionOptions) {
-  if (zlibAvailable && options?.compressionMethod !== "stream") {
-    return ["br", "gzip", "deflate"];
-  }
-  return ["gzip", "deflate"];
-}
 
 export class EncodingGuesser {
   public readonly encoding: SupportedEncodings | null;
@@ -44,7 +28,7 @@ export class EncodingGuesser {
       return null;
     }
 
-    const chosenEncoding = chooseBestEncoding(this.request, availableEncodings(this.options));
+    const chosenEncoding = chooseBestEncoding(this.request, SUPPORTED_ENCODINGS);
 
     if (!chosenEncoding || chosenEncoding === "identity") {
       return null;

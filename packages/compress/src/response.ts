@@ -1,26 +1,27 @@
 import type { SUPPORTED_ENCODINGS } from "./const";
-import type { CompressionOptions, Compressor } from "./types";
+import { compressStream } from "./stream/stream";
+import type { CompressionOptions } from "./types";
 
-async function guessCompressor(
-  compressionMethod: CompressionOptions["compressionMethod"],
-  encoding: (typeof SUPPORTED_ENCODINGS)[number],
-): Promise<Compressor> {
-  if (compressionMethod === "auto" || !compressionMethod) {
-    // biome-ignore lint/style/noParameterAssign: <explanation>
-    compressionMethod = encoding === "br" ? "zlib" : "stream";
-  }
-  if (compressionMethod === "zlib") {
-    const { compressStream } = await import("./zlib/stream.js");
-
-    return (input) => compressStream(input, encoding);
-  }
-  if (compressionMethod === "stream") {
-    const { compressStream } = await import("./stream/stream.js");
-
-    return (input) => compressStream(input, encoding as CompressionFormat);
-  }
-  throw new Error('Unsupported compressionMethod. Possible values are "auto", "zlib" or "stream".');
-}
+// async function guessCompressor(
+//   compressionMethod: CompressionOptions["compressionMethod"],
+//   encoding: (typeof SUPPORTED_ENCODINGS)[number],
+// ): Promise<Compressor> {
+//   if (compressionMethod === "auto" || !compressionMethod) {
+//     // biome-ignore lint/style/noParameterAssign: <explanation>
+//     compressionMethod = encoding === "br" ? "zlib" : "stream";
+//   }
+//   if (compressionMethod === "zlib") {
+//     const { compressStream } = await import("./zlib/stream.js");
+//
+//     return (input) => compressStream(input, encoding);
+//   }
+//   if (compressionMethod === "stream") {
+//     const { compressStream } = await import("./stream/stream.js");
+//
+//     return (input) => compressStream(input, encoding as CompressionFormat);
+//   }
+//   throw new Error('Unsupported compressionMethod. Possible values are "auto", "zlib" or "stream".');
+// }
 
 export const handleCompression = async (
   encoding: (typeof SUPPORTED_ENCODINGS)[number],
@@ -39,8 +40,7 @@ export const handleCompression = async (
     if (!(input.headers.get(header) ?? "").includes(value)) input.headers.append(header, value);
   }
 
-  const compressor = await guessCompressor(options?.compressionMethod, encoding);
-  const body = await compressor(input.body);
+  const body = compressStream(input.body, encoding);
 
   if (body !== null) {
     input.headers.append("Content-Encoding", encoding);

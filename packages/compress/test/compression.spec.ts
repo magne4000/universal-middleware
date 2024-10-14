@@ -4,23 +4,14 @@ import { decompressResponse } from "./utils";
 
 const hugeStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".repeat(2 * 1024 * 1024);
 
-describe.each([
-  { encoding: "gzip", compressionMethod: "auto" },
-  { encoding: "br", compressionMethod: "auto" },
-  { encoding: "deflate", compressionMethod: "auto" },
-  { encoding: "gzip", compressionMethod: "zlib" },
-  { encoding: "br", compressionMethod: "zlib" },
-  { encoding: "deflate", compressionMethod: "zlib" },
-  { encoding: "gzip", compressionMethod: "stream" },
-  { encoding: "deflate", compressionMethod: "stream" },
-] as const)(
-  "handleCompression: encoding: $encoding, compressionMethod: $compressionMethod",
-  ({ encoding, compressionMethod }) => {
+describe.each([{ encoding: "gzip" }, { encoding: "br" }, { encoding: "deflate" }] as const)(
+  "handleCompression: encoding: $encoding",
+  ({ encoding }) => {
     it("should not compress again if input is compressed already", async () => {
       const input = new Response("Test Response");
       input.headers.set("Content-Encoding", "x-my-compressor");
 
-      const output = await handleCompression(encoding, input, { compressionMethod });
+      const output = await handleCompression(encoding, input);
 
       expect(output).toBeInstanceOf(Response);
       expect(output).toBe(input);
@@ -30,7 +21,7 @@ describe.each([
     it('should set "Vary": Accept-Encoding if not present on intermediate Response', async () => {
       const input = new Response("Test Response");
 
-      const output = await handleCompression(encoding, input, { compressionMethod });
+      const output = await handleCompression(encoding, input);
 
       expect(output).toBeInstanceOf(Response);
       expect(output).not.toBe(input);
@@ -47,7 +38,7 @@ describe.each([
       const input = new Response("Test Response");
       input.headers.set("Vary", "x-funky");
 
-      const output = await handleCompression(encoding, input, { compressionMethod });
+      const output = await handleCompression(encoding, input);
 
       expect(output).toBeInstanceOf(Response);
       expect(output).not.toBe(input);
@@ -60,7 +51,7 @@ describe.each([
     it("should fall back to status and status text of intermediate Response if neither is provided as options", async () => {
       const input = new Response("Test Response", { status: 418, statusText: "I'm a teapot" });
 
-      const output = await handleCompression(encoding, input, { compressionMethod });
+      const output = await handleCompression(encoding, input);
 
       expect(output).toBeInstanceOf(Response);
       expect(output).not.toBe(input);
@@ -74,7 +65,7 @@ describe.each([
 
     it("should properly set status and status text if provided as options and override the values from intermediate Response", async () => {
       const input = new Response("Test Response", { status: 418, statusText: "I'm a teapot" });
-      const options = { compressionMethod, status: 202, statusText: "Accepted" };
+      const options = { status: 202, statusText: "Accepted" };
 
       const output = await handleCompression(encoding, input, options);
 
@@ -93,7 +84,7 @@ describe.each([
     it("should not compress an empty body but still return new Response object", async () => {
       const input = new Response();
 
-      const output = await handleCompression(encoding, input, { compressionMethod });
+      const output = await handleCompression(encoding, input);
 
       expect(output).toBeInstanceOf(Response);
       expect(output).not.toBe(input);
@@ -103,7 +94,7 @@ describe.each([
     it("should compress large body", async () => {
       const input = new Response(hugeStr);
 
-      const output = await handleCompression(encoding, input, { compressionMethod });
+      const output = await handleCompression(encoding, input);
 
       expect(output).toBeInstanceOf(Response);
       expect(output.headers.get("Content-Encoding")).toStrictEqual(encoding);
@@ -116,10 +107,10 @@ describe.each([
   },
 );
 
-describe("handleCompression: encoding: 'br', compressionMethod: 'stream'", () => {
-  it("chould throw because CompressionStream does not support brotli", async () => {
-    const input = new Response("Test Response");
-
-    await expect(handleCompression("br", input, { compressionMethod: "stream" })).rejects.toThrow("compressionMethod");
-  });
-});
+// describe("handleCompression: encoding: 'br', compressionMethod: 'stream'", () => {
+//   it("chould throw because CompressionStream does not support brotli", async () => {
+//     const input = new Response("Test Response");
+//
+//     await expect(handleCompression("br", input, { compressionMethod: "stream" })).rejects.toThrow("compressionMethod");
+//   });
+// });
