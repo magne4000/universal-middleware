@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@brillout/release-me": "catalog:",
-    "@hono/node-server": "^1.13.1",
+    "@hono/node-server": "^1.13.2",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/hono": "workspace:*",

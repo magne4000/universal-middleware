@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@brillout/release-me": "catalog:",
-    "@cloudflare/workers-types": "^4.20241004.0",
+    "@cloudflare/workers-types": "^4.20241011.0",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",

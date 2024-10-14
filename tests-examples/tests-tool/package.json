@@ -45,7 +45,7 @@
     "hono": "catalog:",
     "mri": "^1.2.0",
     "npm-run-all2": "^6.2.3",
-    "playwright": "^1.47.2",
+    "playwright": "^1.48.0",
     "rimraf": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
