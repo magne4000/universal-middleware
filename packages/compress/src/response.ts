@@ -1,9 +1,5 @@
 import type { SUPPORTED_ENCODINGS } from "./const";
-import type { Compressor } from "./types";
-
-export interface CompressionOptions extends ResponseInit {
-  compressionMethod?: "auto" | "zlib" | "stream";
-}
+import type { CompressionOptions, Compressor } from "./types";
 
 async function guessCompressor(
   compressionMethod: CompressionOptions["compressionMethod"],
