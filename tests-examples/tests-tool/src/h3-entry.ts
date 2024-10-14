@@ -2,6 +2,7 @@ import handler from "@universal-middleware-examples/tool/dummy-handler-h3";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-h3";
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-h3";
 import paramsHandler from "@universal-middleware-examples/tool/params-handler-h3";
+import compress from "@universal-middleware/compress/h3";
 import { universalOnBeforeResponse } from "@universal-middleware/h3";
 import { createApp, createRouter, toNodeListener } from "h3";
 import { args } from "./utils";
@@ -18,6 +19,8 @@ app.use(contextMiddleware("World!!!"));
 // After a Response has been returned by the handler below,
 // the `{ "X-Universal-Hello": "World!!!" }` header is appended to it
 app.use(headersMiddleware());
+
+app.use(compress());
 
 const router = createRouter();
 
