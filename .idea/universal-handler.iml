@@ -39,6 +39,8 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-elysia/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-elysia/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/adapter-elysia/.wrangler" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/compress/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/compress/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
