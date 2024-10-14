@@ -22,6 +22,7 @@
     "release:commit": "LANG=en_US release-me commit"
   },
   "devDependencies": {
+    "@universal-middleware/core": "workspace:*",
     "@brillout/release-me": "catalog:",
     "@swc/core": "catalog:",
     "@types/bun": "^1.1.10",

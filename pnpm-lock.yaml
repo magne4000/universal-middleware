@@ -610,6 +610,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 20.16.10
+      '@universal-middleware/core':
+        specifier: link:../core
+        version: link:../core
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1

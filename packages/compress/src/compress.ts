@@ -2,6 +2,8 @@ import { COMPRESSIBLE_CONTENT_TYPE_REGEX, type SUPPORTED_ENCODINGS } from "./con
 import { chooseBestEncoding } from "./encoding-header";
 import type { CompressionOptions } from "./types";
 
+type SupportedEncodings = (typeof SUPPORTED_ENCODINGS)[number];
+
 const cacheControlNoTransformRegExp = /(?:^|,)\s*?no-transform\s*?(?:,|$)/i;
 let zlibAvailable = false;
 
@@ -20,27 +22,41 @@ function availableEncodings(options?: CompressionOptions) {
   return ["gzip", "deflate"];
 }
 
-export function guessEncoding(
-  request: Request,
-  options?: CompressionOptions,
-  response?: Response,
-): (typeof SUPPORTED_ENCODINGS)[number] | null {
-  const threshold = options?.threshold ?? 1024;
+export class EncodingGuesser {
+  public readonly encoding: SupportedEncodings | null;
 
-  if (request.method === "HEAD") {
-    return null;
+  constructor(
+    private request: Request,
+    private options: CompressionOptions = {},
+  ) {
+    this.encoding = this._guessRequest();
   }
 
-  {
+  private _guessRequest() {
+    if (this.request.method === "HEAD") {
+      return null;
+    }
+
     // Don't compress for Cache-Control: no-transform
     // https://tools.ietf.org/html/rfc7234#section-5.2.2.4
-    const cacheControl = request.headers.get("Cache-Control");
+    const cacheControl = this.request.headers.get("Cache-Control");
     if (cacheControl && cacheControlNoTransformRegExp.test(cacheControl)) {
       return null;
     }
+
+    const chosenEncoding = chooseBestEncoding(this.request, availableEncodings(this.options));
+
+    if (!chosenEncoding || chosenEncoding === "identity") {
+      return null;
+    }
+
+    return chosenEncoding as SupportedEncodings;
   }
 
-  if (response) {
+  guessEncoding(response: Response) {
+    if (this.encoding === null) return null;
+    const threshold = this.options?.threshold ?? 1024;
+
     const cacheControl = response.headers.get("Cache-Control");
     if (cacheControl && cacheControlNoTransformRegExp.test(cacheControl)) {
       return null;
@@ -62,13 +78,7 @@ export function guessEncoding(
     if (contentEncoding !== "identity") {
       return null;
     }
+
+    return this.encoding;
   }
-
-  const chosenEncoding = chooseBestEncoding(request, availableEncodings(options));
-
-  if (!chosenEncoding || chosenEncoding === "identity") {
-    return null;
-  }
-
-  return chosenEncoding as (typeof SUPPORTED_ENCODINGS)[number];
 }

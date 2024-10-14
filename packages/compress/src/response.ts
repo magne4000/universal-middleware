@@ -25,7 +25,7 @@ async function guessCompressor(
 export const handleCompression = async (
   encoding: (typeof SUPPORTED_ENCODINGS)[number],
   input: Response,
-  options?: CompressionOptions,
+  options?: CompressionOptions & ResponseInit,
 ): Promise<Response> => {
   // set/append Vary header with Accept-Encoding
   if (!input.headers.get("Vary")?.includes("Accept-Encoding")) input.headers.append("Vary", "Accept-Encoding");

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { guessEncoding } from "../src/compress";
+import { EncodingGuesser } from "../src/compress";
 import { handleCompression } from "../src/response";
 import { decompressResponse } from "./utils";
 
@@ -22,9 +22,11 @@ describe("guessEncoding", () => {
       (options.headers as [string, string][]).push(["Content-Length", String(body.length)]);
     }
 
+    const guesser = new EncodingGuesser(req);
+
     let response = new Response(body, options);
 
-    const encoding = guessEncoding(req, {}, response);
+    const encoding = guesser.guessEncoding(response);
 
     if (encoding) {
       response = await handleCompression(encoding, response);
@@ -94,9 +96,9 @@ describe("guessEncoding", () => {
         headers: new Headers({ "Accept-Encoding": "gzip" }),
       });
 
-      const encoding = guessEncoding(req, {});
+      const guesser = new EncodingGuesser(req);
 
-      expect(encoding).toBeNull();
+      expect(guesser.encoding).toBeNull();
     });
 
     it("should compress custom 404 Not Found responses", async () => {
