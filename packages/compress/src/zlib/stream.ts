@@ -1,4 +1,5 @@
 import {
+  constants,
   type BrotliCompress,
   type Deflate,
   type Gzip,
@@ -14,6 +15,12 @@ const algorithms = {
   deflate: createDeflate,
 } as const;
 
+const defaultOptions = {
+  br: { params: { [constants.BROTLI_PARAM_QUALITY]: 4 } },
+  gzip: {},
+  deflate: {},
+} as const;
+
 export function compressStream<C extends CompressionAlgorithm, O extends Parameters<(typeof algorithms)[C]>[0]>(
   input: ReadableStream<Uint8Array> | null,
   algorithm: CompressionAlgorithm,
@@ -23,7 +30,10 @@ export function compressStream<C extends CompressionAlgorithm, O extends Paramet
     return input;
   }
 
-  const compressionStream: BrotliCompress | Gzip | Deflate = algorithms[algorithm](options);
+  const compressionStream: BrotliCompress | Gzip | Deflate = algorithms[algorithm]({
+    ...defaultOptions[algorithm],
+    ...options,
+  });
   return new ReadableStream<Uint8Array>({
     async start(controller) {
       const reader = input.getReader();

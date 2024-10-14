@@ -84,5 +84,5 @@ export function chooseBestEncoding(request: Request, availableEncodings: string[
     }
   }
 
-  return bestEncoding?.encoding ?? null;
+  return bestEncoding?.encoding;
 }
