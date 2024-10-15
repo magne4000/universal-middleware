@@ -1,0 +1,15 @@
+{
+  "packages": {
+    "packages/adapter-cloudflare": {},
+    "packages/adapter-elysia": {},
+    "packages/adapter-express": {},
+    "packages/adapter-fastify": {},
+    "packages/adapter-h3": {},
+    "packages/adapter-hattip": {},
+    "packages/adapter-hono": {},
+    "packages/adapter-webroute": {},
+    "packages/adapter-compress": {},
+    "packages/adapter-core": {},
+    "packages/universal-middleware": {}
+  }
+}
