@@ -1,6 +1,7 @@
 {
   "bootstrap-sha": "527b50a83f1f17f5f358485e2ec6ddf8b7e07007",
   "release-type": "node",
+  "bump-minor-pre-major": true,
   "plugins": ["node-workspace"],
   "packages": {
     "packages/adapter-cloudflare": {},
