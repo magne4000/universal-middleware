@@ -6,27 +6,15 @@
   "plugins": ["node-workspace"],
   "packages": {
     "packages/adapter-cloudflare": {},
-    "packages/adapter-elysia": {
-      "release-as": "0.2.2"
-    },
-    "packages/adapter-express": {
-      "release-as": "0.2.9"
-    },
+    "packages/adapter-elysia": {},
+    "packages/adapter-express": {},
     "packages/adapter-fastify": {},
-    "packages/adapter-h3": {
-      "release-as": "0.2.8"
-    },
+    "packages/adapter-h3": {},
     "packages/adapter-hattip": {},
-    "packages/adapter-hono": {
-      "release-as": "0.2.12"
-    },
+    "packages/adapter-hono": {},
     "packages/adapter-webroute": {},
-    "packages/compress": {
-      "release-as": "0.2.0"
-    },
+    "packages/compress": {},
     "packages/core": {},
-    "packages/universal-middleware": {
-      "release-as": "0.3.9"
-    }
+    "packages/universal-middleware": {}
   }
 }
