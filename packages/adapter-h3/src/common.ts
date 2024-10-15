@@ -78,7 +78,7 @@ export const universalOnBeforeResponse = defineResponseMiddleware(
     );
 
     if (newResponse) {
-      sendWebResponse(event, newResponse);
+      await sendWebResponse(event, newResponse);
     }
   },
 );
@@ -105,7 +105,7 @@ export function createMiddleware<
         event.context[pendingMiddlewaresSymbol].push(response);
       } else if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
-          return sendWebResponse(event, response);
+          return response;
         }
         // Update context
         event.context[contextSymbol] = response;
