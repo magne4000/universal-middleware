@@ -4,7 +4,6 @@ packages:
   - tests-examples/*
   - docs
 catalog:
-  '@brillout/release-me': ^0.4.2
   '@hattip/router': ^0.0.48
   '@swc/core': ^1.7.28
   '@types/express': ^4.17.21

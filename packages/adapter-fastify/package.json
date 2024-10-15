@@ -19,10 +19,7 @@
     "test": "vitest run",
     "test:run-fastify:node": "tsx tests/entry-fastify.ts",
     "test:run-fastify:bun": "bun tests/entry-fastify.ts",
-    "test:typecheck": "tsc -p tsconfig.json --noEmit",
-    "release": "LANG=en_US release-me patch",
-    "release:minor": "LANG=en_US release-me minor",
-    "release:commit": "LANG=en_US release-me commit"
+    "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@universal-middleware/core": "workspace:^",
@@ -30,7 +27,6 @@
     "fastify-raw-body": "^5.0.0"
   },
   "devDependencies": {
-    "@brillout/release-me": "catalog:",
     "@fastify/helmet": "^12.0.1",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",

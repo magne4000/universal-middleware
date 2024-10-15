@@ -20,16 +20,12 @@
     "test:run-webroute:node": "tsx tests/entry-webroute.ts",
     "test:run-webroute:bun": "bun tests/entry-webroute.ts",
     "test:run-webroute:deno": "deno run --unstable-byonm --unstable-sloppy-imports -A tests/entry-webroute.ts",
-    "test:typecheck": "tsc -p tsconfig.json --noEmit",
-    "release": "LANG=en_US release-me patch",
-    "release:minor": "LANG=en_US release-me minor",
-    "release:commit": "LANG=en_US release-me commit"
+    "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@universal-middleware/core": "workspace:^"
   },
   "devDependencies": {
-    "@brillout/release-me": "catalog:",
     "@hono/node-server": "^1.13.2",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",

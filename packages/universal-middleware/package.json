@@ -60,9 +60,6 @@
     "build": "rimraf dist && tsup",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
-    "release": "LANG=en_US release-me patch",
-    "release:minor": "LANG=en_US release-me minor",
-    "release:commit": "LANG=en_US release-me commit",
     "test": "vitest run"
   },
   "dependencies": {
@@ -78,7 +75,6 @@
     "unplugin": "^1.14.1"
   },
   "devDependencies": {
-    "@brillout/release-me": "catalog:",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-typescript": "^12.1.0",
     "@swc/core": "catalog:",

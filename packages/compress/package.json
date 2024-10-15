@@ -13,14 +13,10 @@
     "build": "rimraf dist && tsup",
     "test": "vitest --typecheck run",
     "prepack": "pnpm build",
-    "test:typecheck": "tsc -p tsconfig.json --noEmit",
-    "release": "LANG=en_US release-me patch",
-    "release:minor": "LANG=en_US release-me minor",
-    "release:commit": "LANG=en_US release-me commit"
+    "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@universal-middleware/core": "workspace:*",
-    "@brillout/release-me": "catalog:",
     "@swc/core": "catalog:",
     "@types/bun": "^1.1.10",
     "@types/node": "catalog:",
