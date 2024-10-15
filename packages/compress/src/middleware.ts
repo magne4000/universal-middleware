@@ -6,12 +6,16 @@ import type { CompressionOptions } from "./types";
 const compressMiddleware = ((options?: CompressionOptions) => (request) => {
   const guesser = new EncodingGuesser(request);
 
-  return (response) => {
+  return async (response) => {
     const encoding = guesser.guessEncoding(response);
 
     if (!encoding) return response;
 
-    return handleCompression(encoding, response, options);
+    const newRes = await handleCompression(encoding, response, options);
+
+    console.log("HEADERS", newRes.headers);
+
+    return newRes;
   };
 }) satisfies Get<[options: CompressionOptions], UniversalMiddleware>;
 

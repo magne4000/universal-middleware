@@ -18,6 +18,7 @@ export function testRun(
 
     expect(content).toContain('"World!!!"');
     expect(response.headers.has("x-universal-hello")).toBe(true);
+    expect(response.headers.get("content-encoding")).toMatch(/gzip|deflate/);
   });
 
   test("/user/:name", async () => {

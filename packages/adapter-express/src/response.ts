@@ -1,8 +1,13 @@
 import type { ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
-import { type DecoratedServerResponse, pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./common.js";
 import { nodeHeadersToWeb } from "@universal-middleware/core";
+import {
+  type DecoratedServerResponse,
+  pendingMiddlewaresSymbol,
+  pendingWritesSymbol,
+  wrappedResponseSymbol,
+} from "./common.js";
 
 // @ts-ignore
 const deno = typeof Deno !== "undefined";
@@ -49,16 +54,83 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
   }
 }
 
-function override<T extends DecoratedServerResponse>(nodeResponse: T, key: keyof T, callback: () => Promise<unknown>) {
+function createTransformStream(): TransformStream<Uint8Array | string | Buffer, Uint8Array> {
+  const textEncoder = new TextEncoder();
+  return new TransformStream({
+    transform(chunk, controller) {
+      if (typeof chunk === "string") {
+        controller.enqueue(textEncoder.encode(chunk));
+      } else if (chunk instanceof Uint8Array) {
+        controller.enqueue(chunk);
+      } else {
+        controller.enqueue(new Uint8Array(chunk));
+      }
+    },
+  });
+}
+
+function override<T extends DecoratedServerResponse>(
+  nodeResponse: T,
+  key: keyof T,
+  forwardTo: WritableStreamDefaultWriter<Uint8Array | string | Buffer>,
+) {
   const original: any = nodeResponse[key];
 
-  (nodeResponse as any)[key] = async (...args: any) => {
-    await callback();
-    return original.apply(nodeResponse, args);
+  (nodeResponse as any)[key] = (...args: any) => {
+    // console.log("called", key, args);
+    if (!nodeResponse.headersSent) {
+      nodeResponse.writeHead(nodeResponse.statusCode);
+    }
+    // if (forwardTo?.closed) return original.apply(nodeResponse, args);
+    if (args[0] && args[0].length > 0) {
+      // console.log("write", args[0]);
+      forwardTo.write(args[0]).catch(console.error);
+    }
+    if (key === "end" && !forwardTo.closed) {
+      // console.log("end");
+      forwardTo.close().catch(console.error);
+    }
+    return true;
   };
 
-  return function restore() {
-    nodeResponse[key] = original;
+  return {
+    original(...args: any[]) {
+      // console.log("original", key, args);
+      original.apply(nodeResponse, args);
+    },
+    restore() {
+      nodeResponse[key] = original;
+    },
+  };
+}
+
+function overrideWriteHead<T extends DecoratedServerResponse>(nodeResponse: T, callback: () => Promise<unknown>) {
+  const original = nodeResponse.writeHead;
+
+  nodeResponse.writeHead = (...args) => {
+    // console.log("called", "writeHead", args);
+    const p = callback();
+    nodeResponse[pendingWritesSymbol] ??= [];
+    nodeResponse[pendingWritesSymbol].push(p);
+    p.then(() => {
+      if (nodeResponse.headersSent) {
+        // console.log("writeHead", args);
+        return nodeResponse;
+      }
+      original.apply(nodeResponse, args as any);
+    });
+
+    return nodeResponse;
+  };
+
+  return {
+    original(...args: any) {
+      // console.log("original writeHead", args);
+      original.apply(nodeResponse, args);
+    },
+    restore() {
+      nodeResponse.writeHead = original;
+    },
   };
 }
 
@@ -66,11 +138,17 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
   if (nodeResponse[wrappedResponseSymbol]) return;
   nodeResponse[wrappedResponseSymbol] = true;
 
+  const body = createTransformStream();
+  const writer = body.writable.getWriter();
+  const [reader1, reader2] = body.readable.tee();
+
+  let readableToOriginal = reader2;
+
   const restore = [
-    override(nodeResponse, "write", triggerPendingMiddlewares),
-    override(nodeResponse, "end", triggerPendingMiddlewares),
-    override(nodeResponse, "writeHead", triggerPendingMiddlewares),
-  ];
+    override(nodeResponse, "write", writer),
+    override(nodeResponse, "end", writer),
+    overrideWriteHead(nodeResponse, triggerPendingMiddlewares),
+  ] as const;
   let resolve: () => void;
   // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
   const pendingResponse: Promise<void> = new Promise((r) => (resolve = r));
@@ -79,10 +157,10 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
     if (nodeResponse[pendingMiddlewaresSymbol]) {
       const middlewares = nodeResponse[pendingMiddlewaresSymbol];
       delete nodeResponse[pendingMiddlewaresSymbol];
-      const response = await middlewares.reduce(
+      let response = await middlewares.reduce(
         async (prev, curr) => curr(await prev),
         Promise.resolve(
-          new Response(null, {
+          new Response(reader1, {
             status: nodeResponse.statusCode,
             statusText: nodeResponse.statusMessage,
             headers: nodeHeadersToWeb(nodeResponse.getHeaders()),
@@ -90,17 +168,43 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
         ),
       );
 
-      if (response.body) {
-        throw new Error("Replacing the Response body is currently not supported for connect-like servers");
+      if (response.body && response.body !== reader1) {
+        // console.log("tee");
+        const [body1, body2] = response.body.tee();
+        response = new Response(body1, response);
+        readableToOriginal = body2;
       }
 
       setHeaders(response, nodeResponse, true);
 
+      nodeResponse.flushHeaders();
+
+      const wait = readableToOriginal.pipeTo(
+        new WritableStream({
+          write(chunk) {
+            Promise.all(nodeResponse[pendingWritesSymbol] ?? []).then(() => {
+              restore[0].original(chunk);
+            });
+          },
+          close() {
+            Promise.all(nodeResponse[pendingWritesSymbol] ?? []).then(() => {
+              restore[1].original();
+            });
+          },
+        }),
+      );
+
+      // console.log("close");
+      await Promise.all([wait, writer.close()]);
+      // console.log("closed");
+
       resolve();
       // biome-ignore lint/complexity/noForEach: <explanation>
-      restore.forEach((r) => r());
+      restore.forEach((r) => r.restore());
     } else {
+      // console.log("pendingResponse");
       await pendingResponse;
+      // console.log("pendingResponse DONE");
     }
   }
 }
