@@ -88,6 +88,15 @@ export default defineConfig({
         ],
       },
       {
+        text: "Middlewares",
+        items: [
+          {
+            text: "Compress",
+            link: "/middlewares/compress",
+          },
+        ],
+      },
+      {
         text: "Definitions",
         link: "/definitions",
       },

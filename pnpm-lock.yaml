@@ -109,6 +109,9 @@ importers:
       '@universal-middleware/cloudflare':
         specifier: link:../packages/adapter-cloudflare
         version: link:../packages/adapter-cloudflare
+      '@universal-middleware/compress':
+        specifier: workspace:*
+        version: link:../packages/compress
       '@universal-middleware/core':
         specifier: link:../packages/core
         version: link:../packages/core
