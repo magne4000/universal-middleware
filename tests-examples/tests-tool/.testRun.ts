@@ -21,7 +21,12 @@ export function testRun(
 
     expect(content).toContain('"World!!!"');
     expect(response.headers.has("x-universal-hello")).toBe(true);
-    expect(response.headers.get("content-encoding")).toMatch(/gzip|deflate/);
+
+    // Bun does not support CompressionStream yet
+    // https://github.com/oven-sh/bun/issues/1723
+    if (!cmd.startsWith("pnpm run dev:elysia")) {
+      expect(response.headers.get("content-encoding")).toMatch(/gzip|deflate/);
+    }
   });
 
   test("/user/:name", async () => {
