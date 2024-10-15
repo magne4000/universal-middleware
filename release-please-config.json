@@ -11,8 +11,8 @@
     "packages/adapter-hattip": {},
     "packages/adapter-hono": {},
     "packages/adapter-webroute": {},
-    "packages/adapter-compress": {},
-    "packages/adapter-core": {},
+    "packages/compress": {},
+    "packages/core": {},
     "packages/universal-middleware": {}
   }
 }
