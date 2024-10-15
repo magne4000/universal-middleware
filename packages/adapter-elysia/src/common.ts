@@ -66,12 +66,16 @@ export function createMiddleware<
           value: true,
         });
 
+        let currentResponse: Response = elysiaContext.response;
+
         for (const p of elysiaContext[pendingSymbol]) {
-          const res = await p(elysiaContext.response);
+          const res = await p(currentResponse);
           if (res) {
-            return res;
+            currentResponse = res;
           }
         }
+
+        return currentResponse;
       });
   };
 }
