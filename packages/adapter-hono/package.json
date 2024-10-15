@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/hono",
-  "version": "0.2.11",
+  "version": "1.0.0",
   "type": "module",
   "description": "Hono adapter for universal middlewares",
   "files": [

@@ -7,6 +7,13 @@
 
 
 
+## 1.0.0 (2024-10-15)
+
+
+### Features
+
+* @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([4827fdd](https://github.com/magne4000/universal-middleware/commit/4827fdd82b7c27923d6b4f47c6faa7d57475324f))
+
 ## [0.2.10](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.9...@universal-middleware/hono@0.2.10) (2024-10-09)
 
 
@@ -148,6 +155,3 @@
 ### Features
 
 * hono adapter ([#10](https://github.com/magne4000/universal-handler/issues/10)) ([044bc66](https://github.com/magne4000/universal-handler/commit/044bc6608851c3f3d3a68dc413e3c769fa22647c))
-
-
-
