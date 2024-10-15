@@ -4,7 +4,7 @@ import { decompressResponse } from "./utils";
 
 const hugeStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".repeat(2 * 1024 * 1024);
 
-describe.each([{ encoding: "gzip" }, { encoding: "br" }, { encoding: "deflate" }] as const)(
+describe.each([{ encoding: "gzip" }, { encoding: "deflate" }] as const)(
   "handleCompression: encoding: $encoding",
   ({ encoding }) => {
     it("should not compress again if input is compressed already", async () => {
@@ -29,9 +29,7 @@ describe.each([{ encoding: "gzip" }, { encoding: "br" }, { encoding: "deflate" }
       expect(output.headers.get("Vary")).toStrictEqual("Accept-Encoding");
       expect(output.headers.get("Content-Length")).toBeNull();
 
-      if (encoding !== "br") {
-        await expect(decompressResponse(output, encoding)).resolves.toBe("Test Response");
-      }
+      await expect(decompressResponse(output, encoding)).resolves.toBe("Test Response");
     });
 
     it('should append Accept-Encoding to "Vary" header if already present on intermediate Response', async () => {
@@ -100,17 +98,16 @@ describe.each([{ encoding: "gzip" }, { encoding: "br" }, { encoding: "deflate" }
       expect(output.headers.get("Content-Encoding")).toStrictEqual(encoding);
       expect(output.headers.get("Content-Length")).toBeNull();
 
-      if (encoding !== "br") {
-        await expect(decompressResponse(output, encoding)).resolves.toBe(hugeStr);
-      }
+      await expect(decompressResponse(output, encoding)).resolves.toBe(hugeStr);
     });
   },
 );
 
-// describe("handleCompression: encoding: 'br', compressionMethod: 'stream'", () => {
-//   it("chould throw because CompressionStream does not support brotli", async () => {
-//     const input = new Response("Test Response");
-//
-//     await expect(handleCompression("br", input, { compressionMethod: "stream" })).rejects.toThrow("compressionMethod");
-//   });
-// });
+describe("handleCompression: encoding: 'br', compressionMethod: 'stream'", () => {
+  it("chould throw because CompressionStream does not support brotli", async () => {
+    const input = new Response("Test Response");
+
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    await expect(handleCompression("br" as any, input)).rejects.toThrow("compressionMethod");
+  });
+});

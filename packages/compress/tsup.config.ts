@@ -10,6 +10,7 @@ export default defineConfig([
     dts: true,
     esbuildPlugins: [
       universalMiddleware({
+        servers: ["hono", "express", "hattip", "fastify", "h3", "webroute", "elysia"],
         entryExportNames: ".",
         serversExportNames: "./[dir]/[server]",
       }),

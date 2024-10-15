@@ -75,11 +75,6 @@
       "import": "./dist/universal-hattip-middleware-middleware.js",
       "default": "./dist/universal-hattip-middleware-middleware.js"
     },
-    "./webroute": {
-      "types": "./dist/universal-webroute-middleware-middleware.d.ts",
-      "import": "./dist/universal-webroute-middleware-middleware.js",
-      "default": "./dist/universal-webroute-middleware-middleware.js"
-    },
     "./fastify": {
       "types": "./dist/universal-fastify-middleware-middleware.d.ts",
       "import": "./dist/universal-fastify-middleware-middleware.js",
@@ -90,15 +85,10 @@
       "import": "./dist/universal-h3-middleware-middleware.js",
       "default": "./dist/universal-h3-middleware-middleware.js"
     },
-    "./cloudflare-worker": {
-      "types": "./dist/universal-cloudflare-worker-middleware-middleware.d.ts",
-      "import": "./dist/universal-cloudflare-worker-middleware-middleware.js",
-      "default": "./dist/universal-cloudflare-worker-middleware-middleware.js"
-    },
-    "./cloudflare-pages": {
-      "types": "./dist/universal-cloudflare-pages-middleware-middleware.d.ts",
-      "import": "./dist/universal-cloudflare-pages-middleware-middleware.js",
-      "default": "./dist/universal-cloudflare-pages-middleware-middleware.js"
+    "./webroute": {
+      "types": "./dist/universal-webroute-middleware-middleware.d.ts",
+      "import": "./dist/universal-webroute-middleware-middleware.js",
+      "default": "./dist/universal-webroute-middleware-middleware.js"
     },
     "./elysia": {
       "types": "./dist/universal-elysia-middleware-middleware.d.ts",
