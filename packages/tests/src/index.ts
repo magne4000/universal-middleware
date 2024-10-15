@@ -85,6 +85,7 @@ export function runTests(runs: Run[], options: Options) {
       const body = JSON.parse(await response.text());
       options.vitest.expect(response.status).toBe(200);
       options.vitest.expect(body).toEqual({
+        long: "a".repeat(1024),
         something: {
           a: 1,
         },

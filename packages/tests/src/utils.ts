@@ -44,6 +44,7 @@ export const middlewares = [
 ] as const satisfies Get<[], UniversalMiddleware>[];
 
 export const handler: Get<[], UniversalHandler> = () => (_request, context) => {
+  context.long = "a".repeat(1024);
   return new Response(JSON.stringify(context, null, 2), {
     headers: {
       "x-should-be-removed": "universal-middleware",

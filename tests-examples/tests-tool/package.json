@@ -30,6 +30,7 @@
     "@types/node": "catalog:",
     "@universal-middleware-examples/tool": "workspace:*",
     "@universal-middleware/cloudflare": "workspace:*",
+    "@universal-middleware/compress": "workspace:*",
     "@universal-middleware/core": "workspace:*",
     "@universal-middleware/express": "workspace:*",
     "@universal-middleware/fastify": "workspace:*",
