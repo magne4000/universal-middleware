@@ -2,6 +2,13 @@
 
 
 
+## 1.0.0 (2024-10-15)
+
+
+### Features
+
+* @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([4827fdd](https://github.com/magne4000/universal-middleware/commit/4827fdd82b7c27923d6b4f47c6faa7d57475324f))
+
 ## [0.2.7](https://github.com/magne4000/universal-handler/compare/@universal-middleware/express@0.2.6...@universal-middleware/express@0.2.7) (2024-10-08)
 
 
@@ -134,6 +141,3 @@
 * handler and middleware adapter for connect-like ([ee82abb](https://github.com/magne4000/universal-handler/commit/ee82abbdbd0dd9e077755e9db2f2cf06559c1f93))
 * hono adapter ([#10](https://github.com/magne4000/universal-handler/issues/10)) ([044bc66](https://github.com/magne4000/universal-handler/commit/044bc6608851c3f3d3a68dc413e3c769fa22647c))
 * working adapter-express ([0c18a2a](https://github.com/magne4000/universal-handler/commit/0c18a2afb7c104a0d5e2b9c6dbff735b30b0bf6b))
-
-
-

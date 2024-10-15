@@ -1,1 +1,1 @@
-{}
+{"packages/compress":"1.0.0","packages/adapter-elysia":"1.0.0","packages/adapter-express":"1.0.0","packages/adapter-h3":"1.0.0","packages/adapter-hono":"1.0.0","packages/universal-middleware":"1.0.0","packages/adapter-fastify":"0.3.6","packages/adapter-webroute":"0.2.8"}
