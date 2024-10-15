@@ -81,7 +81,6 @@ function override<T extends DecoratedServerResponse>(
     if (!nodeResponse.headersSent) {
       nodeResponse.writeHead(nodeResponse.statusCode);
     }
-    // if (forwardTo?.closed) return original.apply(nodeResponse, args);
     if (args[0] && args[0].length > 0) {
       // console.log("write", args[0]);
       forwardTo.write(args[0]).catch(console.error);
