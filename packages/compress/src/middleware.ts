@@ -5,11 +5,17 @@ import type { CompressionOptions } from "./types";
 
 const compressMiddleware = ((options?: CompressionOptions) => (request) => {
   const guesser = new EncodingGuesser(request);
+  let disabled = false;
 
-  return (response) => {
+  if (typeof CompressionStream === "undefined") {
+    console.error("Your platform does not support CompressionStream. Compression is disabled");
+    disabled = true;
+  }
+
+  return function universalMiddlewareCompress(response) {
     const encoding = guesser.guessEncoding(response);
 
-    if (!encoding) return response;
+    if (disabled || !encoding) return response;
 
     return handleCompression(encoding, response, options);
   };
