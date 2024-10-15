@@ -1,4 +1,6 @@
 {
+  "release-type": "node",
+  "plugins": ["node-workspace"],
   "packages": {
     "packages/adapter-cloudflare": {},
     "packages/adapter-elysia": {},
