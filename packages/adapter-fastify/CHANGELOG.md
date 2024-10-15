@@ -2,6 +2,15 @@
 
 
 
+## 0.3.6 (2024-10-15)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/express bumped to 0.2.9
+
 ## [0.3.4](https://github.com/magne4000/universal-handler/compare/@universal-middleware/fastify@0.3.3...@universal-middleware/fastify@0.3.4) (2024-10-08)
 
 
@@ -79,6 +88,3 @@
 ### Features
 
 * adapter-fastify ([b1bb889](https://github.com/magne4000/universal-handler/commit/b1bb8897a0a4bebee14336356b1bb12dd3ba9d60))
-
-
-
