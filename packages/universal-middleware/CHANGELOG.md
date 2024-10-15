@@ -2,6 +2,23 @@
 
 
 
+## 0.3.9 (2024-10-15)
+
+
+### Features
+
+* @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([97fd518](https://github.com/magne4000/universal-middleware/commit/97fd51819192a1d8b1d6659995b197ae8ddeb163))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/express bumped to 0.2.9
+    * @universal-middleware/fastify bumped to 0.3.6
+    * @universal-middleware/hono bumped to 0.2.12
+    * @universal-middleware/webroute bumped to 0.2.8
+
 ## [0.3.7](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.3.6...universal-middleware@0.3.7) (2024-10-09)
 
 
@@ -144,6 +161,3 @@
 * doc: intro to universal-middleware usage
 
 * doc: README
-
-
-
