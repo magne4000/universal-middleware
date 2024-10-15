@@ -60,7 +60,7 @@ export function createMiddleware<
         await next();
         const res = await response(honoContext.res);
         if (res) {
-          return res;
+          honoContext.res = res;
         }
       } else if (response !== null && typeof response === "object") {
         if (response instanceof Response) {

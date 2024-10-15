@@ -4,6 +4,7 @@ import handler from "@universal-middleware-examples/tool/dummy-handler-hattip";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hattip";
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hattip";
 import paramsHandler from "@universal-middleware-examples/tool/params-handler-hattip";
+import compress from "@universal-middleware/compress/hattip";
 import { args } from "./utils";
 
 const app = createRouter();
@@ -15,6 +16,8 @@ app.use(contextMiddleware("World!!!"));
 // After a Response has been returned by the handler below,
 // the `{ "X-Universal-Hello": "World!!!" }` header is appended to it
 app.use(headersMiddleware());
+
+app.use(compress());
 
 app.get("/user/:name", paramsHandler());
 

@@ -327,24 +327,34 @@ function fixBundleExports(
 ) {
   for (const [k, v] of Object.entries(bundle)) {
     if (!k.startsWith(namespace)) {
-      v.exports = `./${posix
-        .normalize(options.entryExportNames.replace("[dir]", v.dir).replace("[name]", v.name).replace("[type]", v.type))
-        .replaceAll("\\", "/")}`;
+      if (options.entryExportNames === ".") {
+        v.exports = ".";
+      } else {
+        v.exports = `./${posix
+          .normalize(
+            options.entryExportNames.replace("[dir]", v.dir).replace("[name]", v.name).replace("[type]", v.type),
+          )
+          .replaceAll("\\", "/")}`;
+      }
     }
   }
 
   for (const [k, v] of Object.entries(bundle)) {
     if (k.startsWith(namespace)) {
       const [, , server, type, handler] = k.split(":");
-      v.exports = `./${posix
-        .normalize(
-          options.serversExportNames
-            .replace("[name]", bundle[handler].name)
-            .replace("[dir]", bundle[handler].dir)
-            .replace("[type]", type)
-            .replace("[server]", server),
-        )
-        .replaceAll("\\", "/")}`;
+      if (options.serversExportNames === ".") {
+        v.exports = ".";
+      } else {
+        v.exports = `./${posix
+          .normalize(
+            options.serversExportNames
+              .replace("[name]", bundle[handler].name)
+              .replace("[dir]", bundle[handler].dir)
+              .replace("[type]", type)
+              .replace("[server]", server),
+          )
+          .replaceAll("\\", "/")}`;
+      }
     }
   }
 
@@ -621,7 +631,9 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
 
           // Remove dist folder from `exports`
           for (const v of Object.values(mapping)) {
-            v.exports = `./${posix.relative(outdir, v.exports)}`;
+            if (v.exports !== ".") {
+              v.exports = `./${posix.relative(outdir, v.exports)}`;
+            }
           }
 
           await genDts(mapping, options);
