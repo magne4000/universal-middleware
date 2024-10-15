@@ -8,7 +8,7 @@ const compressMiddleware = ((options?: CompressionOptions) => (request) => {
   let disabled = false;
 
   if (typeof CompressionStream === "undefined") {
-    console.error("Your platform does not support CompressionStream. Compression is disabled");
+    console.warn("Your platform does not support CompressionStream. Compression is disabled");
     disabled = true;
   }
 

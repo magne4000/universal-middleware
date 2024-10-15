@@ -1,14 +1,17 @@
 import { expect, fetch, getServerUrl, run, test } from "@brillout/test-e2e";
 
+type RunOptions = Parameters<typeof run>[1];
+
 export function testRun(
   cmd: `pnpm run dev:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia"}${string}`,
   port: number,
-  serverIsReadyMessage?: string,
+  options?: RunOptions,
 ) {
   run(`${cmd} --port ${port}`, {
     doNotFailOnWarning: true,
     serverUrl: `http://localhost:${port}`,
-    serverIsReadyMessage: serverIsReadyMessage ?? "Server listening",
+    ...options,
+    serverIsReadyMessage: options?.serverIsReadyMessage ?? "Server listening",
   });
 
   test("/", async () => {
