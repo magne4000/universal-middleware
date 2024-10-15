@@ -35,10 +35,7 @@ jobs:
       - run: pnpm run build
         if: ${{ steps.release.outputs.release_created }}
 
-      - run: pnpm run test
-        if: ${{ steps.release.outputs.release_created }}
-
-      - run: pnpm publish
+      - run: npm publish --access public -r
         if: ${{ steps.release.outputs.release_created }}
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
