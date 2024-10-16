@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.0...compress-v0.2.1) (2024-10-16)
+
+
+### Features
+
+* enable zlib compression when available ([d2f6509](https://github.com/magne4000/universal-middleware/commit/d2f6509164e09b0d3ee9d24ae4f7a5a9c558292b))
+
 ## 0.2.0 (2024-10-15)
 
 
