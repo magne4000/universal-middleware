@@ -5,9 +5,6 @@
 > [!NOTE]
 > **Cloudflare** middlewares are not generated, as Cloudflare compresses responses by default.
 
-> [!NOTE]
-> **Elysia** middleware does not compress right now as Bun lacks support for `CompressionStream`
-
 ## Usage
 
 ```ts twoslash
