@@ -1,13 +1,12 @@
-import { COMPRESSIBLE_CONTENT_TYPE_REGEX, SUPPORTED_ENCODINGS } from "./const";
+import { COMPRESSIBLE_CONTENT_TYPE_REGEX } from "./const";
 import { chooseBestEncoding } from "./encoding-header";
-import type { CompressionOptions } from "./types";
-
-type SupportedEncodings = (typeof SUPPORTED_ENCODINGS)[number];
+import { supportedEncodings } from "./runtime";
+import type { CompressionAlgorithm, CompressionOptions } from "./types";
 
 const cacheControlNoTransformRegExp = /(?:^|,)\s*?no-transform\s*?(?:,|$)/i;
 
 export class EncodingGuesser {
-  public readonly encoding: SupportedEncodings | null;
+  public readonly encoding: CompressionAlgorithm | null;
 
   constructor(
     private request: Request,
@@ -28,13 +27,13 @@ export class EncodingGuesser {
       return null;
     }
 
-    const chosenEncoding = chooseBestEncoding(this.request, SUPPORTED_ENCODINGS);
+    const chosenEncoding = chooseBestEncoding(this.request, supportedEncodings);
 
     if (!chosenEncoding || chosenEncoding === "identity") {
       return null;
     }
 
-    return chosenEncoding as SupportedEncodings;
+    return chosenEncoding as CompressionAlgorithm;
   }
 
   guessEncoding(response: Response) {
