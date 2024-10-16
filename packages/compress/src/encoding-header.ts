@@ -64,8 +64,10 @@ function parseEncoding(str: string) {
 export function chooseBestEncoding(request: Request, availableEncodings: readonly string[]) {
   let bestEncoding: AcceptEncoding | null = null;
 
+  if (availableEncodings.length === 0) return null;
+
   const header = request.headers.get("Accept-Encoding");
-  if (!header) return bestEncoding;
+  if (!header) return null;
 
   const parsed = parseAcceptEncodingHeader(header);
 

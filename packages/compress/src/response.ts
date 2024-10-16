@@ -1,30 +1,19 @@
-import type { SUPPORTED_ENCODINGS } from "./const";
-import { compressStream } from "./stream/stream";
-import type { CompressionOptions } from "./types";
+import { isCompressionStreamAvailable } from "./runtime";
+import type { CompressionAlgorithm, CompressionOptions, Compressor } from "./types";
 
-// async function guessCompressor(
-//   compressionMethod: CompressionOptions["compressionMethod"],
-//   encoding: (typeof SUPPORTED_ENCODINGS)[number],
-// ): Promise<Compressor> {
-//   if (compressionMethod === "auto" || !compressionMethod) {
-//     // biome-ignore lint/style/noParameterAssign: <explanation>
-//     compressionMethod = encoding === "br" ? "zlib" : "stream";
-//   }
-//   if (compressionMethod === "zlib") {
-//     const { compressStream } = await import("./zlib/stream.js");
-//
-//     return (input) => compressStream(input, encoding);
-//   }
-//   if (compressionMethod === "stream") {
-//     const { compressStream } = await import("./stream/stream.js");
-//
-//     return (input) => compressStream(input, encoding as CompressionFormat);
-//   }
-//   throw new Error('Unsupported compressionMethod. Possible values are "auto", "zlib" or "stream".');
-// }
+async function guessCompressor(encoding: CompressionAlgorithm): Promise<Compressor> {
+  if (encoding === "br" || !isCompressionStreamAvailable) {
+    const { compressStream } = await import("./zlib/stream.js");
+
+    return (input) => compressStream(input, encoding);
+  }
+  const { compressStream } = await import("./stream/stream.js");
+
+  return (input) => compressStream(input, encoding as CompressionFormat);
+}
 
 export const handleCompression = async (
-  encoding: (typeof SUPPORTED_ENCODINGS)[number],
+  encoding: CompressionAlgorithm,
   input: Response,
   options?: CompressionOptions & ResponseInit,
 ): Promise<Response> => {
@@ -40,7 +29,8 @@ export const handleCompression = async (
     if (!(input.headers.get(header) ?? "").includes(value)) input.headers.append(header, value);
   }
 
-  const body = compressStream(input.body, encoding);
+  const compressor = await guessCompressor(encoding);
+  const body = await compressor(input.body);
 
   if (body !== null) {
     input.headers.append("Content-Encoding", encoding);

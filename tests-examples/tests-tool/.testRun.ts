@@ -23,9 +23,6 @@ export function testRun(
     expect(response.headers.has("x-universal-hello")).toBe(true);
 
     if (
-      // Bun does not support CompressionStream yet
-      // https://github.com/oven-sh/bun/issues/1723
-      !cmd.startsWith("pnpm run dev:elysia") &&
       // Cloudflare already compresses data, so the compress middleware is not built for those targets
       !cmd.startsWith("pnpm run dev:pages") &&
       !cmd.startsWith("pnpm run dev:worker")
