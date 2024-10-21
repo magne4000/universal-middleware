@@ -21,7 +21,7 @@
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@brillout/test-e2e": "^0.5.35",
+    "@brillout/test-e2e": "^0.5.36",
     "@hattip/adapter-node": "^0.0.48",
     "@hattip/router": "catalog:",
     "@hono/vite-dev-server": "^0.16.0",
@@ -45,8 +45,8 @@
     "h3": "catalog:",
     "hono": "catalog:",
     "mri": "^1.2.0",
-    "npm-run-all2": "^6.2.3",
-    "playwright": "^1.48.0",
+    "npm-run-all2": "^6.2.4",
+    "playwright": "^1.48.1",
     "rimraf": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
