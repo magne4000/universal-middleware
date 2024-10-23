@@ -49,14 +49,14 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
   return (value as string) || "";
 }
 
-export function attachContextAndRuntime<C extends Universal.Context>(
+export function attachContextAndRuntime<C extends Universal.Context, R extends RuntimeAdapter>(
   request: Request,
   ctx: C,
-  runtime?: RuntimeAdapter,
+  runtime?: R,
 ): UniversalRequest<C> {
-  (request as UniversalRequest<C>)[contextSymbol] = ctx;
+  (request as UniversalRequest<C, R>)[contextSymbol] = ctx;
   if (runtime) {
-    (request as UniversalRequest<C>)[runtimeSymbol] = runtime;
+    (request as UniversalRequest<C, R>)[runtimeSymbol] = runtime;
   }
-  return request as UniversalRequest<C>;
+  return request as UniversalRequest<C, R>;
 }
