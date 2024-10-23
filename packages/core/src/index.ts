@@ -10,4 +10,3 @@ export { mergeHeadersInto, nodeHeadersToWeb, isBodyInit, attachContextAndRuntime
 export { pipe } from "./pipe.js";
 export { params } from "./route.js";
 export { env } from "./env.js";
-export { contextSymbol, runtimeSymbol } from "./const.js";

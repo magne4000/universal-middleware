@@ -1,5 +1,5 @@
 import type { Awaitable, Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import { attachContextAndRuntime, getAdapterRuntime } from "@universal-middleware/core";
 import { Elysia, type Context as ElysiaContext, type Handler } from "elysia";
 
 export const contextSymbol = Symbol("unContext");
@@ -28,7 +28,10 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
         context = (elysiaContext as any)[contextSymbol];
       }
 
-      return handler(elysiaContext.request, context, getRuntime(elysiaContext));
+      const runtime = getRuntime(elysiaContext);
+      attachContextAndRuntime(elysiaContext.request, context, runtime);
+
+      return handler(elysiaContext.request, context, runtime);
     }) satisfies ElysiaHandler;
   };
 }
@@ -47,7 +50,10 @@ export function createMiddleware<
     return new Elysia()
       .use(initPlugin<InContext>())
       .onBeforeHandle({ as: "global" }, async (elysiaContext) => {
-        const response = await middleware(elysiaContext.request, elysiaContext.getContext(), getRuntime(elysiaContext));
+        const ctx = elysiaContext.getContext();
+        const runtime = getRuntime(elysiaContext);
+        attachContextAndRuntime(elysiaContext.request, ctx, runtime);
+        const response = await middleware(elysiaContext.request, ctx, runtime);
 
         if (typeof response === "function") {
           elysiaContext[pendingSymbol].push(response);

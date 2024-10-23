@@ -6,7 +6,7 @@ import type {
   PagesFunction,
 } from "@cloudflare/workers-types";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import { attachContextAndRuntime, getAdapterRuntime } from "@universal-middleware/core";
 
 export const contextSymbol = Symbol("unContext");
 
@@ -32,7 +32,9 @@ export function createHandler<T extends unknown[], C extends Universal.Context>(
     return {
       async fetch(request, env, ctx) {
         const universalContext = initContext<C>(env);
-        const response = await handler(request as unknown as Request, universalContext, getRuntime(env, ctx));
+        const runtime = getRuntime(env, ctx);
+        attachContextAndRuntime(request as unknown as Request, universalContext, runtime);
+        const response = await handler(request as unknown as Request, universalContext, runtime);
 
         return response as unknown as CloudflareResponse;
       },
@@ -61,7 +63,9 @@ export function createPagesFunction<
 
     return async (context) => {
       const universalContext = initContext<InContext>(context.env);
-      const response = await middleware(context.request as unknown as Request, universalContext, getRuntime(context));
+      const runtime = getRuntime(context);
+      attachContextAndRuntime(context.request as unknown as Request, universalContext, runtime);
+      const response = await middleware(context.request as unknown as Request, universalContext, runtime);
 
       if (typeof response === "function") {
         const cloudflareResponse = await context.next();

@@ -36,6 +36,7 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
     return (honoContext) => {
       const runtime = getRuntime(honoContext);
       const context = initContext(honoContext, runtime);
+      attachContextAndRuntime(honoContext.req.raw, context, runtime);
       return handler(honoContext.req.raw, context, runtime);
     };
   };
@@ -55,7 +56,7 @@ export function createMiddleware<
     return async (honoContext, next) => {
       const runtime = getRuntime(honoContext);
       const context = initContext<InContext>(honoContext, runtime);
-
+      attachContextAndRuntime(honoContext.req.raw, context, runtime);
       const response = await middleware(honoContext.req.raw, context, runtime);
 
       if (typeof response === "function") {
@@ -85,7 +86,7 @@ function initContext<Context extends Universal.Context = Universal.Context>(
   let ctx = getContext<Context>(honoContext);
   if (ctx === undefined) {
     ctx = {} as Context;
-    setContext(honoContext, ctx, runtime);
+    setContext(honoContext, ctx);
   }
   return ctx;
 }
@@ -93,14 +94,13 @@ function initContext<Context extends Universal.Context = Universal.Context>(
 function setContext<Context extends Universal.Context = Universal.Context>(
   honoContext: HonoContext<UniversalEnv>,
   value: Context,
-  runtime?: RuntimeAdapter,
 ): void {
   honoContext.set(contextSymbol, value);
   honoContext.env[contextSymbol] = value;
   if (honoContext.env?.eventContext?.env) {
     honoContext.env.eventContext.env[contextSymbol] = value;
   }
-  attachContextAndRuntime(honoContext.req.raw, value, runtime);
+  attachContextAndRuntime(honoContext.req.raw, value);
 }
 
 export function getContext<Context extends Universal.Context = Universal.Context>(
