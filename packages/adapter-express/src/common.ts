@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Socket } from "node:net";
 import type { Awaitable, Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import { attachContextAndRuntime, getAdapterRuntime } from "@universal-middleware/core";
 import { type NodeRequestAdapterOptions, createRequestAdapter } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
 
@@ -74,7 +74,9 @@ export function createHandler<T extends unknown[]>(
       try {
         req[contextSymbol] ??= {};
         const request = requestAdapter(req);
-        const response = await handler(request, req[contextSymbol], getRuntime(req, res));
+        const runtime = getRuntime(req, res);
+        attachContextAndRuntime(request, req[contextSymbol], runtime);
+        const response = await handler(request, req[contextSymbol], runtime);
 
         await sendResponse(response, res);
       } catch (error) {
@@ -116,7 +118,10 @@ export function createMiddleware<
       try {
         req[contextSymbol] ??= {} as OutContext;
         const request = requestAdapter(req);
-        const response = await middleware(request, getContext(req), getRuntime(req, res));
+        const ctx = getContext<InContext>(req);
+        const runtime = getRuntime(req, res);
+        attachContextAndRuntime(request, ctx, runtime);
+        const response = await middleware(request, ctx, runtime);
 
         if (!response) {
           return next?.();
