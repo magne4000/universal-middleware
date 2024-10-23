@@ -142,6 +142,7 @@ export function createMiddleware<
           await sendResponse(response, res);
         } else {
           req[contextSymbol] = response;
+          attachContextAndRuntime(request, response);
           return next?.();
         }
       } catch (error) {

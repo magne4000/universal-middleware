@@ -47,6 +47,7 @@ export function pipe<F extends UniversalMiddleware<any, any>[]>(
         // Update context
         // biome-ignore lint/style/noParameterAssign: <explanation>
         context = response as any;
+        attachContextAndRuntime(request, context);
       }
     }
 

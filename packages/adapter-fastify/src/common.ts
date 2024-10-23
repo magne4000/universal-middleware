@@ -166,6 +166,7 @@ export function createMiddleware<
           reply.send(response);
         } else {
           setContext(request, response);
+          attachContextAndRuntime(r, response);
         }
       });
 

@@ -79,6 +79,9 @@ export function createPagesFunction<
         // Update context
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         setContext(context.env, response as any);
+        // Update context
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        attachContextAndRuntime(context.request as unknown as Request, response as any);
         return await context.next();
       }
 

@@ -71,6 +71,7 @@ export function createMiddleware<
         }
         // Update context
         setContext(honoContext, response);
+        attachContextAndRuntime(honoContext.req.raw, response);
         return next();
       } else {
         return next();
@@ -100,7 +101,6 @@ function setContext<Context extends Universal.Context = Universal.Context>(
   if (honoContext.env?.eventContext?.env) {
     honoContext.env.eventContext.env[contextSymbol] = value;
   }
-  attachContextAndRuntime(honoContext.req.raw, value);
 }
 
 export function getContext<Context extends Universal.Context = Universal.Context>(

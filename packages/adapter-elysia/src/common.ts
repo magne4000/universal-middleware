@@ -63,6 +63,7 @@ export function createMiddleware<
           }
           // Update context
           elysiaContext.setContext(response);
+          attachContextAndRuntime(elysiaContext.request, response);
         }
       })
       .onAfterHandle({ as: "global" }, async (elysiaContext) => {

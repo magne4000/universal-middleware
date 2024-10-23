@@ -58,6 +58,7 @@ export function createMiddleware<
 
         // Update context
         context[contextSymbol] = response;
+        attachContextAndRuntime(context.request, response);
       }
     };
   };
