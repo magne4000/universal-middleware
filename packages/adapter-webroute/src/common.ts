@@ -1,5 +1,5 @@
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import { attachContextAndRuntime, getAdapterRuntime } from "@universal-middleware/core";
 import type { DataResult, MiddlewareFn } from "@webroute/middleware";
 import type { RequestCtx } from "@webroute/route";
 
@@ -40,7 +40,9 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
 
     return async (request, ctx) => {
       const context = initContext(ctx);
-      return handler(request, context, await getRuntime(ctx));
+      const runtime = await getRuntime(ctx);
+      attachContextAndRuntime(request, context, runtime);
+      return handler(request, context, runtime);
     };
   };
 }
@@ -74,7 +76,9 @@ export function createMiddleware<
 
     return (async (request, ctx) => {
       const context = initContext(ctx);
-      return middleware(request, context, await getRuntime(ctx));
+      const runtime = await getRuntime(ctx);
+      attachContextAndRuntime(request, context, runtime);
+      return middleware(request, context, runtime);
     }) as WebrouteMiddleware<InContext, MiddlewareFactoryDataResult<typeof middlewareFactory>>;
   };
 }
