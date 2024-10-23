@@ -1,6 +1,6 @@
 import type { IncomingMessage } from "node:http";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime, isBodyInit, mergeHeadersInto } from "@universal-middleware/core";
+import { attachContextAndRuntime, getAdapterRuntime, isBodyInit, mergeHeadersInto } from "@universal-middleware/core";
 import { type DecoratedRequest, createRequestAdapter } from "@universal-middleware/express";
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import fp from "fastify-plugin";
@@ -111,7 +111,10 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
 
     return async (request, reply) => {
       const ctx = initContext<InContext>(request);
-      const response = await handler(requestAdapter(getRawRequest(request)), ctx, getRuntime(request, reply));
+      const runtime = getRuntime(request, reply);
+      const r = requestAdapter(getRawRequest(request));
+      attachContextAndRuntime(r, ctx, runtime);
+      const response = await handler(r, ctx, runtime);
 
       if (response) {
         if (!response.body) {
@@ -137,7 +140,10 @@ export function createMiddleware<
     return fp(async (instance) => {
       instance.addHook("preHandler", async (request, reply) => {
         const ctx = initContext<InContext>(request);
-        const response = await middleware(requestAdapter(getRawRequest(request)), ctx, getRuntime(request, reply));
+        const runtime = getRuntime(request, reply);
+        const r = requestAdapter(getRawRequest(request));
+        attachContextAndRuntime(r, ctx, runtime);
+        const response = await middleware(r, ctx, runtime);
 
         if (!response) {
           return;
