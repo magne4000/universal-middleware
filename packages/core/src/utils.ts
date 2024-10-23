@@ -1,4 +1,6 @@
 import type { OutgoingHttpHeaders } from "node:http";
+import { contextSymbol, runtimeSymbol } from "./const";
+import type { RuntimeAdapter, UniversalRequest } from "./types";
 
 export function isBodyInit(value: unknown): value is BodyInit {
   return (
@@ -45,4 +47,16 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
     return value.join(", ");
   }
   return (value as string) || "";
+}
+
+export function attachContextAndRuntime<C extends Universal.Context>(
+  request: Request,
+  ctx: C,
+  runtime?: RuntimeAdapter,
+): UniversalRequest<C> {
+  (request as UniversalRequest<C>)[contextSymbol] = ctx;
+  if (runtime) {
+    (request as UniversalRequest<C>)[runtimeSymbol] = runtime;
+  }
+  return request as UniversalRequest<C>;
 }

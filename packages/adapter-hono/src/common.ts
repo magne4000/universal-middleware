@@ -1,15 +1,5 @@
-import type {
-  Get,
-  RuntimeAdapter,
-  UniversalHandler,
-  UniversalMiddleware,
-  UniversalRequest,
-} from "@universal-middleware/core";
-import {
-  contextSymbol as contextCore,
-  getAdapterRuntime,
-  runtimeSymbol as runtimeCore,
-} from "@universal-middleware/core";
+import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import { attachContextAndRuntime, getAdapterRuntime } from "@universal-middleware/core";
 import type { Env, ExecutionContext, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
 
 export const contextSymbol = Symbol("unContext");
@@ -110,10 +100,7 @@ function setContext<Context extends Universal.Context = Universal.Context>(
   if (honoContext.env?.eventContext?.env) {
     honoContext.env.eventContext.env[contextSymbol] = value;
   }
-  (honoContext.req.raw as UniversalRequest<Context>)[contextCore] = value;
-  if (runtime) {
-    (honoContext.req.raw as UniversalRequest<Context>)[runtimeCore] = runtime;
-  }
+  attachContextAndRuntime(honoContext.req.raw, value, runtime);
 }
 
 export function getContext<Context extends Universal.Context = Universal.Context>(

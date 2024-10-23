@@ -1,13 +1,11 @@
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import {
-  contextSymbol as contextCore,
+  attachContextAndRuntime,
   getAdapterRuntime,
   isBodyInit,
   mergeHeadersInto,
   nodeHeadersToWeb,
-  runtimeSymbol as runtimeCore,
 } from "@universal-middleware/core";
-import type { UniversalRequest } from "@universal-middleware/core";
 import {
   type EventHandler,
   type H3Event,
@@ -141,11 +139,7 @@ function getRequest<Context extends Universal.Context = Universal.Context>(
   runtime?: RuntimeAdapter,
 ): Request {
   const request = toWebRequest(event);
-  (request as UniversalRequest<Context>)[contextCore] = value;
-  if (runtime) {
-    (request as UniversalRequest<Context>)[runtimeCore] = runtime;
-  }
-  return request;
+  return attachContextAndRuntime(request, value, runtime);
 }
 
 export function getRuntime(event: H3Event): RuntimeAdapter {
