@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Server as BunServer } from "bun";
+import { contextSymbol, runtimeSymbol } from "./const";
 
 export type Awaitable<T> = T | Promise<T>;
 
@@ -172,3 +173,11 @@ export type UniversalHandler<InContext extends Universal.Context = Universal.Con
 ) => Awaitable<Response>;
 
 export type Get<T extends unknown[], U> = (...args: T) => U;
+
+export interface UniversalRequest<
+  C extends Universal.Context = Universal.Context,
+  R extends RuntimeAdapter = RuntimeAdapter,
+> extends Request {
+  [contextSymbol]: C;
+  [runtimeSymbol]: R;
+}

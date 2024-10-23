@@ -1,5 +1,15 @@
-import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import type {
+  Get,
+  RuntimeAdapter,
+  UniversalHandler,
+  UniversalMiddleware,
+  UniversalRequest,
+} from "@universal-middleware/core";
+import {
+  contextSymbol as contextCore,
+  getAdapterRuntime,
+  runtimeSymbol as runtimeCore,
+} from "@universal-middleware/core";
 import type { Env, ExecutionContext, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
 
 export const contextSymbol = Symbol("unContext");
@@ -34,8 +44,9 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
     const handler = handlerFactory(...args);
 
     return (honoContext) => {
-      const context = initContext(honoContext);
-      return handler(honoContext.req.raw, context, getRuntime(honoContext));
+      const runtime = getRuntime(honoContext);
+      const context = initContext(honoContext, runtime);
+      return handler(honoContext.req.raw, context, runtime);
     };
   };
 }
@@ -52,9 +63,10 @@ export function createMiddleware<
     const middleware = middlewareFactory(...args);
 
     return async (honoContext, next) => {
-      const context = initContext<InContext>(honoContext);
+      const runtime = getRuntime(honoContext);
+      const context = initContext<InContext>(honoContext, runtime);
 
-      const response = await middleware(honoContext.req.raw, context, getRuntime(honoContext));
+      const response = await middleware(honoContext.req.raw, context, runtime);
 
       if (typeof response === "function") {
         await next();
@@ -78,11 +90,12 @@ export function createMiddleware<
 
 function initContext<Context extends Universal.Context = Universal.Context>(
   honoContext: HonoContext<UniversalEnv>,
+  runtime: RuntimeAdapter,
 ): Context {
   let ctx = getContext<Context>(honoContext);
   if (ctx === undefined) {
     ctx = {} as Context;
-    setContext(honoContext, ctx);
+    setContext(honoContext, ctx, runtime);
   }
   return ctx;
 }
@@ -90,11 +103,16 @@ function initContext<Context extends Universal.Context = Universal.Context>(
 function setContext<Context extends Universal.Context = Universal.Context>(
   honoContext: HonoContext<UniversalEnv>,
   value: Context,
+  runtime?: RuntimeAdapter,
 ): void {
   honoContext.set(contextSymbol, value);
   honoContext.env[contextSymbol] = value;
   if (honoContext.env?.eventContext?.env) {
     honoContext.env.eventContext.env[contextSymbol] = value;
+  }
+  (honoContext.req.raw as UniversalRequest<Context>)[contextCore] = value;
+  if (runtime) {
+    (honoContext.req.raw as UniversalRequest<Context>)[runtimeCore] = runtime;
   }
 }
 
