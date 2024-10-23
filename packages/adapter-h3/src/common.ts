@@ -1,5 +1,13 @@
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime, isBodyInit, mergeHeadersInto, nodeHeadersToWeb } from "@universal-middleware/core";
+import {
+  contextSymbol as contextCore,
+  getAdapterRuntime,
+  isBodyInit,
+  mergeHeadersInto,
+  nodeHeadersToWeb,
+  runtimeSymbol as runtimeCore,
+} from "@universal-middleware/core";
+import type { UniversalRequest } from "@universal-middleware/core";
 import {
   type EventHandler,
   type H3Event,
@@ -38,7 +46,9 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
 
     return eventHandler((event) => {
       const ctx = initContext(event);
-      return handler(toWebRequest(event), ctx, getRuntime(event));
+      const runtime = getRuntime(event);
+      const request = getRequest(event, ctx, runtime);
+      return handler(request, ctx, runtime);
     });
   };
 }
@@ -96,7 +106,9 @@ export function createMiddleware<
 
     return eventHandler(async (event) => {
       const ctx = initContext<InContext>(event);
-      const response = await middleware(toWebRequest(event), ctx, getRuntime(event));
+      const runtime = getRuntime(event);
+      const request = getRequest(event, ctx, runtime);
+      const response = await middleware(request, ctx, runtime);
 
       if (typeof response === "function") {
         event.context[pendingMiddlewaresSymbol] ??= [];
@@ -121,6 +133,19 @@ export function initContext<Context extends Universal.Context>(event: H3Event): 
 
 export function getContext<Context extends Universal.Context>(event: H3Event): Context {
   return event.context[contextSymbol] as Context;
+}
+
+function getRequest<Context extends Universal.Context = Universal.Context>(
+  event: H3Event,
+  value: Context,
+  runtime?: RuntimeAdapter,
+): Request {
+  const request = toWebRequest(event);
+  (request as UniversalRequest<Context>)[contextCore] = value;
+  if (runtime) {
+    (request as UniversalRequest<Context>)[runtimeCore] = runtime;
+  }
+  return request;
 }
 
 export function getRuntime(event: H3Event): RuntimeAdapter {
