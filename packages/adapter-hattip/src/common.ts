@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@hattip/compose";
 import type { AdapterRequestContext, HattipHandler } from "@hattip/core";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import { attachContextAndRuntime, getAdapterRuntime } from "@universal-middleware/core";
 
 export const contextSymbol = Symbol("unContext");
 
@@ -23,7 +23,9 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
 
     return (context) => {
       const ctx = initContext(context);
-      return handler(context.request, ctx, getRuntime(context));
+      const runtime = getRuntime(context);
+      attachContextAndRuntime(context.request, ctx, runtime);
+      return handler(context.request, ctx, runtime);
     };
   };
 }
@@ -41,7 +43,9 @@ export function createMiddleware<
 
     return async (context) => {
       const ctx = initContext<InContext>(context);
-      const response = await middleware(context.request, ctx, getRuntime(context));
+      const runtime = getRuntime(context);
+      attachContextAndRuntime(context.request, ctx, runtime);
+      const response = await middleware(context.request, ctx, runtime);
 
       if (typeof response === "function") {
         const res = await context.next();
