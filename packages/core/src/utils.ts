@@ -49,6 +49,9 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
   return (value as string) || "";
 }
 
+/**
+ * @internal
+ */
 export function attachContextAndRuntime<C extends Universal.Context, R extends RuntimeAdapter>(
   request: Request,
   ctx: C,
@@ -59,4 +62,12 @@ export function attachContextAndRuntime<C extends Universal.Context, R extends R
     (request as UniversalRequest<C, R>)[runtimeSymbol] = runtime;
   }
   return request as UniversalRequest<C, R>;
+}
+
+export function getRequestContext<C extends Universal.Context>(request: Request): C {
+  return (request as UniversalRequest<C>)[contextSymbol] ?? {};
+}
+
+export function getRequestRuntime<R extends RuntimeAdapter>(request: Request): R {
+  return (request as UniversalRequest<Universal.Context, R>)[runtimeSymbol] ?? { adapter: "other", runtime: "other" };
 }
