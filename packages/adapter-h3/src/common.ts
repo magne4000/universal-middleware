@@ -1,10 +1,12 @@
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import {
-  attachContextAndRuntime,
   getAdapterRuntime,
+  getRequestContextAndRuntime,
+  initRequestWeb,
   isBodyInit,
   mergeHeadersInto,
   nodeHeadersToWeb,
+  setRequestContextAndRuntime,
 } from "@universal-middleware/core";
 import {
   type EventHandler,
@@ -43,10 +45,57 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
     const handler = handlerFactory(...args);
 
     return eventHandler((event) => {
-      const ctx = initContext(event);
-      const runtime = getRuntime(event);
-      const request = getRequest(event, ctx, runtime);
-      return handler(request, ctx, runtime);
+      initRequestWeb(event, event, () => getRuntime(event), event.context);
+      const request = toWebRequest(event);
+      setRequestContextAndRuntime(
+        request,
+        {
+          // Update runtime.params
+          runtime: getRuntime(event),
+        },
+        event.context,
+      );
+      const { context, runtime } = getRequestContextAndRuntime(request, event.context);
+      return handler(request, context, runtime);
+    });
+  };
+}
+
+/**
+ * Creates a middleware to be passed to app.use() or any route function
+ */
+export function createMiddleware<
+  T extends unknown[],
+  InContext extends Universal.Context,
+  OutContext extends Universal.Context,
+>(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, H3Middleware> {
+  return (...args) => {
+    const middleware = middlewareFactory(...args);
+
+    return eventHandler(async (event) => {
+      initRequestWeb(event, event, () => getRuntime(event), event.context);
+      const request = toWebRequest(event);
+      const { context, runtime } = getRequestContextAndRuntime<InContext>(request, event.context);
+      const response = await middleware(request, context, runtime);
+
+      if (typeof response === "function") {
+        event.context[pendingMiddlewaresSymbol] ??= [];
+        event.context[wrappedResponseSymbol] = false;
+        // `wrapResponse` takes care of calling those middlewares right before sending the response
+        event.context[pendingMiddlewaresSymbol].push(response);
+      } else if (response !== null && typeof response === "object") {
+        if (response instanceof Response) {
+          return response;
+        }
+        // Update context
+        setRequestContextAndRuntime(
+          request,
+          {
+            context: response,
+          },
+          event.context,
+        );
+      }
     });
   };
 }
@@ -91,40 +140,6 @@ export const universalOnBeforeResponse = defineResponseMiddleware(
   },
 );
 
-/**
- * Creates a middleware to be passed to app.use() or any route function
- */
-export function createMiddleware<
-  T extends unknown[],
-  InContext extends Universal.Context,
-  OutContext extends Universal.Context,
->(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, H3Middleware> {
-  return (...args) => {
-    const middleware = middlewareFactory(...args);
-
-    return eventHandler(async (event) => {
-      const ctx = initContext<InContext>(event);
-      const runtime = getRuntime(event);
-      const request = getRequest(event, ctx, runtime);
-      const response = await middleware(request, ctx, runtime);
-
-      if (typeof response === "function") {
-        event.context[pendingMiddlewaresSymbol] ??= [];
-        event.context[wrappedResponseSymbol] = false;
-        // `wrapResponse` takes care of calling those middlewares right before sending the response
-        event.context[pendingMiddlewaresSymbol].push(response);
-      } else if (response !== null && typeof response === "object") {
-        if (response instanceof Response) {
-          return response;
-        }
-        // Update context
-        event.context[contextSymbol] = response;
-        attachContextAndRuntime(request, response);
-      }
-    });
-  };
-}
-
 export function initContext<Context extends Universal.Context>(event: H3Event): Context {
   event.context[contextSymbol] ??= {};
   return event.context[contextSymbol] as Context;
@@ -132,15 +147,6 @@ export function initContext<Context extends Universal.Context>(event: H3Event): 
 
 export function getContext<Context extends Universal.Context>(event: H3Event): Context {
   return event.context[contextSymbol] as Context;
-}
-
-function getRequest<Context extends Universal.Context = Universal.Context>(
-  event: H3Event,
-  value: Context,
-  runtime?: RuntimeAdapter,
-): Request {
-  const request = toWebRequest(event);
-  return attachContextAndRuntime(request, value, runtime);
 }
 
 export function getRuntime(event: H3Event): RuntimeAdapter {

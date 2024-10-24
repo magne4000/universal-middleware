@@ -135,11 +135,21 @@ export function initRequestNode<R extends RuntimeAdapter>(
   request: Pick<IncomingMessage, "headers">,
   lifetime: object,
   getRuntime: () => R,
+  lifetimeData?: object,
 ): void {
-  if (typeof request.headers[universalHeaderUuid] === "string") return;
+  if (
+    typeof request.headers[universalHeaderUuid] === "string" ||
+    // @ts-expect-error
+    lifetimeData?.[universalHeaderUuidSymbol]
+  )
+    return;
   const uuid = initRequestUuid(lifetime, getRuntime());
   console.log("initRequestNode", "SET UUID", uuid);
   request.headers[universalHeaderUuid] = uuid;
+  if (lifetimeData) {
+    // @ts-expect-error
+    lifetimeData[universalHeaderUuidSymbol] = uuid;
+  }
 }
 
 export function getRequestContextAndRuntime<
