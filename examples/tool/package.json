@@ -276,6 +276,31 @@
       "types": "./dist/middlewares/universal-elysia-middleware-guard.middleware.d.ts",
       "import": "./dist/middlewares/universal-elysia-middleware-guard.middleware.js",
       "default": "./dist/middlewares/universal-elysia-middleware-guard.middleware.js"
+    },
+    "./dummy-handler-generic": {
+      "types": "./dist/handlers/universal-generic-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-generic-handler-handler.js",
+      "default": "./dist/handlers/universal-generic-handler-handler.js"
+    },
+    "./params-handler-generic": {
+      "types": "./dist/handlers/universal-generic-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-generic-handler-params.handler.js",
+      "default": "./dist/handlers/universal-generic-handler-params.handler.js"
+    },
+    "./middlewares/context-middleware-generic": {
+      "types": "./dist/middlewares/universal-generic-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-generic-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-generic-middleware-context.middleware.js"
+    },
+    "./middlewares/headers-middleware-generic": {
+      "types": "./dist/middlewares/universal-generic-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-generic-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-generic-middleware-headers.middleware.js"
+    },
+    "./middlewares/guard-middleware-generic": {
+      "types": "./dist/middlewares/universal-generic-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-generic-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-generic-middleware-guard.middleware.js"
     }
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",

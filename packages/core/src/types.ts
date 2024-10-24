@@ -166,11 +166,18 @@ export type UniversalMiddleware<
   // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
 ) => Awaitable<Response | OutContext | ((response: Response) => Awaitable<Response>) | void | undefined>;
 
+export type UniversalMiddlewareShort<OutContext extends Universal.Context = Universal.Context> = (
+  request: Request,
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+) => Awaitable<Response | OutContext | ((response: Response) => Awaitable<Response>) | void | undefined>;
+
 export type UniversalHandler<InContext extends Universal.Context = Universal.Context> = (
   request: Request,
   context: InContext,
   runtime: RuntimeAdapter,
 ) => Awaitable<Response>;
+
+export type UniversalHandlerShort = (request: Request) => Awaitable<Response>;
 
 export type Get<T extends unknown[], U> = (...args: T) => U;
 

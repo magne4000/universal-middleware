@@ -3,6 +3,7 @@
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 const contextMiddleware = ((value) => (request, ctx) => {
+  console.log("contextMiddleware");
   // Return the new universal context, thus keeping complete type safety
   // A less typesafe way to do the same thing would be to `ctx.something = value` and return nothing
   return {

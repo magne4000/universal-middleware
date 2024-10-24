@@ -10,10 +10,12 @@ export {
   mergeHeadersInto,
   nodeHeadersToWeb,
   isBodyInit,
-  attachContextAndRuntime,
-  getRequestContext,
-  getRequestRuntime,
+  initRequestWeb,
+  initRequestNode,
+  getRequestContextAndRuntime,
+  setRequestContext,
 } from "./utils.js";
 export { pipe } from "./pipe.js";
+export { createGenericHandler, createGenericMiddleware } from "./common.js";
 export { params } from "./route.js";
 export { env } from "./env.js";

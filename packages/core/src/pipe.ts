@@ -1,5 +1,4 @@
 import type { Awaitable, UniversalHandler, UniversalMiddleware } from "./types";
-import { attachContextAndRuntime } from "./utils";
 
 type Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
 type In<T> = T extends UniversalHandler<infer C> ? C : T extends UniversalMiddleware<infer C, any> ? C : never;
@@ -34,7 +33,6 @@ export function pipe<F extends UniversalMiddleware<any, any>[]>(
 
     let _response: Response | undefined = undefined;
     for (const m of middlewares) {
-      attachContextAndRuntime(request, context ?? {}, runtime);
       const response = await m(request, context ?? {}, runtime);
 
       if (typeof response === "function") {
@@ -47,7 +45,6 @@ export function pipe<F extends UniversalMiddleware<any, any>[]>(
         // Update context
         // biome-ignore lint/style/noParameterAssign: <explanation>
         context = response as any;
-        attachContextAndRuntime(request, context);
       }
     }
 

@@ -1,6 +1,6 @@
-import type { OutgoingHttpHeaders } from "node:http";
-import { contextSymbol, runtimeSymbol } from "./const";
-import type { RuntimeAdapter, UniversalRequest } from "./types";
+import type { IncomingMessage, OutgoingHttpHeaders } from "node:http";
+import { universalHeaderUuid } from "./const";
+import type { RuntimeAdapter } from "./types";
 
 export function isBodyInit(value: unknown): value is BodyInit {
   return (
@@ -49,25 +49,90 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
   return (value as string) || "";
 }
 
+const globalAny = globalThis as unknown as {
+  __um_ctx: Map<
+    string,
+    {
+      context: Universal.Context;
+      runtime: RuntimeAdapter;
+    }
+  >;
+  __um_reg: FinalizationRegistry<string>;
+};
+
+if (!globalAny.__um_ctx) {
+  globalAny.__um_ctx = new Map();
+}
+
+if (!globalAny.__um_reg) {
+  globalAny.__um_reg = new FinalizationRegistry((uuid) => {
+    console.log("DELETED", uuid);
+    globalAny.__um_ctx.delete(uuid);
+  });
+}
+
+function initRequestUuid<R extends RuntimeAdapter>(lifetime: object, runtime: R) {
+  const uuid = crypto.randomUUID();
+  globalAny.__um_reg.register(lifetime, uuid);
+  globalAny.__um_ctx.set(uuid, {
+    context: {},
+    runtime,
+  });
+  return uuid;
+}
+
 /**
  * @internal
  */
-export function attachContextAndRuntime<C extends Universal.Context, R extends RuntimeAdapter>(
+export function initRequestWeb<R extends RuntimeAdapter>(
   request: Request,
-  ctx: C,
-  runtime?: R,
-): UniversalRequest<C> {
-  (request as UniversalRequest<C, R>)[contextSymbol] = ctx;
-  if (runtime) {
-    (request as UniversalRequest<C, R>)[runtimeSymbol] = runtime;
+  lifetime: object,
+  getRuntime: () => R,
+): void {
+  if (request.headers.has(universalHeaderUuid)) return;
+  const uuid = initRequestUuid(lifetime, getRuntime());
+  console.log("initRequestWeb", "SET UUID", uuid);
+  request.headers.set(universalHeaderUuid, uuid);
+}
+
+/**
+ * @internal
+ */
+export function initRequestNode<R extends RuntimeAdapter>(
+  request: IncomingMessage,
+  lifetime: object,
+  getRuntime: () => R,
+): void {
+  if (typeof request.headers[universalHeaderUuid] === "string") return;
+  const uuid = initRequestUuid(lifetime, getRuntime());
+  console.log("initRequestNode", "SET UUID", uuid);
+  request.headers[universalHeaderUuid] = uuid;
+}
+
+export function getRequestContextAndRuntime<
+  C extends Universal.Context = Universal.Context,
+  R extends RuntimeAdapter = RuntimeAdapter,
+>(request: Request): { context: C; runtime: R } {
+  const uuid = request.headers.get(universalHeaderUuid);
+
+  if (!uuid) {
+    throw new Error(
+      `${universalHeaderUuid} header should be present. Please open an issue at https://github.com/magne4000/universal-middleware/issues`,
+    );
   }
-  return request as UniversalRequest<C, R>;
+
+  const contextRuntime = globalAny.__um_ctx.get(uuid);
+
+  if (!contextRuntime) {
+    throw new Error(
+      "Unable to retrieve the context of current Request. Please open an issue at https://github.com/magne4000/universal-middleware/issues",
+    );
+  }
+
+  return contextRuntime as { context: C; runtime: R };
 }
 
-export function getRequestContext<C extends Universal.Context>(request: Request): C {
-  return (request as UniversalRequest<C>)[contextSymbol] ?? {};
-}
-
-export function getRequestRuntime<R extends RuntimeAdapter>(request: Request): R {
-  return (request as UniversalRequest<Universal.Context, R>)[runtimeSymbol] ?? { adapter: "other", runtime: "other" };
+export function setRequestContext<C extends Universal.Context = Universal.Context>(request: Request, context: C): void {
+  const value = getRequestContextAndRuntime(request);
+  value.context = context;
 }

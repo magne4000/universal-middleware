@@ -33,6 +33,7 @@ interface BundleInfo {
 }
 
 const defaultWrappers = [
+  "generic",
   "hono",
   "express",
   "hattip",
@@ -176,6 +177,13 @@ const typesByServer: Record<
     target?: string;
   }
 > = {
+  generic: {
+    middleware: "UniversalMiddlewareShort",
+    handler: "UniversalHandlerShort",
+    typeHandler: "createGenericHandler",
+    typeMiddleware: "createGenericMiddleware",
+    target: "core",
+  },
   hono: {
     middleware: "HonoMiddleware",
     handler: "HonoHandler",
@@ -249,8 +257,9 @@ import { ${selfImports.join(", ")} } from "@universal-middleware/${info.target ?
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
 type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<infer X> ? unknown extends X ? Universal.Context : X : {};
+type ExtractOutContext<T> = T extends (...args: any[]) => UniversalMiddleware<any, infer X> ? unknown extends X ? unknown : X : unknown;
 export type InContext = ExtractInContext<typeof ${type}>;
-export type OutContext = ${info.outContext?.(type) ?? "unknown"};
+export type OutContext = ${info.outContext?.(type) ?? `ExtractOutContext<typeof ${type}>`};
 export type Args = ExtractT<typeof ${type}>;
 export type Middleware = ReturnType<ReturnType<typeof ${fn}<${generics}>>>;
 export default ${fn}(${type}) as (...args: Args) => Middleware;
