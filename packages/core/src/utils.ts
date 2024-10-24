@@ -71,6 +71,17 @@ if (!globalAny.__um_reg && typeof FinalizationRegistry !== "undefined") {
   });
 }
 
+if (!globalThis.crypto) {
+  // Avoid warning on envs like cloudflare
+  const mod = "node:crypto";
+  Object.defineProperty(globalThis, "crypto", {
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    value: await import(mod).then((crypto) => crypto.webcrypto as any),
+    writable: false,
+    configurable: true,
+  });
+}
+
 function initRequestUuid<R extends RuntimeAdapter>(lifetime: object, runtime: R) {
   const uuid = crypto.randomUUID();
   globalAny.__um_reg?.register(lifetime, uuid);
@@ -85,7 +96,7 @@ function initRequestUuid<R extends RuntimeAdapter>(lifetime: object, runtime: R)
  * @internal
  */
 export function initRequestWeb<R extends RuntimeAdapter>(
-  request: Request,
+  request: Pick<Request, "headers">,
   lifetime: object,
   getRuntime: () => R,
   lifetimeData?: object,
@@ -121,7 +132,7 @@ export function initRequestWeb<R extends RuntimeAdapter>(
  * @internal
  */
 export function initRequestNode<R extends RuntimeAdapter>(
-  request: IncomingMessage,
+  request: Pick<IncomingMessage, "headers">,
   lifetime: object,
   getRuntime: () => R,
 ): void {

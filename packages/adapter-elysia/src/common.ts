@@ -3,7 +3,7 @@ import {
   getAdapterRuntime,
   getRequestContextAndRuntime,
   initRequestWeb,
-  setRequestContext,
+  setRequestContextAndRuntime,
 } from "@universal-middleware/core";
 import { Elysia, type Context as ElysiaContext, type Handler } from "elysia";
 
@@ -56,7 +56,9 @@ export function createMiddleware<
           }
           // Update context
           // elysiaContext.setContext(response);
-          setRequestContext(elysiaContext.request, response);
+          setRequestContextAndRuntime(elysiaContext.request, {
+            context: response,
+          });
         }
       })
       .onAfterHandle({ as: "global" }, async (elysiaContext) => {
