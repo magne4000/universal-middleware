@@ -1,5 +1,10 @@
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { attachContextAndRuntime, getAdapterRuntime } from "@universal-middleware/core";
+import {
+  getAdapterRuntime,
+  getRequestContextAndRuntime,
+  initRequestWeb,
+  setRequestContextAndRuntime,
+} from "@universal-middleware/core";
 import type { Env, ExecutionContext, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
 
 export const contextSymbol = Symbol("unContext");
@@ -34,9 +39,21 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
     const handler = handlerFactory(...args);
 
     return (honoContext) => {
-      const runtime = getRuntime(honoContext);
-      const context = initContext(honoContext, runtime);
-      attachContextAndRuntime(honoContext.req.raw, context, runtime);
+      initRequestWeb(
+        honoContext.req.raw,
+        honoContext,
+        () => getRuntime(honoContext),
+        honoContext.env?.eventContext?.env,
+      );
+      setRequestContextAndRuntime(
+        honoContext.req.raw,
+        {
+          // Update runtime.params
+          runtime: getRuntime(honoContext),
+        },
+        honoContext.env?.eventContext?.env,
+      );
+      const { context, runtime } = getRequestContextAndRuntime(honoContext.req.raw, honoContext.env?.eventContext?.env);
       return handler(honoContext.req.raw, context, runtime);
     };
   };
@@ -54,9 +71,24 @@ export function createMiddleware<
     const middleware = middlewareFactory(...args);
 
     return async (honoContext, next) => {
-      const runtime = getRuntime(honoContext);
-      const context = initContext<InContext>(honoContext, runtime);
-      attachContextAndRuntime(honoContext.req.raw, context, runtime);
+      initRequestWeb(
+        honoContext.req.raw,
+        honoContext,
+        () => getRuntime(honoContext),
+        honoContext.env?.eventContext?.env,
+      );
+      setRequestContextAndRuntime(
+        honoContext.req.raw,
+        {
+          // Update runtime.params
+          runtime: getRuntime(honoContext),
+        },
+        honoContext.env?.eventContext?.env,
+      );
+      const { context, runtime } = getRequestContextAndRuntime<InContext>(
+        honoContext.req.raw,
+        honoContext.env?.eventContext?.env,
+      );
       const response = await middleware(honoContext.req.raw, context, runtime);
 
       if (typeof response === "function") {
@@ -70,8 +102,14 @@ export function createMiddleware<
           return response;
         }
         // Update context
-        setContext(honoContext, response);
-        attachContextAndRuntime(honoContext.req.raw, response);
+        // setContext(honoContext, response);
+        setRequestContextAndRuntime(
+          honoContext.req.raw,
+          {
+            context: response,
+          },
+          honoContext.env?.eventContext?.env,
+        );
         return next();
       } else {
         return next();
