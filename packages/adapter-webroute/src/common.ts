@@ -1,5 +1,10 @@
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { attachContextAndRuntime, getAdapterRuntime } from "@universal-middleware/core";
+import {
+  getAdapterRuntime,
+  getRequestContextAndRuntime,
+  initRequestWeb,
+  setRequestContextAndRuntime,
+} from "@universal-middleware/core";
 import type { DataResult, MiddlewareFn } from "@webroute/middleware";
 import type { RequestCtx } from "@webroute/route";
 
@@ -39,9 +44,13 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
     const handler = handlerFactory(...args);
 
     return async (request, ctx) => {
-      const context = initContext(ctx);
       const runtime = await getRuntime(ctx);
-      attachContextAndRuntime(request, context, runtime);
+      initRequestWeb(request, request, () => runtime);
+      setRequestContextAndRuntime(request, {
+        // Update runtime.params
+        runtime,
+      });
+      const { context } = getRequestContextAndRuntime<InContext>(request);
       return handler(request, context, runtime);
     };
   };
@@ -75,10 +84,21 @@ export function createMiddleware<
     const middleware = middlewareFactory(...args);
 
     return (async (request, ctx) => {
-      const context = initContext(ctx);
       const runtime = await getRuntime(ctx);
-      attachContextAndRuntime(request, context, runtime);
-      return middleware(request, context, runtime);
+      initRequestWeb(request, request, () => runtime);
+      setRequestContextAndRuntime(request, {
+        // Update runtime.params
+        runtime,
+      });
+      const { context } = getRequestContextAndRuntime<InContext>(request);
+      const res = await middleware(request, context, runtime);
+
+      if (res !== null && typeof res === "object" && !(res instanceof Response)) {
+        setRequestContextAndRuntime(request, {
+          context: res,
+        });
+      }
+      return res;
     }) as WebrouteMiddleware<InContext, MiddlewareFactoryDataResult<typeof middlewareFactory>>;
   };
 }
