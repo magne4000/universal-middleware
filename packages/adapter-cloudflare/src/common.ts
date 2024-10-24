@@ -13,24 +13,18 @@ import {
   setRequestContext,
 } from "@universal-middleware/core";
 
-export const contextSymbol = Symbol("unContext");
-
-export type CloudflareHandler<C extends Universal.Context> = {
-  fetch: ExportedHandlerFetchHandler<{
-    [contextSymbol]: C;
-  }>;
+export type CloudflareHandler = {
+  fetch: ExportedHandlerFetchHandler;
 };
 
-export type CloudflarePagesFunction<C extends Universal.Context> = PagesFunction<{
-  [contextSymbol]: C;
-}>;
+export type CloudflarePagesFunction = PagesFunction;
 
 /**
  * Creates a request handler for Cloudflare Worker. Should be used as dist/_worker.js
  */
-export function createHandler<T extends unknown[], C extends Universal.Context>(
+export function createHandler<T extends unknown[]>(
   handlerFactory: Get<T, UniversalHandler>,
-): Get<T, CloudflareHandler<C>> {
+): Get<T, CloudflareHandler> {
   return (...args) => {
     const handler = handlerFactory(...args);
 
@@ -51,17 +45,17 @@ export function createHandler<T extends unknown[], C extends Universal.Context>(
  */
 export function createPagesFunction<T extends unknown[], InContext extends Universal.Context>(
   middlewareFactory: Get<T, UniversalHandler<InContext>>,
-): Get<T, CloudflarePagesFunction<InContext>>;
+): Get<T, CloudflarePagesFunction>;
 export function createPagesFunction<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
->(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, CloudflarePagesFunction<InContext>>;
+>(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, CloudflarePagesFunction>;
 export function createPagesFunction<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
->(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, CloudflarePagesFunction<InContext>> {
+>(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, CloudflarePagesFunction> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
@@ -88,26 +82,6 @@ export function createPagesFunction<
       return await ctx.next();
     };
   };
-}
-
-function initContext<Context extends Universal.Context = Universal.Context>(env: {
-  [contextSymbol]?: Context;
-}): Context {
-  env[contextSymbol] ??= {} as Context;
-  return env[contextSymbol];
-}
-
-export function getContext<Context extends Universal.Context = Universal.Context>(env: {
-  [contextSymbol]: Context;
-}): Context {
-  return env[contextSymbol] as Context;
-}
-
-function setContext<Context extends Universal.Context = Universal.Context>(
-  env: { [contextSymbol]?: Context },
-  value: Context,
-): void {
-  env[contextSymbol] = value;
 }
 
 export function getRuntime(env: unknown, ctx: ExecutionContext): RuntimeAdapter;
