@@ -1,5 +1,5 @@
 import type { IncomingMessage, OutgoingHttpHeaders } from "node:http";
-import { universalHeaderUuid } from "./const";
+import { universalHeaderUuid, universalHeaderUuidSymbol } from "./const";
 import type { RuntimeAdapter } from "./types";
 
 export function isBodyInit(value: unknown): value is BodyInit {
@@ -57,14 +57,14 @@ const globalAny = globalThis as unknown as {
       runtime: RuntimeAdapter;
     }
   >;
-  __um_reg: FinalizationRegistry<string>;
+  __um_reg: FinalizationRegistry<string> | undefined;
 };
 
 if (!globalAny.__um_ctx) {
   globalAny.__um_ctx = new Map();
 }
 
-if (!globalAny.__um_reg) {
+if (!globalAny.__um_reg && typeof FinalizationRegistry !== "undefined") {
   globalAny.__um_reg = new FinalizationRegistry((uuid) => {
     console.log("DELETED", uuid);
     globalAny.__um_ctx.delete(uuid);
@@ -73,7 +73,7 @@ if (!globalAny.__um_reg) {
 
 function initRequestUuid<R extends RuntimeAdapter>(lifetime: object, runtime: R) {
   const uuid = crypto.randomUUID();
-  globalAny.__um_reg.register(lifetime, uuid);
+  globalAny.__um_reg?.register(lifetime, uuid);
   globalAny.__um_ctx.set(uuid, {
     context: {},
     runtime,
@@ -88,11 +88,33 @@ export function initRequestWeb<R extends RuntimeAdapter>(
   request: Request,
   lifetime: object,
   getRuntime: () => R,
+  lifetimeData?: object,
 ): void {
-  if (request.headers.has(universalHeaderUuid)) return;
+  if (
+    request.headers.has(universalHeaderUuid) ||
+    // @ts-expect-error
+    lifetimeData?.[universalHeaderUuidSymbol]
+  )
+    return;
   const uuid = initRequestUuid(lifetime, getRuntime());
   console.log("initRequestWeb", "SET UUID", uuid);
-  request.headers.set(universalHeaderUuid, uuid);
+  try {
+    // This can fail in some environments, like Miniflare (or other tools using undici),
+    // because headers is immutable
+    request.headers.set(universalHeaderUuid, uuid);
+  } catch {
+    Object.defineProperty(request, "headers", {
+      configurable: false,
+      writable: false,
+      enumerable: true,
+      value: new Headers(Array.from(request.headers)),
+    });
+    request.headers.set(universalHeaderUuid, uuid);
+  }
+  if (lifetimeData) {
+    // @ts-expect-error
+    lifetimeData[universalHeaderUuidSymbol] = uuid;
+  }
 }
 
 /**
@@ -112,8 +134,11 @@ export function initRequestNode<R extends RuntimeAdapter>(
 export function getRequestContextAndRuntime<
   C extends Universal.Context = Universal.Context,
   R extends RuntimeAdapter = RuntimeAdapter,
->(request: Request): { context: C; runtime: R } {
-  const uuid = request.headers.get(universalHeaderUuid);
+>(request: Request, lifetimeData?: object): { context: C; runtime: R } {
+  const uuid =
+    request.headers.get(universalHeaderUuid) ??
+    // @ts-expect-error
+    lifetimeData?.[universalHeaderUuidSymbol];
 
   if (!uuid) {
     throw new Error(
@@ -132,7 +157,15 @@ export function getRequestContextAndRuntime<
   return contextRuntime as { context: C; runtime: R };
 }
 
-export function setRequestContext<C extends Universal.Context = Universal.Context>(request: Request, context: C): void {
-  const value = getRequestContextAndRuntime(request);
-  value.context = context;
+export function setRequestContextAndRuntime<
+  C extends Universal.Context = Universal.Context,
+  R extends RuntimeAdapter = RuntimeAdapter,
+>(request: Request, contextRuntime: { context?: C; runtime?: R }, lifetimeData?: object): void {
+  const value = getRequestContextAndRuntime(request, lifetimeData);
+  if (contextRuntime.context) {
+    value.context = contextRuntime.context;
+  }
+  if (contextRuntime.runtime) {
+    value.runtime = contextRuntime.runtime;
+  }
 }

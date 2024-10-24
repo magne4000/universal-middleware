@@ -13,7 +13,7 @@ export {
   initRequestWeb,
   initRequestNode,
   getRequestContextAndRuntime,
-  setRequestContext,
+  setRequestContextAndRuntime,
 } from "./utils.js";
 export { pipe } from "./pipe.js";
 export { createGenericHandler, createGenericMiddleware } from "./common.js";

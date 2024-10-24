@@ -10,7 +10,7 @@ import {
   getAdapterRuntime,
   getRequestContextAndRuntime,
   initRequestWeb,
-  setRequestContext,
+  setRequestContextAndRuntime,
 } from "@universal-middleware/core";
 
 export type CloudflareHandler = {
@@ -60,8 +60,16 @@ export function createPagesFunction<
     const middleware = middlewareFactory(...args);
 
     return async (ctx) => {
-      initRequestWeb(ctx.request as unknown as Request, ctx, () => getRuntime(ctx));
-      const { context, runtime } = getRequestContextAndRuntime<InContext>(ctx.request as unknown as Request);
+      initRequestWeb(ctx.request as unknown as Request, ctx, () => getRuntime(ctx), ctx.env);
+      setRequestContextAndRuntime(
+        ctx.request as unknown as Request,
+        {
+          // Cloudflare pages runtime is not the same in _middleware or in functions
+          runtime: getRuntime(ctx),
+        },
+        ctx.env,
+      );
+      const { context, runtime } = getRequestContextAndRuntime<InContext>(ctx.request as unknown as Request, ctx.env);
       const response = await middleware(ctx.request as unknown as Request, context, runtime);
 
       if (typeof response === "function") {
@@ -74,8 +82,14 @@ export function createPagesFunction<
           return response as unknown as CloudflareResponse;
         }
         // Update context
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        setRequestContext(ctx.request as unknown as Request, response as any);
+        setRequestContextAndRuntime(
+          ctx.request as unknown as Request,
+          {
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            context: response as any,
+          },
+          ctx.env,
+        );
         return await ctx.next();
       }
 
