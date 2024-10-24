@@ -1,6 +1,13 @@
 import type { IncomingMessage } from "node:http";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { attachContextAndRuntime, getAdapterRuntime, isBodyInit, mergeHeadersInto } from "@universal-middleware/core";
+import {
+  getAdapterRuntime,
+  getRequestContextAndRuntime,
+  initRequestNode,
+  isBodyInit,
+  mergeHeadersInto,
+  setRequestContextAndRuntime,
+} from "@universal-middleware/core";
 import { type DecoratedRequest, createRequestAdapter } from "@universal-middleware/express";
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import fp from "fastify-plugin";
@@ -110,11 +117,10 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
     const handler = handlerFactory(...args);
 
     return async (request, reply) => {
-      const ctx = initContext<InContext>(request);
-      const runtime = getRuntime(request, reply);
+      initRequestNode(request.raw, request, () => getRuntime(request, reply));
       const r = requestAdapter(getRawRequest(request));
-      attachContextAndRuntime(r, ctx, runtime);
-      const response = await handler(r, ctx, runtime);
+      const { context, runtime } = getRequestContextAndRuntime<InContext>(r);
+      const response = await handler(r, context, runtime);
 
       if (response) {
         if (!response.body) {
@@ -139,11 +145,10 @@ export function createMiddleware<
 
     return fp(async (instance) => {
       instance.addHook("preHandler", async (request, reply) => {
-        const ctx = initContext<InContext>(request);
-        const runtime = getRuntime(request, reply);
+        initRequestNode(request.raw, request, () => getRuntime(request, reply));
         const r = requestAdapter(getRawRequest(request));
-        attachContextAndRuntime(r, ctx, runtime);
-        const response = await middleware(r, ctx, runtime);
+        const { context, runtime } = getRequestContextAndRuntime<InContext>(r);
+        const response = await middleware(r, context, runtime);
 
         if (!response) {
           return;
@@ -165,8 +170,9 @@ export function createMiddleware<
 
           reply.send(response);
         } else {
-          setContext(request, response);
-          attachContextAndRuntime(r, response);
+          setRequestContextAndRuntime(r, {
+            context: response,
+          });
         }
       });
 
