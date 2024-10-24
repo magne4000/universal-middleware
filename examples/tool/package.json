@@ -276,6 +276,31 @@
       "types": "./dist/middlewares/universal-elysia-middleware-guard.middleware.d.ts",
       "import": "./dist/middlewares/universal-elysia-middleware-guard.middleware.js",
       "default": "./dist/middlewares/universal-elysia-middleware-guard.middleware.js"
+    },
+    "./dummy-handler-generic": {
+      "types": "./dist/handlers/universal-generic-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-generic-handler-handler.js",
+      "default": "./dist/handlers/universal-generic-handler-handler.js"
+    },
+    "./params-handler-generic": {
+      "types": "./dist/handlers/universal-generic-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-generic-handler-params.handler.js",
+      "default": "./dist/handlers/universal-generic-handler-params.handler.js"
+    },
+    "./middlewares/context-middleware-generic": {
+      "types": "./dist/middlewares/universal-generic-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-generic-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-generic-middleware-context.middleware.js"
+    },
+    "./middlewares/headers-middleware-generic": {
+      "types": "./dist/middlewares/universal-generic-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-generic-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-generic-middleware-headers.middleware.js"
+    },
+    "./middlewares/guard-middleware-generic": {
+      "types": "./dist/middlewares/universal-generic-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-generic-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-generic-middleware-guard.middleware.js"
     }
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
@@ -297,14 +322,14 @@
     "universal-middleware": "workspace:*"
   },
   "optionalDependencies": {
-    "@universal-middleware/cloudflare": "^0.2.6",
-    "@universal-middleware/express": "^0.2.9",
-    "@universal-middleware/fastify": "^0.3.6",
-    "@universal-middleware/h3": "^0.2.8",
-    "@universal-middleware/hattip": "^0.2.10",
-    "@universal-middleware/hono": "^0.2.12",
-    "@universal-middleware/webroute": "^0.2.8",
-    "@universal-middleware/elysia": "^0.2.2"
+    "@universal-middleware/cloudflare": "^0",
+    "@universal-middleware/elysia": "^0",
+    "@universal-middleware/express": "^0",
+    "@universal-middleware/fastify": "^0",
+    "@universal-middleware/h3": "^0",
+    "@universal-middleware/hattip": "^0",
+    "@universal-middleware/hono": "^0",
+    "@universal-middleware/webroute": "^0"
   },
   "sideEffects": false
 }

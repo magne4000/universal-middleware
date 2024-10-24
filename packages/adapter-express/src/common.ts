@@ -1,7 +1,12 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Socket } from "node:net";
 import type { Awaitable, Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import {
+  getAdapterRuntime,
+  getRequestContextAndRuntime,
+  initRequestNode,
+  setRequestContextAndRuntime,
+} from "@universal-middleware/core";
 import { type NodeRequestAdapterOptions, createRequestAdapter } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
 
@@ -70,11 +75,16 @@ export function createHandler<T extends unknown[]>(
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return async (req, res, next) => {
+    return async function universalHandler(req, res, next) {
       try {
-        req[contextSymbol] ??= {};
+        initRequestNode(req, req, () => getRuntime(req, res));
         const request = requestAdapter(req);
-        const response = await handler(request, req[contextSymbol], getRuntime(req, res));
+        setRequestContextAndRuntime(request, {
+          // Update runtime.params
+          runtime: getRuntime(req, res),
+        });
+        const { context, runtime } = getRequestContextAndRuntime(request);
+        const response = await handler(request, context, runtime);
 
         await sendResponse(response, res);
       } catch (error) {
@@ -114,9 +124,10 @@ export function createMiddleware<
 
     return async function universalMiddleware(req, res, next) {
       try {
-        req[contextSymbol] ??= {} as OutContext;
+        initRequestNode(req, req, () => getRuntime(req, res));
         const request = requestAdapter(req);
-        const response = await middleware(request, getContext(req), getRuntime(req, res));
+        const { context, runtime } = getRequestContextAndRuntime<InContext>(request);
+        const response = await middleware(request, context, runtime);
 
         if (!response) {
           return next?.();
@@ -136,7 +147,9 @@ export function createMiddleware<
         if (response instanceof Response) {
           await sendResponse(response, res);
         } else {
-          req[contextSymbol] = response;
+          setRequestContextAndRuntime(request, {
+            context: response,
+          });
           return next?.();
         }
       } catch (error) {

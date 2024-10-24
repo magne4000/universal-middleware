@@ -80,7 +80,7 @@ export function runTests(runs: Run[], options: Options) {
       }
     }, 30_000);
 
-    options.vitest.test("middlewares", { retry: 3, timeout: 30_000 }, async () => {
+    options.vitest.test("middlewares", { timeout: 30_000 }, async () => {
       const response = await fetch(host);
       const body = JSON.parse(await response.text());
       options.vitest.expect(response.status).toBe(200);
@@ -100,7 +100,7 @@ export function runTests(runs: Run[], options: Options) {
       await options?.test?.(response, body, run);
     });
 
-    options.vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {
+    options.vitest.test("route param handler", { timeout: 30_000 }, async () => {
       const response = await fetch(`${host}/user/magne4000`);
       const body = await response.text();
       options.vitest.expect(response.status).toBe(200);
@@ -108,7 +108,7 @@ export function runTests(runs: Run[], options: Options) {
     });
 
     if (options?.testPost) {
-      options.vitest.test("post", { retry: 3, timeout: 30_000 }, async () => {
+      options.vitest.test("post", { timeout: 30_000 }, async () => {
         const response = await fetch(`${host}/post`, {
           method: "POST",
           body: JSON.stringify({ something: true }),

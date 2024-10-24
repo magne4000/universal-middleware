@@ -1,7 +1,12 @@
 import type { RequestHandler } from "@hattip/compose";
 import type { AdapterRequestContext, HattipHandler } from "@hattip/core";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import {
+  getAdapterRuntime,
+  getRequestContextAndRuntime,
+  initRequestWeb,
+  setRequestContextAndRuntime,
+} from "@universal-middleware/core";
 
 export const contextSymbol = Symbol("unContext");
 
@@ -21,9 +26,14 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return (context) => {
-      const ctx = initContext(context);
-      return handler(context.request, ctx, getRuntime(context));
+    return (ctx) => {
+      initRequestWeb(ctx.request, ctx, () => getRuntime(ctx));
+      setRequestContextAndRuntime(ctx.request, {
+        // Update runtime.params
+        runtime: getRuntime(ctx),
+      });
+      const { context, runtime } = getRequestContextAndRuntime(ctx.request);
+      return handler(ctx.request, context, runtime);
     };
   };
 }
@@ -39,12 +49,13 @@ export function createMiddleware<
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
-    return async (context) => {
-      const ctx = initContext<InContext>(context);
-      const response = await middleware(context.request, ctx, getRuntime(context));
+    return async (ctx) => {
+      initRequestWeb(ctx.request, ctx, () => getRuntime(ctx));
+      const { context, runtime } = getRequestContextAndRuntime<InContext>(ctx.request);
+      const response = await middleware(ctx.request, context, runtime);
 
       if (typeof response === "function") {
-        const res = await context.next();
+        const res = await ctx.next();
         return response(res);
       }
       if (response !== null && typeof response === "object") {
@@ -53,7 +64,10 @@ export function createMiddleware<
         }
 
         // Update context
-        context[contextSymbol] = response;
+        // context[contextSymbol] = response;
+        setRequestContextAndRuntime(ctx.request, {
+          context: response,
+        });
       }
     };
   };

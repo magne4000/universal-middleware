@@ -6,7 +6,16 @@ declare global {
 
 export type * from "./types.js";
 export { getAdapterRuntime } from "./adapter.js";
-export { mergeHeadersInto, nodeHeadersToWeb, isBodyInit } from "./utils.js";
+export {
+  mergeHeadersInto,
+  nodeHeadersToWeb,
+  isBodyInit,
+  initRequestWeb,
+  initRequestNode,
+  getRequestContextAndRuntime,
+  setRequestContextAndRuntime,
+} from "./utils.js";
 export { pipe } from "./pipe.js";
+export { createGenericHandler, createGenericMiddleware } from "./common.js";
 export { params } from "./route.js";
 export { env } from "./env.js";

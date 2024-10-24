@@ -1,5 +1,10 @@
 import type { Awaitable, Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import {
+  getAdapterRuntime,
+  getRequestContextAndRuntime,
+  initRequestWeb,
+  setRequestContextAndRuntime,
+} from "@universal-middleware/core";
 import { Elysia, type Context as ElysiaContext, type Handler } from "elysia";
 
 export const contextSymbol = Symbol("unContext");
@@ -17,18 +22,10 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
     const handler = handlerFactory(...args);
 
     return ((elysiaContext) => {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      let context = (elysiaContext as any)[contextSymbol];
+      initRequestWeb(elysiaContext.request, elysiaContext, () => getRuntime(elysiaContext));
+      const { context, runtime } = getRequestContextAndRuntime(elysiaContext.request);
 
-      if (!context) {
-        Object.defineProperty(elysiaContext, contextSymbol, {
-          value: {},
-        });
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        context = (elysiaContext as any)[contextSymbol];
-      }
-
-      return handler(elysiaContext.request, context, getRuntime(elysiaContext));
+      return handler(elysiaContext.request, context, runtime);
     }) satisfies ElysiaHandler;
   };
 }
@@ -47,7 +44,9 @@ export function createMiddleware<
     return new Elysia()
       .use(initPlugin<InContext>())
       .onBeforeHandle({ as: "global" }, async (elysiaContext) => {
-        const response = await middleware(elysiaContext.request, elysiaContext.getContext(), getRuntime(elysiaContext));
+        initRequestWeb(elysiaContext.request, elysiaContext, () => getRuntime(elysiaContext));
+        const { context, runtime } = getRequestContextAndRuntime<InContext>(elysiaContext.request);
+        const response = await middleware(elysiaContext.request, context, runtime);
 
         if (typeof response === "function") {
           elysiaContext[pendingSymbol].push(response);
@@ -56,7 +55,10 @@ export function createMiddleware<
             return response;
           }
           // Update context
-          elysiaContext.setContext(response);
+          // elysiaContext.setContext(response);
+          setRequestContextAndRuntime(elysiaContext.request, {
+            context: response,
+          });
         }
       })
       .onAfterHandle({ as: "global" }, async (elysiaContext) => {

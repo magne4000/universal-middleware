@@ -1,4 +1,6 @@
-import type { OutgoingHttpHeaders } from "node:http";
+import type { IncomingMessage, OutgoingHttpHeaders } from "node:http";
+import { universalHeaderUuid, universalHeaderUuidSymbol } from "./const";
+import type { RuntimeAdapter } from "./types";
 
 export function isBodyInit(value: unknown): value is BodyInit {
   return (
@@ -45,4 +47,146 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
     return value.join(", ");
   }
   return (value as string) || "";
+}
+
+const globalAny = globalThis as unknown as {
+  __um_ctx: Map<
+    string,
+    {
+      context: Universal.Context;
+      runtime: RuntimeAdapter;
+    }
+  >;
+  __um_reg: FinalizationRegistry<string> | undefined;
+};
+
+if (!globalAny.__um_ctx) {
+  globalAny.__um_ctx = new Map();
+}
+
+if (!globalAny.__um_reg && typeof FinalizationRegistry !== "undefined") {
+  globalAny.__um_reg = new FinalizationRegistry((uuid) => {
+    console.log("DELETED", uuid);
+    globalAny.__um_ctx.delete(uuid);
+  });
+}
+
+if (!globalThis.crypto) {
+  // Avoid warning on envs like cloudflare
+  const mod = "node:crypto";
+  Object.defineProperty(globalThis, "crypto", {
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    value: await import(mod).then((crypto) => crypto.webcrypto as any),
+    writable: false,
+    configurable: true,
+  });
+}
+
+function initRequestUuid<R extends RuntimeAdapter>(lifetime: object, runtime: R) {
+  const uuid = crypto.randomUUID();
+  globalAny.__um_reg?.register(lifetime, uuid);
+  globalAny.__um_ctx.set(uuid, {
+    context: {},
+    runtime,
+  });
+  return uuid;
+}
+
+/**
+ * @internal
+ */
+export function initRequestWeb<R extends RuntimeAdapter>(
+  request: Pick<Request, "headers">,
+  lifetime: object,
+  getRuntime: () => R,
+  lifetimeData?: object,
+): void {
+  if (
+    request.headers.has(universalHeaderUuid) ||
+    // @ts-expect-error
+    lifetimeData?.[universalHeaderUuidSymbol]
+  )
+    return;
+  const uuid = initRequestUuid(lifetime, getRuntime());
+  console.log("initRequestWeb", "SET UUID", uuid);
+  try {
+    // This can fail in some environments, like Miniflare (or other tools using undici),
+    // because headers is immutable
+    request.headers.set(universalHeaderUuid, uuid);
+  } catch {
+    Object.defineProperty(request, "headers", {
+      configurable: false,
+      writable: false,
+      enumerable: true,
+      value: new Headers(Array.from(request.headers)),
+    });
+    request.headers.set(universalHeaderUuid, uuid);
+  }
+  if (lifetimeData) {
+    // @ts-expect-error
+    lifetimeData[universalHeaderUuidSymbol] = uuid;
+  }
+}
+
+/**
+ * @internal
+ */
+export function initRequestNode<R extends RuntimeAdapter>(
+  request: Pick<IncomingMessage, "headers">,
+  lifetime: object,
+  getRuntime: () => R,
+  lifetimeData?: object,
+): void {
+  if (
+    typeof request.headers[universalHeaderUuid] === "string" ||
+    // @ts-expect-error
+    lifetimeData?.[universalHeaderUuidSymbol]
+  )
+    return;
+  const uuid = initRequestUuid(lifetime, getRuntime());
+  console.log("initRequestNode", "SET UUID", uuid);
+  request.headers[universalHeaderUuid] = uuid;
+  if (lifetimeData) {
+    // @ts-expect-error
+    lifetimeData[universalHeaderUuidSymbol] = uuid;
+  }
+}
+
+export function getRequestContextAndRuntime<
+  C extends Universal.Context = Universal.Context,
+  R extends RuntimeAdapter = RuntimeAdapter,
+>(request: Request, lifetimeData?: object): { context: C; runtime: R } {
+  const uuid =
+    request.headers.get(universalHeaderUuid) ??
+    // @ts-expect-error
+    lifetimeData?.[universalHeaderUuidSymbol];
+
+  if (!uuid) {
+    throw new Error(
+      `${universalHeaderUuid} header should be present. Please open an issue at https://github.com/magne4000/universal-middleware/issues`,
+    );
+  }
+
+  const contextRuntime = globalAny.__um_ctx.get(uuid);
+
+  if (!contextRuntime) {
+    throw new Error(
+      "Unable to retrieve the context of current Request. Please open an issue at https://github.com/magne4000/universal-middleware/issues",
+    );
+  }
+
+  return contextRuntime as { context: C; runtime: R };
+}
+
+export function setRequestContextAndRuntime<
+  C extends Universal.Context = Universal.Context,
+  R extends RuntimeAdapter = RuntimeAdapter,
+>(request: Request, contextRuntime: { context?: C; runtime?: R }, lifetimeData?: object): void {
+  const value = getRequestContextAndRuntime(request, lifetimeData);
+  if (contextRuntime.context) {
+    value.context = contextRuntime.context;
+  }
+  if (contextRuntime.runtime) {
+    value.runtime = contextRuntime.runtime;
+  }
 }

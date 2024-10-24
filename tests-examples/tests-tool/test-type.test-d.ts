@@ -1,6 +1,7 @@
 import handler from "@universal-middleware-examples/tool/dummy-handler";
 import expressHandler from "@universal-middleware-examples/tool/dummy-handler-express";
 import fastifyHandler from "@universal-middleware-examples/tool/dummy-handler-fastify";
+import genericHandler from "@universal-middleware-examples/tool/dummy-handler-generic";
 import h3Handler from "@universal-middleware-examples/tool/dummy-handler-h3";
 import hattipHandler from "@universal-middleware-examples/tool/dummy-handler-hattip";
 import honoHandler from "@universal-middleware-examples/tool/dummy-handler-hono";
@@ -8,6 +9,7 @@ import webrouteHandler from "@universal-middleware-examples/tool/dummy-handler-w
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
 import expressContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-express";
 import fastifyContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-fastify";
+import genericContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-generic";
 import h3ContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-h3";
 import hattipContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hattip";
 import honoContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hono";
@@ -15,11 +17,17 @@ import webrouteContextMiddleware from "@universal-middleware-examples/tool/middl
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware";
 import expressHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-express";
 import fastifyHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-fastify";
+import genericHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-generic";
 import h3HeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-h3";
 import hattipHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hattip";
 import honoHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hono";
 import webrouteHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-webroute";
-import type { UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type {
+  UniversalHandler,
+  UniversalHandlerShort,
+  UniversalMiddleware,
+  UniversalMiddlewareShort,
+} from "@universal-middleware/core";
 import type { NodeHandler, NodeMiddleware } from "@universal-middleware/express";
 import type { FastifyHandler, FastifyMiddleware } from "@universal-middleware/fastify";
 import type { H3Handler, H3Middleware } from "@universal-middleware/h3";
@@ -35,7 +43,7 @@ test("hono", () => {
 });
 
 test("express", () => {
-  expectTypeOf(expressContextMiddleware).returns.toEqualTypeOf<NodeMiddleware>();
+  expectTypeOf(expressContextMiddleware).returns.toEqualTypeOf<NodeMiddleware<{ hello: string }>>();
   expectTypeOf(expressHeadersMiddleware).returns.toEqualTypeOf<NodeMiddleware>();
   expectTypeOf(expressHandler).returns.toEqualTypeOf<NodeHandler>();
 });
@@ -70,8 +78,14 @@ test("h3", () => {
   expectTypeOf(h3Handler).returns.toEqualTypeOf<H3Handler>();
 });
 
-test("generic", () => {
+test("universal", () => {
   expectTypeOf(contextMiddleware).returns.toEqualTypeOf<(req: Request, ctx: Universal.Context) => { hello: string }>();
   expectTypeOf(headersMiddleware).returns.toMatchTypeOf<UniversalMiddleware<{ hello?: string }>>();
   expectTypeOf(handler).returns.toEqualTypeOf<UniversalHandler>();
+});
+
+test("generic", () => {
+  expectTypeOf(genericContextMiddleware).returns.toEqualTypeOf<UniversalMiddlewareShort<{ hello: string }>>();
+  expectTypeOf(genericHeadersMiddleware).returns.toMatchTypeOf<UniversalMiddlewareShort>();
+  expectTypeOf(genericHandler).returns.toEqualTypeOf<UniversalHandlerShort>();
 });

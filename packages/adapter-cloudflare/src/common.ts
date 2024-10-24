@@ -6,33 +6,33 @@ import type {
   PagesFunction,
 } from "@cloudflare/workers-types";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import {
+  getAdapterRuntime,
+  getRequestContextAndRuntime,
+  initRequestWeb,
+  setRequestContextAndRuntime,
+} from "@universal-middleware/core";
 
-export const contextSymbol = Symbol("unContext");
-
-export type CloudflareHandler<C extends Universal.Context> = {
-  fetch: ExportedHandlerFetchHandler<{
-    [contextSymbol]: C;
-  }>;
+export type CloudflareHandler = {
+  fetch: ExportedHandlerFetchHandler;
 };
 
-export type CloudflarePagesFunction<C extends Universal.Context> = PagesFunction<{
-  [contextSymbol]: C;
-}>;
+export type CloudflarePagesFunction = PagesFunction;
 
 /**
  * Creates a request handler for Cloudflare Worker. Should be used as dist/_worker.js
  */
-export function createHandler<T extends unknown[], C extends Universal.Context>(
+export function createHandler<T extends unknown[]>(
   handlerFactory: Get<T, UniversalHandler>,
-): Get<T, CloudflareHandler<C>> {
+): Get<T, CloudflareHandler> {
   return (...args) => {
     const handler = handlerFactory(...args);
 
     return {
       async fetch(request, env, ctx) {
-        const universalContext = initContext<C>(env);
-        const response = await handler(request as unknown as Request, universalContext, getRuntime(env, ctx));
+        initRequestWeb(request as unknown as Request, request, () => getRuntime(env, ctx));
+        const { context, runtime } = getRequestContextAndRuntime(request as unknown as Request);
+        const response = await handler(request as unknown as Request, context, runtime);
 
         return response as unknown as CloudflareResponse;
       },
@@ -45,26 +45,35 @@ export function createHandler<T extends unknown[], C extends Universal.Context>(
  */
 export function createPagesFunction<T extends unknown[], InContext extends Universal.Context>(
   middlewareFactory: Get<T, UniversalHandler<InContext>>,
-): Get<T, CloudflarePagesFunction<InContext>>;
+): Get<T, CloudflarePagesFunction>;
 export function createPagesFunction<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
->(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, CloudflarePagesFunction<InContext>>;
+>(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, CloudflarePagesFunction>;
 export function createPagesFunction<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
->(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, CloudflarePagesFunction<InContext>> {
+>(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, CloudflarePagesFunction> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
-    return async (context) => {
-      const universalContext = initContext<InContext>(context.env);
-      const response = await middleware(context.request as unknown as Request, universalContext, getRuntime(context));
+    return async (ctx) => {
+      initRequestWeb(ctx.request as unknown as Request, ctx, () => getRuntime(ctx), ctx.env);
+      setRequestContextAndRuntime(
+        ctx.request as unknown as Request,
+        {
+          // Cloudflare pages runtime is not the same in _middleware or in functions
+          runtime: getRuntime(ctx),
+        },
+        ctx.env,
+      );
+      const { context, runtime } = getRequestContextAndRuntime<InContext>(ctx.request as unknown as Request, ctx.env);
+      const response = await middleware(ctx.request as unknown as Request, context, runtime);
 
       if (typeof response === "function") {
-        const cloudflareResponse = await context.next();
+        const cloudflareResponse = await ctx.next();
         const res = await response(cloudflareResponse as unknown as Response);
         return (res ?? cloudflareResponse) as unknown as CloudflareResponse;
       }
@@ -73,34 +82,20 @@ export function createPagesFunction<
           return response as unknown as CloudflareResponse;
         }
         // Update context
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        setContext(context.env, response as any);
-        return await context.next();
+        setRequestContextAndRuntime(
+          ctx.request as unknown as Request,
+          {
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            context: response as any,
+          },
+          ctx.env,
+        );
+        return await ctx.next();
       }
 
-      return await context.next();
+      return await ctx.next();
     };
   };
-}
-
-function initContext<Context extends Universal.Context = Universal.Context>(env: {
-  [contextSymbol]?: Context;
-}): Context {
-  env[contextSymbol] ??= {} as Context;
-  return env[contextSymbol];
-}
-
-export function getContext<Context extends Universal.Context = Universal.Context>(env: {
-  [contextSymbol]: Context;
-}): Context {
-  return env[contextSymbol] as Context;
-}
-
-function setContext<Context extends Universal.Context = Universal.Context>(
-  env: { [contextSymbol]?: Context },
-  value: Context,
-): void {
-  env[contextSymbol] = value;
 }
 
 export function getRuntime(env: unknown, ctx: ExecutionContext): RuntimeAdapter;
