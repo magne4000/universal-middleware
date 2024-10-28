@@ -70,7 +70,7 @@
     "@universal-middleware/hattip": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
     "@universal-middleware/webroute": "workspace:*",
-    "oxc-transform": "^0.32.0",
+    "oxc-transform": "^0.34.0",
     "package-up": "^5.0.0",
     "unplugin": "^1.14.1"
   },
@@ -80,7 +80,7 @@
     "@swc/core": "catalog:",
     "esbuild": "^0.24.0",
     "rimraf": "catalog:",
-    "rollup": "^4.24.0",
+    "rollup": "^4.24.2",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
@@ -89,8 +89,8 @@
   "peerDependencies": {
     "@rollup/plugin-node-resolve": "^15.3.0",
     "esbuild": "^0.24.0",
-    "rollup": "^4.24.0",
-    "vite": ">=5.4.9"
+    "rollup": "^4.24.2",
+    "vite": ">=5.4.10"
   },
   "peerDependenciesMeta": {
     "rollup": {

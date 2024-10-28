@@ -16,8 +16,8 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "catalog:",
-    "playwright": "^1.48.1",
-    "turbo": "^2.2.1",
+    "playwright": "^1.48.2",
+    "turbo": "^2.2.3",
     "typescript": "^5.6.3"
   },
   "pnpm": {

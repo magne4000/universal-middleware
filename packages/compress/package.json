@@ -18,7 +18,7 @@
   "devDependencies": {
     "@universal-middleware/core": "workspace:*",
     "@swc/core": "catalog:",
-    "@types/bun": "^1.1.11",
+    "@types/bun": "^1.1.12",
     "@types/node": "catalog:",
     "rimraf": "catalog:",
     "tsup": "catalog:",
