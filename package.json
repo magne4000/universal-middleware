@@ -24,13 +24,13 @@
     "overrides": {
       "@universal-middleware/cloudflare": "link:./packages/adapter-cloudflare",
       "@universal-middleware/core": "link:./packages/core",
+      "@universal-middleware/elysia": "link:./packages/adapter-elysia",
       "@universal-middleware/express": "link:./packages/adapter-express",
       "@universal-middleware/fastify": "link:./packages/adapter-fastify",
       "@universal-middleware/h3": "link:./packages/adapter-h3",
       "@universal-middleware/hattip": "link:./packages/adapter-hattip",
       "@universal-middleware/hono": "link:./packages/adapter-hono",
       "@universal-middleware/webroute": "link:./packages/adapter-webroute",
-      "@universal-middleware/elysia": "link:./packages/adapter-elysia",
       "@webroute/middleware": "^0.10.0",
       "esbuild": "^0.24.0",
       "universal-middleware": "link:./packages/universal-middleware"

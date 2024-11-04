@@ -70,7 +70,7 @@
     "@universal-middleware/hattip": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
     "@universal-middleware/webroute": "workspace:*",
-    "oxc-transform": "^0.34.0",
+    "oxc-transform": "^0.35.0",
     "package-up": "^5.0.0",
     "unplugin": "^1.15.0"
   },
