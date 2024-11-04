@@ -72,7 +72,7 @@
     "@universal-middleware/webroute": "workspace:*",
     "oxc-transform": "^0.34.0",
     "package-up": "^5.0.0",
-    "unplugin": "^1.14.1"
+    "unplugin": "^1.15.0"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.3.0",
@@ -80,7 +80,7 @@
     "@swc/core": "catalog:",
     "esbuild": "^0.24.0",
     "rimraf": "catalog:",
-    "rollup": "^4.24.2",
+    "rollup": "^4.24.4",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
@@ -89,7 +89,7 @@
   "peerDependencies": {
     "@rollup/plugin-node-resolve": "^15.3.0",
     "esbuild": "^0.24.0",
-    "rollup": "^4.24.2",
+    "rollup": "^4.24.4",
     "vite": ">=5.4.10"
   },
   "peerDependenciesMeta": {
