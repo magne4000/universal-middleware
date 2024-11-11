@@ -33,6 +33,6 @@
     "hono": "catalog:",
     "typescript": "catalog:",
     "universal-middleware": "workspace:*",
-    "vitepress": "^1.4.5"
+    "vitepress": "^1.5.0"
   }
 }

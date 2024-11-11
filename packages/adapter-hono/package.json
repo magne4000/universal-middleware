@@ -27,7 +27,7 @@
     "@universal-middleware/core": "workspace:^"
   },
   "devDependencies": {
-    "@hono/node-server": "^1.13.5",
+    "@hono/node-server": "^1.13.6",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
