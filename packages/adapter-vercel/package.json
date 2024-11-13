@@ -1,0 +1,51 @@
+{
+  "name": "@universal-middleware/vercel",
+  "version": "0.2.6",
+  "type": "module",
+  "description": "Vercel adapter for universal middlewares",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "repository": "https://github.com/magne4000/universal-middleware",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsup",
+    "dev": "tsup --watch",
+    "prepack": "pnpm build",
+    "test:run-vercel:node": "vercel dev",
+    "test": "vitest run",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@universal-middleware/core": "workspace:^",
+    "@universal-middleware/express": "workspace:^"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@types/node": "catalog:",
+    "@universal-middleware/tests": "workspace:*",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vercel": "^38.0.0",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "vercel",
+    "universal-middleware",
+    "middleware",
+    "handlers",
+    "server-adapters",
+    "vercel-middleware",
+    "universal-server",
+    "context-middleware",
+    "request-handling"
+  ]
+}
