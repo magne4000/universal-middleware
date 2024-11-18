@@ -297,14 +297,14 @@
     "universal-middleware": "workspace:*"
   },
   "optionalDependencies": {
-    "@universal-middleware/cloudflare": "^0",
-    "@universal-middleware/elysia": "^0",
-    "@universal-middleware/express": "^0",
-    "@universal-middleware/fastify": "^0",
-    "@universal-middleware/h3": "^0",
-    "@universal-middleware/hattip": "^0",
-    "@universal-middleware/hono": "^0",
-    "@universal-middleware/webroute": "^0"
+    "@universal-middleware/cloudflare": "^0.2.6",
+    "@universal-middleware/elysia": "^0.2.2",
+    "@universal-middleware/express": "^0.2.9",
+    "@universal-middleware/fastify": "^0.3.6",
+    "@universal-middleware/h3": "^0.2.8",
+    "@universal-middleware/hattip": "^0.2.10",
+    "@universal-middleware/hono": "^0.2.12",
+    "@universal-middleware/webroute": "^0.2.8"
   },
   "sideEffects": false
 }
