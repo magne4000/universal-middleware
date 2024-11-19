@@ -6,6 +6,8 @@ import fastifyHandler from "@universal-middleware-examples/tool/dummy-handler-fa
 import h3Handler from "@universal-middleware-examples/tool/dummy-handler-h3";
 import hattipHandler from "@universal-middleware-examples/tool/dummy-handler-hattip";
 import honoHandler from "@universal-middleware-examples/tool/dummy-handler-hono";
+import vercelEdgeHandler from "@universal-middleware-examples/tool/dummy-handler-vercel-edge";
+import vercelNodeHandler from "@universal-middleware-examples/tool/dummy-handler-vercel-node";
 import webrouteHandler from "@universal-middleware-examples/tool/dummy-handler-webroute";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
 import cloudflarePagesContextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-cloudflare-pages";
@@ -30,6 +32,7 @@ import type { FastifyHandler, FastifyMiddleware } from "@universal-middleware/fa
 import type { H3Handler, H3Middleware } from "@universal-middleware/h3";
 import type { HattipHandler, HattipMiddleware } from "@universal-middleware/hattip";
 import type { HonoHandler, HonoMiddleware } from "@universal-middleware/hono";
+import type { VercelEdgeHandler, VercelNodeHandler } from "@universal-middleware/vercel";
 import type { WebrouteHandler, WebrouteMiddleware } from "@universal-middleware/webroute";
 import { expectTypeOf, test } from "vitest";
 
@@ -83,6 +86,14 @@ test("cloudflare-pages", () => {
 
 test("cloudflare-worker", () => {
   expectTypeOf(cloudflareWorkerHandler).returns.toEqualTypeOf<CloudflareHandler<Universal.Context>>();
+});
+
+test("vercel-edge", () => {
+  expectTypeOf(vercelEdgeHandler).returns.toEqualTypeOf<VercelEdgeHandler>();
+});
+
+test("vercel-node", () => {
+  expectTypeOf(vercelNodeHandler).returns.toEqualTypeOf<VercelNodeHandler>();
 });
 
 test("generic", () => {
