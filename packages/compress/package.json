@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/compress",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "description": "Universal compress middleware",
   "files": [
@@ -41,15 +41,15 @@
     "h3-middleware"
   ],
   "optionalDependencies": {
-    "@universal-middleware/cloudflare": "^0",
-    "@universal-middleware/elysia": "^0",
-    "@universal-middleware/express": "^0",
-    "@universal-middleware/fastify": "^0",
-    "@universal-middleware/h3": "^0",
-    "@universal-middleware/hattip": "^0",
-    "@universal-middleware/hono": "^0",
-    "@universal-middleware/webroute": "^0",
-    "@universal-middleware/vercel": "^0"
+    "@universal-middleware/cloudflare": "^1.0.0",
+    "@universal-middleware/elysia": "^0.2.3",
+    "@universal-middleware/express": "^0.2.10",
+    "@universal-middleware/fastify": "^0.3.7",
+    "@universal-middleware/h3": "^0.2.9",
+    "@universal-middleware/hattip": "^1.0.0",
+    "@universal-middleware/hono": "^0.2.13",
+    "@universal-middleware/webroute": "^0.2.9",
+    "@universal-middleware/vercel": "^1.0.0"
   },
   "exports": {
     ".": {

@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.2.2](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.1...compress-v0.2.2) (2024-11-19)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @universal-middleware/core bumped to 1.0.0
+    * universal-middleware bumped to 0.3.10-beta
+  * optionalDependencies
+    * @universal-middleware/cloudflare bumped from ^0 to ^1.0.0
+    * @universal-middleware/elysia bumped from ^0 to ^0.2.3
+    * @universal-middleware/express bumped from ^0 to ^0.2.10
+    * @universal-middleware/fastify bumped from ^0 to ^0.3.7
+    * @universal-middleware/h3 bumped from ^0 to ^0.2.9
+    * @universal-middleware/hattip bumped from ^0 to ^1.0.0
+    * @universal-middleware/hono bumped from ^0 to ^0.2.13
+    * @universal-middleware/webroute bumped from ^0 to ^0.2.9
+    * @universal-middleware/vercel bumped from ^0 to ^1.0.0
+
 ## [0.2.1](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.0...compress-v0.2.1) (2024-10-16)
 
 

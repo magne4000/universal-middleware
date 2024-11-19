@@ -7,6 +7,27 @@
 
 
 
+## 1.0.0 (2024-11-19)
+
+
+### Features
+
+* access route parameters ([#29](https://github.com/magne4000/universal-middleware/issues/29)) ([3a7d500](https://github.com/magne4000/universal-middleware/commit/3a7d500abe579f1d2387de038a7a437091be9e0d))
+* adapter-cloudflare ([#23](https://github.com/magne4000/universal-middleware/issues/23)) ([e6129e3](https://github.com/magne4000/universal-middleware/commit/e6129e35bce87af34d45ed361140fb69ed822ffa))
+* add env() helper ([#32](https://github.com/magne4000/universal-middleware/issues/32)) ([9fc051f](https://github.com/magne4000/universal-middleware/commit/9fc051f6423aac20a5a3c676893c88f9813a3069))
+* add req and res to hattip runtime ([5b88b72](https://github.com/magne4000/universal-middleware/commit/5b88b72bdd822569f2ec2740fb308b5fd55f6ceb))
+* Add support for Fastify ([#17](https://github.com/magne4000/universal-middleware/issues/17)) ([fcd2fdd](https://github.com/magne4000/universal-middleware/commit/fcd2fdd14f04022621f997d6655442dc77a4d9b0))
+* getContext returns Context without undefined ([1ba2692](https://github.com/magne4000/universal-middleware/commit/1ba269265d162863cd866f80ee4cd1b190c864ad))
+* hattip adapter ([#11](https://github.com/magne4000/universal-middleware/issues/11)) ([a8f3aa1](https://github.com/magne4000/universal-middleware/commit/a8f3aa1b25f25c6530982866fb7afbbfc5e6ca97))
+* **hattip:** add getRuntime helper ([96a164b](https://github.com/magne4000/universal-middleware/commit/96a164b02180b5de2e46f7fef3f6837d67a3a02d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 1.0.0
+
 ## [0.2.9](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hattip@0.2.8...@universal-middleware/hattip@0.2.9) (2024-10-09)
 
 
@@ -139,6 +160,3 @@
 ### Features
 
 * hattip adapter ([#11](https://github.com/magne4000/universal-handler/issues/11)) ([a8f3aa1](https://github.com/magne4000/universal-handler/commit/a8f3aa1b25f25c6530982866fb7afbbfc5e6ca97))
-
-
-

@@ -2,6 +2,25 @@
 
 
 
+## 1.0.0 (2024-11-19)
+
+
+### Features
+
+* access route parameters ([#29](https://github.com/magne4000/universal-middleware/issues/29)) ([3a7d500](https://github.com/magne4000/universal-middleware/commit/3a7d500abe579f1d2387de038a7a437091be9e0d))
+* adapter-cloudflare ([#23](https://github.com/magne4000/universal-middleware/issues/23)) ([e6129e3](https://github.com/magne4000/universal-middleware/commit/e6129e35bce87af34d45ed361140fb69ed822ffa))
+* add env() helper ([#32](https://github.com/magne4000/universal-middleware/issues/32)) ([9fc051f](https://github.com/magne4000/universal-middleware/commit/9fc051f6423aac20a5a3c676893c88f9813a3069))
+* **cloudflare:** add getRuntime helper ([ac20190](https://github.com/magne4000/universal-middleware/commit/ac20190583b41a80573bf9b7b7f13495b8de8462))
+* elysia adapter ([#39](https://github.com/magne4000/universal-middleware/issues/39)) ([348a7fd](https://github.com/magne4000/universal-middleware/commit/348a7fd8cb832aecd24f955d24ee076abf069bd7))
+* getContext returns Context without undefined ([f3f0977](https://github.com/magne4000/universal-middleware/commit/f3f0977781da43131ad6b60bc63a25d913d8758c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 1.0.0
+
 ## [0.2.5](https://github.com/magne4000/universal-handler/compare/@universal-middleware/cloudflare@0.2.4...@universal-middleware/cloudflare@0.2.5) (2024-10-08)
 
 
@@ -49,6 +68,3 @@
 ### Features
 
 * adapter-cloudflare ([#23](https://github.com/magne4000/universal-handler/issues/23)) ([e6129e3](https://github.com/magne4000/universal-handler/commit/e6129e35bce87af34d45ed361140fb69ed822ffa))
-
-
-

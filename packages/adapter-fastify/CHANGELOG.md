@@ -2,6 +2,16 @@
 
 
 
+## [0.3.7](https://github.com/magne4000/universal-middleware/compare/fastify-v0.3.6...fastify-v0.3.7) (2024-11-19)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 1.0.0
+    * @universal-middleware/express bumped to 0.2.10
+
 ## 0.3.6 (2024-10-15)
 
 

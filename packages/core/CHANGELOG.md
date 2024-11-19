@@ -2,6 +2,30 @@
 
 
 
+## 1.0.0 (2024-11-19)
+
+
+### Features
+
+* access route parameters ([#29](https://github.com/magne4000/universal-middleware/issues/29)) ([3a7d500](https://github.com/magne4000/universal-middleware/commit/3a7d500abe579f1d2387de038a7a437091be9e0d))
+* adapter-cloudflare ([#23](https://github.com/magne4000/universal-middleware/issues/23)) ([e6129e3](https://github.com/magne4000/universal-middleware/commit/e6129e35bce87af34d45ed361140fb69ed822ffa))
+* add env() helper ([#32](https://github.com/magne4000/universal-middleware/issues/32)) ([9fc051f](https://github.com/magne4000/universal-middleware/commit/9fc051f6423aac20a5a3c676893c88f9813a3069))
+* add req and res to h3 runtime ([495424b](https://github.com/magne4000/universal-middleware/commit/495424b349209ef9b77fe4c5ace117633f3fc740))
+* add req and res to hattip runtime ([5b88b72](https://github.com/magne4000/universal-middleware/commit/5b88b72bdd822569f2ec2740fb308b5fd55f6ceb))
+* add req and res to hono runtime ([c441d95](https://github.com/magne4000/universal-middleware/commit/c441d954c2dcf6a37a1f6865f7c0df27dcff5325))
+* cookie helpers using tough-cookie ([#36](https://github.com/magne4000/universal-middleware/issues/36)) ([4ee350b](https://github.com/magne4000/universal-middleware/commit/4ee350b97bee459adceb36ddba2b2fb126a74e9f))
+* elysia adapter ([#39](https://github.com/magne4000/universal-middleware/issues/39)) ([348a7fd](https://github.com/magne4000/universal-middleware/commit/348a7fd8cb832aecd24f955d24ee076abf069bd7))
+* h3 ([#18](https://github.com/magne4000/universal-middleware/issues/18)) ([74a774d](https://github.com/magne4000/universal-middleware/commit/74a774deaf56e60ee6be13d2e78f132bdcbe7b9c))
+* hono adapter ([#10](https://github.com/magne4000/universal-middleware/issues/10)) ([044bc66](https://github.com/magne4000/universal-middleware/commit/044bc6608851c3f3d3a68dc413e3c769fa22647c))
+* pipe universal middlewares ([#19](https://github.com/magne4000/universal-middleware/issues/19)) ([c13e8f5](https://github.com/magne4000/universal-middleware/commit/c13e8f54634f352a07be3d9e56b4776613ccbda5))
+
+
+### Bug Fixes
+
+* core types for middleware returning empty context ([ed0c33f](https://github.com/magne4000/universal-middleware/commit/ed0c33fb9bcf011de55cdc1b22dd83e2135811f3))
+* core types for middleware returning empty context ([781fb15](https://github.com/magne4000/universal-middleware/commit/781fb153263feb3fcb68cb7a530db23ba89784c7))
+* UniversalMiddleware type fix. Fixes [#26](https://github.com/magne4000/universal-middleware/issues/26) ([99feb35](https://github.com/magne4000/universal-middleware/commit/99feb35526015ab63583d625ade1b4413025e4e6))
+
 ## [0.2.12](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.11...@universal-middleware/core@0.2.12) (2024-10-08)
 
 
@@ -166,6 +190,3 @@
 
 
 ## 0.1.1 (2024-07-12)
-
-
-

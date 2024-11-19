@@ -2,6 +2,26 @@
 
 
 
+## [0.3.10-beta](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.3.9...universal-middleware-v0.3.10-beta) (2024-11-19)
+
+
+### Bug Fixes
+
+* cloudflare types ([cd54f5f](https://github.com/magne4000/universal-middleware/commit/cd54f5f3673e310d0b2c097a2f751c764cbc8069))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/cloudflare bumped to 1.0.0
+    * @universal-middleware/core bumped to 1.0.0
+    * @universal-middleware/express bumped to 0.2.10
+    * @universal-middleware/fastify bumped to 0.3.7
+    * @universal-middleware/hattip bumped to 1.0.0
+    * @universal-middleware/hono bumped to 0.2.13
+    * @universal-middleware/webroute bumped to 0.2.9
+
 ## 0.3.9 (2024-10-15)
 
 
