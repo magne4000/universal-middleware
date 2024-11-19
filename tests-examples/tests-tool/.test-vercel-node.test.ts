@@ -1,6 +1,8 @@
 import { testRun } from "./.testRun";
 
-testRun("pnpm run dev:vercel", 23008, {
+const token = process.env.VERCEL_TOKEN ? ` --token=${process.env.VERCEL_TOKEN}` : "";
+
+testRun(`pnpm run dev:vercel${token}`, 23008, {
   serverIsReadyMessage: "Local:",
   portCommand: "--listen",
   prefix: "/api/node",

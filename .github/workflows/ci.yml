@@ -77,3 +77,5 @@ jobs:
       - name: Run tests
         if: ${{ matrix.os != 'windows-latest' }}
         run: pnpm run test
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
