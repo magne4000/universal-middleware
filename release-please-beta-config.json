@@ -55,11 +55,6 @@
       "prerelease-type": "beta",
       "versioning": "prerelease"
     },
-    "packages/compress": {
-      "prerelease": true,
-      "prerelease-type": "beta",
-      "versioning": "prerelease"
-    },
     "packages/core": {
       "prerelease": true,
       "prerelease-type": "beta",
