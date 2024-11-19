@@ -1,24 +1,24 @@
 on:
-  push:
+  pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
   pull-requests: write
 
-name: release-please
+name: release-please-beta
 
 jobs:
-  release-please:
+  release-please-beta:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
         with:
-          config-file: release-please-config.json
+          config-file: release-please-beta-config.json
           manifest-file: .release-please-manifest.json
-          target-branch: ${{ github.ref_name }}
 
       - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.releases_created }}
@@ -40,7 +40,7 @@ jobs:
       - run: pnpm run build
         if: ${{ steps.release.outputs.releases_created }}
 
-      - run: pnpm publish --access public --no-git-checks -r
+      - run: pnpm publish --tag beta --access public --no-git-checks -r
         if: ${{ steps.release.outputs.releases_created }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

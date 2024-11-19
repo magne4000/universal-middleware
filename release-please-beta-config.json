@@ -4,6 +4,9 @@
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "plugins": ["node-workspace"],
+  "prerelease": true,
+  "prerelease-type": "beta",
+  "versioning": "prerelease",
   "packages": {
     "packages/adapter-cloudflare": {},
     "packages/adapter-elysia": {},
