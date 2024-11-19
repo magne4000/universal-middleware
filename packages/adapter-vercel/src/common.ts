@@ -51,7 +51,9 @@ export function getRuntime(request: Request | IncomingMessage, response?: Server
   return getAdapterRuntime(
     "hono",
     {
-      params: routeMatches ? Object.fromEntries(new URLSearchParams(routeMatches).entries()) : {},
+      params: Object.fromEntries(
+        new URLSearchParams(routeMatches ?? new URL(request.url ?? "", "http://localhost").search).entries(),
+      ),
     },
     response
       ? {

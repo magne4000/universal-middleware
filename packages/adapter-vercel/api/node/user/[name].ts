@@ -3,14 +3,7 @@ import { middlewares, routeParamHandler } from "@universal-middleware/tests/util
 import { createNodeHandler } from "../../../src/index.js";
 
 const pipedHandler = createNodeHandler(() =>
-  pipe(
-    middlewares[0](),
-    middlewares[1](),
-    middlewares[2](),
-    routeParamHandler({
-      route: "/api/node/user/:name",
-    }),
-  ),
+  pipe(middlewares[0](), middlewares[1](), middlewares[2](), routeParamHandler()),
 )();
 
 export default pipedHandler;
