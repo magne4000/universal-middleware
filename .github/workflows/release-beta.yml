@@ -21,6 +21,7 @@ jobs:
         with:
           config-file: release-please-beta-config.json
           manifest-file: .release-please-manifest.json
+          target-branch: ${{ github.head_ref || github.ref_name }}
 
       - uses: pnpm/action-setup@v4
         if: ${{ steps.release.outputs.releases_created }}
