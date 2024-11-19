@@ -10,17 +10,65 @@
   "prerelease-type": "beta",
   "versioning": "prerelease",
   "packages": {
-    "packages/adapter-cloudflare": {},
-    "packages/adapter-elysia": {},
-    "packages/adapter-express": {},
-    "packages/adapter-fastify": {},
-    "packages/adapter-h3": {},
-    "packages/adapter-hattip": {},
-    "packages/adapter-hono": {},
-    "packages/adapter-vercel": {},
-    "packages/adapter-webroute": {},
-    "packages/compress": {},
-    "packages/core": {},
-    "packages/universal-middleware": {}
+    "packages/adapter-cloudflare": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-elysia": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-express": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-fastify": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-h3": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-hattip": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-hono": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-vercel": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-webroute": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/compress": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/core": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/universal-middleware": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    }
   }
 }
