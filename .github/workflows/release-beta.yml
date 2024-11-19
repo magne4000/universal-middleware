@@ -3,6 +3,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "CI tests"
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -13,6 +18,8 @@ name: release-please-beta
 jobs:
   release-please-beta:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -22,25 +29,3 @@ jobs:
           config-file: release-please-beta-config.json
           manifest-file: .release-please-manifest.json
           target-branch: ${{ github.head_ref || github.ref_name }}
-
-      - uses: pnpm/action-setup@v4
-        if: ${{ steps.release.outputs.releases_created }}
-
-      - name: Setup Node
-        if: ${{ steps.release.outputs.releases_created }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: "https://registry.npmjs.org"
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm i
-
-      - run: pnpm run build
-        if: ${{ steps.release.outputs.releases_created }}
-
-      - run: pnpm publish --tag beta --access public --no-git-checks -r
-        if: ${{ steps.release.outputs.releases_created }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
