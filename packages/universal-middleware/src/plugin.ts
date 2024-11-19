@@ -210,12 +210,14 @@ const typesByServer: Record<
   "cloudflare-worker": {
     handler: "CloudflareHandler",
     target: "cloudflare",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   "cloudflare-pages": {
     middleware: "CloudflarePagesFunction",
     handler: "CloudflarePagesFunction",
     typeHandler: "createPagesFunction",
     typeMiddleware: "createPagesFunction",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
     target: "cloudflare",
   },
   "vercel-edge": {
