@@ -14,14 +14,13 @@ jobs:
   release-please-beta:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - uses: googleapis/release-please-action@v4
         id: release
         with:
           config-file: release-please-beta-config.json
           manifest-file: .release-please-manifest.json
-
-      - uses: actions/checkout@v4
-        if: ${{ steps.release.outputs.releases_created }}
 
       - uses: pnpm/action-setup@v4
         if: ${{ steps.release.outputs.releases_created }}
