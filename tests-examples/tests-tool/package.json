@@ -37,6 +37,7 @@
     "@universal-middleware/h3": "workspace:*",
     "@universal-middleware/hattip": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
+    "@universal-middleware/vercel": "workspace:*",
     "@universal-middleware/webroute": "workspace:*",
     "elysia": "catalog:",
     "express": "catalog:",

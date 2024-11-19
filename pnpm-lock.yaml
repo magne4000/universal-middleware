@@ -64,6 +64,7 @@ overrides:
   '@universal-middleware/h3': link:./packages/adapter-h3
   '@universal-middleware/hattip': link:./packages/adapter-hattip
   '@universal-middleware/hono': link:./packages/adapter-hono
+  '@universal-middleware/vercel': link:./packages/adapter-vercel
   '@universal-middleware/webroute': link:./packages/adapter-webroute
   '@webroute/middleware': ^0.10.0
   esbuild: ^0.24.0
@@ -177,6 +178,9 @@ importers:
       '@universal-middleware/hono':
         specifier: link:../../packages/adapter-hono
         version: link:../../packages/adapter-hono
+      '@universal-middleware/vercel':
+        specifier: link:../../packages/adapter-vercel
+        version: link:../../packages/adapter-vercel
       '@universal-middleware/webroute':
         specifier: link:../../packages/adapter-webroute
         version: link:../../packages/adapter-webroute
@@ -637,6 +641,9 @@ importers:
       '@universal-middleware/hono':
         specifier: link:../adapter-hono
         version: link:../adapter-hono
+      '@universal-middleware/vercel':
+        specifier: link:../adapter-vercel
+        version: link:../adapter-vercel
       '@universal-middleware/webroute':
         specifier: link:../adapter-webroute
         version: link:../adapter-webroute
@@ -854,6 +861,9 @@ importers:
       '@universal-middleware/hono':
         specifier: link:../../packages/adapter-hono
         version: link:../../packages/adapter-hono
+      '@universal-middleware/vercel':
+        specifier: link:../../packages/adapter-vercel
+        version: link:../../packages/adapter-vercel
       '@universal-middleware/webroute':
         specifier: link:../../packages/adapter-webroute
         version: link:../../packages/adapter-webroute
@@ -3486,6 +3496,9 @@ packages:
   path-to-regexp@6.1.0:
     resolution: {integrity: sha512-h9DqehX3zZZDCEm+xbfU0ZmwCGFCAAraPJWMXJ4+v32NjZJilVg3k1TcKsRgIb8IQ/izZSaydDc1OhJCZvs2Dw==}
 
+  path-to-regexp@6.2.1:
+    resolution: {integrity: sha512-JLyh7xT1kizaEvcaXOQwOc2/Yhw6KZOvPf1S8401UyLk86CU79LN3vl7ztXGm/pZ+YjoyAJ4rxmHwbkBXJX+yw==}
+
   path-to-regexp@6.3.0:
     resolution: {integrity: sha512-Yhpw4T9C6hPpgPeA28us07OJeqZ5EzQTkbfwuhsUg0c237RomFoETJgmp2sa3F/41gfLE6G5cqcYwznmeEeOlQ==}
 
@@ -5525,7 +5538,7 @@ snapshots:
       esbuild: 0.24.0
       etag: 1.8.1
       node-fetch: 2.6.9
-      path-to-regexp: 6.3.0
+      path-to-regexp: 6.2.1
       ts-morph: 12.0.0
       ts-node: 10.9.2(@swc/core@1.9.2)(@types/node@16.18.11)(typescript@5.6.3)
       typescript: 5.6.3
@@ -7317,6 +7330,8 @@ snapshots:
       isarray: 0.0.1
 
   path-to-regexp@6.1.0: {}
+
+  path-to-regexp@6.2.1: {}
 
   path-to-regexp@6.3.0: {}
 

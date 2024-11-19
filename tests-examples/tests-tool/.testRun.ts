@@ -3,7 +3,7 @@ import { expect, fetch, getServerUrl, run, test } from "@brillout/test-e2e";
 type RunOptions = Parameters<typeof run>[1];
 
 export function testRun(
-  cmd: `pnpm run dev:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia"}${string}`,
+  cmd: `pnpm run dev:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia" | "vercel"}${string}`,
   port: number,
   options?: RunOptions,
 ) {

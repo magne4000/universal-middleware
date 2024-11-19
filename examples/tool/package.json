@@ -276,6 +276,56 @@
       "types": "./dist/middlewares/universal-elysia-middleware-guard.middleware.d.ts",
       "import": "./dist/middlewares/universal-elysia-middleware-guard.middleware.js",
       "default": "./dist/middlewares/universal-elysia-middleware-guard.middleware.js"
+    },
+    "./dummy-handler-vercel-edge": {
+      "types": "./dist/handlers/universal-vercel-edge-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-vercel-edge-handler-handler.js",
+      "default": "./dist/handlers/universal-vercel-edge-handler-handler.js"
+    },
+    "./dummy-handler-vercel-node": {
+      "types": "./dist/handlers/universal-vercel-node-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-vercel-node-handler-handler.js",
+      "default": "./dist/handlers/universal-vercel-node-handler-handler.js"
+    },
+    "./params-handler-vercel-edge": {
+      "types": "./dist/handlers/universal-vercel-edge-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-vercel-edge-handler-params.handler.js",
+      "default": "./dist/handlers/universal-vercel-edge-handler-params.handler.js"
+    },
+    "./params-handler-vercel-node": {
+      "types": "./dist/handlers/universal-vercel-node-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-vercel-node-handler-params.handler.js",
+      "default": "./dist/handlers/universal-vercel-node-handler-params.handler.js"
+    },
+    "./middlewares/context-middleware-vercel-edge": {
+      "types": "./dist/middlewares/universal-vercel-edge-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-vercel-edge-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-vercel-edge-middleware-context.middleware.js"
+    },
+    "./middlewares/context-middleware-vercel-node": {
+      "types": "./dist/middlewares/universal-vercel-node-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-vercel-node-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-vercel-node-middleware-context.middleware.js"
+    },
+    "./middlewares/headers-middleware-vercel-edge": {
+      "types": "./dist/middlewares/universal-vercel-edge-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-vercel-edge-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-vercel-edge-middleware-headers.middleware.js"
+    },
+    "./middlewares/headers-middleware-vercel-node": {
+      "types": "./dist/middlewares/universal-vercel-node-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-vercel-node-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-vercel-node-middleware-headers.middleware.js"
+    },
+    "./middlewares/guard-middleware-vercel-edge": {
+      "types": "./dist/middlewares/universal-vercel-edge-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-vercel-edge-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-vercel-edge-middleware-guard.middleware.js"
+    },
+    "./middlewares/guard-middleware-vercel-node": {
+      "types": "./dist/middlewares/universal-vercel-node-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-vercel-node-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-vercel-node-middleware-guard.middleware.js"
     }
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
@@ -304,7 +354,8 @@
     "@universal-middleware/h3": "^0",
     "@universal-middleware/hattip": "^0",
     "@universal-middleware/hono": "^0",
-    "@universal-middleware/webroute": "^0"
+    "@universal-middleware/webroute": "^0",
+    "@universal-middleware/vercel": "^0"
   },
   "sideEffects": false
 }

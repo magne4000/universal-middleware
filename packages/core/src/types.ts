@@ -126,8 +126,8 @@ export interface CloudflareWorkerAdapter {
   params: undefined;
 }
 
-export interface VercelWebAdapter {
-  adapter: "vercel-web";
+export interface VercelEdgeAdapter {
+  adapter: "vercel-edge";
   params: Record<string, string> | undefined;
 }
 
@@ -160,7 +160,7 @@ export type Adapter =
   | H3Adapter
   | CloudflarePagesAdapter
   | CloudflareWorkerAdapter
-  | VercelWebAdapter
+  | VercelEdgeAdapter
   | VercelNodeAdapter
   | ElysiaAdapter
   | WebrouteAdapter

@@ -49,7 +49,7 @@ export function getRuntime(request: Request | IncomingMessage, response?: Server
       : (request.headers["x-now-route-matches"] as string | undefined);
 
   return getAdapterRuntime(
-    request instanceof Request ? "vercel-web" : "vercel-node",
+    request instanceof Request ? "vercel-edge" : "vercel-node",
     {
       params: Object.fromEntries(
         new URLSearchParams(routeMatches ?? new URL(request.url ?? "", "http://localhost").search).entries(),

@@ -30,6 +30,7 @@
       "@universal-middleware/h3": "link:./packages/adapter-h3",
       "@universal-middleware/hattip": "link:./packages/adapter-hattip",
       "@universal-middleware/hono": "link:./packages/adapter-hono",
+      "@universal-middleware/vercel": "link:./packages/adapter-vercel",
       "@universal-middleware/webroute": "link:./packages/adapter-webroute",
       "@webroute/middleware": "^0.10.0",
       "esbuild": "^0.24.0",

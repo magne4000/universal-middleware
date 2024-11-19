@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
-import { build, type BuildResult } from "esbuild";
-import plugin from "../src/esbuild";
 import { join } from "node:path";
+import { type BuildResult, build } from "esbuild";
+import { describe, expect, it } from "vitest";
+import plugin from "../src/esbuild";
 import { adapters, options } from "./common";
 
 describe("esbuild", () => {
@@ -328,7 +328,7 @@ function testEsbuildOutput(
   file: string,
 ) {
   for (const adapter of adapters) {
-    if (adapter === "cloudflare-pages" || adapter === "cloudflare-worker") {
+    if (adapter.startsWith("cloudflare-") || adapter.startsWith("vercel-")) {
       continue;
     }
     testEsbuildHandler(result, type, adapter, file);
