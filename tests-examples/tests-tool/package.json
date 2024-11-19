@@ -15,6 +15,7 @@
     "dev:elysia": "bun --bun src/elysia-entry.ts",
     "dev:pages": "wrangler pages dev",
     "dev:worker": "wrangler dev src/cloudflare-worker-entry.ts",
+    "dev:vercel": "vercel dev",
     "test:e2e": "test-e2e",
     "test:types": "vitest --typecheck",
     "test": "run-s \"test:types run\" test:e2e",
@@ -50,6 +51,7 @@
     "playwright": "^1.48.2",
     "rimraf": "catalog:",
     "typescript": "catalog:",
+    "vercel": "^38.0.0",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
