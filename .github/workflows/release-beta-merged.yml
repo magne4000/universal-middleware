@@ -10,7 +10,7 @@ permissions:
 name: release-please-beta-merge
 
 jobs:
-  release-please-beta:
+  release-please-beta-merge:
     runs-on: ubuntu-latest
 
     steps:
