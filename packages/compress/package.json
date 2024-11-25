@@ -19,11 +19,11 @@
     "@swc/core": "catalog:",
     "@types/bun": "^1.1.13",
     "@types/node": "catalog:",
-    "@universal-middleware/core": "workspace:*",
+    "@universal-middleware/core": "workspace:^",
     "rimraf": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",
-    "universal-middleware": "workspace:*",
+    "universal-middleware": "workspace:^",
     "vite": "catalog:",
     "vitest": "catalog:"
   },
