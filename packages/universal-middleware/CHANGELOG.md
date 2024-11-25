@@ -2,6 +2,13 @@
 
 
 
+## [0.3.10-beta.1](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.3.10-beta...universal-middleware-v0.3.10-beta.1) (2024-11-25)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#58](https://github.com/magne4000/universal-middleware/issues/58)) ([24d5fc3](https://github.com/magne4000/universal-middleware/commit/24d5fc3bafb0ef3b00c0eb8067d7acb86a67d079))
+
 ## [0.3.10-beta](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.3.9...universal-middleware-v0.3.10-beta) (2024-11-19)
 
 
