@@ -1,5 +1,12 @@
-import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import type {
+  Get,
+  RuntimeAdapter,
+  SetThisHandler,
+  SetThisMiddleware,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "@universal-middleware/core";
+import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import type { Env, ExecutionContext, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
 
 export const contextSymbol = Symbol.for("unContext");
@@ -15,8 +22,8 @@ interface UniversalEnv {
   };
 }
 
-export type HonoHandler = Handler<UniversalEnv>;
-export type HonoMiddleware = MiddlewareHandler<UniversalEnv>;
+export type HonoHandler = SetThisHandler<Handler<UniversalEnv>>;
+export type HonoMiddleware = SetThisMiddleware<MiddlewareHandler<UniversalEnv>>;
 
 function getExecutionCtx(honoContext: HonoContext): ExecutionContext | undefined {
   try {
@@ -33,10 +40,11 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return (honoContext) => {
+    return bindUniversal(handler, function universalHandlerHono(honoContext) {
       const context = initContext(honoContext);
-      return handler(honoContext.req.raw, context, getRuntime(honoContext));
-    };
+
+      return this[universalSymbol](honoContext.req.raw, context, getRuntime(honoContext));
+    });
   };
 }
 
@@ -51,10 +59,10 @@ export function createMiddleware<
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
-    return async (honoContext, next) => {
+    return bindUniversal(middleware, async function universalMiddlewareHono(honoContext, next) {
       const context = initContext<InContext>(honoContext);
 
-      const response = await middleware(honoContext.req.raw, context, getRuntime(honoContext));
+      const response = await this[universalSymbol](honoContext.req.raw, context, getRuntime(honoContext));
 
       if (typeof response === "function") {
         await next();
@@ -72,7 +80,7 @@ export function createMiddleware<
       } else {
         return next();
       }
-    };
+    });
   };
 }
 
