@@ -16,9 +16,9 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "catalog:",
-    "playwright": "^1.48.2",
-    "turbo": "^2.3.0",
-    "typescript": "^5.6.3"
+    "playwright": "^1.49.0",
+    "turbo": "^2.3.1",
+    "typescript": "^5.7.2"
   },
   "pnpm": {
     "overrides": {
