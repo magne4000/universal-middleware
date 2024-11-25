@@ -1,4 +1,6 @@
 import type { OutgoingHttpHeaders } from "node:http";
+import { universalSymbol } from "./const";
+import type { AnyFn, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
 
 export function isBodyInit(value: unknown): value is BodyInit {
   return (
@@ -45,4 +47,15 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
     return value.join(", ");
   }
   return (value as string) || "";
+}
+
+/**
+ * @internal
+ */
+export function bindUniversal<U extends UniversalHandler<any> | UniversalMiddleware<any, any>, F extends AnyFn>(
+  universal: U,
+  fn: NoInfer<F>,
+): UniversalFn<U, F> {
+  const self = { [universalSymbol]: universal };
+  return fn.bind(self) as UniversalFn<U, F>;
 }

@@ -1,7 +1,21 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Server as BunServer } from "bun";
+import type { universalSymbol } from "./const";
+
+// Helpers
 
 export type Awaitable<T> = T | Promise<T>;
+
+export type AnyFn = (...args: any[]) => any;
+
+export type SetThis<F extends AnyFn, This> = (this: This, ...args: Parameters<F>) => ReturnType<F>;
+
+export type UniversalFn<U extends UniversalHandler | UniversalMiddleware, F extends AnyFn> = F & {
+  [universalSymbol]: U;
+};
+
+export type SetThisHandler<F extends AnyFn> = SetThis<F, { [universalSymbol]: UniversalHandler }>;
+export type SetThisMiddleware<F extends AnyFn> = SetThis<F, { [universalSymbol]: UniversalMiddleware }>;
 
 // Runtimes
 
