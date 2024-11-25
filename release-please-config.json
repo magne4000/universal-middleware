@@ -1,4 +1,5 @@
 {
+  "$schema": "./node_modules/release-please/schemas/config.json",
   "bootstrap-sha": "527b50a83f1f17f5f358485e2ec6ddf8b7e07007",
   "release-type": "node",
   "bump-minor-pre-major": true,
@@ -12,6 +13,7 @@
     "packages/adapter-h3": {},
     "packages/adapter-hattip": {},
     "packages/adapter-hono": {},
+    "packages/adapter-vercel": {},
     "packages/adapter-webroute": {},
     "packages/compress": {},
     "packages/core": {},

@@ -15,6 +15,7 @@
     "dev:elysia": "bun --bun src/elysia-entry.ts",
     "dev:pages": "wrangler pages dev",
     "dev:worker": "wrangler dev src/cloudflare-worker-entry.ts",
+    "dev:vercel": "vercel dev",
     "test:e2e": "test-e2e",
     "test:types": "vitest --typecheck",
     "test": "run-s \"test:types run\" test:e2e",
@@ -37,6 +38,7 @@
     "@universal-middleware/h3": "workspace:*",
     "@universal-middleware/hattip": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
+    "@universal-middleware/vercel": "workspace:*",
     "@universal-middleware/webroute": "workspace:*",
     "elysia": "catalog:",
     "express": "catalog:",
@@ -49,6 +51,7 @@
     "playwright": "^1.49.0",
     "rimraf": "catalog:",
     "typescript": "catalog:",
+    "vercel": "^38.0.0",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"

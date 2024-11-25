@@ -41,6 +41,8 @@ const defaultWrappers = [
   "h3",
   "cloudflare-worker",
   "cloudflare-pages",
+  "vercel-edge",
+  "vercel-node",
   "elysia",
 ] as const;
 const externals = [
@@ -52,6 +54,7 @@ const externals = [
   "@universal-middleware/h3",
   "@universal-middleware/cloudflare",
   "@universal-middleware/elysia",
+  "@universal-middleware/vercel",
 ];
 const namespace = "virtual:universal-middleware";
 const versionRange = "^0";
@@ -207,13 +210,25 @@ const typesByServer: Record<
   "cloudflare-worker": {
     handler: "CloudflareHandler",
     target: "cloudflare",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   "cloudflare-pages": {
     middleware: "CloudflarePagesFunction",
     handler: "CloudflarePagesFunction",
     typeHandler: "createPagesFunction",
     typeMiddleware: "createPagesFunction",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
     target: "cloudflare",
+  },
+  "vercel-edge": {
+    handler: "VercelEdgeHandler",
+    typeHandler: "createEdgeHandler",
+    target: "vercel",
+  },
+  "vercel-node": {
+    handler: "VercelNodeHandler",
+    typeHandler: "createNodeHandler",
+    target: "vercel",
   },
   elysia: {
     handler: "ElysiaHandler",

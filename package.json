@@ -17,6 +17,7 @@
     "@biomejs/biome": "^1.9.4",
     "@types/node": "catalog:",
     "playwright": "^1.49.0",
+    "release-please": "^16.15.0",
     "turbo": "^2.3.1",
     "typescript": "^5.7.2"
   },
@@ -30,10 +31,13 @@
       "@universal-middleware/h3": "link:./packages/adapter-h3",
       "@universal-middleware/hattip": "link:./packages/adapter-hattip",
       "@universal-middleware/hono": "link:./packages/adapter-hono",
+      "@universal-middleware/vercel": "link:./packages/adapter-vercel",
       "@universal-middleware/webroute": "link:./packages/adapter-webroute",
       "@webroute/middleware": "^0.10.0",
       "esbuild": "^0.24.0",
-      "universal-middleware": "link:./packages/universal-middleware"
+      "universal-middleware": "link:./packages/universal-middleware",
+      "@vercel/node>ts-node": "^10.9.2",
+      "@vercel/node>typescript": "catalog:"
     }
   },
   "packageManager": "pnpm@9.7.1"

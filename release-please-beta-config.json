@@ -1,0 +1,69 @@
+{
+  "$schema": "./node_modules/release-please/schemas/config.json",
+  "bootstrap-sha": "527b50a83f1f17f5f358485e2ec6ddf8b7e07007",
+  "release-type": "node",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+
+  "plugins": ["node-workspace"],
+  "prerelease": true,
+  "prerelease-type": "beta",
+  "versioning": "prerelease",
+  "packages": {
+    "packages/adapter-cloudflare": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-elysia": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-express": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-fastify": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-h3": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-hattip": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-hono": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-vercel": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/adapter-webroute": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/core": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    },
+    "packages/universal-middleware": {
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
+    }
+  }
+}

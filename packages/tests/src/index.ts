@@ -14,6 +14,7 @@ export interface Options {
   vitest: typeof import("vitest");
   test?: (response: Response, body: Record<string, unknown>, run: Run) => void | Promise<void>;
   testPost?: boolean;
+  prefix?: string;
 }
 
 declare global {
@@ -81,7 +82,7 @@ export function runTests(runs: Run[], options: Options) {
     }, 30_000);
 
     options.vitest.test("middlewares", { retry: 3, timeout: 30_000 }, async () => {
-      const response = await fetch(host);
+      const response = await fetch(`${host}${options.prefix ?? ""}`);
       const body = JSON.parse(await response.text());
       options.vitest.expect(response.status).toBe(200);
       options.vitest.expect(body).toEqual({
@@ -101,7 +102,7 @@ export function runTests(runs: Run[], options: Options) {
     });
 
     options.vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {
-      const response = await fetch(`${host}/user/magne4000`);
+      const response = await fetch(`${host}${options.prefix ?? ""}/user/magne4000`);
       const body = await response.text();
       options.vitest.expect(response.status).toBe(200);
       options.vitest.expect(body).toBe("User name is: magne4000");
@@ -109,7 +110,7 @@ export function runTests(runs: Run[], options: Options) {
 
     if (options?.testPost) {
       options.vitest.test("post", { retry: 3, timeout: 30_000 }, async () => {
-        const response = await fetch(`${host}/post`, {
+        const response = await fetch(`${host}${options.prefix ?? ""}/post`, {
           method: "POST",
           body: JSON.stringify({ something: true }),
         });

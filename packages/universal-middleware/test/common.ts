@@ -9,6 +9,8 @@ export const adapters = [
   "h3",
   "cloudflare-pages",
   "cloudflare-worker",
+  "vercel-edge",
+  "vercel-node",
   "elysia",
 ] as const;
 
