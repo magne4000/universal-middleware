@@ -4,7 +4,7 @@ import typescript from "@rollup/plugin-typescript";
 import { type OutputChunk, type RollupOutput, rollup } from "rollup";
 import { describe, expect, it } from "vitest";
 import plugin from "../src/rollup";
-import { adapters, expectNbOutput, options } from "./common";
+import { adapters, expectNbOutput, noMiddlewaresSupport, options } from "./common";
 
 describe("rollup", () => {
   it("generates all server files (string input)", options, async () => {
@@ -59,14 +59,16 @@ describe("rollup", () => {
           doNotEditPackageJson: true,
           dts: false,
           buildEnd(report) {
-            expect(report).toHaveLength(expectNbOutput(2));
+            expect(report).toHaveLength(expectNbOutput(1, 1));
             const exports = report.map((r) => r.exports);
 
             expect(exports).toContain("./h-handler");
             expect(exports).toContain("./m-middleware");
             for (const adapter of adapters) {
               expect(exports).toContain(`./h-handler-${adapter}`);
-              expect(exports).toContain(`./m-middleware-${adapter}`);
+              if (!noMiddlewaresSupport.includes(adapter)) {
+                expect(exports).toContain(`./m-middleware-${adapter}`);
+              }
             }
           },
         }),
@@ -82,7 +84,7 @@ describe("rollup", () => {
 
     const gen = await result.generate({});
 
-    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(2));
+    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(1, 1));
 
     const handler = gen.output.find((f: any) => f.facadeModuleId === entry1) as OutputChunk | undefined;
     expect(handler?.name).toEqual("h");
@@ -104,14 +106,16 @@ describe("rollup", () => {
           doNotEditPackageJson: true,
           dts: false,
           buildEnd(report) {
-            expect(report).toHaveLength(expectNbOutput(2));
+            expect(report).toHaveLength(expectNbOutput(1, 1));
             const exports = report.map((r) => r.exports);
 
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/middleware-middleware");
             for (const adapter of adapters) {
               expect(exports).toContain(`./test/files/folder1/handler-handler-${adapter}`);
-              expect(exports).toContain(`./test/files/middleware-middleware-${adapter}`);
+              if (!noMiddlewaresSupport.includes(adapter)) {
+                expect(exports).toContain(`./test/files/middleware-middleware-${adapter}`);
+              }
             }
           },
         }),
@@ -127,7 +131,7 @@ describe("rollup", () => {
 
     const gen = await result.generate({});
 
-    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(2));
+    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(1, 1));
 
     const handler = gen.output.find((f: any) => f.facadeModuleId === entry1) as OutputChunk | undefined;
     expect(handler?.name).toEqual(join("test", "files", "folder1", "handler"));
@@ -261,7 +265,7 @@ function testRollupHandler(gen: RollupOutput, type: "handler" | "middleware", se
 
 function testRollupOutput(gen: RollupOutput, type: "handler" | "middleware", f: string) {
   for (const adapter of adapters) {
-    if (adapter === "cloudflare-pages" || adapter === "cloudflare-worker") {
+    if (adapter.startsWith("cloudflare-") || adapter.startsWith("vercel-")) {
       continue;
     }
     testRollupHandler(gen, type, adapter, f);

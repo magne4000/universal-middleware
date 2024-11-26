@@ -39,6 +39,8 @@ describe("esbuild", () => {
     expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(expectNbOutput(1));
 
     expect(findOutput(result, entry)).toSatisfy((s: string) => s.startsWith("dist/handler"));
+
+    testEsbuildOutput(result, "handler", entry);
   });
 
   it("generates all server files (object input)", options, async () => {
@@ -85,6 +87,9 @@ describe("esbuild", () => {
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/handlers/one"));
     expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/middleware"));
+
+    testEsbuildOutput(result, "handler", entry1);
+    testEsbuildOutput(result, "middleware", entry2);
   });
 
   it("generates all server files (array input)", options, async () => {
@@ -128,6 +133,9 @@ describe("esbuild", () => {
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/test/files/folder1/handler"));
     expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/test/files/middleware"));
+
+    testEsbuildOutput(result, "handler", entry1);
+    testEsbuildOutput(result, "middleware", entry2);
   });
 
   it("generates all server files (multiple handlers)", options, async () => {
@@ -167,6 +175,9 @@ describe("esbuild", () => {
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/test/files/folder1/handler"));
     expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/test/files/folder2/handler"));
+
+    testEsbuildOutput(result, "handler", entry1);
+    testEsbuildOutput(result, "handler", entry2);
   });
 
   it("respects outbase", options, async () => {
@@ -208,6 +219,9 @@ describe("esbuild", () => {
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/folder1/handler"));
     expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/folder2/handler"));
+
+    testEsbuildOutput(result, "handler", entry1);
+    testEsbuildOutput(result, "handler", entry2);
   });
 
   it("generates selected server files", options, async () => {
@@ -297,4 +311,27 @@ describe("esbuild", () => {
 
 function findOutput(result: BuildResult<{ metafile: true; write: false }>, entry: string) {
   return Object.entries(result.metafile.outputs).find(([, value]) => value.entryPoint === entry)?.[0];
+}
+
+function testEsbuildHandler(
+  result: BuildResult<{ metafile: true; write: false }>,
+  type: "handler" | "middleware",
+  server: string,
+  f: string,
+) {
+  const output = findOutput(result, `virtual:universal-middleware:virtual:universal-middleware:${server}:${type}:${f}`);
+  expect(output).toBeTruthy();
+}
+
+function testEsbuildOutput(
+  result: BuildResult<{ metafile: true; write: false }>,
+  type: "handler" | "middleware",
+  file: string,
+) {
+  for (const adapter of adapters) {
+    if (adapter.startsWith("cloudflare-") || adapter.startsWith("vercel-")) {
+      continue;
+    }
+    testEsbuildHandler(result, type, adapter, file);
+  }
 }
