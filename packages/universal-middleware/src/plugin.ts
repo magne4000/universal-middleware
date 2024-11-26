@@ -572,7 +572,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
     },
 
     esbuild: {
-      async setup(builder) {
+      setup(builder) {
         if (builder.initialOptions.bundle !== true) {
           throw new Error("`bundle` options must be `true` for universal-middleware to work properly");
         }
@@ -613,11 +613,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
         builder.initialOptions.entryPoints = applyOutbase(builder.initialOptions.entryPoints, outbase);
 
         if (!options?.externalDependencies) {
-          const umResolved = await builder.resolve("universal-middleware", {
-            kind: "import-statement",
-            resolveDir: process.cwd(),
-          });
-          const umDir = await packageDirectory({ cwd: umResolved.path });
+          let umDir: string | undefined = undefined;
 
           builder.onResolve({ filter: /^@universal-middleware\/.*/, namespace: namespace }, async (args) => {
             if (externals.includes(args.path)) {
@@ -626,13 +622,21 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
                 kind: args.kind,
               });
               if (result.errors.length > 0) {
+                // lazy load `universal-middleware` dir
+                if (!umDir) {
+                  const umResolved = await builder.resolve("universal-middleware", {
+                    kind: "import-statement",
+                    resolveDir: process.cwd(),
+                  });
+                  umDir = await packageDirectory({ cwd: umResolved.path });
+                }
                 // Try to resolve @universal-middleware/* packages from `universal-middleware` dir
                 const result2 = await builder.resolve(args.path, {
                   kind: args.kind,
                   resolveDir: umDir,
                 });
 
-                if (result2.errors) {
+                if (result2.errors.length > 0) {
                   return { errors: result2.errors };
                 }
                 result = result2;
