@@ -46,7 +46,7 @@ const defaultWrappers = [
   "vercel-node",
   "elysia",
 ] as const;
-const externals = [
+const maybeExternals = [
   "@universal-middleware/hono",
   "@universal-middleware/express",
   "@universal-middleware/hattip",
@@ -457,7 +457,7 @@ export async function readAndEditPackageJson(reports: Report[], options?: Option
 
   if (options?.externalDependencies === true) {
     packageJson.dependencies ??= {};
-    for (const external of externals) {
+    for (const external of maybeExternals) {
       packageJson.dependencies[external] = versionRange;
     }
   }
@@ -505,15 +505,15 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
             if (typeof opts.external === "function") {
               const orig = opts.external;
               opts.external = (id, parentId, isResolved) => {
-                if (externals.includes(id)) return true;
+                if (maybeExternals.includes(id)) return true;
                 return orig(id, parentId, isResolved);
               };
             } else if (Array.isArray(opts.external)) {
-              opts.external = [...opts.external, ...externals];
+              opts.external = [...opts.external, ...maybeExternals];
             } else if (opts.external) {
-              opts.external = [opts.external, ...externals];
+              opts.external = [opts.external, ...maybeExternals];
             } else {
-              opts.external = [...externals];
+              opts.external = [...maybeExternals];
             }
           }
 
@@ -594,10 +594,10 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
         builder.initialOptions.metafile = true;
 
         builder.initialOptions.external ??= [];
-        builder.initialOptions.external.push("node:*");
+        builder.initialOptions.external.push("node:*", "elysia");
 
         if (builder.initialOptions.bundle && options?.externalDependencies === true) {
-          builder.initialOptions.external.push(...externals);
+          builder.initialOptions.external.push(...maybeExternals);
         }
 
         const normalizedInput = normalizeInput(builder.initialOptions.entryPoints);

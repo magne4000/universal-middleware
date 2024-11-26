@@ -20,6 +20,8 @@
     "@types/bun": "^1.1.13",
     "@types/node": "catalog:",
     "@universal-middleware/core": "workspace:^",
+    "elysia": "catalog:",
+    "h3": "catalog:",
     "rimraf": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",

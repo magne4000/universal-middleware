@@ -1,10 +1,16 @@
 import { join, parse } from "node:path";
+import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
-import { type OutputChunk, type RollupOutput, rollup } from "rollup";
+import { type OutputChunk, type RollupLog, type RollupOutput, rollup } from "rollup";
 import { describe, expect, it } from "vitest";
 import plugin from "../src/rollup";
 import { adapters, expectNbOutput, noMiddlewaresSupport, options } from "./common";
+
+function onwarn(warning: RollupLog) {
+  if (warning.code === "CIRCULAR_DEPENDENCY") return;
+  throw new Error(warning.message);
+}
 
 describe("rollup", () => {
   it("generates all server files (string input)", options, async () => {
@@ -27,13 +33,12 @@ describe("rollup", () => {
           },
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     const gen = await result.generate({});
@@ -73,13 +78,12 @@ describe("rollup", () => {
           },
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     const gen = await result.generate({});
@@ -120,13 +124,12 @@ describe("rollup", () => {
           },
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     const gen = await result.generate({});
@@ -165,13 +168,12 @@ describe("rollup", () => {
           },
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     const gen = await result.generate({});
@@ -209,13 +211,12 @@ describe("rollup", () => {
           },
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     const gen = await result.generate({});
@@ -249,13 +250,12 @@ describe("rollup", () => {
           },
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     const gen = await result.generate({});
@@ -282,13 +282,12 @@ describe("rollup", () => {
           serversExportNames: "[name]-[type]-[server]",
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     await expect(result.generate({})).rejects.toThrow("The following files have overlapping exports");

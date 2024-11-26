@@ -3,7 +3,7 @@ import type { AdapterRequestContext, HattipHandler } from "@hattip/core";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
 
-export const contextSymbol = Symbol("unContext");
+export const contextSymbol = Symbol.for("unContext");
 
 declare module "@hattip/core" {
   interface AdapterRequestContext {

@@ -123,6 +123,7 @@
     "unplugin": "^1.16.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-typescript": "^12.1.1",
     "@swc/core": "catalog:",
@@ -135,6 +136,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "esbuild": "^0.24.0",
     "rollup": "^4.27.4",
@@ -142,6 +144,9 @@
   },
   "peerDependenciesMeta": {
     "rollup": {
+      "optional": true
+    },
+    "@rollup/plugin-commonjs": {
       "optional": true
     },
     "@rollup/plugin-node-resolve": {

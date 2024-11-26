@@ -5,11 +5,11 @@ import { getAdapterRuntime } from "@universal-middleware/core";
 import { type NodeRequestAdapterOptions, createRequestAdapter } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
 
-export const contextSymbol = Symbol("unContext");
-export const requestSymbol = Symbol("unRequest");
-export const pendingMiddlewaresSymbol = Symbol("unPendingMiddlewares");
-export const wrappedResponseSymbol = Symbol("unWrappedResponse");
-export const pendingWritesSymbol = Symbol("unPendingWrites");
+export const contextSymbol = Symbol.for("unContext");
+export const requestSymbol = Symbol.for("unRequest");
+export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
+export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
+export const pendingWritesSymbol = Symbol.for("unPendingWrites");
 
 export const env: Record<string, string | undefined> =
   typeof globalThis.process?.env !== "undefined"
