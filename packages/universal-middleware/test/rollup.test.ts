@@ -1,10 +1,10 @@
-import { describe, expect, it } from "vitest";
-import { type OutputChunk, rollup, type RollupOutput } from "rollup";
+import { join, parse } from "node:path";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
+import { type OutputChunk, type RollupOutput, rollup } from "rollup";
+import { describe, expect, it } from "vitest";
 import plugin from "../src/rollup";
-import { join, parse } from "node:path";
-import { adapters, options } from "./common";
+import { adapters, expectNbOutput, options } from "./common";
 
 describe("rollup", () => {
   it("generates all server files (string input)", options, async () => {
@@ -266,8 +266,4 @@ function testRollupOutput(gen: RollupOutput, type: "handler" | "middleware", f: 
     }
     testRollupHandler(gen, type, adapter, f);
   }
-}
-
-function expectNbOutput(i: number) {
-  return i * (adapters.length + 1);
 }

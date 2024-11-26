@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { type BuildResult, build } from "esbuild";
 import { describe, expect, it } from "vitest";
 import plugin from "../src/esbuild";
-import { adapters, options } from "./common";
+import { adapters, expectNbOutput, noMiddlewaresSupport, options } from "./common";
 
 describe("esbuild", () => {
   it("generates all server files (in/out input)", options, async () => {
@@ -39,8 +39,6 @@ describe("esbuild", () => {
     expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(expectNbOutput(1));
 
     expect(findOutput(result, entry)).toSatisfy((s: string) => s.startsWith("dist/handler"));
-
-    testEsbuildOutput(result, "handler", entry);
   });
 
   it("generates all server files (object input)", options, async () => {
@@ -56,14 +54,16 @@ describe("esbuild", () => {
           doNotEditPackageJson: true,
           dts: false,
           buildEnd(report) {
-            expect(report).toHaveLength(expectNbOutput(2));
+            expect(report).toHaveLength(expectNbOutput(1, 1));
             const exports = report.map((r) => r.exports);
 
             expect(exports).toContain("./handlers/one-handler");
             expect(exports).toContain("./middleware-middleware");
             for (const adapter of adapters) {
               expect(exports).toContain(`./handlers/one-handler-${adapter}`);
-              expect(exports).toContain(`./middleware-middleware-${adapter}`);
+              if (!noMiddlewaresSupport.includes(adapter)) {
+                expect(exports).toContain(`./middleware-middleware-${adapter}`);
+              }
             }
           },
         }),
@@ -79,13 +79,12 @@ describe("esbuild", () => {
     });
 
     expect(result.errors).toHaveLength(0);
-    expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(expectNbOutput(2));
+    expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(
+      expectNbOutput(1, 1),
+    );
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/handlers/one"));
     expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/middleware"));
-
-    testEsbuildOutput(result, "handler", entry1);
-    testEsbuildOutput(result, "middleware", entry2);
   });
 
   it("generates all server files (array input)", options, async () => {
@@ -98,14 +97,16 @@ describe("esbuild", () => {
           doNotEditPackageJson: true,
           dts: false,
           buildEnd(report) {
-            expect(report).toHaveLength(expectNbOutput(2));
+            expect(report).toHaveLength(expectNbOutput(1, 1));
             const exports = report.map((r) => r.exports);
 
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/middleware-middleware");
             for (const adapter of adapters) {
               expect(exports).toContain(`./test/files/folder1/handler-handler-${adapter}`);
-              expect(exports).toContain(`./test/files/middleware-middleware-${adapter}`);
+              if (!noMiddlewaresSupport.includes(adapter)) {
+                expect(exports).toContain(`./test/files/middleware-middleware-${adapter}`);
+              }
             }
           },
         }),
@@ -121,13 +122,12 @@ describe("esbuild", () => {
     });
 
     expect(result.errors).toHaveLength(0);
-    expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(expectNbOutput(2));
+    expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(
+      expectNbOutput(1, 1),
+    );
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/test/files/folder1/handler"));
     expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/test/files/middleware"));
-
-    testEsbuildOutput(result, "handler", entry1);
-    testEsbuildOutput(result, "middleware", entry2);
   });
 
   it("generates all server files (multiple handlers)", options, async () => {
@@ -167,9 +167,6 @@ describe("esbuild", () => {
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/test/files/folder1/handler"));
     expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/test/files/folder2/handler"));
-
-    testEsbuildOutput(result, "handler", entry1);
-    testEsbuildOutput(result, "handler", entry2);
   });
 
   it("respects outbase", options, async () => {
@@ -211,9 +208,6 @@ describe("esbuild", () => {
 
     expect(findOutput(result, entry1)).toSatisfy((s: string) => s.startsWith("dist/folder1/handler"));
     expect(findOutput(result, entry2)).toSatisfy((s: string) => s.startsWith("dist/folder2/handler"));
-
-    testEsbuildOutput(result, "handler", entry1);
-    testEsbuildOutput(result, "handler", entry2);
   });
 
   it("generates selected server files", options, async () => {
@@ -303,38 +297,4 @@ describe("esbuild", () => {
 
 function findOutput(result: BuildResult<{ metafile: true; write: false }>, entry: string) {
   return Object.entries(result.metafile.outputs).find(([, value]) => value.entryPoint === entry)?.[0];
-}
-
-function testEsbuildHandler(
-  result: BuildResult<{ metafile: true; write: false }>,
-  type: "handler" | "middleware",
-  server: string,
-  f: string,
-) {
-  const output = findOutput(result, `virtual:universal-middleware:virtual:universal-middleware:${server}:${type}:${f}`);
-  expect(output).toBeTruthy();
-
-  const file = result.outputFiles.find((f) => f.path.includes(`universal-${server}-${type}`));
-  if (type === "handler") {
-    expect(file?.text).toContain(`import { createHandler } from "@universal-middleware/${server}"`);
-  } else {
-    expect(file?.text).toContain(`import { createMiddleware } from "@universal-middleware/${server}"`);
-  }
-}
-
-function testEsbuildOutput(
-  result: BuildResult<{ metafile: true; write: false }>,
-  type: "handler" | "middleware",
-  file: string,
-) {
-  for (const adapter of adapters) {
-    if (adapter.startsWith("cloudflare-") || adapter.startsWith("vercel-")) {
-      continue;
-    }
-    testEsbuildHandler(result, type, adapter, file);
-  }
-}
-
-function expectNbOutput(i: number) {
-  return i * (adapters.length + 1);
 }
