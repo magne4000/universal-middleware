@@ -344,7 +344,7 @@
     "rimraf": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",
-    "universal-middleware": "workspace:*"
+    "universal-middleware": "workspace:^"
   },
   "sideEffects": false
 }

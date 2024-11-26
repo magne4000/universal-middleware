@@ -63,15 +63,19 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@universal-middleware/cloudflare": "workspace:*",
-    "@universal-middleware/core": "workspace:*",
-    "@universal-middleware/express": "workspace:*",
-    "@universal-middleware/fastify": "workspace:*",
-    "@universal-middleware/hattip": "workspace:*",
-    "@universal-middleware/hono": "workspace:*",
-    "@universal-middleware/webroute": "workspace:*",
+    "@universal-middleware/cloudflare": "workspace:^",
+    "@universal-middleware/core": "workspace:^",
+    "@universal-middleware/elysia": "workspace:^",
+    "@universal-middleware/express": "workspace:^",
+    "@universal-middleware/fastify": "workspace:^",
+    "@universal-middleware/h3": "workspace:^",
+    "@universal-middleware/hattip": "workspace:^",
+    "@universal-middleware/hono": "workspace:^",
+    "@universal-middleware/vercel": "workspace:^",
+    "@universal-middleware/webroute": "workspace:^",
     "oxc-transform": "^0.37.0",
     "package-up": "^5.0.0",
+    "pkg-dir": "^8.0.0",
     "unplugin": "^1.16.0"
   },
   "devDependencies": {
@@ -105,5 +109,6 @@
     "esbuild": {
       "optional": true
     }
-  }
+  },
+  "sideEffects": false
 }

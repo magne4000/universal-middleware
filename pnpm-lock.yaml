@@ -159,34 +159,6 @@ importers:
         version: 1.5.0(@algolia/client-search@5.15.0)(@types/node@22.9.3)(postcss@8.4.49)(typescript@5.7.2)
 
   examples/tool:
-    optionalDependencies:
-      '@universal-middleware/cloudflare':
-        specifier: link:../../packages/adapter-cloudflare
-        version: link:../../packages/adapter-cloudflare
-      '@universal-middleware/elysia':
-        specifier: link:../../packages/adapter-elysia
-        version: link:../../packages/adapter-elysia
-      '@universal-middleware/express':
-        specifier: link:../../packages/adapter-express
-        version: link:../../packages/adapter-express
-      '@universal-middleware/fastify':
-        specifier: link:../../packages/adapter-fastify
-        version: link:../../packages/adapter-fastify
-      '@universal-middleware/h3':
-        specifier: link:../../packages/adapter-h3
-        version: link:../../packages/adapter-h3
-      '@universal-middleware/hattip':
-        specifier: link:../../packages/adapter-hattip
-        version: link:../../packages/adapter-hattip
-      '@universal-middleware/hono':
-        specifier: link:../../packages/adapter-hono
-        version: link:../../packages/adapter-hono
-      '@universal-middleware/vercel':
-        specifier: link:../../packages/adapter-vercel
-        version: link:../../packages/adapter-vercel
-      '@universal-middleware/webroute':
-        specifier: link:../../packages/adapter-webroute
-        version: link:../../packages/adapter-webroute
     devDependencies:
       '@hono/node-server':
         specifier: ^1.13.7
@@ -622,34 +594,6 @@ importers:
         version: 2.1.5(@edge-runtime/vm@3.2.0)(@types/node@20.17.7)
 
   packages/compress:
-    optionalDependencies:
-      '@universal-middleware/cloudflare':
-        specifier: link:../adapter-cloudflare
-        version: link:../adapter-cloudflare
-      '@universal-middleware/elysia':
-        specifier: link:../adapter-elysia
-        version: link:../adapter-elysia
-      '@universal-middleware/express':
-        specifier: link:../adapter-express
-        version: link:../adapter-express
-      '@universal-middleware/fastify':
-        specifier: link:../adapter-fastify
-        version: link:../adapter-fastify
-      '@universal-middleware/h3':
-        specifier: link:../adapter-h3
-        version: link:../adapter-h3
-      '@universal-middleware/hattip':
-        specifier: link:../adapter-hattip
-        version: link:../adapter-hattip
-      '@universal-middleware/hono':
-        specifier: link:../adapter-hono
-        version: link:../adapter-hono
-      '@universal-middleware/vercel':
-        specifier: link:../adapter-vercel
-        version: link:../adapter-vercel
-      '@universal-middleware/webroute':
-        specifier: link:../adapter-webroute
-        version: link:../adapter-webroute
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -758,18 +702,27 @@ importers:
       '@universal-middleware/core':
         specifier: link:../core
         version: link:../core
+      '@universal-middleware/elysia':
+        specifier: link:../adapter-elysia
+        version: link:../adapter-elysia
       '@universal-middleware/express':
         specifier: link:../adapter-express
         version: link:../adapter-express
       '@universal-middleware/fastify':
         specifier: link:../adapter-fastify
         version: link:../adapter-fastify
+      '@universal-middleware/h3':
+        specifier: link:../adapter-h3
+        version: link:../adapter-h3
       '@universal-middleware/hattip':
         specifier: link:../adapter-hattip
         version: link:../adapter-hattip
       '@universal-middleware/hono':
         specifier: link:../adapter-hono
         version: link:../adapter-hono
+      '@universal-middleware/vercel':
+        specifier: link:../adapter-vercel
+        version: link:../adapter-vercel
       '@universal-middleware/webroute':
         specifier: link:../adapter-webroute
         version: link:../adapter-webroute
@@ -779,6 +732,9 @@ importers:
       package-up:
         specifier: ^5.0.0
         version: 5.0.0
+      pkg-dir:
+        specifier: ^8.0.0
+        version: 8.0.0
       unplugin:
         specifier: ^1.16.0
         version: 1.16.0
@@ -3950,6 +3906,10 @@ packages:
   pixelmatch@5.3.0:
     resolution: {integrity: sha512-o8mkY4E/+LNUf6LzX96ht6k6CEDi65k9G2rjMtBe9Oo+VPKSvl+0GKHuH/AlG+GA5LPG/i5hrekkxUc3s2HU+Q==}
     hasBin: true
+
+  pkg-dir@8.0.0:
+    resolution: {integrity: sha512-4peoBq4Wks0riS0z8741NVv+/8IiTvqnZAr8QGgtdifrtpdXbNw/FxRS1l6NFqm4EMzuS0EDqNNx4XGaz8cuyQ==}
+    engines: {node: '>=18'}
 
   playwright-chromium@1.49.0:
     resolution: {integrity: sha512-xU+nOHawNFKfJsHTTGyWqSJ5nRGGHQq1wTsc49H9rM+hDNnoKZi+3m12mGoLpqvJP7vRjZQ3uvU9/UJZbrJ1AA==}
@@ -8327,6 +8287,10 @@ snapshots:
   pixelmatch@5.3.0:
     dependencies:
       pngjs: 6.0.0
+
+  pkg-dir@8.0.0:
+    dependencies:
+      find-up-simple: 1.0.0
 
   playwright-chromium@1.49.0:
     dependencies:
