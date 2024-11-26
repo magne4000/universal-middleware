@@ -2,6 +2,19 @@
 
 
 
+## [0.3.10-beta.1](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.3.10-beta...universal-middleware-v0.3.10-beta.1) (2024-11-26)
+
+
+### Features
+
+* @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([97fd518](https://github.com/magne4000/universal-middleware/commit/97fd51819192a1d8b1d6659995b197ae8ddeb163))
+* full bundle by default, with new `externalDependencies` option to keep current behaviour ([a7c0dcc](https://github.com/magne4000/universal-middleware/commit/a7c0dcce9d98dbbed53e901d8a404367a4581407))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#58](https://github.com/magne4000/universal-middleware/issues/58)) ([24d5fc3](https://github.com/magne4000/universal-middleware/commit/24d5fc3bafb0ef3b00c0eb8067d7acb86a67d079))
+
 ## [0.3.10-beta](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.3.9...universal-middleware-v0.3.10-beta) (2024-11-19)
 
 
