@@ -188,6 +188,46 @@ describe("rollup", () => {
     testRollupOutput(gen, "handler", entry2);
   });
 
+  it("generates all server files (externalDependencies: true)", options, async () => {
+    const entry = "test/files/folder1/handler.ts";
+    const result = await rollup({
+      input: entry,
+      plugins: [
+        plugin({
+          doNotEditPackageJson: true,
+          externalDependencies: true,
+          dts: false,
+          buildEnd(report) {
+            expect(report).toHaveLength(expectNbOutput(1));
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./test/files/folder1/handler-handler");
+
+            for (const adapter of adapters) {
+              expect(exports).toContain(`./test/files/folder1/handler-handler-${adapter}`);
+            }
+          },
+        }),
+        nodeResolve(),
+        typescript({
+          sourceMap: false,
+        }),
+      ],
+      onwarn(warning) {
+        throw new Error(warning.message);
+      },
+    });
+
+    const gen = await result.generate({});
+
+    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(1));
+
+    const handler = gen.output.find((f: any) => f.facadeModuleId === entry) as OutputChunk | undefined;
+    expect(handler?.name).toEqual(join("test", "files", "folder1", "handler"));
+
+    testRollupOutput(gen, "handler", entry);
+  });
+
   it("generates selected server files", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
