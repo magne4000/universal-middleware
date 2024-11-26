@@ -10,6 +10,7 @@ export interface Options {
   ignoreRecommendations?: boolean;
   doNotEditPackageJson?: boolean;
   dts?: boolean;
+  externalDependencies?: boolean;
   buildEnd?: (report: Report[]) => void | Promise<void>;
 }
 
@@ -429,7 +430,7 @@ function genReport(bundle: Record<string, BundleInfo>, options?: Options) {
   return reports;
 }
 
-export async function readAndEditPackageJson(reports: Report[]) {
+export async function readAndEditPackageJson(reports: Report[], options?: Options) {
   const packageJsonPath = await packageUp();
 
   if (!packageJsonPath) {
@@ -438,9 +439,11 @@ export async function readAndEditPackageJson(reports: Report[]) {
 
   const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
 
-  packageJson.optionalDependencies ??= {};
-  for (const external of externals) {
-    packageJson.optionalDependencies[external] = versionRange;
+  if (options?.externalDependencies === true) {
+    packageJson.dependencies ??= {};
+    for (const external of externals) {
+      packageJson.dependencies[external] = versionRange;
+    }
   }
 
   packageJson.exports ??= {};
@@ -482,18 +485,20 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
           opts.input = normalizedInput;
           appendVirtualInputs(opts.input, options?.servers);
 
-          if (typeof opts.external === "function") {
-            const orig = opts.external;
-            opts.external = (id, parentId, isResolved) => {
-              if (externals.includes(id)) return true;
-              return orig(id, parentId, isResolved);
-            };
-          } else if (Array.isArray(opts.external)) {
-            opts.external = [...opts.external, ...externals];
-          } else if (opts.external) {
-            opts.external = [opts.external, ...externals];
-          } else {
-            opts.external = [...externals];
+          if (options?.externalDependencies === true) {
+            if (typeof opts.external === "function") {
+              const orig = opts.external;
+              opts.external = (id, parentId, isResolved) => {
+                if (externals.includes(id)) return true;
+                return orig(id, parentId, isResolved);
+              };
+            } else if (Array.isArray(opts.external)) {
+              opts.external = [...opts.external, ...externals];
+            } else if (opts.external) {
+              opts.external = [opts.external, ...externals];
+            } else {
+              opts.external = [...externals];
+            }
           }
 
           return opts;
@@ -572,7 +577,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
 
         builder.initialOptions.metafile = true;
 
-        if (builder.initialOptions.bundle) {
+        if (builder.initialOptions.bundle && options?.externalDependencies === true) {
           builder.initialOptions.external = [...(builder.initialOptions.external ?? []), ...externals];
         }
 
