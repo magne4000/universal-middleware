@@ -8,7 +8,7 @@ import type {
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { getAdapterRuntime } from "@universal-middleware/core";
 
-export const contextSymbol = Symbol("unContext");
+export const contextSymbol = Symbol.for("unContext");
 
 export type CloudflareHandler<C extends Universal.Context> = {
   fetch: ExportedHandlerFetchHandler<{

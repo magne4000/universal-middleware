@@ -114,6 +114,9 @@ universalMiddleware({
   doNotEditPackageJson?: boolean;
   // Generate typings. true by default
   dts?: boolean;
+  // By default, generated exports are self-contained.
+  // You can opt-out of this behaviour and have @universal-middleware/* packages added as `dependencies` instead
+  externalDependencies?: boolean;
   // Hook called when bundle is generated
   // For details, check https://github.com/magne4000/universal-middleware/blob/main/packages/universal-middleware/src/plugin.ts
   buildEnd?: (report: Report[]) => void | Promise<void>;
@@ -142,7 +145,7 @@ dist
   └─ ...
 ```
 
-Your project's `package.json` will be updated to contains the necessary `exports` and `optionalDependencies`.
+Your project's `package.json` will be updated to contains the necessary `exports`.
 
 ::: details
 
@@ -170,12 +173,6 @@ Your project's `package.json` will be updated to contains the necessary `exports
       "import": "./dist/middlewares/universal-h3-middleware-demo.middleware.js",
       "default": "./dist/middlewares/universal-h3-middleware-demo.middleware.js"
     },
-    // ...
-  },
-  "optionalDependencies": {
-    "@universal-middleware/express": "^0",
-    "@universal-middleware/h3": "^0",
-    "@universal-middleware/hono": "^0",
     // ...
   }
 }

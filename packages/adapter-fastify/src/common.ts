@@ -5,9 +5,9 @@ import { type DecoratedRequest, createRequestAdapter } from "@universal-middlewa
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import fp from "fastify-plugin";
 
-export const contextSymbol = Symbol("unContext");
-export const pendingMiddlewaresSymbol = Symbol("unPendingMiddlewares");
-export const wrappedResponseSymbol = Symbol("unWrappedResponse");
+export const contextSymbol = Symbol.for("unContext");
+export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
+export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
 
 export type FastifyMiddleware = FastifyPluginAsync;
 export type FastifyHandler = RouteHandlerMethod;

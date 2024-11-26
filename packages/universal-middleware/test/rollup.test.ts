@@ -1,10 +1,16 @@
-import { describe, expect, it } from "vitest";
-import { type OutputChunk, rollup, type RollupOutput } from "rollup";
+import { join, parse } from "node:path";
+import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
+import { type OutputChunk, type RollupLog, type RollupOutput, rollup } from "rollup";
+import { describe, expect, it } from "vitest";
 import plugin from "../src/rollup";
-import { join, parse } from "node:path";
-import { adapters, options } from "./common";
+import { adapters, expectNbOutput, noMiddlewaresSupport, options } from "./common";
+
+function onwarn(warning: RollupLog) {
+  if (warning.code === "CIRCULAR_DEPENDENCY") return;
+  throw new Error(warning.message);
+}
 
 describe("rollup", () => {
   it("generates all server files (string input)", options, async () => {
@@ -27,13 +33,12 @@ describe("rollup", () => {
           },
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     const gen = await result.generate({});
@@ -59,30 +64,31 @@ describe("rollup", () => {
           doNotEditPackageJson: true,
           dts: false,
           buildEnd(report) {
-            expect(report).toHaveLength(expectNbOutput(2));
+            expect(report).toHaveLength(expectNbOutput(1, 1));
             const exports = report.map((r) => r.exports);
 
             expect(exports).toContain("./h-handler");
             expect(exports).toContain("./m-middleware");
             for (const adapter of adapters) {
               expect(exports).toContain(`./h-handler-${adapter}`);
-              expect(exports).toContain(`./m-middleware-${adapter}`);
+              if (!noMiddlewaresSupport.includes(adapter)) {
+                expect(exports).toContain(`./m-middleware-${adapter}`);
+              }
             }
           },
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     const gen = await result.generate({});
 
-    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(2));
+    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(1, 1));
 
     const handler = gen.output.find((f: any) => f.facadeModuleId === entry1) as OutputChunk | undefined;
     expect(handler?.name).toEqual("h");
@@ -104,30 +110,31 @@ describe("rollup", () => {
           doNotEditPackageJson: true,
           dts: false,
           buildEnd(report) {
-            expect(report).toHaveLength(expectNbOutput(2));
+            expect(report).toHaveLength(expectNbOutput(1, 1));
             const exports = report.map((r) => r.exports);
 
             expect(exports).toContain("./test/files/folder1/handler-handler");
             expect(exports).toContain("./test/files/middleware-middleware");
             for (const adapter of adapters) {
               expect(exports).toContain(`./test/files/folder1/handler-handler-${adapter}`);
-              expect(exports).toContain(`./test/files/middleware-middleware-${adapter}`);
+              if (!noMiddlewaresSupport.includes(adapter)) {
+                expect(exports).toContain(`./test/files/middleware-middleware-${adapter}`);
+              }
             }
           },
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     const gen = await result.generate({});
 
-    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(2));
+    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(1, 1));
 
     const handler = gen.output.find((f: any) => f.facadeModuleId === entry1) as OutputChunk | undefined;
     expect(handler?.name).toEqual(join("test", "files", "folder1", "handler"));
@@ -161,13 +168,12 @@ describe("rollup", () => {
           },
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     const gen = await result.generate({});
@@ -182,6 +188,45 @@ describe("rollup", () => {
 
     testRollupOutput(gen, "handler", entry1);
     testRollupOutput(gen, "handler", entry2);
+  });
+
+  it("generates all server files (externalDependencies: true)", options, async () => {
+    const entry = "test/files/folder1/handler.ts";
+    const result = await rollup({
+      input: entry,
+      plugins: [
+        plugin({
+          doNotEditPackageJson: true,
+          externalDependencies: true,
+          dts: false,
+          buildEnd(report) {
+            expect(report).toHaveLength(expectNbOutput(1));
+            const exports = report.map((r) => r.exports);
+
+            expect(exports).toContain("./test/files/folder1/handler-handler");
+
+            for (const adapter of adapters) {
+              expect(exports).toContain(`./test/files/folder1/handler-handler-${adapter}`);
+            }
+          },
+        }),
+        nodeResolve(),
+        commonjs(),
+        typescript({
+          sourceMap: false,
+        }),
+      ],
+      onwarn,
+    });
+
+    const gen = await result.generate({});
+
+    expect(gen.output.filter((f) => f.type === "chunk" && f.isEntry)).toHaveLength(expectNbOutput(1));
+
+    const handler = gen.output.find((f: any) => f.facadeModuleId === entry) as OutputChunk | undefined;
+    expect(handler?.name).toEqual(join("test", "files", "folder1", "handler"));
+
+    testRollupOutput(gen, "handler", entry);
   });
 
   it("generates selected server files", options, async () => {
@@ -205,13 +250,12 @@ describe("rollup", () => {
           },
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     const gen = await result.generate({});
@@ -238,13 +282,12 @@ describe("rollup", () => {
           serversExportNames: "[name]-[type]-[server]",
         }),
         nodeResolve(),
+        commonjs(),
         typescript({
           sourceMap: false,
         }),
       ],
-      onwarn(warning) {
-        throw new Error(warning.message);
-      },
+      onwarn,
     });
 
     await expect(result.generate({})).rejects.toThrow("The following files have overlapping exports");
@@ -261,13 +304,9 @@ function testRollupHandler(gen: RollupOutput, type: "handler" | "middleware", se
 
 function testRollupOutput(gen: RollupOutput, type: "handler" | "middleware", f: string) {
   for (const adapter of adapters) {
-    if (adapter === "cloudflare-pages" || adapter === "cloudflare-worker") {
+    if (adapter.startsWith("cloudflare-") || adapter.startsWith("vercel-")) {
       continue;
     }
     testRollupHandler(gen, type, adapter, f);
   }
-}
-
-function expectNbOutput(i: number) {
-  return i * (adapters.length + 1);
 }
