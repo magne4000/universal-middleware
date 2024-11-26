@@ -732,9 +732,6 @@ importers:
       package-up:
         specifier: ^5.0.0
         version: 5.0.0
-      pkg-dir:
-        specifier: ^8.0.0
-        version: 8.0.0
       unplugin:
         specifier: ^1.16.0
         version: 1.16.0
@@ -3906,10 +3903,6 @@ packages:
   pixelmatch@5.3.0:
     resolution: {integrity: sha512-o8mkY4E/+LNUf6LzX96ht6k6CEDi65k9G2rjMtBe9Oo+VPKSvl+0GKHuH/AlG+GA5LPG/i5hrekkxUc3s2HU+Q==}
     hasBin: true
-
-  pkg-dir@8.0.0:
-    resolution: {integrity: sha512-4peoBq4Wks0riS0z8741NVv+/8IiTvqnZAr8QGgtdifrtpdXbNw/FxRS1l6NFqm4EMzuS0EDqNNx4XGaz8cuyQ==}
-    engines: {node: '>=18'}
 
   playwright-chromium@1.49.0:
     resolution: {integrity: sha512-xU+nOHawNFKfJsHTTGyWqSJ5nRGGHQq1wTsc49H9rM+hDNnoKZi+3m12mGoLpqvJP7vRjZQ3uvU9/UJZbrJ1AA==}
@@ -8287,10 +8280,6 @@ snapshots:
   pixelmatch@5.3.0:
     dependencies:
       pngjs: 6.0.0
-
-  pkg-dir@8.0.0:
-    dependencies:
-      find-up-simple: 1.0.0
 
   playwright-chromium@1.49.0:
     dependencies:

@@ -1,7 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, parse, posix, resolve } from "node:path";
 import { packageUp } from "package-up";
-import { packageDirectory } from "pkg-dir";
 import type { UnpluginFactory } from "unplugin";
 
 export interface Options {
@@ -260,7 +259,7 @@ function load(id: string, resolve?: (handler: string, type: string) => string) {
   const info = typesByServer[target as (typeof defaultWrappers)[number]];
 
   const fn = type === "handler" ? (info.typeHandler ?? "createHandler") : (info.typeMiddleware ?? "createMiddleware");
-  const code = `import { ${fn} } from "@universal-middleware/${info.target ?? target}";
+  const code = `import { ${fn} } from "universal-middleware/adapters/${info.target ?? target}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 export default ${fn}(${type});
 `;
@@ -278,7 +277,7 @@ function loadDts(id: string, resolve?: (handler: string, type: string) => string
 
   const selfImports = [fn, `type ${t}`, ...(info.selfImports ?? [])];
   const code = `import { type UniversalMiddleware } from '@universal-middleware/core';
-import { ${selfImports.join(", ")} } from "@universal-middleware/${info.target ?? target}";
+import { ${selfImports.join(", ")} } from "universal-middleware/adapters/${info.target ?? target}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
 type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<infer X> ? unknown extends X ? Universal.Context : X : {};
@@ -611,41 +610,6 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
         builder.initialOptions.entryPoints = normalizedInput;
         appendVirtualInputs(builder.initialOptions.entryPoints, options?.servers);
         builder.initialOptions.entryPoints = applyOutbase(builder.initialOptions.entryPoints, outbase);
-
-        if (!options?.externalDependencies) {
-          let umDir: string | undefined = undefined;
-
-          builder.onResolve({ filter: /^@universal-middleware\/.*/, namespace: namespace }, async (args) => {
-            if (externals.includes(args.path)) {
-              // Try to resolve @universal-middleware/* packages the dumb way
-              let result = await builder.resolve(args.path, {
-                kind: args.kind,
-              });
-              if (result.errors.length > 0) {
-                // lazy load `universal-middleware` dir
-                if (!umDir) {
-                  const umResolved = await builder.resolve("universal-middleware", {
-                    kind: "import-statement",
-                    resolveDir: process.cwd(),
-                  });
-                  umDir = await packageDirectory({ cwd: umResolved.path });
-                }
-                // Try to resolve @universal-middleware/* packages from `universal-middleware` dir
-                const result2 = await builder.resolve(args.path, {
-                  kind: args.kind,
-                  resolveDir: umDir,
-                });
-
-                if (result2.errors.length > 0) {
-                  return { errors: result2.errors };
-                }
-                result = result2;
-              }
-              return { ...result, external: false };
-            }
-            return null;
-          });
-        }
 
         builder.onResolve({ filter: /^virtual:universal-middleware/ }, (args) => {
           // console.log("onResolve:virtual", args);

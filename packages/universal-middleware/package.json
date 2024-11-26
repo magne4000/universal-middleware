@@ -49,6 +49,51 @@
       "types": "./dist/esbuild.d.ts",
       "import": "./dist/esbuild.js",
       "default": "./dist/esbuild.js"
+    },
+    "./adapters/cloudflare": {
+      "types": "./dist/adapters/cloudflare.d.ts",
+      "import": "./dist/adapters/cloudflare.js",
+      "default": "./dist/adapters/cloudflare.js"
+    },
+    "./adapters/elysia": {
+      "types": "./dist/adapters/elysia.d.ts",
+      "import": "./dist/adapters/elysia.js",
+      "default": "./dist/adapters/elysia.js"
+    },
+    "./adapters/express": {
+      "types": "./dist/adapters/express.d.ts",
+      "import": "./dist/adapters/express.js",
+      "default": "./dist/adapters/express.js"
+    },
+    "./adapters/fastify": {
+      "types": "./dist/adapters/fastify.d.ts",
+      "import": "./dist/adapters/fastify.js",
+      "default": "./dist/adapters/fastify.js"
+    },
+    "./adapters/h3": {
+      "types": "./dist/adapters/h3.d.ts",
+      "import": "./dist/adapters/h3.js",
+      "default": "./dist/adapters/h3.js"
+    },
+    "./adapters/hattip": {
+      "types": "./dist/adapters/hattip.d.ts",
+      "import": "./dist/adapters/hattip.js",
+      "default": "./dist/adapters/hattip.js"
+    },
+    "./adapters/hono": {
+      "types": "./dist/adapters/hono.d.ts",
+      "import": "./dist/adapters/hono.js",
+      "default": "./dist/adapters/hono.js"
+    },
+    "./adapters/vercel": {
+      "types": "./dist/adapters/vercel.d.ts",
+      "import": "./dist/adapters/vercel.js",
+      "default": "./dist/adapters/vercel.js"
+    },
+    "./adapters/webroute": {
+      "types": "./dist/adapters/webroute.d.ts",
+      "import": "./dist/adapters/webroute.js",
+      "default": "./dist/adapters/webroute.js"
     }
   },
   "module": "dist/index.js",
@@ -75,7 +120,6 @@
     "@universal-middleware/webroute": "workspace:^",
     "oxc-transform": "^0.37.0",
     "package-up": "^5.0.0",
-    "pkg-dir": "^8.0.0",
     "unplugin": "^1.16.0"
   },
   "devDependencies": {
