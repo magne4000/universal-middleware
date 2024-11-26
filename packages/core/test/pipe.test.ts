@@ -1,5 +1,11 @@
 import { describe, expect, test } from "vitest";
-import type { RuntimeAdapter, UniversalMiddleware } from "../src/index";
+import {
+  type RuntimeAdapter,
+  type UniversalHandler,
+  type UniversalMiddleware,
+  bindUniversal,
+  universalSymbol,
+} from "../src/index";
 import { pipe } from "../src/pipe";
 
 describe("pipe", () => {
@@ -11,22 +17,51 @@ describe("pipe", () => {
     params: undefined,
   };
 
+  function wrapHandler<U extends UniversalHandler<any>>(universal: U) {
+    return bindUniversal(universal, async function wrappedHandler(a: number) {
+      const response = await this[universalSymbol](request, context, runtime);
+      response.headers.set("a", String(a));
+      return response;
+    });
+  }
+
   test("handler", async () => {
     const handler = pipe(() => new Response("OK"));
     const response = handler(request, context, runtime);
     await expect(response).resolves.toBeInstanceOf(Response);
   });
 
+  test("wrapped handler", async () => {
+    const handler = pipe(wrapHandler(() => new Response("OK")));
+    const response = handler(1);
+    await expect(response).resolves.toBeInstanceOf(Response);
+    expect((await response).headers.get("a")).toEqual("1");
+  });
+
   test("context middleware |> handler", async () => {
     const handler = pipe(
       () => ({ a: 1 }),
-      (_, ctx: { a: number }) => new Response(String(ctx.a)),
+      (_: Request, ctx: { a: number }) => new Response(String(ctx.a)),
     );
     const response = handler(request, context, runtime);
     await expect(response).resolves.toBeInstanceOf(Response);
 
     const body = await (await response).text();
     expect(body).toBe("1");
+  });
+
+  test("context middleware |> wrapped handler", async () => {
+    const handler = pipe(
+      () => ({ a: 1 }),
+      wrapHandler((_: Request, ctx: { a: number }) => new Response(String(ctx.a))),
+    );
+    const response = handler(2);
+    await expect(response).resolves.toBeInstanceOf(Response);
+
+    const responseAwaited = await response;
+    const body = await responseAwaited.text();
+    expect(body).toBe("1");
+    expect(responseAwaited.headers.get("a")).toEqual("2");
   });
 
   test("context middleware |> empty middleware |> handler", async () => {

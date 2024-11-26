@@ -8,9 +8,9 @@ export type Awaitable<T> = T | Promise<T>;
 
 export type AnyFn = (...args: any[]) => any;
 
-export type SetThis<F extends AnyFn, This> = (this: This, ...args: Parameters<F>) => ReturnType<F>;
+export type SetThis<F extends AnyFn, This> = (this: This, ...args: Parameters<OmitThisParameter<F>>) => ReturnType<F>;
 
-export type UniversalFn<U extends UniversalHandler | UniversalMiddleware, F extends AnyFn> = F & {
+export type UniversalFn<U extends UniversalHandler<any> | UniversalMiddleware<any, any>, F extends AnyFn> = F & {
   [universalSymbol]: U;
 };
 

@@ -1,6 +1,6 @@
 import type { OutgoingHttpHeaders } from "node:http";
-import { universalSymbol } from "./const";
-import type { AnyFn, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
+import { unboundSymbol, universalSymbol } from "./const";
+import type { AnyFn, SetThis, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
 
 export function isBodyInit(value: unknown): value is BodyInit {
   return (
@@ -52,10 +52,13 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
 /**
  * @internal
  */
-export function bindUniversal<U extends UniversalHandler<any> | UniversalMiddleware<any, any>, F extends AnyFn>(
-  universal: U,
-  fn: NoInfer<F>,
-): UniversalFn<U, F> {
-  const self = { [universalSymbol]: universal };
-  return fn.bind(self) as UniversalFn<U, F>;
+export function bindUniversal<
+  U extends UniversalHandler<any> | UniversalMiddleware<any, any>,
+  F extends SetThis<AnyFn, { [universalSymbol]: U }>,
+>(universal: U, fn: F): UniversalFn<U, OmitThisParameter<F>> {
+  const unboundFn = unboundSymbol in fn ? (fn[unboundSymbol] as F) : fn;
+  const self = { [universalSymbol]: universal, [unboundSymbol]: unboundFn };
+  const boundFn = unboundFn.bind(self) as UniversalFn<U, OmitThisParameter<F>>;
+  Object.assign(boundFn, self);
+  return boundFn;
 }
