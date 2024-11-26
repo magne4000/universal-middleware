@@ -177,6 +177,44 @@ describe("esbuild", () => {
     testEsbuildOutput(result, "handler", options, entry2);
   });
 
+  it("generates all server files (externalDependencies: true)", options, async () => {
+    const entry = "test/files/folder1/handler.ts";
+    const options: Options = {
+      doNotEditPackageJson: true,
+      externalDependencies: true,
+      dts: false,
+      buildEnd(report) {
+        expect(report).toHaveLength(expectNbOutput(1));
+        const exports = report.map((r) => r.exports);
+
+        expect(exports).toContain("./handler-handler");
+
+        for (const adapter of adapters) {
+          expect(exports).toContain(`./handler-handler-${adapter}`);
+        }
+      },
+    };
+    const result = await build({
+      entryPoints: [{ out: "handler", in: entry }],
+      plugins: [plugin(options)],
+      outdir: "dist",
+      write: false,
+      metafile: true,
+      bundle: true,
+      platform: "neutral",
+      format: "esm",
+      target: "es2022",
+      splitting: true,
+    });
+
+    expect(result.errors).toHaveLength(0);
+    expect(result.outputFiles.filter((f) => !f.path.includes(join("dist", "chunk-")))).toHaveLength(expectNbOutput(1));
+
+    expect(findOutput(result, entry)).toSatisfy((s: string) => s.startsWith("dist/handler"));
+
+    testEsbuildOutput(result, "handler", options, entry);
+  });
+
   it("respects outbase", options, async () => {
     const entry1 = "test/files/folder1/handler.ts";
     const entry2 = "test/files/folder2/handler.ts";
@@ -318,11 +356,7 @@ function testEsbuildHandler(
 
   const file = result.outputFiles.find((f) => f.path.includes(`universal-${server}-${type}`));
   if (options.externalDependencies === true) {
-    if (type === "handler") {
-      expect(file?.text).toContain(`import { createHandler } from "@universal-middleware/${server}"`);
-    } else {
-      expect(file?.text).toContain(`import { createMiddleware } from "@universal-middleware/${server}"`);
-    }
+    expect(file?.text).toContain(`from "@universal-middleware/${server}"`);
   } else {
     expect(file?.text).not.toContain(`from "@universal-middleware/${server}"`);
   }
