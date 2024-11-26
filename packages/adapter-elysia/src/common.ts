@@ -2,9 +2,9 @@ import type { Awaitable, Get, RuntimeAdapter, UniversalHandler, UniversalMiddlew
 import { getAdapterRuntime } from "@universal-middleware/core";
 import { Elysia, type Context as ElysiaContext, type Handler } from "elysia";
 
-export const contextSymbol = Symbol("unContext");
-export const pendingSymbol = Symbol("unPending");
-export const pendingHandledSymbol = Symbol("unPendingHandled");
+export const contextSymbol = Symbol.for("unContext");
+export const pendingSymbol = Symbol.for("unPending");
+export const pendingHandledSymbol = Symbol.for("unPendingHandled");
 
 export type ElysiaHandler = Handler;
 export type ElysiaMiddleware = ReturnType<typeof createMiddleware>;
@@ -48,7 +48,6 @@ export function createMiddleware<
       .use(initPlugin<InContext>())
       .onBeforeHandle({ as: "global" }, async (elysiaContext) => {
         const response = await middleware(elysiaContext.request, elysiaContext.getContext(), getRuntime(elysiaContext));
-
         if (typeof response === "function") {
           elysiaContext[pendingSymbol].push(response);
         } else if (response !== null && typeof response === "object") {

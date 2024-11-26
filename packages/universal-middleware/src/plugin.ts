@@ -10,6 +10,7 @@ export interface Options {
   ignoreRecommendations?: boolean;
   doNotEditPackageJson?: boolean;
   dts?: boolean;
+  externalDependencies?: boolean;
   buildEnd?: (report: Report[]) => void | Promise<void>;
 }
 
@@ -45,7 +46,7 @@ const defaultWrappers = [
   "vercel-node",
   "elysia",
 ] as const;
-const externals = [
+const maybeExternals = [
   "@universal-middleware/hono",
   "@universal-middleware/express",
   "@universal-middleware/hattip",
@@ -56,6 +57,75 @@ const externals = [
   "@universal-middleware/elysia",
   "@universal-middleware/vercel",
 ];
+const typesByServer: Record<
+  (typeof defaultWrappers)[number],
+  {
+    middleware?: string;
+    handler?: string;
+    selfImports?: string[];
+    outContext?: (type: string) => string;
+    generics?: (type: string) => string;
+    typeHandler?: string;
+    typeMiddleware?: string;
+    target?: string;
+  }
+> = {
+  hono: {
+    middleware: "HonoMiddleware",
+    handler: "HonoHandler",
+  },
+  express: {
+    middleware: "NodeMiddleware",
+    handler: "NodeHandler",
+  },
+  hattip: {
+    middleware: "HattipMiddleware",
+    handler: "HattipHandler",
+  },
+  fastify: {
+    middleware: "FastifyMiddleware",
+    handler: "FastifyHandler",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
+  },
+  h3: {
+    middleware: "H3Middleware",
+    handler: "H3Handler",
+  },
+  webroute: {
+    middleware: "WebrouteMiddleware",
+    handler: "WebrouteHandler",
+    selfImports: ["type MiddlewareFactoryDataResult"],
+    outContext: (type) => `MiddlewareFactoryDataResult<typeof ${type}>`,
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
+  },
+  "cloudflare-worker": {
+    handler: "CloudflareHandler",
+    target: "cloudflare",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
+  },
+  "cloudflare-pages": {
+    middleware: "CloudflarePagesFunction",
+    handler: "CloudflarePagesFunction",
+    typeHandler: "createPagesFunction",
+    typeMiddleware: "createPagesFunction",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
+    target: "cloudflare",
+  },
+  "vercel-edge": {
+    handler: "VercelEdgeHandler",
+    typeHandler: "createEdgeHandler",
+    target: "vercel",
+  },
+  "vercel-node": {
+    handler: "VercelNodeHandler",
+    typeHandler: "createNodeHandler",
+    target: "vercel",
+  },
+  elysia: {
+    handler: "ElysiaHandler",
+    middleware: "ElysiaMiddleware",
+  },
+};
 const namespace = "virtual:universal-middleware";
 const versionRange = "^0";
 
@@ -65,17 +135,22 @@ function getVirtualInputs(
   wrappers: ReadonlyArray<(typeof defaultWrappers)[number]> = defaultWrappers,
 ) {
   const parsed = parse(handler);
-  return wrappers.map((server) => ({
-    server,
-    type,
-    handler,
-    get value() {
-      return `${namespace}:${this.server}:${this.type}:${this.handler}`;
-    },
-    get key() {
-      return join(parsed.dir, `universal-${this.server}-${this.type}-${parsed.name}`);
-    },
-  }));
+  return (
+    wrappers
+      // Exclude wrapper that to not support either handler or middleware features
+      .filter((w) => Boolean(typesByServer[w][type]))
+      .map((server) => ({
+        server,
+        type,
+        handler,
+        get value() {
+          return `${namespace}:${this.server}:${this.type}:${this.handler}`;
+        },
+        get key() {
+          return join(parsed.dir, `universal-${this.server}-${this.type}-${parsed.name}`);
+        },
+      }))
+  );
 }
 
 function filterInput(input: string) {
@@ -166,75 +241,17 @@ function applyOutbase(input: Record<string, string>, outbase: string) {
   );
 }
 
-const typesByServer: Record<
-  (typeof defaultWrappers)[number],
-  {
-    middleware?: string;
-    handler?: string;
-    selfImports?: string[];
-    outContext?: (type: string) => string;
-    generics?: (type: string) => string;
-    typeHandler?: string;
-    typeMiddleware?: string;
-    target?: string;
+function shouldLoad(id: string) {
+  if (id.startsWith(namespace)) {
+    const [, , target, type] = id.split(":");
+
+    const info = typesByServer[target as (typeof defaultWrappers)[number]];
+    const t = info[type as "middleware" | "handler"];
+
+    return Boolean(t);
   }
-> = {
-  hono: {
-    middleware: "HonoMiddleware",
-    handler: "HonoHandler",
-  },
-  express: {
-    middleware: "NodeMiddleware",
-    handler: "NodeHandler",
-  },
-  hattip: {
-    middleware: "HattipMiddleware",
-    handler: "HattipHandler",
-  },
-  fastify: {
-    middleware: "FastifyMiddleware",
-    handler: "FastifyHandler",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
-  },
-  h3: {
-    middleware: "H3Middleware",
-    handler: "H3Handler",
-  },
-  webroute: {
-    middleware: "WebrouteMiddleware",
-    handler: "WebrouteHandler",
-    selfImports: ["type MiddlewareFactoryDataResult"],
-    outContext: (type) => `MiddlewareFactoryDataResult<typeof ${type}>`,
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
-  },
-  "cloudflare-worker": {
-    handler: "CloudflareHandler",
-    target: "cloudflare",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
-  },
-  "cloudflare-pages": {
-    middleware: "CloudflarePagesFunction",
-    handler: "CloudflarePagesFunction",
-    typeHandler: "createPagesFunction",
-    typeMiddleware: "createPagesFunction",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
-    target: "cloudflare",
-  },
-  "vercel-edge": {
-    handler: "VercelEdgeHandler",
-    typeHandler: "createEdgeHandler",
-    target: "vercel",
-  },
-  "vercel-node": {
-    handler: "VercelNodeHandler",
-    typeHandler: "createNodeHandler",
-    target: "vercel",
-  },
-  elysia: {
-    handler: "ElysiaHandler",
-    middleware: "ElysiaMiddleware",
-  },
-};
+  return false;
+}
 
 function load(id: string, resolve?: (handler: string, type: string) => string) {
   const [, , target, type, handler] = id.split(":");
@@ -242,7 +259,7 @@ function load(id: string, resolve?: (handler: string, type: string) => string) {
   const info = typesByServer[target as (typeof defaultWrappers)[number]];
 
   const fn = type === "handler" ? (info.typeHandler ?? "createHandler") : (info.typeMiddleware ?? "createMiddleware");
-  const code = `import { ${fn} } from "@universal-middleware/${info.target ?? target}";
+  const code = `import { ${fn} } from "universal-middleware/adapters/${info.target ?? target}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 export default ${fn}(${type});
 `;
@@ -260,7 +277,7 @@ function loadDts(id: string, resolve?: (handler: string, type: string) => string
 
   const selfImports = [fn, `type ${t}`, ...(info.selfImports ?? [])];
   const code = `import { type UniversalMiddleware } from '@universal-middleware/core';
-import { ${selfImports.join(", ")} } from "@universal-middleware/${info.target ?? target}";
+import { ${selfImports.join(", ")} } from "universal-middleware/adapters/${info.target ?? target}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
 type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<infer X> ? unknown extends X ? Universal.Context : X : {};
@@ -429,7 +446,7 @@ function genReport(bundle: Record<string, BundleInfo>, options?: Options) {
   return reports;
 }
 
-export async function readAndEditPackageJson(reports: Report[]) {
+export async function readAndEditPackageJson(reports: Report[], options?: Options) {
   const packageJsonPath = await packageUp();
 
   if (!packageJsonPath) {
@@ -438,9 +455,11 @@ export async function readAndEditPackageJson(reports: Report[]) {
 
   const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
 
-  packageJson.optionalDependencies ??= {};
-  for (const external of externals) {
-    packageJson.optionalDependencies[external] = versionRange;
+  if (options?.externalDependencies === true) {
+    packageJson.dependencies ??= {};
+    for (const external of maybeExternals) {
+      packageJson.dependencies[external] = versionRange;
+    }
   }
 
   packageJson.exports ??= {};
@@ -482,18 +501,20 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
           opts.input = normalizedInput;
           appendVirtualInputs(opts.input, options?.servers);
 
-          if (typeof opts.external === "function") {
-            const orig = opts.external;
-            opts.external = (id, parentId, isResolved) => {
-              if (externals.includes(id)) return true;
-              return orig(id, parentId, isResolved);
-            };
-          } else if (Array.isArray(opts.external)) {
-            opts.external = [...opts.external, ...externals];
-          } else if (opts.external) {
-            opts.external = [opts.external, ...externals];
-          } else {
-            opts.external = [...externals];
+          if (options?.externalDependencies === true) {
+            if (typeof opts.external === "function") {
+              const orig = opts.external;
+              opts.external = (id, parentId, isResolved) => {
+                if (maybeExternals.includes(id)) return true;
+                return orig(id, parentId, isResolved);
+              };
+            } else if (Array.isArray(opts.external)) {
+              opts.external = [...opts.external, ...maybeExternals];
+            } else if (opts.external) {
+              opts.external = [opts.external, ...maybeExternals];
+            } else {
+              opts.external = [...maybeExternals];
+            }
           }
 
           return opts;
@@ -572,8 +593,11 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
 
         builder.initialOptions.metafile = true;
 
-        if (builder.initialOptions.bundle) {
-          builder.initialOptions.external = [...(builder.initialOptions.external ?? []), ...externals];
+        builder.initialOptions.external ??= [];
+        builder.initialOptions.external.push("node:*", "elysia");
+
+        if (builder.initialOptions.bundle && options?.externalDependencies === true) {
+          builder.initialOptions.external.push(...maybeExternals);
         }
 
         const normalizedInput = normalizeInput(builder.initialOptions.entryPoints);
@@ -607,6 +631,9 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
 
         builder.onLoad({ filter: /.*/, namespace: namespace }, async (args) => {
           // console.log("onLoad", args);
+          if (args.path.startsWith(namespace) && !shouldLoad(args.path)) {
+            return null;
+          }
           const { code } = load(args.path);
 
           return {
@@ -666,7 +693,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
     },
 
     loadInclude(id) {
-      return id.startsWith(namespace);
+      return shouldLoad(id);
     },
 
     load,

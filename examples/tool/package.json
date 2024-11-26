@@ -341,21 +341,12 @@
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/core": "workspace:*",
+    "elysia": "catalog:",
+    "h3": "catalog:",
     "rimraf": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",
-    "universal-middleware": "workspace:*"
-  },
-  "optionalDependencies": {
-    "@universal-middleware/cloudflare": "^0",
-    "@universal-middleware/elysia": "^0",
-    "@universal-middleware/express": "^0",
-    "@universal-middleware/fastify": "^0",
-    "@universal-middleware/h3": "^0",
-    "@universal-middleware/hattip": "^0",
-    "@universal-middleware/hono": "^0",
-    "@universal-middleware/webroute": "^0",
-    "@universal-middleware/vercel": "^0"
+    "universal-middleware": "workspace:^"
   },
   "sideEffects": false
 }

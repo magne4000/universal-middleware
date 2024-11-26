@@ -49,6 +49,51 @@
       "types": "./dist/esbuild.d.ts",
       "import": "./dist/esbuild.js",
       "default": "./dist/esbuild.js"
+    },
+    "./adapters/cloudflare": {
+      "types": "./dist/adapters/cloudflare.d.ts",
+      "import": "./dist/adapters/cloudflare.js",
+      "default": "./dist/adapters/cloudflare.js"
+    },
+    "./adapters/elysia": {
+      "types": "./dist/adapters/elysia.d.ts",
+      "import": "./dist/adapters/elysia.js",
+      "default": "./dist/adapters/elysia.js"
+    },
+    "./adapters/express": {
+      "types": "./dist/adapters/express.d.ts",
+      "import": "./dist/adapters/express.js",
+      "default": "./dist/adapters/express.js"
+    },
+    "./adapters/fastify": {
+      "types": "./dist/adapters/fastify.d.ts",
+      "import": "./dist/adapters/fastify.js",
+      "default": "./dist/adapters/fastify.js"
+    },
+    "./adapters/h3": {
+      "types": "./dist/adapters/h3.d.ts",
+      "import": "./dist/adapters/h3.js",
+      "default": "./dist/adapters/h3.js"
+    },
+    "./adapters/hattip": {
+      "types": "./dist/adapters/hattip.d.ts",
+      "import": "./dist/adapters/hattip.js",
+      "default": "./dist/adapters/hattip.js"
+    },
+    "./adapters/hono": {
+      "types": "./dist/adapters/hono.d.ts",
+      "import": "./dist/adapters/hono.js",
+      "default": "./dist/adapters/hono.js"
+    },
+    "./adapters/vercel": {
+      "types": "./dist/adapters/vercel.d.ts",
+      "import": "./dist/adapters/vercel.js",
+      "default": "./dist/adapters/vercel.js"
+    },
+    "./adapters/webroute": {
+      "types": "./dist/adapters/webroute.d.ts",
+      "import": "./dist/adapters/webroute.js",
+      "default": "./dist/adapters/webroute.js"
     }
   },
   "module": "dist/index.js",
@@ -63,18 +108,22 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@universal-middleware/cloudflare": "workspace:*",
-    "@universal-middleware/core": "workspace:*",
-    "@universal-middleware/express": "workspace:*",
-    "@universal-middleware/fastify": "workspace:*",
-    "@universal-middleware/hattip": "workspace:*",
-    "@universal-middleware/hono": "workspace:*",
-    "@universal-middleware/webroute": "workspace:*",
+    "@universal-middleware/cloudflare": "workspace:^",
+    "@universal-middleware/core": "workspace:^",
+    "@universal-middleware/elysia": "workspace:^",
+    "@universal-middleware/express": "workspace:^",
+    "@universal-middleware/fastify": "workspace:^",
+    "@universal-middleware/h3": "workspace:^",
+    "@universal-middleware/hattip": "workspace:^",
+    "@universal-middleware/hono": "workspace:^",
+    "@universal-middleware/vercel": "workspace:^",
+    "@universal-middleware/webroute": "workspace:^",
     "oxc-transform": "^0.37.0",
     "package-up": "^5.0.0",
     "unplugin": "^1.16.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-typescript": "^12.1.1",
     "@swc/core": "catalog:",
@@ -87,6 +136,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "esbuild": "^0.24.0",
     "rollup": "^4.27.4",
@@ -94,6 +144,9 @@
   },
   "peerDependenciesMeta": {
     "rollup": {
+      "optional": true
+    },
+    "@rollup/plugin-commonjs": {
       "optional": true
     },
     "@rollup/plugin-node-resolve": {
@@ -105,5 +158,6 @@
     "esbuild": {
       "optional": true
     }
-  }
+  },
+  "sideEffects": false
 }
