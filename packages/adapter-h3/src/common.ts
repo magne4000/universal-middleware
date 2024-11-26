@@ -15,9 +15,9 @@ import {
 export type H3Handler = EventHandler;
 export type H3Middleware = EventHandler;
 
-export const contextSymbol = Symbol("unContext");
-export const pendingMiddlewaresSymbol = Symbol("unPendingMiddlewares");
-export const wrappedResponseSymbol = Symbol("unWrappedResponse");
+export const contextSymbol = Symbol.for("unContext");
+export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
+export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
 
 declare module "h3" {
   interface H3EventContext {
