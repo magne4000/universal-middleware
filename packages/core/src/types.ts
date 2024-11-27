@@ -14,8 +14,14 @@ export type UniversalFn<U extends UniversalHandler<any> | UniversalMiddleware<an
   [universalSymbol]: U;
 };
 
-export type SetThisHandler<F extends AnyFn> = SetThis<F, { [universalSymbol]: UniversalHandler }>;
-export type SetThisMiddleware<F extends AnyFn> = SetThis<F, { [universalSymbol]: UniversalMiddleware }>;
+export type SetThisHandler<F extends AnyFn, U extends UniversalHandler<any> = UniversalHandler> = SetThis<
+  UniversalFn<U, F>,
+  { [universalSymbol]: U }
+>;
+export type SetThisMiddleware<F extends AnyFn, U extends UniversalMiddleware<any, any> = UniversalMiddleware> = SetThis<
+  UniversalFn<U, F>,
+  { [universalSymbol]: U }
+>;
 
 // Runtimes
 

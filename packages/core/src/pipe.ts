@@ -1,35 +1,60 @@
 import { universalSymbol } from "./const";
-import type { AnyFn, Awaitable, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
+import type {
+  AnyFn,
+  Awaitable,
+  SetThisHandler,
+  SetThisMiddleware,
+  UniversalFn,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "./types";
 import { bindUniversal } from "./utils";
 
 type _Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
-type Out<T> = T extends UniversalFn<infer X, infer Y> ? _Out<X> : _Out<T>;
+type Out<T> = T extends UniversalFn<infer X, infer _> ? _Out<X> : _Out<T>;
 type _In<T> = T extends UniversalHandler<infer C> ? C : T extends UniversalMiddleware<infer C, any> ? C : never;
-type In<T> = T extends UniversalFn<infer X, infer Y> ? _In<X> : _In<T>;
+type In<T> = T extends UniversalFn<infer X, infer _> ? _In<X> : _In<T>;
 type First<T extends any[]> = T extends [infer X, ...any[]] ? X : never;
 type Last<T extends any[]> = T extends [...any[], infer X] ? X : never;
 
 type AnyMiddleware<In extends Universal.Context = any, Out extends Universal.Context = any, Fn extends AnyFn = AnyFn> =
+  | UniversalHandler<In>
   | UniversalMiddleware<In, Out>
-  | UniversalFn<UniversalMiddleware<In, Out>, Fn>
-  | UniversalFn<UniversalHandler<In>, Fn>;
+  | SetThisHandler<Fn, UniversalHandler<In>>
+  | SetThisMiddleware<Fn, UniversalMiddleware<In, Out>>;
 
-type ComposeReturnType<T extends AnyMiddleware[]> = Last<T> extends UniversalFn<infer X, infer Y>
-  ? X extends UniversalHandler<any>
-    ? UniversalFn<UniversalHandler<In<First<T>>>, Y>
-    : UniversalFn<UniversalMiddleware<In<First<T>>, In<Last<T>>>, Y>
-  : Last<T> extends UniversalHandler<any>
-    ? UniversalHandler<In<First<T>>>
-    : UniversalMiddleware<In<First<T>>, In<Last<T>>>;
+type ExtractUF<T> = T extends UniversalFn<infer _, infer Fn> ? Fn : never;
+
+type ComposeReturnType<T extends AnyMiddleware[]> = Last<T> extends UniversalHandler<any>
+  ? UniversalHandler<In<First<T>>>
+  : Last<T> extends UniversalMiddleware<any, any>
+    ? UniversalMiddleware<In<First<T>>, In<Last<T>>>
+    : Last<T> extends SetThisHandler<infer _, infer __>
+      ? SetThisHandler<ExtractUF<Last<T>>, UniversalHandler<In<First<T>>>>
+      : Last<T> extends SetThisMiddleware<infer _, infer __>
+        ? SetThisMiddleware<ExtractUF<Last<T>>, UniversalMiddleware<In<First<T>>, In<Last<T>>>>
+        : never;
+
+type Cast<
+  T extends AnyMiddleware,
+  NewIn extends Universal.Context,
+  NewOut extends Universal.Context,
+> = T extends UniversalMiddleware<any, any>
+  ? UniversalMiddleware<NewIn, NewOut>
+  : T extends SetThisHandler<infer Fn>
+    ? SetThisHandler<Fn, UniversalHandler<NewIn>>
+    : T extends SetThisMiddleware<infer Fn>
+      ? SetThisMiddleware<Fn, UniversalMiddleware<NewIn, NewOut>>
+      : never;
 
 type Pipe<F extends AnyMiddleware[]> = F extends []
   ? F
   : F extends [AnyMiddleware]
     ? F
-    : F extends [AnyMiddleware<infer A, infer B>, AnyMiddleware<any, infer D>]
-      ? [AnyMiddleware<A, B>, AnyMiddleware<B, D>]
-      : F extends [...infer X extends AnyMiddleware[], infer Y extends AnyMiddleware, AnyMiddleware<any, infer D1>]
-        ? [...Pipe<[...X, Y]>, AnyMiddleware<Out<Y>, D1>]
+    : F extends [infer F1 extends AnyMiddleware, infer F2 extends AnyMiddleware]
+      ? [Cast<F1, In<F1>, Out<F1>>, Cast<F2, Out<F1>, Out<F2>>]
+      : F extends [...infer X extends AnyMiddleware[], infer Y extends AnyMiddleware, infer L extends AnyMiddleware]
+        ? [...Pipe<[...X, Y]>, Cast<L, Out<Y>, Out<L>>]
         : never;
 
 /**
@@ -89,7 +114,9 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
  * @returns A new middleware function that applies the input middleware functions in sequence.
  */
 export function pipe<F extends AnyMiddleware[]>(...a: Pipe<F> extends F ? F : Pipe<F>): ComposeReturnType<F> {
-  const middlewares = (a as AnyMiddleware[]).map((m) => (universalSymbol in m ? m[universalSymbol] : m));
+  const middlewares: UniversalMiddleware<any, any>[] = (a as AnyMiddleware[]).map((m) =>
+    universalSymbol in m ? (m[universalSymbol] as SetThisMiddleware<any>) : m,
+  );
 
   const fn: UniversalMiddleware<any, any> = async function pipeInternal(request, context, runtime) {
     const pending: ((response: Response) => Awaitable<Response>)[] = [];
