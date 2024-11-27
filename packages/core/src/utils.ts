@@ -53,6 +53,7 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
  * @internal
  */
 export function bindUniversal<
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   U extends UniversalHandler<any> | UniversalMiddleware<any, any>,
   F extends UniversalFn<U, AnyFn>,
 >(universal: U, fn: SetThis<F, { [universalSymbol]: U }>): F {
