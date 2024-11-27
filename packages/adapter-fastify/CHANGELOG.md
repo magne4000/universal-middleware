@@ -2,6 +2,21 @@
 
 
 
+## [0.3.7](https://github.com/magne4000/universal-middleware/compare/fastify-v0.3.6...fastify-v0.3.7) (2024-11-27)
+
+
+### Features
+
+* export are now self-contained bundles by default ([adf9f30](https://github.com/magne4000/universal-middleware/commit/adf9f3007ac7655e6288fef24d418b159c79d8fd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.2.14
+    * @universal-middleware/express bumped to 0.2.10
+
 ## 0.3.6 (2024-10-15)
 
 

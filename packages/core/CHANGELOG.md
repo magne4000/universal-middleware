@@ -2,6 +2,13 @@
 
 
 
+## [0.2.14](https://github.com/magne4000/universal-middleware/compare/core-v0.2.13...core-v0.2.14) (2024-11-27)
+
+
+### Features
+
+* Add `vercel-edge` and `vercel-node` support ([f0b33f8](https://github.com/magne4000/universal-middleware/commit/f0b33f8fcb751d50f7062f4b450b7a2c30d9a460))
+
 ## [0.2.12](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.11...@universal-middleware/core@0.2.12) (2024-10-08)
 
 
@@ -166,6 +173,3 @@
 
 
 ## 0.1.1 (2024-07-12)
-
-
-
