@@ -32,6 +32,62 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
         ? [...Pipe<[...X, Y]>, AnyMiddleware<Out<Y>, D1>]
         : never;
 
+/**
+ * Composes a sequence of middlewares into a single middleware.
+ * The `pipe` function takes an array of middleware functions and returns a new middleware function that
+ * applies the input middleware functions in sequence to a given request and context.
+ *
+ * @example piping a universal middleware into a universal handler
+ * ```js
+ * const m = pipe(
+ *   (request, context, runtime) => return { status: "OK" },
+ *   (request, context, runtime) => new Response(context.status),
+ * );
+ *
+ * const response = await m(request, context, runtime);
+ *
+ * console.log(await response.text()); // "OK"
+ * ```
+ *
+ * The `pipe` function can also be applied to any combination of universal middlewares and adapter-specific middlewares.
+ *
+ * @example piping an express middleware into a universal handler
+ * ```js
+ * // Express middleware created thanks to universal-middleware
+ * // It returns a `{ status: "OK" }` Context.
+ * import someExpressMiddleware from "my-lib/express";
+ *
+ * const m = pipe(
+ *   someExpressMiddleware,
+ *   (request, context, runtime) => new Response(context.status),
+ * );
+ *
+ * const response = await m(request, context, runtime);
+ *
+ * console.log(await response.text()); // "OK"
+ * ```
+ *
+ * @example piping a universal middleware into an express handler
+ * ```js
+ * // Express handler created thanks to universal-middleware
+ * // It returns `new Response(context.status)`.
+ * import someExpressHandler from "my-lib/express";
+ *
+ * const m = pipe(
+ *   (request, context, runtime) => return { status: "OK" },
+ *   someExpressHandler,
+ * );
+ *
+ * // The function signature always corresponds to the last middleware or handler given to the `pipe` function.
+ * m(nodeRequest, nodeResponse);
+ *
+ * // Usage with an express `app`
+ * app.use(m);
+ * ```
+ *
+ * @see {@link https://universal-middleware.dev/helpers/pipe}
+ * @returns A new middleware function that applies the input middleware functions in sequence.
+ */
 export function pipe<F extends AnyMiddleware[]>(...a: Pipe<F> extends F ? F : Pipe<F>): ComposeReturnType<F> {
   const middlewares = (a as AnyMiddleware[]).map((m) => (universalSymbol in m ? m[universalSymbol] : m));
 
