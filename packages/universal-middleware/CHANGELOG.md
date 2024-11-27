@@ -2,6 +2,35 @@
 
 
 
+## [0.4.0](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.3.10-beta...universal-middleware-v0.4.0) (2024-11-27)
+
+
+### Features
+
+* @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([97fd518](https://github.com/magne4000/universal-middleware/commit/97fd51819192a1d8b1d6659995b197ae8ddeb163))
+* Add `vercel-edge` and `vercel-node` support ([f0b33f8](https://github.com/magne4000/universal-middleware/commit/f0b33f8fcb751d50f7062f4b450b7a2c30d9a460))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#58](https://github.com/magne4000/universal-middleware/issues/58)) ([24d5fc3](https://github.com/magne4000/universal-middleware/commit/24d5fc3bafb0ef3b00c0eb8067d7acb86a67d079))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/cloudflare bumped to 0.2.7
+    * @universal-middleware/core bumped to 0.2.14
+    * @universal-middleware/elysia bumped to 0.2.3
+    * @universal-middleware/express bumped to 0.2.10
+    * @universal-middleware/fastify bumped to 0.3.7
+    * @universal-middleware/h3 bumped to 0.2.9
+    * @universal-middleware/hattip bumped to 0.2.11
+    * @universal-middleware/hono bumped to 0.2.13
+    * @universal-middleware/vercel bumped to 0.1.2-beta
+    * @universal-middleware/webroute bumped to 0.2.9
+
 ## [0.3.10-beta](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.3.9...universal-middleware-v0.3.10-beta) (2024-11-19)
 
 

@@ -2,6 +2,15 @@
 
 
 
+## [0.2.7](https://github.com/magne4000/universal-middleware/compare/cloudflare-v0.2.6...cloudflare-v0.2.7) (2024-11-27)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.2.14
+
 ## [0.2.5](https://github.com/magne4000/universal-handler/compare/@universal-middleware/cloudflare@0.2.4...@universal-middleware/cloudflare@0.2.5) (2024-10-08)
 
 
@@ -49,6 +58,3 @@
 ### Features
 
 * adapter-cloudflare ([#23](https://github.com/magne4000/universal-handler/issues/23)) ([e6129e3](https://github.com/magne4000/universal-handler/commit/e6129e35bce87af34d45ed361140fb69ed822ffa))
-
-
-
