@@ -2,6 +2,31 @@
 
 
 
+## [0.4.1-beta](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.4.0...universal-middleware-v0.4.1-beta) (2024-11-27)
+
+
+### Features
+
+* @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([97fd518](https://github.com/magne4000/universal-middleware/commit/97fd51819192a1d8b1d6659995b197ae8ddeb163))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#58](https://github.com/magne4000/universal-middleware/issues/58)) ([24d5fc3](https://github.com/magne4000/universal-middleware/commit/24d5fc3bafb0ef3b00c0eb8067d7acb86a67d079))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/elysia bumped to 0.2.4-beta
+    * @universal-middleware/express bumped to 0.2.11-beta
+    * @universal-middleware/fastify bumped to 0.3.8
+    * @universal-middleware/h3 bumped to 0.2.10-beta
+    * @universal-middleware/hono bumped to 0.2.14-beta
+    * @universal-middleware/vercel bumped to 0.1.3-beta
+    * @universal-middleware/webroute bumped to 0.2.10
+
 ## [0.4.0](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.3.10-beta...universal-middleware-v0.4.0) (2024-11-27)
 
 

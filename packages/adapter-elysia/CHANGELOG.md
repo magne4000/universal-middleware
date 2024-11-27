@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4-beta](https://github.com/magne4000/universal-middleware/compare/elysia-v0.2.3...elysia-v0.2.4-beta) (2024-11-27)
+
+
+### Features
+
+* @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([97fd518](https://github.com/magne4000/universal-middleware/commit/97fd51819192a1d8b1d6659995b197ae8ddeb163))
+
 ## [0.2.3](https://github.com/magne4000/universal-middleware/compare/elysia-v0.2.2...elysia-v0.2.3) (2024-11-27)
 
 

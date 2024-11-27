@@ -2,6 +2,13 @@
 
 
 
+## [0.2.11-beta](https://github.com/magne4000/universal-middleware/compare/express-v0.2.10...express-v0.2.11-beta) (2024-11-27)
+
+
+### Features
+
+* @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([97fd518](https://github.com/magne4000/universal-middleware/commit/97fd51819192a1d8b1d6659995b197ae8ddeb163))
+
 ## [0.2.10](https://github.com/magne4000/universal-middleware/compare/express-v0.2.9...express-v0.2.10) (2024-11-27)
 
 

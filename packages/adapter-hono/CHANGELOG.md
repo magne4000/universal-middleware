@@ -7,6 +7,13 @@
 
 
 
+## [0.2.14-beta](https://github.com/magne4000/universal-middleware/compare/hono-v0.2.13...hono-v0.2.14-beta) (2024-11-27)
+
+
+### Features
+
+* @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([97fd518](https://github.com/magne4000/universal-middleware/commit/97fd51819192a1d8b1d6659995b197ae8ddeb163))
+
 ## [0.2.13](https://github.com/magne4000/universal-middleware/compare/hono-v0.2.12...hono-v0.2.13) (2024-11-27)
 
 

@@ -2,6 +2,15 @@
 
 
 
+## [0.2.10](https://github.com/magne4000/universal-middleware/compare/webroute-v0.2.9...webroute-v0.2.10) (2024-11-27)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @universal-middleware/hono bumped to 0.2.14-beta
+
 ## [0.2.9](https://github.com/magne4000/universal-middleware/compare/webroute-v0.2.8...webroute-v0.2.9) (2024-11-27)
 
 

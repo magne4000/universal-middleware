@@ -7,6 +7,13 @@
 
 
 
+## [0.2.10-beta](https://github.com/magne4000/universal-middleware/compare/h3-v0.2.9...h3-v0.2.10-beta) (2024-11-27)
+
+
+### Features
+
+* @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([97fd518](https://github.com/magne4000/universal-middleware/commit/97fd51819192a1d8b1d6659995b197ae8ddeb163))
+
 ## [0.2.9](https://github.com/magne4000/universal-middleware/compare/h3-v0.2.8...h3-v0.2.9) (2024-11-27)
 
 
