@@ -1,5 +1,9 @@
 on:
   pull_request:
+    types:
+      - opened
+      - labeled
+      - unlabeled
     branches:
       - main
 
@@ -11,6 +15,7 @@ name: release-please-beta-merge
 
 jobs:
   release-please-beta-merge:
+    if: contains(github.event.pull_request.labels.*.name, 'beta')
     runs-on: ubuntu-latest
 
     steps:
