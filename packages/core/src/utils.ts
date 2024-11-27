@@ -55,10 +55,10 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
 export function bindUniversal<
   U extends UniversalHandler<any> | UniversalMiddleware<any, any>,
   F extends UniversalFn<U, AnyFn>,
->(universal: U, fn: SetThis<F, { [universalSymbol]: U }>): UniversalFn<U, OmitThisParameter<F>> {
+>(universal: U, fn: SetThis<F, { [universalSymbol]: U }>): F {
   const unboundFn = unboundSymbol in fn ? (fn[unboundSymbol] as F) : fn;
   const self = { [universalSymbol]: universal, [unboundSymbol]: unboundFn };
-  const boundFn = unboundFn.bind(self) as UniversalFn<U, OmitThisParameter<F>>;
+  const boundFn = unboundFn.bind(self) as F;
   Object.assign(boundFn, self);
   return boundFn;
 }

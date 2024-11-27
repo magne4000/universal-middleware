@@ -37,9 +37,9 @@ import type { WebrouteHandler, WebrouteMiddleware } from "@universal-middleware/
 import { expectTypeOf, test } from "vitest";
 
 test("hono", () => {
-  expectTypeOf(honoContextMiddleware).returns.toEqualTypeOf<HonoMiddleware>();
-  expectTypeOf(honoHeadersMiddleware).returns.toEqualTypeOf<HonoMiddleware>();
-  expectTypeOf(honoHandler).returns.toEqualTypeOf<HonoHandler>();
+  expectTypeOf(honoContextMiddleware).returns.toEqualTypeOf<HonoMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(honoHeadersMiddleware).returns.toEqualTypeOf<HonoMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(honoHandler).returns.toEqualTypeOf<HonoHandler<Universal.Context>>();
 });
 
 test("express", () => {

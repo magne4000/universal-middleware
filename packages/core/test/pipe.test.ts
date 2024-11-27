@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   type RuntimeAdapter,
+  type UniversalFn,
   type UniversalHandler,
   type UniversalMiddleware,
   bindUniversal,
@@ -17,8 +18,10 @@ describe("pipe", () => {
     params: undefined,
   };
 
-  function wrapHandler<U extends UniversalHandler<any>>(universal: U) {
-    return bindUniversal(universal, async function wrappedHandler(a: number) {
+  function wrapHandler<U extends UniversalHandler<any>>(
+    universal: U,
+  ): UniversalFn<U, (a: number) => Promise<Response>> {
+    return bindUniversal(universal, async function wrappedHandler(a) {
       const response = await this[universalSymbol](request, context, runtime);
       response.headers.set("a", String(a));
       return response;

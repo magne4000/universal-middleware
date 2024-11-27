@@ -3,6 +3,7 @@ import contextMiddleware from "@universal-middleware-examples/tool/middlewares/c
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware";
 import paramsHandler from "@universal-middleware-examples/tool/params-handler";
 import { createHandler } from "@universal-middleware/cloudflare";
+import type { UniversalMiddleware } from "@universal-middleware/core";
 import { pipe } from "@universal-middleware/core";
 
 const paramsHandlerInstance = paramsHandler({
@@ -14,12 +15,12 @@ const paramsHandlerInstance = paramsHandler({
 const wrapped = pipe(
   contextMiddleware("World!!!"),
   headersMiddleware(),
-  (request, ctx, runtime) => {
+  ((request, ctx, runtime) => {
     const url = new URL(request.url);
     if (url.pathname.startsWith("/user/")) {
       return paramsHandlerInstance(request, ctx, runtime);
     }
-  },
+  }) as UniversalMiddleware,
   handler(),
 );
 

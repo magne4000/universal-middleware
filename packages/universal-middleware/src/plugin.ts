@@ -73,6 +73,7 @@ const typesByServer: Record<
   hono: {
     middleware: "HonoMiddleware",
     handler: "HonoHandler",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   express: {
     middleware: "NodeMiddleware",
