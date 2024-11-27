@@ -17,6 +17,8 @@
     "packages/adapter-webroute": {},
     "packages/compress": {},
     "packages/core": {},
-    "packages/universal-middleware": {}
+    "packages/universal-middleware": {
+      "release-as": "0.4.0"
+    }
   }
 }
