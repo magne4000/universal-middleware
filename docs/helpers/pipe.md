@@ -19,7 +19,7 @@ const middlewareEarlyResponseError = (() => (request, context, runtime) => {
   if (context.status && context.status !== 'OK') {
     return new Response("Error", { status: 500 });
   }
-}) satisfies Get<[], UniversalMiddleware>;
+}) satisfies Get<[], UniversalMiddleware<{ status?: string }>>;
 
 const handler = (() => (request, context, runtime) => {
   return new Response(context.status ?? "OK");
