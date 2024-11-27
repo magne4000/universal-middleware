@@ -54,7 +54,7 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
  * @example piping an express middleware into a universal handler
  * ```js
  * // Express middleware created thanks to universal-middleware
- * // It returns a `{ status: "OK" }` Context.
+ * // It returns a { status: "OK" } Context.
  * import someExpressMiddleware from "my-lib/express";
  *
  * const m = pipe(
@@ -70,7 +70,7 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
  * @example piping a universal middleware into an express handler
  * ```js
  * // Express handler created thanks to universal-middleware
- * // It returns `new Response(context.status)`.
+ * // It returns new Response(context.status).
  * import someExpressHandler from "my-lib/express";
  *
  * const m = pipe(
