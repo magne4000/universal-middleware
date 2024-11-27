@@ -8,7 +8,7 @@ The following middleware demonstrate how to interact with or modify a Response.
 
 <<< @/../examples/tool/src/middlewares/headers.middleware.ts
 
-After bundling and publishing this middleware, one can then use this middleware as follows:
+After bundling and publishing this middleware as `@universal-middleware-examples/tool`, one can then use this middleware as follows:
 
 ::: code-group
 
