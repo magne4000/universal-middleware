@@ -60,10 +60,10 @@ const hattipHandler = app.buildHandler();
 export default hattipHandler;
 ```
 
-```ts twoslash [cloudflare-worker.ts]
+```ts [cloudflare-worker.ts]
 import paramsHandler from "@universal-middleware-examples/tool/params-handler";
 import { createHandler } from "@universal-middleware/cloudflare";
-import { pipe } from "@universal-middleware/core";
+import { pipe, type RuntimeAdapter } from "@universal-middleware/core";
 
 const paramsHandlerInstance = paramsHandler({
   // Mandatory when targeting Cloudflare Worker
@@ -73,7 +73,7 @@ const paramsHandlerInstance = paramsHandler({
 // Cloudflare Workers have no native routing support.
 // We recommend using Hono as it fully supports Cloudflare Worker.
 const wrapped = pipe(
-  (request, ctx, runtime) => {
+  (request: Request, ctx: Universal.Context, runtime: RuntimeAdapter) => {
     const url = new URL(request.url);
     // intercept `/user/*` routes with this handler
     if (url.pathname.startsWith("/user/")) {
