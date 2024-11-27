@@ -1,7 +1,7 @@
 import type { UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { expectTypeOf, test } from "vitest";
 import { pipe } from "../src/pipe";
-import type { SetThisHandler, UniversalFn } from "../src/types";
+import type { UniversalFn } from "../src/types";
 
 type M1 = UniversalMiddleware<{ a: 1 }, { a: 1; b: 2 }>;
 type M2 = UniversalMiddleware<{ a: 1; b: 2 }, { a: 1; b: 2; c: 3 }>;
@@ -61,17 +61,17 @@ test("pipe", () => {
   const mw3: UniversalFn<M3, W> = {} as any;
   const hw1: UniversalFn<H1, W> = {} as any;
 
-  expectTypeOf(pipe(m3, hw1)).toEqualTypeOf<SetThisHandler<W, UniversalHandler<{ a: 1; b: 2; c: 3 }>>>();
-  expectTypeOf(pipe(mw3, hw1)).toEqualTypeOf<SetThisHandler<W, UniversalHandler<{ a: 1; b: 2; c: 3 }>>>();
+  expectTypeOf(pipe(m3, hw1)).toEqualTypeOf<UniversalFn<UniversalHandler<{ a: 1; b: 2; c: 3 }>, W>>();
+  expectTypeOf(pipe(mw3, hw1)).toEqualTypeOf<UniversalFn<UniversalHandler<{ a: 1; b: 2; c: 3 }>, W>>();
   expectTypeOf(pipe(m3, h1)).toEqualTypeOf<UniversalHandler<{ a: 1; b: 2; c: 3 }>>();
 
-  expectTypeOf(pipe(m1, m2, m3, hw1)).toEqualTypeOf<SetThisHandler<W, UniversalHandler<{ a: 1 }>>>();
-  expectTypeOf(pipe(m1, m2, mw3, hw1)).toEqualTypeOf<SetThisHandler<W, UniversalHandler<{ a: 1 }>>>();
-  expectTypeOf(pipe(m1, mw2, mw3, hw1)).toEqualTypeOf<SetThisHandler<W, UniversalHandler<{ a: 1 }>>>();
-  expectTypeOf(pipe(mw1, mw2, mw3, hw1)).toEqualTypeOf<SetThisHandler<W, UniversalHandler<{ a: 1 }>>>();
-  expectTypeOf(pipe(mw1, mw2, m3, hw1)).toEqualTypeOf<SetThisHandler<W, UniversalHandler<{ a: 1 }>>>();
-  expectTypeOf(pipe(mw1, m2, mw3, hw1)).toEqualTypeOf<SetThisHandler<W, UniversalHandler<{ a: 1 }>>>();
-  expectTypeOf(pipe(m1, mw2, mw3, hw1)).toEqualTypeOf<SetThisHandler<W, UniversalHandler<{ a: 1 }>>>();
+  expectTypeOf(pipe(m1, m2, m3, hw1)).toEqualTypeOf<UniversalFn<UniversalHandler<{ a: 1 }>, W>>();
+  expectTypeOf(pipe(m1, m2, mw3, hw1)).toEqualTypeOf<UniversalFn<UniversalHandler<{ a: 1 }>, W>>();
+  expectTypeOf(pipe(m1, mw2, mw3, hw1)).toEqualTypeOf<UniversalFn<UniversalHandler<{ a: 1 }>, W>>();
+  expectTypeOf(pipe(mw1, mw2, mw3, hw1)).toEqualTypeOf<UniversalFn<UniversalHandler<{ a: 1 }>, W>>();
+  expectTypeOf(pipe(mw1, mw2, m3, hw1)).toEqualTypeOf<UniversalFn<UniversalHandler<{ a: 1 }>, W>>();
+  expectTypeOf(pipe(mw1, m2, mw3, hw1)).toEqualTypeOf<UniversalFn<UniversalHandler<{ a: 1 }>, W>>();
+  expectTypeOf(pipe(m1, mw2, mw3, hw1)).toEqualTypeOf<UniversalFn<UniversalHandler<{ a: 1 }>, W>>();
 
   expectTypeOf(pipe(m1, m2, m3, h1)).toEqualTypeOf<UniversalHandler<{ a: 1 }>>();
   expectTypeOf(pipe(m1, m2, mw3, h1)).toEqualTypeOf<UniversalHandler<{ a: 1 }>>();

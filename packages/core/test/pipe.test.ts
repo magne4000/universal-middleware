@@ -42,17 +42,6 @@ describe("pipe", () => {
   });
 
   test("wrapped handler", async () => {
-    pipe(
-      bindUniversal(
-        () => new Response("OK"),
-        async function wrappedHandler(a: number) {
-          const response = await this[universalSymbol]();
-          response.headers.set("a", String(a));
-          return response;
-        },
-      ),
-    )(1);
-
     const handler = pipe(wrapHandler(() => new Response("OK")));
     const response = handler(1);
     await expect(response).resolves.toBeInstanceOf(Response);

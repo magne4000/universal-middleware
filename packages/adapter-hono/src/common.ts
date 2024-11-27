@@ -1,8 +1,7 @@
 import type {
   Get,
   RuntimeAdapter,
-  SetThisHandler,
-  SetThisMiddleware,
+  UniversalFn,
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
@@ -22,8 +21,11 @@ interface UniversalEnv {
   };
 }
 
-export type HonoHandler = SetThisHandler<Handler<UniversalEnv>>;
-export type HonoMiddleware = SetThisMiddleware<MiddlewareHandler<UniversalEnv>>;
+export type HonoHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, Handler<UniversalEnv>>;
+export type HonoMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
+  UniversalMiddleware<In, Out>,
+  MiddlewareHandler<UniversalEnv>
+>;
 
 function getExecutionCtx(honoContext: HonoContext): ExecutionContext | undefined {
   try {
@@ -36,12 +38,14 @@ function getExecutionCtx(honoContext: HonoContext): ExecutionContext | undefined
 /**
  * Creates a request handler to be passed to app.all() or any other route function
  */
-export function createHandler<T extends unknown[]>(handlerFactory: Get<T, UniversalHandler>): Get<T, HonoHandler> {
+export function createHandler<T extends unknown[], InContext extends Universal.Context>(
+  handlerFactory: Get<T, UniversalHandler<InContext>>,
+): Get<T, HonoHandler<InContext>> {
   return (...args) => {
     const handler = handlerFactory(...args);
 
     return bindUniversal(handler, function universalHandlerHono(honoContext) {
-      const context = initContext(honoContext);
+      const context = initContext<InContext>(honoContext);
 
       return this[universalSymbol](honoContext.req.raw, context, getRuntime(honoContext));
     });
@@ -55,7 +59,9 @@ export function createMiddleware<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
->(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, HonoMiddleware> {
+>(
+  middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
+): Get<T, HonoMiddleware<InContext, OutContext>> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 

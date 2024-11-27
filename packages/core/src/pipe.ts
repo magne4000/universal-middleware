@@ -1,13 +1,5 @@
 import { universalSymbol } from "./const";
-import type {
-  AnyFn,
-  Awaitable,
-  SetThisHandler,
-  SetThisMiddleware,
-  UniversalFn,
-  UniversalHandler,
-  UniversalMiddleware,
-} from "./types";
+import type { AnyFn, Awaitable, SetThisMiddleware, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
 import { bindUniversal } from "./utils";
 
 type _Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
@@ -20,8 +12,8 @@ type Last<T extends any[]> = T extends [...any[], infer X] ? X : never;
 type AnyMiddleware<In extends Universal.Context = any, Out extends Universal.Context = any, Fn extends AnyFn = AnyFn> =
   | UniversalHandler<In>
   | UniversalMiddleware<In, Out>
-  | SetThisHandler<Fn, UniversalHandler<In>>
-  | SetThisMiddleware<Fn, UniversalMiddleware<In, Out>>;
+  | UniversalFn<UniversalHandler<In>, Fn>
+  | UniversalFn<UniversalMiddleware<In, Out>, Fn>;
 
 type ExtractUF<T> = T extends UniversalFn<infer _, infer Fn> ? Fn : never;
 
@@ -29,10 +21,10 @@ type ComposeReturnType<T extends AnyMiddleware[]> = Last<T> extends UniversalHan
   ? UniversalHandler<In<First<T>>>
   : Last<T> extends UniversalMiddleware<any, any>
     ? UniversalMiddleware<In<First<T>>, In<Last<T>>>
-    : Last<T> extends SetThisHandler<infer _, infer __>
-      ? SetThisHandler<ExtractUF<Last<T>>, UniversalHandler<In<First<T>>>>
-      : Last<T> extends SetThisMiddleware<infer _, infer __>
-        ? SetThisMiddleware<ExtractUF<Last<T>>, UniversalMiddleware<In<First<T>>, In<Last<T>>>>
+    : Last<T> extends UniversalFn<UniversalHandler<any>, infer _>
+      ? UniversalFn<UniversalHandler<In<First<T>>>, ExtractUF<Last<T>>>
+      : Last<T> extends UniversalFn<UniversalMiddleware<any, any>, infer _>
+        ? UniversalFn<UniversalMiddleware<In<First<T>>, In<Last<T>>>, ExtractUF<Last<T>>>
         : never;
 
 type Cast<
@@ -41,10 +33,10 @@ type Cast<
   NewOut extends Universal.Context,
 > = T extends UniversalMiddleware<any, any>
   ? UniversalMiddleware<NewIn, NewOut>
-  : T extends SetThisHandler<infer Fn>
-    ? SetThisHandler<Fn, UniversalHandler<NewIn>>
-    : T extends SetThisMiddleware<infer Fn>
-      ? SetThisMiddleware<Fn, UniversalMiddleware<NewIn, NewOut>>
+  : T extends UniversalFn<UniversalHandler<any>, infer Fn>
+    ? UniversalFn<UniversalHandler<NewIn>, Fn>
+    : T extends UniversalFn<UniversalMiddleware<any, any>, infer Fn>
+      ? UniversalFn<UniversalMiddleware<NewIn, NewOut>, Fn>
       : never;
 
 type Pipe<F extends AnyMiddleware[]> = F extends []
