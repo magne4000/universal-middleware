@@ -19,7 +19,7 @@ const router = createRadixRouter([
   Route.normalise(
     route("/")
       .method("get")
-      // `createMiddleware(m1)()` or `m1()` are roughly equivalant is some cases (if not using the context or runtime).
+      // `createMiddleware(m1)()` or `m1()` are roughly equivalent is some cases (if not using the context or runtime).
       // Usually prefer wrapping in `createMiddleware` for better compatibility
       .use(m1())
       .use(createMiddleware(m2)())

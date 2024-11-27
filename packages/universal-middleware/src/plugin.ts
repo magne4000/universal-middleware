@@ -540,7 +540,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
           })?.[0];
 
           if (!found) {
-            throw new Error("Error occured while generating bundle info");
+            throw new Error("Error occurred while generating bundle info");
           }
 
           return found;
@@ -660,7 +660,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
             })?.[0];
 
             if (!found) {
-              throw new Error("Error occured while generating bundle info");
+              throw new Error("Error occurred while generating bundle info");
             }
 
             return found;

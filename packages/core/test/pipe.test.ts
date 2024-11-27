@@ -29,7 +29,7 @@ describe("pipe", () => {
     expect(body).toBe("1");
   });
 
-  test("context middleware |> empty middlware |> handler", async () => {
+  test("context middleware |> empty middleware |> handler", async () => {
     const handler = pipe(
       () => ({ a: 1 }),
       (async () => {}) as UniversalMiddleware<{ a: number }, { a: number }>,
