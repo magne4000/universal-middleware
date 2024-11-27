@@ -1,7 +1,7 @@
 # Pipe
-The `pipe` functions composes a sequence of middlewares into a single middleware.
-It takes an array of middleware functions and returns a new middleware function that
-applies the input middleware functions in sequence to a given request and context.
+The `pipe` function combines multiple middleware into one.
+It takes an array of middleware and returns a new middleware that processes a request and context
+through each middleware in sequence.
 
 ## Usage
 
@@ -40,11 +40,9 @@ You can also `pipe` universal middlewares and handlers together, creating a new 
 const newHandler = pipe(middlewareStatus(), middlewareEarlyResponseError(), handler())
 ```
 
-You can also `pipe` middlewares or handlers that are adapter specific:
+You can also `pipe` middlewares or handlers that are adapter specific.
 
-> [!WARNING]
-> This is only valid for middlewares and handlers generated thanks to `universal-middleware`
-
+Any adapter specific middleware will act as if they were universal:
 ```ts twoslash
 // @include: main
 // ---cut---
@@ -53,8 +51,11 @@ import { createMiddleware } from "@universal-middleware/hono";
 const honoMiddlewareStatus = createMiddleware(middlewareStatus);
 
 const newHandler = pipe(honoMiddlewareStatus(), middlewareEarlyResponseError(), handler())
+//    ^^^^^^^^^^
+//    ^ `newHandler` is a universal handler because `handler` is universal
 ```
 
+Any adapter specific handler will keep their signature once returned:
 ```ts twoslash
 // @include: main
 // ---cut---
@@ -62,5 +63,11 @@ import { createHandler } from "@universal-middleware/hono";
 
 const honoHandler = createHandler(handler);
 
-const newHandler = pipe(middlewareStatus(), middlewareEarlyResponseError(), honoHandler())
+const newHonoHandler = pipe(middlewareStatus(), middlewareEarlyResponseError(), honoHandler())
+//    ^^^^^^^^^^^^^^
+//    ^ `newHonoHandler` is a hono handler because `honoHandler` is hono-specific
+// It can directly be used by hono: app.get("/", newHonoHandler);
 ```
+
+> [!WARNING]
+> This is only valid for middlewares and handlers generated thanks to `universal-middleware`
