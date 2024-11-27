@@ -2,8 +2,10 @@ import { universalSymbol } from "./const";
 import type { AnyFn, Awaitable, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
 import { bindUniversal } from "./utils";
 
-type Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
-type In<T> = T extends UniversalHandler<infer C> ? C : T extends UniversalMiddleware<infer C, any> ? C : never;
+type _Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
+type Out<T> = T extends UniversalFn<infer X, infer Y> ? _Out<X> : _Out<T>;
+type _In<T> = T extends UniversalHandler<infer C> ? C : T extends UniversalMiddleware<infer C, any> ? C : never;
+type In<T> = T extends UniversalFn<infer X, infer Y> ? _In<X> : _In<T>;
 type First<T extends any[]> = T extends [infer X, ...any[]] ? X : never;
 type Last<T extends any[]> = T extends [...any[], infer X] ? X : never;
 
@@ -12,8 +14,10 @@ type AnyMiddleware<In extends Universal.Context = any, Out extends Universal.Con
   | UniversalFn<UniversalMiddleware<In, Out>, Fn>
   | UniversalFn<UniversalHandler<In>, Fn>;
 
-type ComposeReturnType<T extends AnyMiddleware[]> = Last<T> extends UniversalFn<any, infer X>
-  ? Last<T>
+type ComposeReturnType<T extends AnyMiddleware[]> = Last<T> extends UniversalFn<infer X, infer Y>
+  ? X extends UniversalHandler<any>
+    ? UniversalFn<UniversalHandler<In<First<T>>>, Y>
+    : UniversalFn<UniversalMiddleware<In<First<T>>, In<Last<T>>>, Y>
   : Last<T> extends UniversalHandler<any>
     ? UniversalHandler<In<First<T>>>
     : UniversalMiddleware<In<First<T>>, In<Last<T>>>;

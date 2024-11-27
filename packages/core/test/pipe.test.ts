@@ -25,6 +25,16 @@ describe("pipe", () => {
     });
   }
 
+  function wrapMiddleware<
+    In extends Universal.Context = Universal.Context,
+    Out extends Universal.Context = Universal.Context,
+    U extends UniversalMiddleware<In, Out> = UniversalMiddleware<In, Out>,
+  >(universal: U) {
+    return bindUniversal(universal, function wrappedMiddleware(_: number) {
+      return this[universalSymbol](request, context as In, runtime);
+    });
+  }
+
   test("handler", async () => {
     const handler = pipe(() => new Response("OK"));
     const response = handler(request, context, runtime);
@@ -77,6 +87,19 @@ describe("pipe", () => {
     expect(body).toBe("1");
   });
 
+  test("context middleware |> wrapped empty middleware |> handler", async () => {
+    const handler = pipe(
+      () => ({ a: 1 }),
+      wrapMiddleware<{ a: number }, { a: number }>(async () => {}),
+      (_: Request, ctx: { a: number }) => new Response(String(ctx.a)),
+    );
+    const response = handler(request, context, runtime);
+    await expect(response).resolves.toBeInstanceOf(Response);
+
+    const body = await (await response).text();
+    expect(body).toBe("1");
+  });
+
   test("context middleware |> context middleware |> handler", async () => {
     const handler = pipe(
       () => ({ a: 1 }),
@@ -86,6 +109,24 @@ describe("pipe", () => {
           b: 2,
         };
       },
+      (_: Request, ctx: { a: number; b: number }) => new Response(String(ctx.a + ctx.b)),
+    );
+    const response = handler(request, context, runtime);
+    await expect(response).resolves.toBeInstanceOf(Response);
+
+    const body = await (await response).text();
+    expect(body).toBe("3");
+  });
+
+  test("context middleware |> wrapped context middleware |> handler", async () => {
+    const handler = pipe(
+      () => ({ a: 1 }),
+      wrapMiddleware<{ a: number }, { a: number; b: number }>(async (_, ctx) => {
+        return {
+          ...ctx,
+          b: 2,
+        };
+      }),
       (_: Request, ctx: { a: number; b: number }) => new Response(String(ctx.a + ctx.b)),
     );
     const response = handler(request, context, runtime);
