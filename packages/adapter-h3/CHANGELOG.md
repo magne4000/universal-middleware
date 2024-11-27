@@ -7,6 +7,20 @@
 
 
 
+## [0.2.9](https://github.com/magne4000/universal-middleware/compare/h3-v0.2.8...h3-v0.2.9) (2024-11-27)
+
+
+### Features
+
+* export are now self-contained bundles by default ([adf9f30](https://github.com/magne4000/universal-middleware/commit/adf9f3007ac7655e6288fef24d418b159c79d8fd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.2.14
+
 ## 0.2.8 (2024-10-15)
 
 

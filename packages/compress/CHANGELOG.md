@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.2](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.1...compress-v0.2.2) (2024-11-27)
+
+
+### Features
+
+* Add `vercel-edge` and `vercel-node` support ([f0b33f8](https://github.com/magne4000/universal-middleware/commit/f0b33f8fcb751d50f7062f4b450b7a2c30d9a460))
+* export are now self-contained bundles by default ([adf9f30](https://github.com/magne4000/universal-middleware/commit/adf9f3007ac7655e6288fef24d418b159c79d8fd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @universal-middleware/core bumped to 0.2.14
+    * universal-middleware bumped to 0.4.0
+
 ## [0.2.1](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.0...compress-v0.2.1) (2024-10-16)
 
 
