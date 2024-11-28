@@ -63,3 +63,14 @@ export function bindUniversal<
   Object.assign(boundFn, self);
   return boundFn;
 }
+
+/**
+ * @internal
+ */
+export function attachUniversal<
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  U extends UniversalHandler<any> | UniversalMiddleware<any, any>,
+  T extends {},
+>(universal: U, subject: T): T & { [universalSymbol]: U } {
+  return Object.assign(subject, { [universalSymbol]: universal });
+}
