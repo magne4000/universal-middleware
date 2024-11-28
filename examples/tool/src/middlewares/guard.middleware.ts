@@ -1,4 +1,5 @@
-// src/middlewares/guard.middleware.ts
+// package: @universal-middleware-examples/tool
+// file: src/middlewares/guard.middleware.ts
 
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 

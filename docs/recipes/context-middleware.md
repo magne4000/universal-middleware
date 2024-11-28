@@ -5,7 +5,7 @@ This property will then be accessible to any subsequent middleware or handler.
 
 <<< @/../examples/tool/src/middlewares/context.middleware.ts
 
-After bundling and publishing this middleware as `@universal-middleware-examples/tool`, one can then use this middleware as follows:
+After bundling this middleware, one can then use this middleware as follows:
 
 ::: code-group
 

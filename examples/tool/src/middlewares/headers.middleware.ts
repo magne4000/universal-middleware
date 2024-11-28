@@ -1,4 +1,5 @@
-// src/middlewares/headers.middleware.ts
+// package: @universal-middleware-examples/tool
+// file: src/middlewares/headers.middleware.ts
 
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 

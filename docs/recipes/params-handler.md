@@ -13,7 +13,7 @@ We recommend to follow this next example when using route parameters:
 > For other adapters (`app.get("/user/*", myHandler({ route: "/user/:name" }))`), the 3rd argument of `params` helper must be present and not _undefined_.
 > Then parameters are extracted with [regexparam](https://github.com/lukeed/regexparam).
 
-After bundling and publishing this middleware as `@universal-middleware-examples/tool`, one can then use this middleware as follows:
+After bundling this middleware, one can then use this middleware as follows:
 
 ::: code-group
 

@@ -1,3 +1,6 @@
+// package: @universal-middleware-examples/tool
+// file: src/handlers/params.handler.ts
+
 import type { UniversalHandler } from "@universal-middleware/core";
 import { params } from "@universal-middleware/core";
 
