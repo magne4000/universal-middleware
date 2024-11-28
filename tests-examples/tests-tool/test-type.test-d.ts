@@ -73,9 +73,9 @@ test("fastify", () => {
 });
 
 test("h3", () => {
-  expectTypeOf(h3ContextMiddleware).returns.toEqualTypeOf<H3Middleware>();
-  expectTypeOf(h3HeadersMiddleware).returns.toEqualTypeOf<H3Middleware>();
-  expectTypeOf(h3Handler).returns.toEqualTypeOf<H3Handler>();
+  expectTypeOf(h3ContextMiddleware).returns.toEqualTypeOf<H3Middleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(h3HeadersMiddleware).returns.toEqualTypeOf<H3Middleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(h3Handler).returns.toEqualTypeOf<H3Handler<Universal.Context>>();
 });
 
 test("cloudflare-pages", () => {

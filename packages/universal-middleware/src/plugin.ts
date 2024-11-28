@@ -92,6 +92,7 @@ const typesByServer: Record<
   h3: {
     middleware: "H3Middleware",
     handler: "H3Handler",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   webroute: {
     middleware: "WebrouteMiddleware",
