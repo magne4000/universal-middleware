@@ -7,6 +7,24 @@
 
 
 
+## [0.3.0-beta](https://github.com/magne4000/universal-middleware/compare/hattip-v0.2.11...hattip-v0.3.0-beta) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **hattip:** add Context typings to HattipHandler and HattipMiddleware
+
+### Features
+
+* **hattip:** add Context typings to HattipHandler and HattipMiddleware ([5eab15c](https://github.com/magne4000/universal-middleware/commit/5eab15c0dfda9df461ddddda6b61148eb7be5ed0))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.0-beta
+
 ## [0.2.11](https://github.com/magne4000/universal-middleware/compare/hattip-v0.2.10...hattip-v0.2.11) (2024-11-27)
 
 

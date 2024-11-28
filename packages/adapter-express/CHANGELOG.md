@@ -2,6 +2,24 @@
 
 
 
+## [0.3.0-beta](https://github.com/magne4000/universal-middleware/compare/express-v0.2.10...express-v0.3.0-beta) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **express:** add Context typings to NodeHandler and NodeMiddleware
+
+### Features
+
+* **express:** add Context typings to NodeHandler and NodeMiddleware ([9bbe04c](https://github.com/magne4000/universal-middleware/commit/9bbe04c4fdf25ba57c1b97e1e6efbf92f0c6807f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.0-beta
+
 ## [0.2.10](https://github.com/magne4000/universal-middleware/compare/express-v0.2.9...express-v0.2.10) (2024-11-27)
 
 

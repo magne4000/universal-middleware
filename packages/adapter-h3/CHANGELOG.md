@@ -7,6 +7,24 @@
 
 
 
+## [0.3.0-beta](https://github.com/magne4000/universal-middleware/compare/h3-v0.2.9...h3-v0.3.0-beta) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **h3:** add Context typings to H3Handler and H3Middleware
+
+### Features
+
+* **h3:** add Context typings to H3Handler and H3Middleware ([2901ae6](https://github.com/magne4000/universal-middleware/commit/2901ae646de79fb6fc3ed384fc61b79ae9cc7a2c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.0-beta
+
 ## [0.2.9](https://github.com/magne4000/universal-middleware/compare/h3-v0.2.8...h3-v0.2.9) (2024-11-27)
 
 

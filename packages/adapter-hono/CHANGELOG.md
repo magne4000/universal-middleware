@@ -7,6 +7,25 @@
 
 
 
+## [0.3.0-beta](https://github.com/magne4000/universal-middleware/compare/hono-v0.2.13...hono-v0.3.0-beta) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* add Context typings to HonoHandler and HonoMiddleware
+
+### Features
+
+* add Context typings to HonoHandler and HonoMiddleware ([8a791fc](https://github.com/magne4000/universal-middleware/commit/8a791fc9ef10ed6d1e111f9da96a39c284c34134))
+* **hono:** use bindUniversal ([b7043b4](https://github.com/magne4000/universal-middleware/commit/b7043b406fd93aaea6fbf08c9f63f2218f740dab))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.0-beta
+
 ## [0.2.13](https://github.com/magne4000/universal-middleware/compare/hono-v0.2.12...hono-v0.2.13) (2024-11-27)
 
 

@@ -2,6 +2,41 @@
 
 
 
+## [0.5.0-beta](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.4.0...universal-middleware-v0.5.0-beta) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **cloudflare:** add Context typings to CloudflareHandler and CloudflarePagesFunction
+* **elysia:** add Context typings to ElysiaHandler and ElysiaMiddleware
+* **hattip:** add Context typings to HattipHandler and HattipMiddleware
+* **h3:** add Context typings to H3Handler and H3Middleware
+* **express:** add Context typings to NodeHandler and NodeMiddleware
+
+### Features
+
+* **cloudflare:** add Context typings to CloudflareHandler and CloudflarePagesFunction ([f727f67](https://github.com/magne4000/universal-middleware/commit/f727f67b11a0e9ef125d4da32c7c83a36acdeaf3))
+* **elysia:** add Context typings to ElysiaHandler and ElysiaMiddleware ([f5ab48f](https://github.com/magne4000/universal-middleware/commit/f5ab48ff28ccc44414aa7e985679e7b34a558fe4))
+* **express:** add Context typings to NodeHandler and NodeMiddleware ([9bbe04c](https://github.com/magne4000/universal-middleware/commit/9bbe04c4fdf25ba57c1b97e1e6efbf92f0c6807f))
+* **h3:** add Context typings to H3Handler and H3Middleware ([2901ae6](https://github.com/magne4000/universal-middleware/commit/2901ae646de79fb6fc3ed384fc61b79ae9cc7a2c))
+* **hattip:** add Context typings to HattipHandler and HattipMiddleware ([5eab15c](https://github.com/magne4000/universal-middleware/commit/5eab15c0dfda9df461ddddda6b61148eb7be5ed0))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/cloudflare bumped to 0.3.0-beta
+    * @universal-middleware/core bumped to 0.3.0-beta
+    * @universal-middleware/elysia bumped to 0.3.0-beta
+    * @universal-middleware/express bumped to 0.3.0-beta
+    * @universal-middleware/fastify bumped to 0.4.0-beta
+    * @universal-middleware/h3 bumped to 0.3.0-beta
+    * @universal-middleware/hattip bumped to 0.3.0-beta
+    * @universal-middleware/hono bumped to 0.3.0-beta
+    * @universal-middleware/vercel bumped to 0.1.3-beta
+    * @universal-middleware/webroute bumped to 0.3.0-beta
+
 ## [0.4.0](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.3.10-beta...universal-middleware-v0.4.0) (2024-11-27)
 
 

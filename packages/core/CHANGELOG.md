@@ -2,6 +2,19 @@
 
 
 
+## [0.3.0-beta](https://github.com/magne4000/universal-middleware/compare/core-v0.2.14...core-v0.3.0-beta) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* add Context typings to HonoHandler and HonoMiddleware
+
+### Features
+
+* add Context typings to HonoHandler and HonoMiddleware ([8a791fc](https://github.com/magne4000/universal-middleware/commit/8a791fc9ef10ed6d1e111f9da96a39c284c34134))
+* **core:** pipe now accepts wrapped middlewares ([ef359f4](https://github.com/magne4000/universal-middleware/commit/ef359f4a3df386ed9a98385c2d99b071f5f4f717))
+* new bindUniversal util and types utils ([37b5631](https://github.com/magne4000/universal-middleware/commit/37b5631bc27d07490e2bd38e5eaf6ca5b9dcf7c6))
+
 ## [0.2.14](https://github.com/magne4000/universal-middleware/compare/core-v0.2.13...core-v0.2.14) (2024-11-27)
 
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.3-beta](https://github.com/magne4000/universal-middleware/compare/vercel-v0.1.2-beta...vercel-v0.1.3-beta) (2024-11-28)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.0-beta
+    * @universal-middleware/express bumped to 0.3.0-beta
+
 ## [0.1.2-beta](https://github.com/magne4000/universal-middleware/compare/vercel-v0.1.1-beta...vercel-v0.1.2-beta) (2024-11-27)
 
 

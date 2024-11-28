@@ -2,6 +2,24 @@
 
 
 
+## [0.3.0-beta](https://github.com/magne4000/universal-middleware/compare/cloudflare-v0.2.7...cloudflare-v0.3.0-beta) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **cloudflare:** add Context typings to CloudflareHandler and CloudflarePagesFunction
+
+### Features
+
+* **cloudflare:** add Context typings to CloudflareHandler and CloudflarePagesFunction ([f727f67](https://github.com/magne4000/universal-middleware/commit/f727f67b11a0e9ef125d4da32c7c83a36acdeaf3))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.0-beta
+
 ## [0.2.7](https://github.com/magne4000/universal-middleware/compare/cloudflare-v0.2.6...cloudflare-v0.2.7) (2024-11-27)
 
 

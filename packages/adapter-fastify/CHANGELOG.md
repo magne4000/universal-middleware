@@ -2,6 +2,25 @@
 
 
 
+## [0.4.0-beta](https://github.com/magne4000/universal-middleware/compare/fastify-v0.3.7...fastify-v0.4.0-beta) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **fastify:** add Context typings to FastifyHandler and FastifyMiddleware
+
+### Features
+
+* **fastify:** add Context typings to FastifyHandler and FastifyMiddleware ([344994d](https://github.com/magne4000/universal-middleware/commit/344994d3ab60dd55c7e84ebd2fd0309d1565e1c3))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.0-beta
+    * @universal-middleware/express bumped to 0.3.0-beta
+
 ## [0.3.7](https://github.com/magne4000/universal-middleware/compare/fastify-v0.3.6...fastify-v0.3.7) (2024-11-27)
 
 

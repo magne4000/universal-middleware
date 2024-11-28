@@ -2,6 +2,26 @@
 
 
 
+## [0.3.0-beta](https://github.com/magne4000/universal-middleware/compare/webroute-v0.2.9...webroute-v0.3.0-beta) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **webroute:** add Context typings to WebrouteHandler and WebrouteMiddleware
+
+### Features
+
+* **webroute:** add Context typings to WebrouteHandler and WebrouteMiddleware ([234d89c](https://github.com/magne4000/universal-middleware/commit/234d89c28f41e79d79da6ec8768a54754facc37e))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.0-beta
+  * devDependencies
+    * @universal-middleware/hono bumped to 0.3.0-beta
+
 ## [0.2.9](https://github.com/magne4000/universal-middleware/compare/webroute-v0.2.8...webroute-v0.2.9) (2024-11-27)
 
 

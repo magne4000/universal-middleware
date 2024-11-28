@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.3.0-beta](https://github.com/magne4000/universal-middleware/compare/elysia-v0.2.3...elysia-v0.3.0-beta) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **elysia:** add Context typings to ElysiaHandler and ElysiaMiddleware
+
+### Features
+
+* **elysia:** add Context typings to ElysiaHandler and ElysiaMiddleware ([f5ab48f](https://github.com/magne4000/universal-middleware/commit/f5ab48ff28ccc44414aa7e985679e7b34a558fe4))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.0-beta
+
 ## [0.2.3](https://github.com/magne4000/universal-middleware/compare/elysia-v0.2.2...elysia-v0.2.3) (2024-11-27)
 
 
