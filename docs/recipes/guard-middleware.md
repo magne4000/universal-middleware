@@ -104,4 +104,38 @@ const app = new Elysia().use(guardMiddleware());
 export default app;
 ```
 
+```ts twoslash [vercel-edge.ts]
+import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware";
+import { createEdgeHandler } from "@universal-middleware/vercel";
+import { pipe } from "@universal-middleware/core";
+
+// Vercel has no internal way of representing a middleware
+// Instead, we use the universal `pipe` operator
+const wrapped = pipe(
+  guardMiddleware(),
+  () => {
+    return new Response("OK");
+  }
+);
+
+export const GET = createEdgeHandler(() => wrapped)();
+```
+
+```ts twoslash [vercel-node.ts]
+import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware";
+import { createNodeHandler } from "@universal-middleware/vercel";
+import { pipe } from "@universal-middleware/core";
+
+// Vercel has no internal way of representing a middleware
+// Instead, we use the universal `pipe` operator
+const wrapped = pipe(
+  guardMiddleware(),
+  () => {
+    return new Response("OK");
+  }
+);
+
+export default createNodeHandler(() => wrapped)();
+```
+
 :::
