@@ -1,0 +1,4 @@
+/* multiline tabs */
+.vp-code-group .tabs {
+  flex-wrap: wrap;
+}
