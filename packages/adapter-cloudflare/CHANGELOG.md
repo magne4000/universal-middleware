@@ -1,13 +1,9 @@
-## [0.2.6](https://github.com/magne4000/universal-handler/compare/@universal-middleware/cloudflare@0.2.5...@universal-middleware/cloudflare@0.2.6) (2024-10-09)
-
-
-
 ## [0.3.0](https://github.com/magne4000/universal-middleware/compare/cloudflare-v0.2.7...cloudflare-v0.3.0) (2024-11-28)
 
 
 ### ⚠ BREAKING CHANGES
 
-* add Context typings to HonoHandler and HonoMiddleware
+* add Context typings to CloudflareHandler and CloudflarePagesFunction
 
 ### Features
 

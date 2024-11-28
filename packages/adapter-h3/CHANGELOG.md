@@ -1,18 +1,9 @@
-## [0.2.7](https://github.com/magne4000/universal-handler/compare/@universal-middleware/h3@0.2.6...@universal-middleware/h3@0.2.7) (2024-10-10)
-
-
-### Features
-
-* add req and res to h3 runtime ([495424b](https://github.com/magne4000/universal-handler/commit/495424b349209ef9b77fe4c5ace117633f3fc740))
-
-
-
 ## [0.3.0](https://github.com/magne4000/universal-middleware/compare/h3-v0.2.9...h3-v0.3.0) (2024-11-28)
 
 
 ### ⚠ BREAKING CHANGES
 
-* add Context typings to HonoHandler and HonoMiddleware
+* add Context typings to H3Handler and H3Middleware
 
 ### Features
 
@@ -45,6 +36,15 @@
 ### Features
 
 * @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([97fd518](https://github.com/magne4000/universal-middleware/commit/97fd51819192a1d8b1d6659995b197ae8ddeb163))
+
+
+## [0.2.7](https://github.com/magne4000/universal-handler/compare/@universal-middleware/h3@0.2.6...@universal-middleware/h3@0.2.7) (2024-10-10)
+
+
+### Features
+
+* add req and res to h3 runtime ([495424b](https://github.com/magne4000/universal-handler/commit/495424b349209ef9b77fe4c5ace117633f3fc740))
+
 
 ## [0.2.6](https://github.com/magne4000/universal-handler/compare/@universal-middleware/h3@0.2.5...@universal-middleware/h3@0.2.6) (2024-10-09)
 

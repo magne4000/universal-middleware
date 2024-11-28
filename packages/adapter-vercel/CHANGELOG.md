@@ -5,7 +5,7 @@
 
 ### ⚠ BREAKING CHANGES
 
-* add Context typings to HonoHandler and HonoMiddleware
+* add Context typings to VercelNodeHandler and VercelEdgeHandler
 
 ### Features
 
@@ -16,7 +16,7 @@
 
 ### ⚠ BREAKING CHANGES
 
-* add Context typings to HonoHandler and HonoMiddleware
+* add Context typings to VercelNodeHandler and VercelEdgeHandler
 
 ### Features
 

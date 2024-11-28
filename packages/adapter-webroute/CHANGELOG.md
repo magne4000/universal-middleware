@@ -1,13 +1,9 @@
-## [0.2.7](https://github.com/magne4000/universal-handler/compare/@universal-middleware/webroute@0.2.6...@universal-middleware/webroute@0.2.7) (2024-10-09)
-
-
-
 ## [0.3.0](https://github.com/magne4000/universal-middleware/compare/webroute-v0.2.9...webroute-v0.3.0) (2024-11-28)
 
 
 ### ⚠ BREAKING CHANGES
 
-* add Context typings to HonoHandler and HonoMiddleware
+* add Context typings to WebrouteHandler and WebrouteMiddleware
 
 ### Features
 

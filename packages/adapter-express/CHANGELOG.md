@@ -1,13 +1,9 @@
-## [0.2.8](https://github.com/magne4000/universal-handler/compare/@universal-middleware/express@0.2.7...@universal-middleware/express@0.2.8) (2024-10-09)
-
-
-
 ## [0.3.0](https://github.com/magne4000/universal-middleware/compare/express-v0.2.10...express-v0.3.0) (2024-11-28)
 
 
 ### ⚠ BREAKING CHANGES
 
-* add Context typings to HonoHandler and HonoMiddleware
+* add Context typings to NodeHandler and NodeMiddleware
 
 ### Features
 

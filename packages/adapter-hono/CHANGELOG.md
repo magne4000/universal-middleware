@@ -1,12 +1,3 @@
-## [0.2.11](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.10...@universal-middleware/hono@0.2.11) (2024-10-10)
-
-
-### Features
-
-* add req and res to hono runtime ([c441d95](https://github.com/magne4000/universal-handler/commit/c441d954c2dcf6a37a1f6865f7c0df27dcff5325))
-
-
-
 ## [0.3.0](https://github.com/magne4000/universal-middleware/compare/hono-v0.2.13...hono-v0.3.0) (2024-11-28)
 
 
@@ -45,6 +36,16 @@
 ### Features
 
 * @universal-middleware/compress package ([#41](https://github.com/magne4000/universal-middleware/issues/41)) ([97fd518](https://github.com/magne4000/universal-middleware/commit/97fd51819192a1d8b1d6659995b197ae8ddeb163))
+
+
+## [0.2.11](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.10...@universal-middleware/hono@0.2.11) (2024-10-10)
+
+
+### Features
+
+* add req and res to hono runtime ([c441d95](https://github.com/magne4000/universal-handler/commit/c441d954c2dcf6a37a1f6865f7c0df27dcff5325))
+
+
 
 ## [0.2.10](https://github.com/magne4000/universal-handler/compare/@universal-middleware/hono@0.2.9...@universal-middleware/hono@0.2.10) (2024-10-09)
 

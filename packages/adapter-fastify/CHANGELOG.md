@@ -1,13 +1,9 @@
-## [0.3.5](https://github.com/magne4000/universal-handler/compare/@universal-middleware/fastify@0.3.4...@universal-middleware/fastify@0.3.5) (2024-10-09)
-
-
-
 ## [0.4.0](https://github.com/magne4000/universal-middleware/compare/fastify-v0.3.7...fastify-v0.4.0) (2024-11-28)
 
 
 ### ⚠ BREAKING CHANGES
 
-* add Context typings to HonoHandler and HonoMiddleware
+* add Context typings to FastifyHandler and FastifyMiddleware
 
 ### Features
 

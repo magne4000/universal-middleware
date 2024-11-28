@@ -1,11 +1,9 @@
-# Changelog
-
 ## [0.3.0](https://github.com/magne4000/universal-middleware/compare/elysia-v0.2.3...elysia-v0.3.0) (2024-11-28)
 
 
 ### ⚠ BREAKING CHANGES
 
-* add Context typings to HonoHandler and HonoMiddleware
+* add Context typings to ElysiaHandler and ElysiaMiddleware
 
 ### Features
 
