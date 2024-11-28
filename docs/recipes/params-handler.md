@@ -86,7 +86,7 @@ const wrapped = pipe(
 export default createHandler(() => wrapped)();
 ```
 
-```ts twoslash [cloudflare-pages]
+```ts twoslash [cloudflare-pages.ts]
 // functions/user/[name].ts
 
 import paramHandler from "@universal-middleware-examples/tool/params-handler-cloudflare-pages";
@@ -123,6 +123,22 @@ import Elysia from "elysia";
 const app = new Elysia().get("/user/:name", paramHandler());
 
 export default app;
+```
+
+```ts twoslash [vercel-node.ts]
+// api/user/[name].ts
+
+import paramHandler from "@universal-middleware-examples/tool/params-handler-vercel-node";
+
+export default paramHandler();
+```
+
+```ts twoslash [vercel-edge.ts]
+// api/user/[name].ts
+
+import paramHandler from "@universal-middleware-examples/tool/params-handler-vercel-edge";
+
+export const GET = paramHandler();
 ```
 
 :::
