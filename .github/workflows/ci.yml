@@ -84,6 +84,11 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
+      - name: Run build-doc
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: pnpm run build-doc
+        working-directory: docs
+
   release-please-beta:
     if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'beta') }}
     runs-on: ubuntu-latest
