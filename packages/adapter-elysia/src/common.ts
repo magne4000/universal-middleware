@@ -1,22 +1,34 @@
-import type { Awaitable, Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import type {
+  Awaitable,
+  Get,
+  RuntimeAdapter,
+  UniversalFn,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "@universal-middleware/core";
+import { attachUniversal, bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import { Elysia, type Context as ElysiaContext, type Handler } from "elysia";
 
 export const contextSymbol = Symbol.for("unContext");
 export const pendingSymbol = Symbol.for("unPending");
 export const pendingHandledSymbol = Symbol.for("unPendingHandled");
 
-export type ElysiaHandler = Handler;
-export type ElysiaMiddleware = ReturnType<typeof createMiddleware>;
+export type ElysiaHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, Handler>;
+export type ElysiaMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
+  UniversalMiddleware<In, Out>,
+  ReturnType<typeof createMiddleware>
+>;
 
 /**
  * Creates a request handler to be passed to app.all() or any other route function
  */
-export function createHandler<T extends unknown[]>(handlerFactory: Get<T, UniversalHandler>) {
+export function createHandler<T extends unknown[], InContext extends Universal.Context>(
+  handlerFactory: Get<T, UniversalHandler<InContext>>,
+): Get<T, ElysiaHandler<InContext>> {
   return (...args: T) => {
     const handler = handlerFactory(...args);
 
-    return ((elysiaContext) => {
+    return bindUniversal(handler, function universalHandlerElysia(elysiaContext) {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       let context = (elysiaContext as any)[contextSymbol];
 
@@ -28,8 +40,8 @@ export function createHandler<T extends unknown[]>(handlerFactory: Get<T, Univer
         context = (elysiaContext as any)[contextSymbol];
       }
 
-      return handler(elysiaContext.request, context, getRuntime(elysiaContext));
-    }) satisfies ElysiaHandler;
+      return this[universalSymbol](elysiaContext.request, context, getRuntime(elysiaContext));
+    });
   };
 }
 
@@ -44,38 +56,48 @@ export function createMiddleware<
   return (...args: T) => {
     const middleware = middlewareFactory(...args);
 
-    return new Elysia()
-      .use(initPlugin<InContext>())
-      .onBeforeHandle({ as: "global" }, async (elysiaContext) => {
-        const response = await middleware(elysiaContext.request, elysiaContext.getContext(), getRuntime(elysiaContext));
-        if (typeof response === "function") {
-          elysiaContext[pendingSymbol].push(response);
-        } else if (response !== null && typeof response === "object") {
-          if (response instanceof Response) {
-            return response;
+    return attachUniversal(
+      middleware,
+      new Elysia()
+        .use(initPlugin<InContext>())
+        .onBeforeHandle(
+          { as: "global" },
+          bindUniversal(middleware, async function universalHandlerElysia(elysiaContext) {
+            const response = await this[universalSymbol](
+              elysiaContext.request,
+              elysiaContext.getContext(),
+              getRuntime(elysiaContext),
+            );
+            if (typeof response === "function") {
+              elysiaContext[pendingSymbol].push(response);
+            } else if (response !== null && typeof response === "object") {
+              if (response instanceof Response) {
+                return response;
+              }
+              // Update context
+              elysiaContext.setContext(response);
+            }
+          }),
+        )
+        .onAfterHandle({ as: "global" }, async (elysiaContext) => {
+          if (elysiaContext[pendingHandledSymbol]) return;
+
+          Object.defineProperty(elysiaContext, pendingHandledSymbol, {
+            value: true,
+          });
+
+          let currentResponse: Response = elysiaContext.response;
+
+          for (const p of elysiaContext[pendingSymbol]) {
+            const res = await p(currentResponse);
+            if (res) {
+              currentResponse = res;
+            }
           }
-          // Update context
-          elysiaContext.setContext(response);
-        }
-      })
-      .onAfterHandle({ as: "global" }, async (elysiaContext) => {
-        if (elysiaContext[pendingHandledSymbol]) return;
 
-        Object.defineProperty(elysiaContext, pendingHandledSymbol, {
-          value: true,
-        });
-
-        let currentResponse: Response = elysiaContext.response;
-
-        for (const p of elysiaContext[pendingSymbol]) {
-          const res = await p(currentResponse);
-          if (res) {
-            currentResponse = res;
-          }
-        }
-
-        return currentResponse;
-      });
+          return currentResponse;
+        }),
+    );
   };
 }
 

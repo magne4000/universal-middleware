@@ -128,6 +128,7 @@ const typesByServer: Record<
   elysia: {
     handler: "ElysiaHandler",
     middleware: "ElysiaMiddleware",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
 };
 const namespace = "virtual:universal-middleware";
