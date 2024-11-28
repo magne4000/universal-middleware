@@ -67,9 +67,13 @@ test("webroute", () => {
 });
 
 test("fastify", () => {
-  expectTypeOf(fastifyContextMiddleware).returns.toEqualTypeOf<FastifyMiddleware>();
-  expectTypeOf(fastifyHeadersMiddleware).returns.toEqualTypeOf<FastifyMiddleware>();
-  expectTypeOf(fastifyHandler).returns.toEqualTypeOf<FastifyHandler>();
+  expectTypeOf(fastifyContextMiddleware).returns.toEqualTypeOf<
+    FastifyMiddleware<Universal.Context, Universal.Context>
+  >();
+  expectTypeOf(fastifyHeadersMiddleware).returns.toEqualTypeOf<
+    FastifyMiddleware<Universal.Context, Universal.Context>
+  >();
+  expectTypeOf(fastifyHandler).returns.toEqualTypeOf<FastifyHandler<Universal.Context>>();
 });
 
 test("h3", () => {

@@ -1,6 +1,19 @@
 import type { IncomingMessage } from "node:http";
-import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime, isBodyInit, mergeHeadersInto } from "@universal-middleware/core";
+import type {
+  Get,
+  RuntimeAdapter,
+  UniversalFn,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "@universal-middleware/core";
+import {
+  attachUniversal,
+  bindUniversal,
+  getAdapterRuntime,
+  isBodyInit,
+  mergeHeadersInto,
+  universalSymbol,
+} from "@universal-middleware/core";
 import { type DecoratedRequest, createRequestAdapter } from "@universal-middleware/express";
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import fp from "fastify-plugin";
@@ -9,8 +22,11 @@ export const contextSymbol = Symbol.for("unContext");
 export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
 export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
 
-export type FastifyMiddleware = FastifyPluginAsync;
-export type FastifyHandler = RouteHandlerMethod;
+export type FastifyHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, RouteHandlerMethod>;
+export type FastifyMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
+  UniversalMiddleware<In, Out>,
+  FastifyPluginAsync
+>;
 
 declare module "fastify" {
   export interface FastifyRequest {
@@ -102,16 +118,20 @@ function getRawRequest(req: FastifyRequest): DecoratedRequest {
 }
 
 export function createHandler<T extends unknown[], InContext extends Universal.Context>(
-  handlerFactory: Get<T, UniversalHandler>,
-): Get<T, FastifyHandler> {
+  handlerFactory: Get<T, UniversalHandler<InContext>>,
+): Get<T, FastifyHandler<InContext>> {
   const requestAdapter = createRequestAdapter();
 
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return async (request, reply) => {
+    return bindUniversal(handler, async function universalHandlerFastify(request, reply) {
       const ctx = initContext<InContext>(request);
-      const response = await handler(requestAdapter(getRawRequest(request)), ctx, getRuntime(request, reply));
+      const response = await this[universalSymbol](
+        requestAdapter(getRawRequest(request)),
+        ctx,
+        getRuntime(request, reply),
+      );
 
       if (response) {
         if (!response.body) {
@@ -120,7 +140,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
 
         return reply.send(response);
       }
-    };
+    });
   };
 }
 
@@ -128,71 +148,86 @@ export function createMiddleware<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
->(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, FastifyMiddleware> {
+>(
+  middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
+): Get<T, FastifyMiddleware<InContext, OutContext>> {
   const requestAdapter = createRequestAdapter();
 
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
-    return fp(async (instance) => {
-      instance.addHook("preHandler", async (request, reply) => {
-        const ctx = initContext<InContext>(request);
-        const response = await middleware(requestAdapter(getRawRequest(request)), ctx, getRuntime(request, reply));
+    return attachUniversal(
+      middleware,
+      fp(async (instance) => {
+        instance.addHook(
+          "preHandler",
+          bindUniversal(
+            middleware,
+            async function universalMiddlewareFastify(request: FastifyRequest, reply: FastifyReply) {
+              const ctx = initContext<InContext>(request);
+              const response = await this[universalSymbol](
+                requestAdapter(getRawRequest(request)),
+                ctx,
+                getRuntime(request, reply),
+              );
 
-        if (!response) {
-          return;
-        }
-        if (typeof response === "function") {
-          if (reply.sent) {
-            throw new Error(
-              "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-middleware",
-            );
-          }
-          request[pendingMiddlewaresSymbol] ??= [];
-          request[wrappedResponseSymbol] = false;
-          // `wrapResponse` takes care of calling those middlewares right before sending the response
-          request[pendingMiddlewaresSymbol].push(response);
-        } else if (response instanceof Response) {
-          if (!response.body) {
-            patchBody(response);
-          }
+              if (!response) {
+                return;
+              }
+              if (typeof response === "function") {
+                if (reply.sent) {
+                  throw new Error(
+                    "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-middleware",
+                  );
+                }
+                request[pendingMiddlewaresSymbol] ??= [];
+                request[wrappedResponseSymbol] = false;
+                // `wrapResponse` takes care of calling those middlewares right before sending the response
+                request[pendingMiddlewaresSymbol].push(response);
+              } else if (response instanceof Response) {
+                if (!response.body) {
+                  patchBody(response);
+                }
 
-          reply.send(response);
-        } else {
-          setContext(request, response);
-        }
-      });
-
-      instance.addHook("onSend", async (request, reply, payload) => {
-        if (request[wrappedResponseSymbol] !== false) return payload;
-        request[wrappedResponseSymbol] = true;
-
-        if (payload instanceof Response) {
-          mergeHeadersInto(payload.headers, getHeaders(reply));
-        } else if (isBodyInit(payload)) {
-          // biome-ignore lint/style/noParameterAssign: <explanation>
-          payload = new Response(payload, {
-            headers: new Headers(getHeaders(reply)),
-            status: reply.statusCode,
-          });
-        } else {
-          throw new TypeError("Payload is not a Response or BodyInit compatible");
-        }
-
-        const middlewares = request[pendingMiddlewaresSymbol];
-        delete request[pendingMiddlewaresSymbol];
-        const newResponse = await middlewares?.reduce(
-          async (prev, curr) => {
-            const p = await prev;
-            const newR = await curr(p);
-            return newR ?? p;
-          },
-          Promise.resolve(payload as Response),
+                reply.send(response);
+              } else {
+                setContext(request, response);
+              }
+            },
+          ),
         );
 
-        return newResponse ?? payload;
-      });
-    });
+        instance.addHook("onSend", async (request, reply, payload) => {
+          if (request[wrappedResponseSymbol] !== false) return payload;
+          request[wrappedResponseSymbol] = true;
+
+          if (payload instanceof Response) {
+            mergeHeadersInto(payload.headers, getHeaders(reply));
+          } else if (isBodyInit(payload)) {
+            // biome-ignore lint/style/noParameterAssign: <explanation>
+            payload = new Response(payload, {
+              headers: new Headers(getHeaders(reply)),
+              status: reply.statusCode,
+            });
+          } else {
+            throw new TypeError("Payload is not a Response or BodyInit compatible");
+          }
+
+          const middlewares = request[pendingMiddlewaresSymbol];
+          delete request[pendingMiddlewaresSymbol];
+          const newResponse = await middlewares?.reduce(
+            async (prev, curr) => {
+              const p = await prev;
+              const newR = await curr(p);
+              return newR ?? p;
+            },
+            Promise.resolve(payload as Response),
+          );
+
+          return newResponse ?? payload;
+        });
+      }),
+    );
   };
 }
 
