@@ -2,6 +2,17 @@
 
 
 
+## [0.3.0](https://github.com/magne4000/universal-middleware/compare/core-v0.2.14...core-v0.3.0) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* add Context typings to HonoHandler and HonoMiddleware
+
+### Features
+
+* add the ability to `pipe` adapter middlewares in addition to universal ones ([#66](https://github.com/magne4000/universal-middleware/issues/66)) ([28332e3](https://github.com/magne4000/universal-middleware/commit/28332e3e2bc3c2730191655ae77f56ab6a33d771))
+
 ## [0.2.14](https://github.com/magne4000/universal-middleware/compare/core-v0.2.13...core-v0.2.14) (2024-11-27)
 
 

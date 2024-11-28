@@ -2,6 +2,33 @@
 
 
 
+## [0.5.0](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.4.0...universal-middleware-v0.5.0) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* add Context typings to HonoHandler and HonoMiddleware
+
+### Features
+
+* add the ability to `pipe` adapter middlewares in addition to universal ones ([#66](https://github.com/magne4000/universal-middleware/issues/66)) ([28332e3](https://github.com/magne4000/universal-middleware/commit/28332e3e2bc3c2730191655ae77f56ab6a33d771))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/cloudflare bumped to 0.3.0
+    * @universal-middleware/core bumped to 0.3.0
+    * @universal-middleware/elysia bumped to 0.3.0
+    * @universal-middleware/express bumped to 0.3.0
+    * @universal-middleware/fastify bumped to 0.4.0
+    * @universal-middleware/h3 bumped to 0.3.0
+    * @universal-middleware/hattip bumped to 0.3.0
+    * @universal-middleware/hono bumped to 0.3.0
+    * @universal-middleware/vercel bumped to 0.2.0-beta
+    * @universal-middleware/webroute bumped to 0.3.0
+
 ## [0.4.0](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.3.10-beta...universal-middleware-v0.4.0) (2024-11-27)
 
 
