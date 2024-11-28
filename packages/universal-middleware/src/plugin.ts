@@ -83,6 +83,7 @@ const typesByServer: Record<
   hattip: {
     middleware: "HattipMiddleware",
     handler: "HattipHandler",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   fastify: {
     middleware: "FastifyMiddleware",

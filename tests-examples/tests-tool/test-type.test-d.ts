@@ -49,9 +49,9 @@ test("express", () => {
 });
 
 test("hattip", () => {
-  expectTypeOf(hattipContextMiddleware).returns.toEqualTypeOf<HattipMiddleware>();
-  expectTypeOf(hattipHeadersMiddleware).returns.toEqualTypeOf<HattipMiddleware>();
-  expectTypeOf(hattipHandler).returns.toEqualTypeOf<HattipHandler>();
+  expectTypeOf(hattipContextMiddleware).returns.toEqualTypeOf<HattipMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(hattipHeadersMiddleware).returns.toEqualTypeOf<HattipMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(hattipHandler).returns.toEqualTypeOf<HattipHandler<Universal.Context>>();
 });
 
 test("webroute", () => {

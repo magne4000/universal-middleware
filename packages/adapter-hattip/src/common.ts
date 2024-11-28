@@ -1,7 +1,13 @@
 import type { RequestHandler } from "@hattip/compose";
-import type { AdapterRequestContext, HattipHandler } from "@hattip/core";
-import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import type { AdapterRequestContext, HattipHandler as _HattipHandler } from "@hattip/core";
+import type {
+  Get,
+  RuntimeAdapter,
+  UniversalFn,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "@universal-middleware/core";
+import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 
 export const contextSymbol = Symbol.for("unContext");
 
@@ -11,20 +17,25 @@ declare module "@hattip/core" {
   }
 }
 
-export type { HattipHandler };
-export type HattipMiddleware = RequestHandler;
+export type HattipHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, _HattipHandler>;
+export type HattipMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
+  UniversalMiddleware<In, Out>,
+  RequestHandler
+>;
 
 /**
  * Creates a request handler to be passed to hattip
  */
-export function createHandler<T extends unknown[]>(handlerFactory: Get<T, UniversalHandler>): Get<T, HattipHandler> {
+export function createHandler<T extends unknown[], InContext extends Universal.Context>(
+  handlerFactory: Get<T, UniversalHandler<InContext>>,
+): Get<T, HattipHandler<InContext>> {
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return (context) => {
-      const ctx = initContext(context);
-      return handler(context.request, ctx, getRuntime(context));
-    };
+    return bindUniversal(handler, function universalHandlerHattip(context) {
+      const ctx = initContext<InContext>(context);
+      return this[universalSymbol](context.request, ctx, getRuntime(context));
+    });
   };
 }
 
@@ -35,13 +46,15 @@ export function createMiddleware<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
->(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, HattipMiddleware> {
+>(
+  middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
+): Get<T, HattipMiddleware<InContext, OutContext>> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
-    return async (context) => {
+    return bindUniversal(middleware, async function universalMiddlewareHattip(context) {
       const ctx = initContext<InContext>(context);
-      const response = await middleware(context.request, ctx, getRuntime(context));
+      const response = await this[universalSymbol](context.request, ctx, getRuntime(context));
 
       if (typeof response === "function") {
         const res = await context.next();
@@ -55,7 +68,7 @@ export function createMiddleware<
         // Update context
         context[contextSymbol] = response;
       }
-    };
+    });
   };
 }
 
