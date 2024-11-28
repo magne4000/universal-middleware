@@ -2,6 +2,15 @@
 
 
 
+## [0.5.1](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.0...universal-middleware-v0.5.1) (2024-11-28)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/vercel bumped to 0.3.0
+
 ## [0.5.0](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.4.0...universal-middleware-v0.5.0) (2024-11-28)
 
 
