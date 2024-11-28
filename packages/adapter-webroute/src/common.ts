@@ -1,24 +1,16 @@
-import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import type {
+  Get,
+  RuntimeAdapter,
+  UniversalFn,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "@universal-middleware/core";
+import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import type { DataResult, MiddlewareFn } from "@webroute/middleware";
 import type { RequestCtx } from "@webroute/route";
 
-export type WebrouteMiddleware<
-  // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  InContext extends object = {},
-  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-  TResult extends DataResult | void = void,
-  TParams = unknown,
-  TQuery = unknown,
-  TBody = unknown,
-  THeaders = unknown,
-  TState extends InContext = InContext,
-  TProviders = unknown,
-> = MiddlewareFn<TResult, [ctx: RequestCtx<TParams, TQuery, TBody, THeaders, TState, TProviders>]>;
-
 export type WebrouteHandler<
-  // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  InContext extends object = {},
+  InContext extends object,
   // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   TResult extends DataResult | void = void,
   TParams = unknown,
@@ -27,23 +19,26 @@ export type WebrouteHandler<
   THeaders = unknown,
   TState extends InContext = InContext,
   TProviders = unknown,
-> = WebrouteMiddleware<InContext, TResult, TParams, TQuery, TBody, THeaders, TState, TProviders>;
+> = UniversalFn<
+  UniversalHandler<Extract<InContext, Universal.Context>>,
+  MiddlewareFn<TResult, [ctx: RequestCtx<TParams, TQuery, TBody, THeaders, TState, TProviders>]>
+>;
 
-/**
- * Creates a request handler to be passed to app.all() or any other route function
- */
-export function createHandler<T extends unknown[], InContext extends Universal.Context>(
-  handlerFactory: Get<T, UniversalHandler>,
-): Get<T, WebrouteHandler<InContext>> {
-  return (...args) => {
-    const handler = handlerFactory(...args);
-
-    return async (request, ctx) => {
-      const context = initContext(ctx);
-      return handler(request, context, await getRuntime(ctx));
-    };
-  };
-}
+export type WebrouteMiddleware<
+  InContext extends object,
+  OutContext extends object,
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+  TResult extends DataResult | void = void,
+  TParams = unknown,
+  TQuery = unknown,
+  TBody = unknown,
+  THeaders = unknown,
+  TState extends InContext = InContext,
+  TProviders = unknown,
+> = UniversalFn<
+  UniversalMiddleware<Extract<InContext, Universal.Context>, Extract<OutContext, Universal.Context>>,
+  MiddlewareFn<TResult, [ctx: RequestCtx<TParams, TQuery, TBody, THeaders, TState, TProviders>]>
+>;
 
 // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
 type ExtractVoid<T, U> = T extends U ? T : void;
@@ -60,6 +55,22 @@ export type MiddlewareFactoryDataResult<T extends (...args: any) => any> = Extra
 >;
 
 /**
+ * Creates a request handler to be passed to app.all() or any other route function
+ */
+export function createHandler<T extends unknown[], InContext extends Universal.Context>(
+  handlerFactory: Get<T, UniversalHandler<InContext>>,
+): Get<T, WebrouteHandler<InContext>> {
+  return (...args) => {
+    const handler = handlerFactory(...args);
+
+    return bindUniversal(handler, async function universalHandlerWebroute(request, ctx) {
+      const context = initContext<InContext>(ctx);
+      return this[universalSymbol](request, context, await getRuntime(ctx));
+    });
+  };
+}
+
+/**
  * Creates a middleware to be passed to app.use() or any route function
  */
 export function createMiddleware<
@@ -68,14 +79,21 @@ export function createMiddleware<
   OutContext extends Universal.Context,
 >(
   middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
-): Get<T, WebrouteMiddleware<InContext, MiddlewareFactoryDataResult<typeof middlewareFactory>>> {
+): Get<T, WebrouteMiddleware<InContext, OutContext, MiddlewareFactoryDataResult<typeof middlewareFactory>>> {
+  // @ts-ignore
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
-    return (async (request, ctx) => {
-      const context = initContext(ctx);
-      return middleware(request, context, await getRuntime(ctx));
-    }) as WebrouteMiddleware<InContext, MiddlewareFactoryDataResult<typeof middlewareFactory>>;
+    return bindUniversal(
+      middleware,
+      async function universalMiddlewareWebroute(
+        request: Request,
+        ctx: RequestCtx<unknown, unknown, unknown, unknown, InContext>,
+      ) {
+        const context = initContext<InContext>(ctx);
+        return this[universalSymbol](request, context, await getRuntime(ctx));
+      },
+    );
   };
 }
 

@@ -1,42 +1,48 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import type { Get, RuntimeAdapter, UniversalHandler } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import type { Get, RuntimeAdapter, UniversalFn, UniversalHandler } from "@universal-middleware/core";
+import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import { createRequestAdapter, sendResponse } from "@universal-middleware/express";
 
-export type VercelEdgeHandler = (request: Request) => Response | Promise<Response>;
-export type VercelNodeHandler = (request: IncomingMessage, response: ServerResponse) => void | Promise<void>;
+export type VercelEdgeHandler<In extends Universal.Context> = UniversalFn<
+  UniversalHandler<In>,
+  (request: Request) => Response | Promise<Response>
+>;
+export type VercelNodeHandler<In extends Universal.Context> = UniversalFn<
+  UniversalHandler<In>,
+  (request: IncomingMessage, response: ServerResponse) => void | Promise<void>
+>;
 
 /**
  * Creates an Edge request handler
  */
-export function createEdgeHandler<T extends unknown[]>(
-  handlerFactory: Get<T, UniversalHandler>,
-): Get<T, VercelEdgeHandler> {
+export function createEdgeHandler<T extends unknown[], InContext extends Universal.Context>(
+  handlerFactory: Get<T, UniversalHandler<InContext>>,
+): Get<T, VercelEdgeHandler<InContext>> {
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return (request) => {
-      return handler(request, {}, getRuntime(request));
-    };
+    return bindUniversal(handler, function universalHandlerVercelEdge(request) {
+      return this[universalSymbol](request, {} as InContext, getRuntime(request));
+    });
   };
 }
 
 /**
  * Creates a Node request handler
  */
-export function createNodeHandler<T extends unknown[]>(
-  handlerFactory: Get<T, UniversalHandler>,
-): Get<T, VercelNodeHandler> {
+export function createNodeHandler<T extends unknown[], InContext extends Universal.Context>(
+  handlerFactory: Get<T, UniversalHandler<InContext>>,
+): Get<T, VercelNodeHandler<InContext>> {
   const requestAdapter = createRequestAdapter();
 
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return async (message, response) => {
+    return bindUniversal(handler, async function universalHandlerVercelNode(message, response) {
       const request = requestAdapter(message);
-      const res = await handler(request, {}, getRuntime(message, response));
+      const res = await this[universalSymbol](request, {} as InContext, getRuntime(message, response));
       return sendResponse(res, response);
-    };
+    });
   };
 }
 

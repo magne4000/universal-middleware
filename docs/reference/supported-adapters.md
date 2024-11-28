@@ -9,3 +9,4 @@ Supports the following server adapters:
 - [h3](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-h3)
 - [Cloudflare](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-cloudflare)
 - [Elysia](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-elysia)
+- [Vercel](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-vercel)

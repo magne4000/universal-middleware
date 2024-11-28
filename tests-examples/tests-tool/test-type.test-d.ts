@@ -37,51 +37,61 @@ import type { WebrouteHandler, WebrouteMiddleware } from "@universal-middleware/
 import { expectTypeOf, test } from "vitest";
 
 test("hono", () => {
-  expectTypeOf(honoContextMiddleware).returns.toEqualTypeOf<HonoMiddleware>();
-  expectTypeOf(honoHeadersMiddleware).returns.toEqualTypeOf<HonoMiddleware>();
-  expectTypeOf(honoHandler).returns.toEqualTypeOf<HonoHandler>();
+  expectTypeOf(honoContextMiddleware).returns.toEqualTypeOf<HonoMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(honoHeadersMiddleware).returns.toEqualTypeOf<HonoMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(honoHandler).returns.toEqualTypeOf<HonoHandler<Universal.Context>>();
 });
 
 test("express", () => {
-  expectTypeOf(expressContextMiddleware).returns.toEqualTypeOf<NodeMiddleware>();
-  expectTypeOf(expressHeadersMiddleware).returns.toEqualTypeOf<NodeMiddleware>();
-  expectTypeOf(expressHandler).returns.toEqualTypeOf<NodeHandler>();
+  expectTypeOf(expressContextMiddleware).returns.toEqualTypeOf<NodeMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(expressHeadersMiddleware).returns.toEqualTypeOf<NodeMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(expressHandler).returns.toEqualTypeOf<NodeHandler<Universal.Context>>();
 });
 
 test("hattip", () => {
-  expectTypeOf(hattipContextMiddleware).returns.toEqualTypeOf<HattipMiddleware>();
-  expectTypeOf(hattipHeadersMiddleware).returns.toEqualTypeOf<HattipMiddleware>();
-  expectTypeOf(hattipHandler).returns.toEqualTypeOf<HattipHandler>();
+  expectTypeOf(hattipContextMiddleware).returns.toEqualTypeOf<HattipMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(hattipHeadersMiddleware).returns.toEqualTypeOf<HattipMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(hattipHandler).returns.toEqualTypeOf<HattipHandler<Universal.Context>>();
 });
 
 test("webroute", () => {
   expectTypeOf(webrouteContextMiddleware).returns.toEqualTypeOf<
     // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-    WebrouteMiddleware<Universal.Context, void | { hello: string }>
+    WebrouteMiddleware<Universal.Context, { hello: string }, void | { hello: string }>
   >();
   expectTypeOf(webrouteHeadersMiddleware).returns.toEqualTypeOf<
     // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-    WebrouteMiddleware<Universal.Context, void | Universal.Context>
+    WebrouteMiddleware<Universal.Context, Universal.Context, void | Universal.Context>
   >();
   expectTypeOf(webrouteHandler).returns.toEqualTypeOf<WebrouteHandler<Universal.Context, void>>();
 });
 
 test("fastify", () => {
-  expectTypeOf(fastifyContextMiddleware).returns.toEqualTypeOf<FastifyMiddleware>();
-  expectTypeOf(fastifyHeadersMiddleware).returns.toEqualTypeOf<FastifyMiddleware>();
-  expectTypeOf(fastifyHandler).returns.toEqualTypeOf<FastifyHandler>();
+  expectTypeOf(fastifyContextMiddleware).returns.toEqualTypeOf<
+    FastifyMiddleware<Universal.Context, Universal.Context>
+  >();
+  expectTypeOf(fastifyHeadersMiddleware).returns.toEqualTypeOf<
+    FastifyMiddleware<Universal.Context, Universal.Context>
+  >();
+  expectTypeOf(fastifyHandler).returns.toEqualTypeOf<FastifyHandler<Universal.Context>>();
 });
 
 test("h3", () => {
-  expectTypeOf(h3ContextMiddleware).returns.toEqualTypeOf<H3Middleware>();
-  expectTypeOf(h3HeadersMiddleware).returns.toEqualTypeOf<H3Middleware>();
-  expectTypeOf(h3Handler).returns.toEqualTypeOf<H3Handler>();
+  expectTypeOf(h3ContextMiddleware).returns.toEqualTypeOf<H3Middleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(h3HeadersMiddleware).returns.toEqualTypeOf<H3Middleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(h3Handler).returns.toEqualTypeOf<H3Handler<Universal.Context>>();
 });
 
 test("cloudflare-pages", () => {
-  expectTypeOf(cloudflarePagesContextMiddleware).returns.toEqualTypeOf<CloudflarePagesFunction<Universal.Context>>();
-  expectTypeOf(cloudflarePagesHeadersMiddleware).returns.toEqualTypeOf<CloudflarePagesFunction<Universal.Context>>();
-  expectTypeOf(cloudflarePagesHandler).returns.toEqualTypeOf<CloudflarePagesFunction<Universal.Context>>();
+  expectTypeOf(cloudflarePagesContextMiddleware).returns.toEqualTypeOf<
+    CloudflarePagesFunction<Universal.Context, Universal.Context>
+  >();
+  expectTypeOf(cloudflarePagesHeadersMiddleware).returns.toEqualTypeOf<
+    CloudflarePagesFunction<Universal.Context, Universal.Context>
+  >();
+  expectTypeOf(cloudflarePagesHandler).returns.toEqualTypeOf<
+    CloudflarePagesFunction<Universal.Context, Universal.Context>
+  >();
 });
 
 test("cloudflare-worker", () => {
@@ -89,11 +99,11 @@ test("cloudflare-worker", () => {
 });
 
 test("vercel-edge", () => {
-  expectTypeOf(vercelEdgeHandler).returns.toEqualTypeOf<VercelEdgeHandler>();
+  expectTypeOf(vercelEdgeHandler).returns.toEqualTypeOf<VercelEdgeHandler<Universal.Context>>();
 });
 
 test("vercel-node", () => {
-  expectTypeOf(vercelNodeHandler).returns.toEqualTypeOf<VercelNodeHandler>();
+  expectTypeOf(vercelNodeHandler).returns.toEqualTypeOf<VercelNodeHandler<Universal.Context>>();
 });
 
 test("generic", () => {

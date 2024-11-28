@@ -88,7 +88,7 @@ import { pipe } from "@universal-middleware/core";
 // Instead, we use the universal `pipe` operator
 const wrapped = pipe(
   contextMiddleware("world"),
-  (request, context) => {
+  (request: Request, context: Universal.Context) => {
     return new Response(`Hello ${context.hello}`);
   }
 );

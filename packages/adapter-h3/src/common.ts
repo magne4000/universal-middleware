@@ -1,5 +1,18 @@
-import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime, isBodyInit, mergeHeadersInto, nodeHeadersToWeb } from "@universal-middleware/core";
+import type {
+  Get,
+  RuntimeAdapter,
+  UniversalFn,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "@universal-middleware/core";
+import {
+  bindUniversal,
+  getAdapterRuntime,
+  isBodyInit,
+  mergeHeadersInto,
+  nodeHeadersToWeb,
+  universalSymbol,
+} from "@universal-middleware/core";
 import {
   type EventHandler,
   type H3Event,
@@ -12,8 +25,11 @@ import {
   toWebRequest,
 } from "h3";
 
-export type H3Handler = EventHandler;
-export type H3Middleware = EventHandler;
+export type H3Handler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, EventHandler>;
+export type H3Middleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
+  UniversalMiddleware<In, Out>,
+  EventHandler
+>;
 
 export const contextSymbol = Symbol.for("unContext");
 export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
@@ -32,14 +48,24 @@ declare module "h3" {
 /**
  * Creates a request handler to be passed to app.all() or any other route function
  */
-export function createHandler<T extends unknown[]>(handlerFactory: Get<T, UniversalHandler>): Get<T, H3Handler> {
+export function createHandler<T extends unknown[], InContext extends Universal.Context>(
+  handlerFactory: Get<T, UniversalHandler<InContext>>,
+): Get<T, H3Handler<InContext>> {
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return eventHandler((event) => {
-      const ctx = initContext(event);
-      return handler(toWebRequest(event), ctx, getRuntime(event));
-    });
+    return bindUniversal(
+      handler,
+      eventHandler(function universalHandlerH3(
+        this: {
+          [universalSymbol]: UniversalHandler<InContext>;
+        },
+        event,
+      ) {
+        const ctx = initContext<InContext>(event);
+        return this[universalSymbol](toWebRequest(event), ctx, getRuntime(event));
+      }),
+    );
   };
 }
 
@@ -90,27 +116,35 @@ export function createMiddleware<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
->(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, H3Middleware> {
+>(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>): Get<T, H3Middleware<InContext, OutContext>> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
-    return eventHandler(async (event) => {
-      const ctx = initContext<InContext>(event);
-      const response = await middleware(toWebRequest(event), ctx, getRuntime(event));
+    return bindUniversal(
+      middleware,
+      eventHandler(async function universalMiddlewareH3(
+        this: {
+          [universalSymbol]: UniversalHandler<InContext>;
+        },
+        event,
+      ) {
+        const ctx = initContext<InContext>(event);
+        const response = await this[universalSymbol](toWebRequest(event), ctx, getRuntime(event));
 
-      if (typeof response === "function") {
-        event.context[pendingMiddlewaresSymbol] ??= [];
-        event.context[wrappedResponseSymbol] = false;
-        // `wrapResponse` takes care of calling those middlewares right before sending the response
-        event.context[pendingMiddlewaresSymbol].push(response);
-      } else if (response !== null && typeof response === "object") {
-        if (response instanceof Response) {
-          return response;
+        if (typeof response === "function") {
+          event.context[pendingMiddlewaresSymbol] ??= [];
+          event.context[wrappedResponseSymbol] = false;
+          // `wrapResponse` takes care of calling those middlewares right before sending the response
+          event.context[pendingMiddlewaresSymbol].push(response);
+        } else if (response !== null && typeof response === "object") {
+          if (response instanceof Response) {
+            return response;
+          }
+          // Update context
+          event.context[contextSymbol] = response;
         }
-        // Update context
-        event.context[contextSymbol] = response;
-      }
-    });
+      }),
+    );
   };
 }
 

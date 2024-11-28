@@ -85,7 +85,6 @@ const typesByServer: Record<
   fastify: {
     middleware: "FastifyMiddleware",
     handler: "FastifyHandler",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   h3: {
     middleware: "H3Middleware",
@@ -96,19 +95,17 @@ const typesByServer: Record<
     handler: "WebrouteHandler",
     selfImports: ["type MiddlewareFactoryDataResult"],
     outContext: (type) => `MiddlewareFactoryDataResult<typeof ${type}>`,
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   "cloudflare-worker": {
     handler: "CloudflareHandler",
     target: "cloudflare",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   "cloudflare-pages": {
     middleware: "CloudflarePagesFunction",
     handler: "CloudflarePagesFunction",
     typeHandler: "createPagesFunction",
     typeMiddleware: "createPagesFunction",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
+    generics: (type) => (type === "handler" ? "Args, InContext, OutContext" : "Args, InContext, OutContext"),
     target: "cloudflare",
   },
   "vercel-edge": {
@@ -272,7 +269,11 @@ function loadDts(id: string, resolve?: (handler: string, type: string) => string
   const info = typesByServer[target as (typeof defaultWrappers)[number]];
   const fn = type === "handler" ? (info.typeHandler ?? "createHandler") : (info.typeMiddleware ?? "createMiddleware");
   const t = info[type as "middleware" | "handler"];
-  const generics = info.generics ? info.generics(type) : type === "handler" ? "Args" : "Args, InContext, OutContext";
+  const generics = info.generics
+    ? info.generics(type)
+    : type === "handler"
+      ? "Args, InContext"
+      : "Args, InContext, OutContext";
   if (t === undefined) return;
 
   const selfImports = [fn, `type ${t}`, ...(info.selfImports ?? [])];

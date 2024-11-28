@@ -85,6 +85,10 @@ export default defineConfig({
             text: "Cookie",
             link: "/helpers/cookie",
           },
+          {
+            text: "Pipe",
+            link: "/helpers/pipe",
+          },
         ],
       },
       {
