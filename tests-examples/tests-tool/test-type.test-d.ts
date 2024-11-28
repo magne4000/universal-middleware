@@ -83,9 +83,15 @@ test("h3", () => {
 });
 
 test("cloudflare-pages", () => {
-  expectTypeOf(cloudflarePagesContextMiddleware).returns.toEqualTypeOf<CloudflarePagesFunction<Universal.Context>>();
-  expectTypeOf(cloudflarePagesHeadersMiddleware).returns.toEqualTypeOf<CloudflarePagesFunction<Universal.Context>>();
-  expectTypeOf(cloudflarePagesHandler).returns.toEqualTypeOf<CloudflarePagesFunction<Universal.Context>>();
+  expectTypeOf(cloudflarePagesContextMiddleware).returns.toEqualTypeOf<
+    CloudflarePagesFunction<Universal.Context, Universal.Context>
+  >();
+  expectTypeOf(cloudflarePagesHeadersMiddleware).returns.toEqualTypeOf<
+    CloudflarePagesFunction<Universal.Context, Universal.Context>
+  >();
+  expectTypeOf(cloudflarePagesHandler).returns.toEqualTypeOf<
+    CloudflarePagesFunction<Universal.Context, Universal.Context>
+  >();
 });
 
 test("cloudflare-worker", () => {

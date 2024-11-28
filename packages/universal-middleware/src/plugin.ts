@@ -112,7 +112,7 @@ const typesByServer: Record<
     handler: "CloudflarePagesFunction",
     typeHandler: "createPagesFunction",
     typeMiddleware: "createPagesFunction",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
+    generics: (type) => (type === "handler" ? "Args, InContext, OutContext" : "Args, InContext, OutContext"),
     target: "cloudflare",
   },
   "vercel-edge": {
