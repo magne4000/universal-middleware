@@ -40,6 +40,20 @@ export type WebrouteMiddleware<
   MiddlewareFn<TResult, [ctx: RequestCtx<TParams, TQuery, TBody, THeaders, TState, TProviders>]>
 >;
 
+// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+type ExtractVoid<T, U> = T extends U ? T : void;
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+type MiddlewareFactoryReturnType<T extends (...args: any) => any> =
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  ReturnType<T> extends UniversalMiddleware<any, any> ? Awaited<ReturnType<ReturnType<T>>> : never;
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export type MiddlewareFactoryDataResult<T extends (...args: any) => any> = ExtractVoid<
+  MiddlewareFactoryReturnType<T>,
+  DataResult
+>;
+
 /**
  * Creates a request handler to be passed to app.all() or any other route function
  */
@@ -55,20 +69,6 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
     });
   };
 }
-
-// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-type ExtractVoid<T, U> = T extends U ? T : void;
-
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-type MiddlewareFactoryReturnType<T extends (...args: any) => any> =
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  ReturnType<T> extends UniversalMiddleware<any, any> ? Awaited<ReturnType<ReturnType<T>>> : never;
-
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type MiddlewareFactoryDataResult<T extends (...args: any) => any> = ExtractVoid<
-  MiddlewareFactoryReturnType<T>,
-  DataResult
->;
 
 /**
  * Creates a middleware to be passed to app.use() or any route function

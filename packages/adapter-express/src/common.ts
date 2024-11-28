@@ -124,7 +124,7 @@ export function createMiddleware<
       try {
         req[contextSymbol] ??= {} as InContext;
         const request = requestAdapter(req);
-        const response = await middleware(request, getContext(req), getRuntime(req, res));
+        const response = await this[universalSymbol](request, getContext(req), getRuntime(req, res));
 
         if (!response) {
           return next?.();

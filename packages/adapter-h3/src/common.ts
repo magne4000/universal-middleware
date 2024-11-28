@@ -122,7 +122,7 @@ export function createMiddleware<
 
     return bindUniversal(
       middleware,
-      eventHandler(async function universalHandlerH3(
+      eventHandler(async function universalMiddlewareH3(
         this: {
           [universalSymbol]: UniversalHandler<InContext>;
         },

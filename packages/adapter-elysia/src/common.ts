@@ -62,7 +62,7 @@ export function createMiddleware<
         .use(initPlugin<InContext>())
         .onBeforeHandle(
           { as: "global" },
-          bindUniversal(middleware, async function universalHandlerElysia(elysiaContext) {
+          bindUniversal(middleware, async function universalMiddlewareElysia(elysiaContext) {
             const response = await this[universalSymbol](
               elysiaContext.request,
               elysiaContext.getContext(),
