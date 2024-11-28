@@ -119,11 +119,13 @@ const typesByServer: Record<
     handler: "VercelEdgeHandler",
     typeHandler: "createEdgeHandler",
     target: "vercel",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   "vercel-node": {
     handler: "VercelNodeHandler",
     typeHandler: "createNodeHandler",
     target: "vercel",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   elysia: {
     handler: "ElysiaHandler",

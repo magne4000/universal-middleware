@@ -99,11 +99,11 @@ test("cloudflare-worker", () => {
 });
 
 test("vercel-edge", () => {
-  expectTypeOf(vercelEdgeHandler).returns.toEqualTypeOf<VercelEdgeHandler>();
+  expectTypeOf(vercelEdgeHandler).returns.toEqualTypeOf<VercelEdgeHandler<Universal.Context>>();
 });
 
 test("vercel-node", () => {
-  expectTypeOf(vercelNodeHandler).returns.toEqualTypeOf<VercelNodeHandler>();
+  expectTypeOf(vercelNodeHandler).returns.toEqualTypeOf<VercelNodeHandler<Universal.Context>>();
 });
 
 test("generic", () => {
