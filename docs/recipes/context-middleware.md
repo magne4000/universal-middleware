@@ -84,7 +84,7 @@ import contextMiddleware from "@universal-middleware-examples/tool/middlewares/c
 import { createHandler } from "@universal-middleware/cloudflare";
 import { pipe } from "@universal-middleware/core";
 
-// Cloudflare Workers have no internal way of representing a middleware
+// Cloudflare Workers has no internal way of representing a middleware
 // Instead, we use the universal `pipe` operator
 const wrapped = pipe(
   contextMiddleware("world"),
@@ -169,6 +169,40 @@ const app = new Elysia()
   });
 
 export default app;
+```
+
+```ts twoslash [vercel-edge.ts]
+import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
+import { createEdgeHandler } from "@universal-middleware/vercel";
+import { pipe } from "@universal-middleware/core";
+
+// Vercel has no internal way of representing a middleware
+// Instead, we use the universal `pipe` operator
+const wrapped = pipe(
+  contextMiddleware("world"),
+  (request: Request, context: Universal.Context) => {
+    return new Response(`Hello ${context.hello}`);
+  }
+);
+
+export const GET = createEdgeHandler(() => wrapped)();
+```
+
+```ts twoslash [vercel-node.ts]
+import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
+import { createNodeHandler } from "@universal-middleware/vercel";
+import { pipe } from "@universal-middleware/core";
+
+// Vercel has no internal way of representing a middleware
+// Instead, we use the universal `pipe` operator
+const wrapped = pipe(
+  contextMiddleware("world"),
+  (request: Request, context: Universal.Context) => {
+    return new Response(`Hello ${context.hello}`);
+  }
+);
+
+export default createNodeHandler(() => wrapped)();
 ```
 
 :::
