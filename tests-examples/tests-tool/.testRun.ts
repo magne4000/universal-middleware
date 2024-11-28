@@ -1,6 +1,11 @@
 import { expect, fetch, getServerUrl, run, test } from "@brillout/test-e2e";
 
-type RunOptions = Parameters<typeof run>[1] & { portCommand?: string; prefix?: string; noMiddleware?: boolean };
+type RunOptions = Parameters<typeof run>[1] & {
+  portCommand?: string;
+  prefix?: string;
+  noMiddleware?: boolean;
+  noCompression?: boolean;
+};
 
 export function testRun(
   cmd: `pnpm run dev:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia" | "vercel"}${string}`,
@@ -24,12 +29,7 @@ export function testRun(
       expect(response.headers.has("x-universal-hello")).toBe(true);
     }
 
-    if (
-      !options?.noMiddleware &&
-      // Cloudflare already compresses data, so the compress middleware is not built for those targets
-      !cmd.startsWith("pnpm run dev:pages") &&
-      !cmd.startsWith("pnpm run dev:worker")
-    ) {
+    if (!options?.noMiddleware && !options?.noCompression) {
       expect(response.headers.get("content-encoding")).toMatch(/gzip|deflate/);
     }
   });

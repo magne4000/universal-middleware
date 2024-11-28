@@ -1,2 +1,2 @@
-export const universalSymbol = Symbol("universal");
-export const unboundSymbol = Symbol("unbound");
+export const universalSymbol = Symbol.for("universal");
+export const unboundSymbol = Symbol.for("unbound");

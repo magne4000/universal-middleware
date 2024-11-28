@@ -6,5 +6,5 @@ testRun(`pnpm run dev:vercel${token}`, 23008, {
   serverIsReadyMessage: "Local:",
   portCommand: "--listen",
   prefix: "/api/node",
-  noMiddleware: true,
+  noCompression: true,
 });
