@@ -73,39 +73,32 @@ const typesByServer: Record<
   hono: {
     middleware: "HonoMiddleware",
     handler: "HonoHandler",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   express: {
     middleware: "NodeMiddleware",
     handler: "NodeHandler",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   hattip: {
     middleware: "HattipMiddleware",
     handler: "HattipHandler",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   fastify: {
     middleware: "FastifyMiddleware",
     handler: "FastifyHandler",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   h3: {
     middleware: "H3Middleware",
     handler: "H3Handler",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   webroute: {
     middleware: "WebrouteMiddleware",
     handler: "WebrouteHandler",
     selfImports: ["type MiddlewareFactoryDataResult"],
     outContext: (type) => `MiddlewareFactoryDataResult<typeof ${type}>`,
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   "cloudflare-worker": {
     handler: "CloudflareHandler",
     target: "cloudflare",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   "cloudflare-pages": {
     middleware: "CloudflarePagesFunction",
@@ -119,18 +112,15 @@ const typesByServer: Record<
     handler: "VercelEdgeHandler",
     typeHandler: "createEdgeHandler",
     target: "vercel",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   "vercel-node": {
     handler: "VercelNodeHandler",
     typeHandler: "createNodeHandler",
     target: "vercel",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   elysia: {
     handler: "ElysiaHandler",
     middleware: "ElysiaMiddleware",
-    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
 };
 const namespace = "virtual:universal-middleware";
@@ -279,7 +269,11 @@ function loadDts(id: string, resolve?: (handler: string, type: string) => string
   const info = typesByServer[target as (typeof defaultWrappers)[number]];
   const fn = type === "handler" ? (info.typeHandler ?? "createHandler") : (info.typeMiddleware ?? "createMiddleware");
   const t = info[type as "middleware" | "handler"];
-  const generics = info.generics ? info.generics(type) : type === "handler" ? "Args" : "Args, InContext, OutContext";
+  const generics = info.generics
+    ? info.generics(type)
+    : type === "handler"
+      ? "Args, InContext"
+      : "Args, InContext, OutContext";
   if (t === undefined) return;
 
   const selfImports = [fn, `type ${t}`, ...(info.selfImports ?? [])];
