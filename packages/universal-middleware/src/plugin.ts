@@ -78,6 +78,7 @@ const typesByServer: Record<
   express: {
     middleware: "NodeMiddleware",
     handler: "NodeHandler",
+    generics: (type) => (type === "handler" ? "Args, InContext" : "Args, InContext, OutContext"),
   },
   hattip: {
     middleware: "HattipMiddleware",

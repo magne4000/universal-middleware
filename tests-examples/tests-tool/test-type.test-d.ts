@@ -43,9 +43,9 @@ test("hono", () => {
 });
 
 test("express", () => {
-  expectTypeOf(expressContextMiddleware).returns.toEqualTypeOf<NodeMiddleware>();
-  expectTypeOf(expressHeadersMiddleware).returns.toEqualTypeOf<NodeMiddleware>();
-  expectTypeOf(expressHandler).returns.toEqualTypeOf<NodeHandler>();
+  expectTypeOf(expressContextMiddleware).returns.toEqualTypeOf<NodeMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(expressHeadersMiddleware).returns.toEqualTypeOf<NodeMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(expressHandler).returns.toEqualTypeOf<NodeHandler<Universal.Context>>();
 });
 
 test("hattip", () => {

@@ -1,7 +1,14 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Socket } from "node:net";
-import type { Awaitable, Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { getAdapterRuntime } from "@universal-middleware/core";
+import type {
+  Awaitable,
+  Get,
+  RuntimeAdapter,
+  UniversalFn,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "@universal-middleware/core";
+import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import { type NodeRequestAdapterOptions, createRequestAdapter } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
 
@@ -45,13 +52,14 @@ export interface DecoratedServerResponse extends ServerResponse {
 }
 
 /** Connect/Express style request listener/middleware */
-export type NodeMiddleware<C extends Universal.Context = Universal.Context> = (
-  req: DecoratedRequest<C>,
-  res: DecoratedServerResponse,
-  next?: (err?: unknown) => void,
-) => void;
-
-export type NodeHandler<C extends Universal.Context = Universal.Context> = NodeMiddleware<C>;
+export type NodeMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
+  UniversalMiddleware<In, Out>,
+  <R>(req: DecoratedRequest<In>, res: DecoratedServerResponse, next?: (err?: unknown) => void) => R
+>;
+export type NodeHandler<In extends Universal.Context> = UniversalFn<
+  UniversalHandler<In>,
+  <R>(req: DecoratedRequest<In>, res: DecoratedServerResponse, next?: (err?: unknown) => void) => R
+>;
 
 /** Adapter options */
 export interface NodeAdapterHandlerOptions extends NodeRequestAdapterOptions {}
@@ -61,20 +69,20 @@ export interface NodeAdapterMiddlewareOptions extends NodeRequestAdapterOptions 
  * Creates a request handler to be passed to http.createServer() or used as a
  * middleware in Connect-style frameworks like Express.
  */
-export function createHandler<T extends unknown[]>(
-  handlerFactory: Get<T, UniversalHandler>,
+export function createHandler<T extends unknown[], InContext extends Universal.Context>(
+  handlerFactory: Get<T, UniversalHandler<InContext>>,
   options: NodeAdapterHandlerOptions = {},
-): Get<T, NodeMiddleware> {
+): Get<T, NodeHandler<InContext>> {
   const requestAdapter = createRequestAdapter(options);
 
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return async (req, res, next) => {
+    return bindUniversal(handler, async function universalHandlerExpress(req, res, next) {
       try {
-        req[contextSymbol] ??= {};
+        req[contextSymbol] ??= {} as InContext;
         const request = requestAdapter(req);
-        const response = await handler(request, req[contextSymbol], getRuntime(req, res));
+        const response = await this[universalSymbol](request, req[contextSymbol], getRuntime(req, res));
 
         await sendResponse(response, res);
       } catch (error) {
@@ -92,7 +100,7 @@ export function createHandler<T extends unknown[]>(
           }
         }
       }
-    };
+    });
   };
 }
 
@@ -106,15 +114,15 @@ export function createMiddleware<
 >(
   middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
   options: NodeAdapterMiddlewareOptions = {},
-): Get<T, NodeMiddleware<OutContext>> {
+): Get<T, NodeMiddleware<InContext, OutContext>> {
   const requestAdapter = createRequestAdapter(options);
 
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
-    return async function universalMiddleware(req, res, next) {
+    return bindUniversal(middleware, async function universalMiddlewareExpress(req, res, next) {
       try {
-        req[contextSymbol] ??= {} as OutContext;
+        req[contextSymbol] ??= {} as InContext;
         const request = requestAdapter(req);
         const response = await middleware(request, getContext(req), getRuntime(req, res));
 
@@ -136,7 +144,7 @@ export function createMiddleware<
         if (response instanceof Response) {
           await sendResponse(response, res);
         } else {
-          req[contextSymbol] = response;
+          req[contextSymbol] = response as unknown as InContext;
           return next?.();
         }
       } catch (error) {
@@ -154,7 +162,7 @@ export function createMiddleware<
           }
         }
       }
-    };
+    });
   };
 }
 
