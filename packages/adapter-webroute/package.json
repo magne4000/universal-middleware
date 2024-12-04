@@ -29,7 +29,6 @@
     "@hono/node-server": "^1.13.7",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
-    "@universal-middleware/hono": "workspace:*",
     "@universal-middleware/tests": "workspace:*",
     "@webroute/middleware": "^0.10.0",
     "@webroute/route": "catalog:",
