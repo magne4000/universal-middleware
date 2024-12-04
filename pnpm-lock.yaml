@@ -574,9 +574,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 20.17.9
-      '@universal-middleware/hono':
-        specifier: link:../adapter-hono
-        version: link:../adapter-hono
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
