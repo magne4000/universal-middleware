@@ -2,6 +2,13 @@
 
 
 
+## [0.3.1](https://github.com/magne4000/universal-middleware/compare/core-v0.3.0...core-v0.3.1) (2024-12-04)
+
+
+### Features
+
+* document runtime and add adapter specific properties ([203febf](https://github.com/magne4000/universal-middleware/commit/203febfec402d095a443b21255a8c2d4fa99fcab))
+
 ## [0.3.0](https://github.com/magne4000/universal-middleware/compare/core-v0.2.14...core-v0.3.0) (2024-11-28)
 
 
