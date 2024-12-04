@@ -135,6 +135,7 @@ export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
     "hono",
     {
       params,
+      hono: honoContext,
     },
     {
       env: honoContext.env,

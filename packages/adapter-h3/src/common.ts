@@ -162,6 +162,7 @@ export function getRuntime(event: H3Event): RuntimeAdapter {
     "h3",
     {
       params: event.context.params,
+      h3: event,
     },
     {
       req: event.node.req,

@@ -4,6 +4,7 @@ import type { AdapterRequestContext as HattipContext } from "@hattip/core";
 import type { RequestCtx as WebrouteContext } from "@webroute/route";
 import type { Server as BunServer } from "bun";
 import type { Context as ElysiaContext } from "elysia";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import type { H3Event } from "h3";
 import type { Context as HonoContext } from "hono";
 import type { universalSymbol } from "./const";
@@ -115,8 +116,8 @@ export interface FastifyAdapter {
   res: ServerResponse;
 
   fastify: {
-    req: IncomingMessage;
-    res: ServerResponse;
+    request: FastifyRequest;
+    reply: FastifyReply;
   };
 }
 
@@ -190,7 +191,7 @@ export interface WebrouteAdapter {
   adapter: "webroute";
   params: Record<string, string> | undefined;
 
-  webroute: WebrouteContext;
+  webroute?: WebrouteContext;
 }
 
 export interface OtherAdapter {

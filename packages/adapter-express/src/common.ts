@@ -175,5 +175,9 @@ export function getRuntime(request: DecoratedRequest, response: DecoratedServerR
     params: request.params,
     req: request as IncomingMessage,
     res: response,
+    express: Object.freeze({
+      req: request as IncomingMessage,
+      res: response,
+    }),
   });
 }
