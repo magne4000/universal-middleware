@@ -16,6 +16,20 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.0
 
+## [0.3.1](https://github.com/magne4000/universal-middleware/compare/hono-v0.3.0...hono-v0.3.1) (2024-12-04)
+
+
+### Features
+
+* document runtime and add adapter specific properties ([203febf](https://github.com/magne4000/universal-middleware/commit/203febfec402d095a443b21255a8c2d4fa99fcab))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.1
+
 ## [0.2.13](https://github.com/magne4000/universal-middleware/compare/hono-v0.2.12...hono-v0.2.13) (2024-11-27)
 
 
