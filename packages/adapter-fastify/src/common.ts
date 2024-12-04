@@ -255,5 +255,9 @@ export function getRuntime(request: FastifyRequest, reply: FastifyReply): Runtim
     params: request.params as Record<string, string> | undefined,
     req: request.raw as IncomingMessage,
     res: reply.raw,
+    fastify: Object.freeze({
+      request: request,
+      reply: reply,
+    }),
   });
 }

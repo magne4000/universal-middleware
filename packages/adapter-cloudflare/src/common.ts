@@ -136,10 +136,13 @@ export function getRuntime(
 ): RuntimeAdapter {
   const isContext = args.length === 1;
 
+  const key = isContext ? "cloudflare-pages" : "cloudflare-worker";
+
   return getAdapterRuntime(
     isContext ? "cloudflare-pages" : "cloudflare-worker",
     {
       params: isContext ? ((args[0].params as Record<string, string>) ?? undefined) : undefined,
+      [key]: isContext ? args[0] : { env: args[0], ctx: args[1] },
     },
     {
       env: isContext ? args[0].env : args[0],

@@ -145,6 +145,7 @@ export function getRuntime(elysiaContext: ElysiaContext): RuntimeAdapter {
     "elysia",
     {
       params,
+      elysia: elysiaContext,
     },
     cloudflareContext,
   );

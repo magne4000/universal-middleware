@@ -23,11 +23,50 @@
     "@swc/core": "catalog:",
     "@types/bun": "^1.1.14",
     "@types/node": "catalog:",
+    "@cloudflare/workers-types": "catalog:",
+    "@hattip/core": "catalog:",
+    "@webroute/route": "catalog:",
+    "elysia": "catalog:",
+    "fastify": "catalog:",
+    "h3": "catalog:",
+    "hono": "catalog:",
     "rimraf": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@hattip/core": "catalog:",
+    "@webroute/route": "catalog:",
+    "elysia": "catalog:",
+    "fastify": "catalog:",
+    "h3": "catalog:",
+    "hono": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@cloudflare/workers-types": {
+      "optional": true
+    },
+    "@hattip/core": {
+      "optional": true
+    },
+    "@webroute/route": {
+      "optional": true
+    },
+    "elysia": {
+      "optional": true
+    },
+    "fastify": {
+      "optional": true
+    },
+    "h3": {
+      "optional": true
+    },
+    "hono": {
+      "optional": true
+    }
   },
   "sideEffects": false,
   "dependencies": {

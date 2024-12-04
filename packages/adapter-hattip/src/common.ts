@@ -91,6 +91,7 @@ export function getRuntime(context: AdapterRequestContext): RuntimeAdapter {
     "hattip",
     {
       params: "params" in context ? (context.params as Record<string, string>) : undefined,
+      hattip: context,
     },
     {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>

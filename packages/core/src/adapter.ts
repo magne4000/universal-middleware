@@ -1,5 +1,5 @@
-import type { Adapter, Runtime } from "./types";
 import { getRuntime } from "./runtime";
+import type { Adapter, Runtime } from "./types";
 
 export function getAdapter<K extends Adapter["adapter"]>(
   key: K,
@@ -19,5 +19,5 @@ export function getAdapterRuntime<K extends Adapter["adapter"]>(
   const a = getAdapter(adapter, adapterArgs);
   const r = getRuntime(runtimeArgs);
 
-  return { ...r, ...a };
+  return Object.freeze({ ...r, ...a });
 }

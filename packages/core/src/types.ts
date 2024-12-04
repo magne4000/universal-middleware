@@ -1,5 +1,12 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import type { EventContext as CloudflarePagesContext } from "@cloudflare/workers-types";
+import type { AdapterRequestContext as HattipContext } from "@hattip/core";
+import type { RequestCtx as WebrouteContext } from "@webroute/route";
 import type { Server as BunServer } from "bun";
+import type { Context as ElysiaContext } from "elysia";
+import type { FastifyReply, FastifyRequest } from "fastify";
+import type { H3Event } from "h3";
+import type { Context as HonoContext } from "hono";
 import type { universalSymbol } from "./const";
 
 // Helpers
@@ -88,20 +95,17 @@ export type Runtime =
 
 // Adapters
 
-export interface NodeAdapter {
-  adapter: "node";
-  params: undefined;
-
-  req: IncomingMessage;
-  res: ServerResponse;
-}
-
 export interface ExpressAdapter {
   adapter: "express";
   params: Record<string, string> | undefined;
 
   req: IncomingMessage;
   res: ServerResponse;
+
+  express: {
+    req: IncomingMessage;
+    res: ServerResponse;
+  };
 }
 
 export interface FastifyAdapter {
@@ -110,6 +114,11 @@ export interface FastifyAdapter {
 
   req: IncomingMessage;
   res: ServerResponse;
+
+  fastify: {
+    request: FastifyRequest;
+    reply: FastifyReply;
+  };
 }
 
 export interface HonoAdapter {
@@ -118,6 +127,8 @@ export interface HonoAdapter {
 
   req?: IncomingMessage;
   res?: ServerResponse;
+
+  hono: HonoContext;
 }
 
 export interface HattipAdapter {
@@ -126,6 +137,8 @@ export interface HattipAdapter {
 
   req?: IncomingMessage;
   res?: ServerResponse;
+
+  hattip: HattipContext;
 }
 
 export interface H3Adapter {
@@ -134,16 +147,22 @@ export interface H3Adapter {
 
   req?: IncomingMessage;
   res?: ServerResponse;
+
+  h3: H3Event;
 }
 
 export interface CloudflarePagesAdapter {
   adapter: "cloudflare-pages";
   params: Record<string, string> | undefined;
+
+  "cloudflare-pages": CloudflarePagesContext<Record<string | number | symbol, unknown>, any, Record<string, unknown>>;
 }
 
 export interface CloudflareWorkerAdapter {
   adapter: "cloudflare-worker";
   params: undefined;
+
+  "cloudflare-worker": Omit<CloudflareWorkerdRuntime, "runtime">;
 }
 
 export interface VercelEdgeAdapter {
@@ -154,16 +173,25 @@ export interface VercelEdgeAdapter {
 export interface VercelNodeAdapter {
   adapter: "vercel-node";
   params: Record<string, string> | undefined;
+
+  "vercel-node": {
+    req: IncomingMessage;
+    res: ServerResponse;
+  };
 }
 
 export interface ElysiaAdapter {
   adapter: "elysia";
   params: Record<string, string> | undefined;
+
+  elysia: ElysiaContext;
 }
 
 export interface WebrouteAdapter {
   adapter: "webroute";
   params: Record<string, string> | undefined;
+
+  webroute?: WebrouteContext;
 }
 
 export interface OtherAdapter {
@@ -172,7 +200,6 @@ export interface OtherAdapter {
 }
 
 export type Adapter =
-  | NodeAdapter
   | ExpressAdapter
   | FastifyAdapter
   | HonoAdapter

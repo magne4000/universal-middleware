@@ -2,7 +2,7 @@
 
 The `env()` function helps to retrieve environment variables across all supported runtimes.
 
-```ts
+```ts twoslash
 import { env, type Get, type UniversalMiddleware } from "@universal-middleware/core";
 
 const handler = (() => (request, context, runtime) => {

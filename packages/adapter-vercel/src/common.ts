@@ -54,18 +54,23 @@ export function getRuntime(request: Request | IncomingMessage, response?: Server
       ? request.headers.get("x-now-route-matches")
       : (request.headers["x-now-route-matches"] as string | undefined);
 
-  return getAdapterRuntime(
-    request instanceof Request ? "vercel-edge" : "vercel-node",
-    {
-      params: Object.fromEntries(
-        new URLSearchParams(routeMatches ?? new URL(request.url ?? "", "http://localhost").search).entries(),
-      ),
-    },
-    response
-      ? {
-          req: request,
-          res: response,
-        }
-      : {},
+  const key = request instanceof Request ? "vercel-edge" : "vercel-node";
+  const params = Object.fromEntries(
+    new URLSearchParams(routeMatches ?? new URL(request.url ?? "", "http://localhost").search).entries(),
   );
+  const args = response
+    ? {
+        req: request,
+        res: response,
+      }
+    : {};
+
+  const value = response
+    ? {
+        params,
+        [key]: Object.freeze(args),
+      }
+    : { params };
+
+  return getAdapterRuntime(key, value, args);
 }

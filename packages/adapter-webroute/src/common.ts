@@ -117,5 +117,6 @@ export async function getRuntime(ctx: RequestCtx | undefined): Promise<RuntimeAd
 
   return getAdapterRuntime("webroute", {
     params,
+    webroute: ctx,
   });
 }
