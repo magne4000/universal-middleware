@@ -6,8 +6,11 @@ A function that returns a [Response](https://developer.mozilla.org/en-US/docs/We
 It will usually be associated with a _route_.
 
 ```ts twoslash
+import type { RuntimeAdapter } from "@universal-middleware/core";
+// ---cut---
 interface UniversalHandler<Context> {
-  (request: Request, context: Context): Response | Promise<Response>;
+  (request: Request, context: Context, runtime: RuntimeAdapter):
+    Response | Promise<Response>;
 }
 ```
 
@@ -24,9 +27,10 @@ Check the [recipes](/recipes/context-middleware) for details.
 
 ```ts twoslash
 type Awaitable<T> = T | Promise<T>;
-
-interface UniversalMiddleware<InContext, OutContext> { // [!code focus:9]
-  (request: Request, context: InContext):
+import type { RuntimeAdapter } from "@universal-middleware/core";
+// ---cut---
+interface UniversalMiddleware<InContext, OutContext> {
+  (request: Request, context: InContext, runtime: RuntimeAdapter):
     Awaitable<
     | Response // Can return an early Response
     | OutContext // Can return a new context. Ensures type-safe context representation
