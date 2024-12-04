@@ -9,7 +9,7 @@ interface User {
 }
 
 // This middleware will return an early Response for unauthenticated users
-const guardMiddleware = (() => (request, ctx) => {
+const guardMiddleware = (() => (request, ctx, runtime) => {
   if (!ctx?.user) {
     return new Response("Unauthorized", {
       status: 401,
