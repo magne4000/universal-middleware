@@ -6,7 +6,7 @@ The following middleware demonstrate how to interact with or modify a Response.
 > Contrary to some middleware patterns out there, universal middlewares do not use a `next()` function. 
 > Instead, a middleware can return a function that will take the response as its first parameter.
 
-<<< @/../examples/tool/src/middlewares/headers.middleware.ts
+<<< @/../examples/tool/src/middlewares/headers.middleware.ts {ts twoslash}
 
 After bundling this middleware, one can then use this middleware as follows:
 

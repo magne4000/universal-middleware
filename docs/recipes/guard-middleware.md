@@ -2,7 +2,7 @@
 
 The following middleware is in charge of returning an early Response in case of unauthenticated user access.
 
-<<< @/../examples/tool/src/middlewares/guard.middleware.ts
+<<< @/../examples/tool/src/middlewares/guard.middleware.ts {ts twoslash}
 
 After bundling this middleware, one can then use this middleware as follows:
 

@@ -5,7 +5,7 @@ Most adapters natively support route parameters (also called _parametric path_ o
 
 We recommend to follow this next example when using route parameters:
 
-<<< @/../examples/tool/src/handlers/params.handler.ts
+<<< @/../examples/tool/src/handlers/params.handler.ts {ts twoslash}
 
 > [!NOTE]
 > For servers supporting route parameters (`app.get("/user/:name", myHandler())`), the parameters are available under `runtime.params`.
