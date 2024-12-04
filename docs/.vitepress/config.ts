@@ -72,6 +72,10 @@ export default defineConfig({
             text: "Using env variables",
             link: "/recipes/env-helper",
           },
+          {
+            text: "Using runtime information",
+            link: "/recipes/runtime",
+          },
         ],
       },
       {
