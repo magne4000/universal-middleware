@@ -26,7 +26,7 @@ import hattipHeadersMiddleware from "@universal-middleware-examples/tool/middlew
 import honoHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hono";
 import webrouteHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-webroute";
 import type { CloudflareHandler, CloudflarePagesFunction } from "@universal-middleware/cloudflare";
-import type { UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type { RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import type { NodeHandler, NodeMiddleware } from "@universal-middleware/express";
 import type { FastifyHandler, FastifyMiddleware } from "@universal-middleware/fastify";
 import type { H3Handler, H3Middleware } from "@universal-middleware/h3";
@@ -107,7 +107,9 @@ test("vercel-node", () => {
 });
 
 test("generic", () => {
-  expectTypeOf(contextMiddleware).returns.toEqualTypeOf<(req: Request, ctx: Universal.Context) => { hello: string }>();
+  expectTypeOf(contextMiddleware).returns.toEqualTypeOf<
+    (req: Request, ctx: Universal.Context, runtime: RuntimeAdapter) => { hello: string }
+  >();
   expectTypeOf(headersMiddleware).returns.toMatchTypeOf<UniversalMiddleware<{ hello?: string }>>();
   expectTypeOf(handler).returns.toEqualTypeOf<UniversalHandler>();
 });
