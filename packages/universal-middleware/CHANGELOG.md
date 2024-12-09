@@ -2,6 +2,13 @@
 
 
 
+## [0.5.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.4...universal-middleware-v0.5.5) (2024-12-09)
+
+
+### Features
+
+* export Target and RuntimeAdapter from generated code ([056df5f](https://github.com/magne4000/universal-middleware/commit/056df5f8a48039eb93805f868f8f938c001423a9))
+
 ## [0.5.4](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.3...universal-middleware-v0.5.4) (2024-12-09)
 
 
