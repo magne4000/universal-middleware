@@ -2,6 +2,13 @@
 
 
 
+## [0.3.2](https://github.com/magne4000/universal-middleware/compare/core-v0.3.1...core-v0.3.2) (2024-12-09)
+
+
+### Bug Fixes
+
+* ensure h3 eventHandler is called ([#82](https://github.com/magne4000/universal-middleware/issues/82)) ([8dd3cc3](https://github.com/magne4000/universal-middleware/commit/8dd3cc385f06a46afec9239897b10361bd09b4ed))
+
 ## [0.3.1](https://github.com/magne4000/universal-middleware/compare/core-v0.3.0...core-v0.3.1) (2024-12-04)
 
 
