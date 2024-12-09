@@ -120,7 +120,7 @@
     "@universal-middleware/webroute": "workspace:^",
     "oxc-transform": "^0.39.0",
     "package-up": "^5.0.0",
-    "unplugin": "^1.16.0"
+    "unplugin": "^2.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.1",
