@@ -2,6 +2,24 @@
 
 
 
+## [0.5.4](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.3...universal-middleware-v0.5.4) (2024-12-09)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/cloudflare bumped to 0.3.3
+    * @universal-middleware/core bumped to 0.3.3
+    * @universal-middleware/elysia bumped to 0.3.3
+    * @universal-middleware/express bumped to 0.3.3
+    * @universal-middleware/fastify bumped to 0.4.3
+    * @universal-middleware/h3 bumped to 0.3.3
+    * @universal-middleware/hattip bumped to 0.3.3
+    * @universal-middleware/hono bumped to 0.3.3
+    * @universal-middleware/vercel bumped to 0.3.3
+    * @universal-middleware/webroute bumped to 0.3.3
+
 ## [0.5.3](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.2...universal-middleware-v0.5.3) (2024-12-09)
 
 

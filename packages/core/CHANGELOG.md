@@ -2,6 +2,13 @@
 
 
 
+## [0.3.3](https://github.com/magne4000/universal-middleware/compare/core-v0.3.2...core-v0.3.3) (2024-12-09)
+
+
+### Features
+
+* new type RuntimeAdapterTarget ([8768e6d](https://github.com/magne4000/universal-middleware/commit/8768e6dd6f1e7e7bfcbe88baf13a21bbaae842c6))
+
 ## [0.3.2](https://github.com/magne4000/universal-middleware/compare/core-v0.3.1...core-v0.3.2) (2024-12-09)
 
 
