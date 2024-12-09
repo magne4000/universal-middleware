@@ -277,11 +277,13 @@ function loadDts(id: string, resolve?: (handler: string, type: string) => string
   if (t === undefined) return;
 
   const selfImports = [fn, `type ${t}`, ...(info.selfImports ?? [])];
-  const code = `import { type UniversalMiddleware } from '@universal-middleware/core';
+  const code = `import { type UniversalMiddleware, type RuntimeAdapterTarget } from '@universal-middleware/core';
 import { ${selfImports.join(", ")} } from "universal-middleware/adapters/${info.target ?? target}";
 import ${type} from "${resolve ? resolve(handler, type) : handler}";
 type ExtractT<T> = T extends (...args: infer X) => any ? X : never;
 type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<infer X> ? unknown extends X ? Universal.Context : X : {};
+export type Target = '${target}';
+export type RuntimeAdapter = RuntimeAdapterTarget<Target>;
 export type InContext = ExtractInContext<typeof ${type}>;
 export type OutContext = ${info.outContext?.(type) ?? "unknown"};
 export type Args = ExtractT<typeof ${type}>;
