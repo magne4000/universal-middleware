@@ -213,21 +213,23 @@ export type Adapter =
   | WebrouteAdapter
   | OtherAdapter;
 export type RuntimeAdapter = Runtime & Adapter;
+export type RuntimeAdapterTarget<T> = T extends string ? Runtime & Extract<Adapter, { adapter: T }> : RuntimeAdapter;
 
 export type UniversalMiddleware<
   InContext extends Universal.Context = Universal.Context,
   OutContext extends Universal.Context = Universal.Context,
+  Target = unknown,
 > = (
   request: Request,
   context: InContext,
-  runtime: RuntimeAdapter,
+  runtime: RuntimeAdapterTarget<Target>,
   // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
 ) => Awaitable<Response | OutContext | ((response: Response) => Awaitable<Response>) | void | undefined>;
 
-export type UniversalHandler<InContext extends Universal.Context = Universal.Context> = (
+export type UniversalHandler<InContext extends Universal.Context = Universal.Context, Target = unknown> = (
   request: Request,
   context: InContext,
-  runtime: RuntimeAdapter,
+  runtime: RuntimeAdapterTarget<Target>,
 ) => Awaitable<Response>;
 
 export type Get<T extends unknown[], U> = (...args: T) => U;
