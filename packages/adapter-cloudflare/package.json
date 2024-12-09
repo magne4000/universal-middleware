@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/cloudflare",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "type": "module",
   "description": "Cloudflare Pages adapter for universal middlewares",
   "files": [

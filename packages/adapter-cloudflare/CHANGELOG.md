@@ -16,6 +16,15 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.0
 
+## [0.3.2](https://github.com/magne4000/universal-middleware/compare/cloudflare-v0.3.1...cloudflare-v0.3.2) (2024-12-09)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.2
+
 ## [0.3.1](https://github.com/magne4000/universal-middleware/compare/cloudflare-v0.3.0...cloudflare-v0.3.1) (2024-12-04)
 
 

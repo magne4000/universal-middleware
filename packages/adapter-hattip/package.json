@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/hattip",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "type": "module",
   "description": "Hono adapter for universal middlewares",
   "files": [

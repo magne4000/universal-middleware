@@ -16,6 +16,15 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.0
 
+## [0.3.2](https://github.com/magne4000/universal-middleware/compare/hono-v0.3.1...hono-v0.3.2) (2024-12-09)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.2
+
 ## [0.3.1](https://github.com/magne4000/universal-middleware/compare/hono-v0.3.0...hono-v0.3.1) (2024-12-04)
 
 

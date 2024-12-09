@@ -16,6 +16,20 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.0
 
+## [0.3.2](https://github.com/magne4000/universal-middleware/compare/h3-v0.3.1...h3-v0.3.2) (2024-12-09)
+
+
+### Bug Fixes
+
+* ensure h3 eventHandler is called ([#82](https://github.com/magne4000/universal-middleware/issues/82)) ([8dd3cc3](https://github.com/magne4000/universal-middleware/commit/8dd3cc385f06a46afec9239897b10361bd09b4ed))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.2
+
 ## [0.3.1](https://github.com/magne4000/universal-middleware/compare/h3-v0.3.0...h3-v0.3.1) (2024-12-04)
 
 
