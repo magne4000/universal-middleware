@@ -56,12 +56,12 @@ export function bindUniversal<
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   U extends UniversalHandler<any> | UniversalMiddleware<any, any>,
   F extends UniversalFn<U, AnyFn>,
->(universal: U, fn: SetThis<F, { [universalSymbol]: U }>): F {
+>(universal: U, fn: SetThis<F, { [universalSymbol]: U }>, wrapper?: AnyFn): F {
   const unboundFn = unboundSymbol in fn ? (fn[unboundSymbol] as F) : fn;
   const self = { [universalSymbol]: universal, [unboundSymbol]: unboundFn };
   const boundFn = unboundFn.bind(self) as F;
   Object.assign(boundFn, self);
-  return boundFn;
+  return wrapper ? (wrapper(boundFn) as F) : boundFn;
 }
 
 /**

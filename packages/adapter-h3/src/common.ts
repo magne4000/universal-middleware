@@ -65,6 +65,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
         const ctx = initContext<InContext>(event);
         return this[universalSymbol](toWebRequest(event), ctx, getRuntime(event));
       }),
+      eventHandler,
     );
   };
 }
@@ -144,6 +145,7 @@ export function createMiddleware<
           event.context[contextSymbol] = response;
         }
       }),
+      eventHandler,
     );
   };
 }
