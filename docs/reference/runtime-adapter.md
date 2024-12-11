@@ -133,9 +133,12 @@ import type { RuntimeAdapter } from "somelib/express";
 
 const runtime: RuntimeAdapter;
 
-// original express `req` and `res`. See https://expressjs.com/en/guide/using-middleware.html
-runtime.express;
-//      ^^^^^^^
+// original express `req` object. See https://expressjs.com/en/guide/using-middleware.html
+runtime.express.req;
+//              ^^^
+// original express `res` object. See https://expressjs.com/en/guide/using-middleware.html
+runtime.express.res;
+//              ^^^
 ```
 
 ```ts twoslash [fastify]
@@ -154,9 +157,12 @@ import type { RuntimeAdapter } from "somelib/fastify";
 
 const runtime: RuntimeAdapter;
 
-// original fastify `request` and `reply`. See https://fastify.dev/docs/latest/Guides/Getting-Started/
-runtime.fastify;
-//      ^^^^^^^
+// original fastify `request` object. See https://fastify.dev/docs/latest/Reference/Request/
+runtime.fastify.request;
+//              ^^^^^^^
+// original fastify `reply` object. See https://fastify.dev/docs/latest/Reference/Reply/
+runtime.fastify.reply;
+//              ^^^^^
 ```
 
 ```ts twoslash [elysia]
@@ -195,10 +201,14 @@ type RuntimeAdapter = Explain<VercelNodeAdapter>;
 import type { RuntimeAdapter } from "somelib/vercel-node";
 
 const runtime: RuntimeAdapter;
-
-// original node `req` and `res`. See https://expressjs.com/en/guide/using-middleware.html
 const originalParameters = runtime["vercel-node"];
-//    ^^^^^^^^^^^^^^^^^^
+
+// original Vercel Request object. See https://vercel.com/docs/functions/runtimes/node-js
+originalParameters.req;
+//                 ^^^
+// original Vercel Response object. See https://vercel.com/docs/functions/runtimes/node-js
+originalParameters.res;
+//                 ^^^
 ```
 
 :::
@@ -230,19 +240,19 @@ type RuntimeAdapter = Explain<_RuntimeAdapter>;
 // ---cut---
 const runtime: RuntimeAdapter;
 
-// identify which adapter is currently used
+// identify which adapter is currently used. For example 'hono' when using @universal-middleware/hono
 runtime.adapter;
 //      ^^^^^^^
-// runtime environment identifier. See https://runtime-keys.proposal.wintercg.org/
+// the runtime name ('hono', 'express', ...). Follows https://runtime-keys.proposal.wintercg.org/
 runtime.runtime;
 //      ^^^^^^^
 // extracted route parameters. See https://universal-middleware.dev/recipes/params-handler
 runtime.params;
 //      ^^^^^^
-// original `req` if running inside node
+// the original Node.js HTTP request object (if available), see https://nodejs.org/api/http.html#class-httpincomingmessage
 runtime.req;
 //      ^^^
-// original `res` if running inside node
+// the original Node.js HTTP response object (if available), see https://nodejs.org/api/http.html#class-httpserverresponse
 runtime.res;
 //      ^^^
 ```
