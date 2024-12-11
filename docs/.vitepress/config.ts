@@ -108,6 +108,10 @@ export default defineConfig({
         text: "Definitions",
         link: "/definitions",
       },
+      {
+        text: "RuntimeAdapter",
+        link: "/reference/runtime-adapter",
+      },
       { text: "Supported adapters", link: "/reference/supported-adapters" },
     ],
 

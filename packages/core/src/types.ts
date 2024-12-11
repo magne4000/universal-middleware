@@ -214,6 +214,8 @@ export type Adapter =
   | OtherAdapter;
 export type RuntimeAdapter = Runtime & Adapter;
 export type RuntimeAdapterTarget<T> = T extends string ? Runtime & Extract<Adapter, { adapter: T }> : RuntimeAdapter;
+export type Adapters = Adapter["adapter"];
+export type Runtimes = Runtime["runtime"];
 
 export type UniversalMiddleware<
   InContext extends Universal.Context = Universal.Context,
