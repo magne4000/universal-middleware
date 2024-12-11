@@ -1,3 +1,8 @@
+/* update code blocks font color to not look like a link */
+:root {
+  --vp-code-color: var(--vp-c-purple-2);
+}
+
 /* multiline tabs */
 .vp-code-group .tabs {
   flex-wrap: wrap;
