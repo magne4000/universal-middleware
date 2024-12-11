@@ -19,7 +19,7 @@ features:
     details: Automatically generate compatible middlewares for popular servers, from a single codebase
     link: /guide/introduction
   - title: Support for popular servers
-    details: Bundle your middlewares for Hono, Express, Fastify, Cloudflare, h3, Hattip, Elysia, Vercel and Webroute
+    details: Bundle your middlewares for Express, Hono, Fastify, Cloudflare, Vercel, h3, Elysia, Hattip and Webroute
     link: /reference/supported-adapters
   - title: Web Standards Compliance
     details: Write middlewares following established web standards (WinterCG, WHATWG) to ensure consistency and future-proofing

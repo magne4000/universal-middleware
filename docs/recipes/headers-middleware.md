@@ -12,11 +12,11 @@ After bundling this middleware, one can then use this middleware as follows:
 
 ::: code-group
 
+<<< @/../tests-examples/tests-tool/src/express-entry.ts [express.ts]
+
 <<< @/../tests-examples/tests-tool/src/hono-entry.ts [hono.ts]
 
-<<< @/../tests-examples/tests-tool/src/h3-entry.ts [h3.ts]
-
-<<< @/../tests-examples/tests-tool/src/hattip-entry.ts [hattip.ts]
+<<< @/../tests-examples/tests-tool/src/fastify-entry.ts [fastify.ts]
 
 <<< @/../tests-examples/tests-tool/src/cloudflare-worker-entry.ts [cloudflare-worker.ts]
 
@@ -36,14 +36,14 @@ import headersMiddleware from "@universal-middleware-examples/tool/middlewares/h
 export const onRequest = [contextMiddleware("World!!!"), headersMiddleware()];
 ```
 
-<<< @/../tests-examples/tests-tool/src/express-entry.ts [express.ts]
-
-<<< @/../tests-examples/tests-tool/src/fastify-entry.ts [fastify.ts]
-
-<<< @/../tests-examples/tests-tool/src/elysia-entry.ts [elysia.ts]
-
 <<< @/../tests-examples/tests-tool/api/node/index.ts [vercel-node.ts]
 
 <<< @/../tests-examples/tests-tool/api/web/index.ts [vercel-edge.ts]
+
+<<< @/../tests-examples/tests-tool/src/h3-entry.ts [h3.ts]
+
+<<< @/../tests-examples/tests-tool/src/elysia-entry.ts [elysia.ts]
+
+<<< @/../tests-examples/tests-tool/src/hattip-entry.ts [hattip.ts]
 
 :::

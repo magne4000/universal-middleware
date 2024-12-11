@@ -18,6 +18,21 @@ const handler = (() => (request, context, runtime) => {
 
 ::: code-group
 
+```ts twoslash [express]
+// @noErrors
+import type { ExpressAdapter } from "@universal-middleware/core";
+
+export type Explain<A extends any> =
+  A extends Function
+    ? A
+    : {[K in keyof A]: A[K]} & unknown
+
+// ---cut---
+// hover me
+type Runtime = Explain<ExpressAdapter>;
+//   ^^^^^^^
+```
+
 ```ts twoslash [hono]
 // @noErrors
 import type { HonoAdapter } from "@universal-middleware/core";
@@ -33,9 +48,9 @@ type Runtime = Explain<HonoAdapter>;
 //   ^^^^^^^
 ```
 
-```ts twoslash [h3]
+```ts twoslash [fastify]
 // @noErrors
-import type { H3Adapter } from "@universal-middleware/core";
+import type { FastifyAdapter } from "@universal-middleware/core";
 
 export type Explain<A extends any> =
   A extends Function
@@ -44,22 +59,7 @@ export type Explain<A extends any> =
 
 // ---cut---
 // hover me
-type Runtime = Explain<H3Adapter>;
-//   ^^^^^^^
-```
-
-```ts twoslash [hattip]
-// @noErrors
-import type { HattipAdapter } from "@universal-middleware/core";
-
-export type Explain<A extends any> =
-  A extends Function
-    ? A
-    : {[K in keyof A]: A[K]} & unknown
-
-// ---cut---
-// hover me
-type Runtime = Explain<HattipAdapter>;
+type Runtime = Explain<FastifyAdapter>;
 //   ^^^^^^^
 ```
 
@@ -93,51 +93,6 @@ type Runtime = Explain<CloudflarePagesAdapter>;
 //   ^^^^^^^
 ```
 
-```ts twoslash [express]
-// @noErrors
-import type { ExpressAdapter } from "@universal-middleware/core";
-
-export type Explain<A extends any> =
-  A extends Function
-    ? A
-    : {[K in keyof A]: A[K]} & unknown
-
-// ---cut---
-// hover me
-type Runtime = Explain<ExpressAdapter>;
-//   ^^^^^^^
-```
-
-```ts twoslash [fastify]
-// @noErrors
-import type { FastifyAdapter } from "@universal-middleware/core";
-
-export type Explain<A extends any> =
-  A extends Function
-    ? A
-    : {[K in keyof A]: A[K]} & unknown
-
-// ---cut---
-// hover me
-type Runtime = Explain<FastifyAdapter>;
-//   ^^^^^^^
-```
-
-```ts twoslash [elysia]
-// @noErrors
-import type { ElysiaAdapter } from "@universal-middleware/core";
-
-export type Explain<A extends any> =
-  A extends Function
-    ? A
-    : {[K in keyof A]: A[K]} & unknown
-
-// ---cut---
-// hover me
-type Runtime = Explain<ElysiaAdapter>;
-//   ^^^^^^^
-```
-
 ```ts twoslash [vercel-edge]
 // @noErrors
 import type { VercelEdgeAdapter } from "@universal-middleware/core";
@@ -165,6 +120,51 @@ export type Explain<A extends any> =
 // ---cut---
 // hover me
 type Runtime = Explain<VercelNodeAdapter>;
+//   ^^^^^^^
+```
+
+```ts twoslash [h3]
+// @noErrors
+import type { H3Adapter } from "@universal-middleware/core";
+
+export type Explain<A extends any> =
+  A extends Function
+    ? A
+    : {[K in keyof A]: A[K]} & unknown
+
+// ---cut---
+// hover me
+type Runtime = Explain<H3Adapter>;
+//   ^^^^^^^
+```
+
+```ts twoslash [elysia]
+// @noErrors
+import type { ElysiaAdapter } from "@universal-middleware/core";
+
+export type Explain<A extends any> =
+  A extends Function
+    ? A
+    : {[K in keyof A]: A[K]} & unknown
+
+// ---cut---
+// hover me
+type Runtime = Explain<ElysiaAdapter>;
+//   ^^^^^^^
+```
+
+```ts twoslash [hattip]
+// @noErrors
+import type { HattipAdapter } from "@universal-middleware/core";
+
+export type Explain<A extends any> =
+  A extends Function
+    ? A
+    : {[K in keyof A]: A[K]} & unknown
+
+// ---cut---
+// hover me
+type Runtime = Explain<HattipAdapter>;
 //   ^^^^^^^
 ```
 

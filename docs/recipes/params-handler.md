@@ -17,6 +17,17 @@ After bundling this middleware, one can then use this middleware as follows:
 
 ::: code-group
 
+```ts twoslash [express.ts]
+import paramHandler from "@universal-middleware-examples/tool/params-handler-express";
+import express from "express";
+
+const app = express();
+
+app.get("/user/:name", paramHandler());
+
+export default app;
+```
+
 ```ts twoslash [hono.ts]
 import { Hono } from "hono";
 import paramHandler from "@universal-middleware-examples/tool/params-handler-hono";
@@ -28,36 +39,15 @@ app.get("/user/:name", paramHandler());
 export default app;
 ```
 
-```ts twoslash [h3.ts]
-import { createApp, createRouter } from "h3";
-import paramHandler from "@universal-middleware-examples/tool/params-handler-h3";
-import { universalOnBeforeResponse } from "@universal-middleware/h3";
+```ts twoslash [fastify.ts]
+import paramHandler from "@universal-middleware-examples/tool/params-handler-fastify";
+import fastify from "fastify";
 
-const app = createApp({
-  // /!\ This is required for universal-middleware to operate properly
-  onBeforeResponse: universalOnBeforeResponse,
-});
-
-const router = createRouter();
-
-router.get("/user/:name", paramHandler());
-
-app.use(router);
-
-export default app;
-```
-
-```ts twoslash [hattip.ts]
-import { createRouter } from "@hattip/router";
-import paramHandler from "@universal-middleware-examples/tool/params-handler-hattip";
-
-const app = createRouter();
+const app = fastify();
 
 app.get("/user/:name", paramHandler());
 
-const hattipHandler = app.buildHandler();
-
-export default hattipHandler;
+export default app;
 ```
 
 ```ts [cloudflare-worker.ts]
@@ -94,37 +84,6 @@ import paramHandler from "@universal-middleware-examples/tool/params-handler-clo
 export const onRequest = paramHandler();
 ```
 
-```ts twoslash [express.ts]
-import paramHandler from "@universal-middleware-examples/tool/params-handler-express";
-import express from "express";
-
-const app = express();
-
-app.get("/user/:name", paramHandler());
-
-export default app;
-```
-
-```ts twoslash [fastify.ts]
-import paramHandler from "@universal-middleware-examples/tool/params-handler-fastify";
-import fastify from "fastify";
-
-const app = fastify();
-
-app.get("/user/:name", paramHandler());
-
-export default app;
-```
-
-```ts twoslash [elysia.ts]
-import paramHandler from "@universal-middleware-examples/tool/params-handler-elysia";
-import Elysia from "elysia";
-
-const app = new Elysia().get("/user/:name", paramHandler());
-
-export default app;
-```
-
 ```ts twoslash [vercel-node.ts]
 // api/user/[name].ts
 
@@ -139,6 +98,47 @@ export default paramHandler();
 import paramHandler from "@universal-middleware-examples/tool/params-handler-vercel-edge";
 
 export const GET = paramHandler();
+```
+
+```ts twoslash [h3.ts]
+import { createApp, createRouter } from "h3";
+import paramHandler from "@universal-middleware-examples/tool/params-handler-h3";
+import { universalOnBeforeResponse } from "@universal-middleware/h3";
+
+const app = createApp({
+  // /!\ This is required for universal-middleware to operate properly
+  onBeforeResponse: universalOnBeforeResponse,
+});
+
+const router = createRouter();
+
+router.get("/user/:name", paramHandler());
+
+app.use(router);
+
+export default app;
+```
+
+```ts twoslash [elysia.ts]
+import paramHandler from "@universal-middleware-examples/tool/params-handler-elysia";
+import Elysia from "elysia";
+
+const app = new Elysia().get("/user/:name", paramHandler());
+
+export default app;
+```
+
+```ts twoslash [hattip.ts]
+import { createRouter } from "@hattip/router";
+import paramHandler from "@universal-middleware-examples/tool/params-handler-hattip";
+
+const app = createRouter();
+
+app.get("/user/:name", paramHandler());
+
+const hattipHandler = app.buildHandler();
+
+export default hattipHandler;
 ```
 
 :::

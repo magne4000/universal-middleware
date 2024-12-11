@@ -8,6 +8,30 @@ It can be used to type `runtime` when exposed to userland.
 
 ::: code-group
 
+```ts twoslash [express]
+// @noErrors
+import type { Runtime, ExpressAdapter } from "@universal-middleware/core";
+
+export type Explain<A extends any> =
+  A extends Function
+    ? A
+    : {[K in keyof A]: A[K]} & unknown
+
+type RuntimeAdapter = Explain<ExpressAdapter>;
+
+// ---cut---
+import type { RuntimeAdapter } from "somelib/express";
+
+const runtime: RuntimeAdapter;
+
+// original express `req` object. See https://expressjs.com/en/guide/using-middleware.html
+runtime.express.req;
+//              ^^^
+// original express `res` object. See https://expressjs.com/en/guide/using-middleware.html
+runtime.express.res;
+//              ^^^
+```
+
 ```ts twoslash [hono]
 // @noErrors
 import type { Runtime, HonoAdapter } from "@universal-middleware/core";
@@ -29,46 +53,28 @@ runtime.hono;
 //      ^^^^
 ```
 
-```ts twoslash [h3]
+```ts twoslash [fastify]
 // @noErrors
-import type { Runtime, H3Adapter } from "@universal-middleware/core";
+import type { Runtime, FastifyAdapter } from "@universal-middleware/core";
 
 export type Explain<A extends any> =
   A extends Function
     ? A
     : {[K in keyof A]: A[K]} & unknown
 
-type RuntimeAdapter = Explain<H3Adapter>;
+type RuntimeAdapter = Explain<FastifyAdapter>;
 
 // ---cut---
-import type { RuntimeAdapter } from "somelib/h3";
+import type { RuntimeAdapter } from "somelib/fastify";
 
 const runtime: RuntimeAdapter;
 
-// original H3 Event. See https://h3.unjs.io/guide/event
-runtime.h3;
-//      ^^
-```
-
-```ts twoslash [hattip]
-// @noErrors
-import type { Runtime, HattipAdapter } from "@universal-middleware/core";
-
-export type Explain<A extends any> =
-  A extends Function
-    ? A
-    : {[K in keyof A]: A[K]} & unknown
-
-type RuntimeAdapter = Explain<HattipAdapter>;
-
-// ---cut---
-import type { RuntimeAdapter } from "somelib/hattip";
-
-const runtime: RuntimeAdapter;
-
-// original Hattip context
-runtime.hattip;
-//      ^^^^^^
+// original fastify `request` object. See https://fastify.dev/docs/latest/Reference/Request/
+runtime.fastify.request;
+//              ^^^^^^^
+// original fastify `reply` object. See https://fastify.dev/docs/latest/Reference/Reply/
+runtime.fastify.reply;
+//              ^^^^^
 ```
 
 ```ts twoslash [cloudflare-worker]
@@ -117,75 +123,6 @@ const originalContext = runtime["cloudflare-pages"];
 //    ^^^^^^^^^^^^^^^
 ```
 
-```ts twoslash [express]
-// @noErrors
-import type { Runtime, ExpressAdapter } from "@universal-middleware/core";
-
-export type Explain<A extends any> =
-  A extends Function
-    ? A
-    : {[K in keyof A]: A[K]} & unknown
-
-type RuntimeAdapter = Explain<ExpressAdapter>;
-
-// ---cut---
-import type { RuntimeAdapter } from "somelib/express";
-
-const runtime: RuntimeAdapter;
-
-// original express `req` object. See https://expressjs.com/en/guide/using-middleware.html
-runtime.express.req;
-//              ^^^
-// original express `res` object. See https://expressjs.com/en/guide/using-middleware.html
-runtime.express.res;
-//              ^^^
-```
-
-```ts twoslash [fastify]
-// @noErrors
-import type { Runtime, FastifyAdapter } from "@universal-middleware/core";
-
-export type Explain<A extends any> =
-  A extends Function
-    ? A
-    : {[K in keyof A]: A[K]} & unknown
-
-type RuntimeAdapter = Explain<FastifyAdapter>;
-
-// ---cut---
-import type { RuntimeAdapter } from "somelib/fastify";
-
-const runtime: RuntimeAdapter;
-
-// original fastify `request` object. See https://fastify.dev/docs/latest/Reference/Request/
-runtime.fastify.request;
-//              ^^^^^^^
-// original fastify `reply` object. See https://fastify.dev/docs/latest/Reference/Reply/
-runtime.fastify.reply;
-//              ^^^^^
-```
-
-```ts twoslash [elysia]
-// @noErrors
-import type { Runtime, ElysiaAdapter } from "@universal-middleware/core";
-
-export type Explain<A extends any> =
-  A extends Function
-    ? A
-    : {[K in keyof A]: A[K]} & unknown
-
-type RuntimeAdapter = Explain<ElysiaAdapter>;
-
-// ---cut---
-import type { RuntimeAdapter } from "somelib/elysia";
-
-const runtime: RuntimeAdapter;
-
-// original elysia context. See https://elysiajs.com/essential/handler#context
-runtime.elysia;
-//      ^^^^^^
-```
-
 ```ts twoslash [vercel-node]
 // @noErrors
 import type { Runtime, VercelNodeAdapter } from "@universal-middleware/core";
@@ -209,6 +146,69 @@ originalParameters.req;
 // original Vercel Response object. See https://vercel.com/docs/functions/runtimes/node-js
 originalParameters.res;
 //                 ^^^
+```
+
+```ts twoslash [h3]
+// @noErrors
+import type { Runtime, H3Adapter } from "@universal-middleware/core";
+
+export type Explain<A extends any> =
+  A extends Function
+    ? A
+    : {[K in keyof A]: A[K]} & unknown
+
+type RuntimeAdapter = Explain<H3Adapter>;
+
+// ---cut---
+import type { RuntimeAdapter } from "somelib/h3";
+
+const runtime: RuntimeAdapter;
+
+// original H3 Event. See https://h3.unjs.io/guide/event
+runtime.h3;
+//      ^^
+```
+
+```ts twoslash [elysia]
+// @noErrors
+import type { Runtime, ElysiaAdapter } from "@universal-middleware/core";
+
+export type Explain<A extends any> =
+  A extends Function
+    ? A
+    : {[K in keyof A]: A[K]} & unknown
+
+type RuntimeAdapter = Explain<ElysiaAdapter>;
+
+// ---cut---
+import type { RuntimeAdapter } from "somelib/elysia";
+
+const runtime: RuntimeAdapter;
+
+// original elysia context. See https://elysiajs.com/essential/handler#context
+runtime.elysia;
+//      ^^^^^^
+```
+
+```ts twoslash [hattip]
+// @noErrors
+import type { Runtime, HattipAdapter } from "@universal-middleware/core";
+
+export type Explain<A extends any> =
+  A extends Function
+    ? A
+    : {[K in keyof A]: A[K]} & unknown
+
+type RuntimeAdapter = Explain<HattipAdapter>;
+
+// ---cut---
+import type { RuntimeAdapter } from "somelib/hattip";
+
+const runtime: RuntimeAdapter;
+
+// original Hattip context
+runtime.hattip;
+//      ^^^^^^
 ```
 
 :::
