@@ -236,7 +236,7 @@ runtime.adapter;
 // runtime environment identifier. See https://runtime-keys.proposal.wintercg.org/
 runtime.runtime;
 //      ^^^^^^^
-// extracted route parameters. See http://localhost:5173/recipes/params-handler
+// extracted route parameters. See https://universal-middleware.dev/recipes/params-handler
 runtime.params;
 //      ^^^^^^
 // original `req` if running inside node
