@@ -124,7 +124,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^12.1.1",
     "@swc/core": "catalog:",
     "esbuild": "^0.24.0",
@@ -137,7 +137,7 @@
   },
   "peerDependencies": {
     "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-node-resolve": "^16.0.0",
     "esbuild": "^0.24.0",
     "rollup": "^4.28.1",
     "vite": ">=5.4.11"
