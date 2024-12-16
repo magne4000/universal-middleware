@@ -118,14 +118,14 @@
     "@universal-middleware/hono": "workspace:^",
     "@universal-middleware/vercel": "workspace:^",
     "@universal-middleware/webroute": "workspace:^",
-    "oxc-transform": "^0.39.0",
+    "oxc-transform": "^0.41.0",
     "package-up": "^5.0.0",
-    "unplugin": "^2.0.0"
+    "unplugin": "^2.1.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-typescript": "^12.1.1",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@swc/core": "catalog:",
     "esbuild": "^0.24.0",
     "rimraf": "catalog:",
@@ -136,7 +136,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "esbuild": "^0.24.0",
     "rollup": "^4.28.1",
