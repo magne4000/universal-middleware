@@ -702,6 +702,22 @@ importers:
         specifier: 'catalog:'
         version: 2.1.7(@edge-runtime/vm@3.2.0)(@types/node@20.17.9)
 
+  packages/router:
+    dependencies:
+      '@universal-middleware/core':
+        specifier: link:../core
+        version: link:../core
+      '@universal-middleware/hono':
+        specifier: link:../adapter-hono
+        version: link:../adapter-hono
+      rou3:
+        specifier: ^0.5.1
+        version: 0.5.1
+    devDependencies:
+      hono:
+        specifier: 'catalog:'
+        version: 4.6.12
+
   packages/tests:
     dependencies:
       mri:
@@ -4145,6 +4161,9 @@ packages:
     resolution: {integrity: sha512-mlJ4glW020fPuLi7DkM/lN97mYEZGWeqBnrljzN0gs7GLctqX3lNWxKQ7Gl712UAX+6fog/L3jh4gb7R6aVi3w==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
+
+  rou3@0.5.1:
+    resolution: {integrity: sha512-OXMmJ3zRk2xeXFGfA3K+EOPHC5u7RDFG7lIOx0X1pdnhUkI8MdVrbV+sNsD80ElpUZ+MRHdyxPnFthq9VHs8uQ==}
 
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
@@ -8567,6 +8586,8 @@ snapshots:
       '@rollup/rollup-win32-ia32-msvc': 4.30.1
       '@rollup/rollup-win32-x64-msvc': 4.30.1
       fsevents: 2.3.3
+
+  rou3@0.5.1: {}
 
   run-parallel@1.2.0:
     dependencies:

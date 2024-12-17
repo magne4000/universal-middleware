@@ -17,15 +17,17 @@ type AnyMiddleware<In extends Universal.Context = any, Out extends Universal.Con
 
 type ExtractUF<T> = T extends UniversalFn<infer _, infer Fn> ? Fn : never;
 
-type ComposeReturnType<T extends AnyMiddleware[]> = Last<T> extends UniversalHandler<any>
-  ? UniversalHandler<In<First<T>>>
-  : Last<T> extends UniversalMiddleware<any, any>
-    ? UniversalMiddleware<In<First<T>>, In<Last<T>>>
-    : Last<T> extends UniversalFn<UniversalHandler<any>, infer _>
-      ? UniversalFn<UniversalHandler<In<First<T>>>, ExtractUF<Last<T>>>
-      : Last<T> extends UniversalFn<UniversalMiddleware<any, any>, infer _>
-        ? UniversalFn<UniversalMiddleware<In<First<T>>, In<Last<T>>>, ExtractUF<Last<T>>>
-        : never;
+type ComposeReturnType<T extends AnyMiddleware[]> = Last<T> extends never
+  ? T[number]
+  : Last<T> extends UniversalHandler<any>
+    ? UniversalHandler<In<First<T>>>
+    : Last<T> extends UniversalMiddleware<any, any>
+      ? UniversalMiddleware<In<First<T>>, In<Last<T>>>
+      : Last<T> extends UniversalFn<UniversalHandler<any>, infer _>
+        ? UniversalFn<UniversalHandler<In<First<T>>>, ExtractUF<Last<T>>>
+        : Last<T> extends UniversalFn<UniversalMiddleware<any, any>, infer _>
+          ? UniversalFn<UniversalMiddleware<In<First<T>>, In<Last<T>>>, ExtractUF<Last<T>>>
+          : never;
 
 type Cast<
   T extends AnyMiddleware,
