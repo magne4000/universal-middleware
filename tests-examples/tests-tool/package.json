@@ -47,7 +47,7 @@
     "h3": "catalog:",
     "hono": "catalog:",
     "mri": "^1.2.0",
-    "npm-run-all2": "^7.0.1",
+    "npm-run-all2": "^7.0.2",
     "playwright": "^1.49.1",
     "rimraf": "catalog:",
     "typescript": "catalog:",
