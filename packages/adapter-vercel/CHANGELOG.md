@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/magne4000/universal-middleware/compare/vercel-v0.3.3...vercel-v0.3.4) (2024-12-30)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#88](https://github.com/magne4000/universal-middleware/issues/88)) ([105940c](https://github.com/magne4000/universal-middleware/commit/105940c4f2527370f4ccdd69651a1dee9a8c2a8c))
+
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/vercel-v0.3.2...vercel-v0.3.3) (2024-12-09)
 
 
