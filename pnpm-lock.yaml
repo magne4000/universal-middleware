@@ -708,8 +708,8 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
       zx:
-        specifier: ^8.2.4
-        version: 8.2.4
+        specifier: ^8.3.0
+        version: 8.3.0
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -769,14 +769,14 @@ importers:
         specifier: link:../adapter-webroute
         version: link:../adapter-webroute
       oxc-transform:
-        specifier: ^0.43.0
-        version: 0.43.0
+        specifier: ^0.44.0
+        version: 0.44.0
       package-up:
         specifier: ^5.0.0
         version: 5.0.0
       unplugin:
-        specifier: ^2.1.0
-        version: 2.1.0
+        specifier: ^2.1.2
+        version: 2.1.2
     devDependencies:
       '@rollup/plugin-commonjs':
         specifier: ^28.0.2
@@ -1603,43 +1603,43 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@oxc-transform/binding-darwin-arm64@0.43.0':
-    resolution: {integrity: sha512-RqqhTftyG9LwHdZ4v3YkJBMgZSI7BQp5qWpJQYCChVRVLOJjNtF1Oq5J/rKiqmntvSrWGrJHUeYQtOJnrlMb6g==}
+  '@oxc-transform/binding-darwin-arm64@0.44.0':
+    resolution: {integrity: sha512-bgJg3+TypUMDAWTMKXws2TL45FcTOAtYJObuXvPTyanUDR16Lgara+lCWZkJQDrq+WngNdzYBkTn6gJZwlcS8g==}
     cpu: [arm64]
     os: [darwin]
 
-  '@oxc-transform/binding-darwin-x64@0.43.0':
-    resolution: {integrity: sha512-Iw2a/uWWbeetxS8KplRBD2PnWcwATd/Yy/nIu7rQ0SopZxEoSA/qHZiTIztMcF/jOKJlgo/rhDtjASzD+hW/nw==}
+  '@oxc-transform/binding-darwin-x64@0.44.0':
+    resolution: {integrity: sha512-+YR/7VWCakghk8RGa9KTAB6+ZCLUMdk6TCpch8aYrP7QKZqHBFkzJr4e+Ewhhxuqc+ULQ/eA4B7TZzd/LkTj2w==}
     cpu: [x64]
     os: [darwin]
 
-  '@oxc-transform/binding-linux-arm64-gnu@0.43.0':
-    resolution: {integrity: sha512-4mZg+lntLUStu/2qmpGE7Mqj3eTnBvcezXa4M1pBHtkRCA03bhLJ/Xv7e9Tknpv8joazxftCHSr0BSASdMlhPg==}
+  '@oxc-transform/binding-linux-arm64-gnu@0.44.0':
+    resolution: {integrity: sha512-xNBejh63+V/xwZlwDzzvSje9M1EYajedLYewxXeA0oH+AxwMK24jgn5qhXi38kp28Mhn/PNNss2UETTCpNJGGg==}
     cpu: [arm64]
     os: [linux]
 
-  '@oxc-transform/binding-linux-arm64-musl@0.43.0':
-    resolution: {integrity: sha512-+0JxQ9IJNB4bvIWyy0EViRnwikeCo0FctejWW2lg7Mqh7z24uu0oQ1DDAb9plFeiJMmrytStpXEq3/92/GdqUA==}
+  '@oxc-transform/binding-linux-arm64-musl@0.44.0':
+    resolution: {integrity: sha512-19/jSDBV9+/JtFCg2FMoP4hjibNV4PskTkgzuxpktbJWZnQiDEbbTuOE7MFKZqTXd3okEZ2NqhMNeQEVj1+ULg==}
     cpu: [arm64]
     os: [linux]
 
-  '@oxc-transform/binding-linux-x64-gnu@0.43.0':
-    resolution: {integrity: sha512-he9LbBfZZAPnAJRgbdOQYnlD6dENryVtUCSLqUy0vkVCgRGvw6Y4KPdFNEFQYDDAlFpL0VPolQkuR+IUEaUXSQ==}
+  '@oxc-transform/binding-linux-x64-gnu@0.44.0':
+    resolution: {integrity: sha512-OuZlXynZdr2PPBIdZ0jA8sWYrhYTKW2m+9sYAtgHNHiKeJr7NGTxyTLfjNaLNt0Ji71z6X5eVX4QRVFwnfoEQg==}
     cpu: [x64]
     os: [linux]
 
-  '@oxc-transform/binding-linux-x64-musl@0.43.0':
-    resolution: {integrity: sha512-CLsXVSKhnjnr67PVrbNhvBLfR1yq6O9gUjZuYR0Y9vUi92f575r9PNVIsR00DMbog3q7sW/og4oTd5sqms22ug==}
+  '@oxc-transform/binding-linux-x64-musl@0.44.0':
+    resolution: {integrity: sha512-lDIh5r2atVR72iPsBuhPbM3B67rINakWMMUDa64eJtJcvlgIaqyybQhiRWCbzUErE5cSBnvXgViJLsq7PRrtEA==}
     cpu: [x64]
     os: [linux]
 
-  '@oxc-transform/binding-win32-arm64-msvc@0.43.0':
-    resolution: {integrity: sha512-xbvSsbV32y62N5APQ14SuzIdLPHryMIdLQ1tRoH43kfZcWqi2qeWtgZX/hUnxh3vM9h0sfspXl4S2ohi5q3glw==}
+  '@oxc-transform/binding-win32-arm64-msvc@0.44.0':
+    resolution: {integrity: sha512-JKmmVMw+c+cG0wnCkOUavNGoFqbGggk1RjRC7UGYWrFK10YS48Wyg4pXAW4XwYTzWD4N15ooSO6c6lO40uCEog==}
     cpu: [arm64]
     os: [win32]
 
-  '@oxc-transform/binding-win32-x64-msvc@0.43.0':
-    resolution: {integrity: sha512-rUEUaGIFkcgPAKDvpTQ2o18KWAinLJS6T2TDQMNrS5RYH4u1k7+d9lUCno/f8xbYMnP/AKO3F17HzcvL6U75qg==}
+  '@oxc-transform/binding-win32-x64-msvc@0.44.0':
+    resolution: {integrity: sha512-jeUzJE32z4j/9tVlrVGiIgLRzHMbBAGl47GGQhFpjS2s9+lXxT0PubosMKbFAPnlbUPJTDusebttA+DWhWgFuA==}
     cpu: [x64]
     os: [win32]
 
@@ -3821,8 +3821,8 @@ packages:
   oxc-resolver@1.12.0:
     resolution: {integrity: sha512-YlaCIArvWNKCWZFRrMjhh2l5jK80eXnpYP+bhRc1J/7cW3TiyEY0ngJo73o/5n8hA3+4yLdTmXLNTQ3Ncz50LQ==}
 
-  oxc-transform@0.43.0:
-    resolution: {integrity: sha512-m0sjGlhiAv8t3KumXJ7qhamo/HVME6MtwaHU0BwRpkuN8i3O5ZmrOx3kUyg3iWiebI0nKSRR9v+6ecVrM8Yv4w==}
+  oxc-transform@0.44.0:
+    resolution: {integrity: sha512-T9o8PWvhYCJWK25MD0qmAQTeIgMkD7NvCFzzqzdFSDHP03wh6B6yy+7nLn1Scw+TsT82QQaaaD5bRl/ATLaPdQ==}
 
   p-finally@2.0.1:
     resolution: {integrity: sha512-vpm09aKwq6H9phqRQzecoDpD8TmVyGw70qmWlyq5onxY7tqyTTFVvxMykxQSQKILBSFlbXpypIw2T1Ml7+DDtw==}
@@ -4729,8 +4729,8 @@ packages:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
     engines: {node: '>= 0.8'}
 
-  unplugin@2.1.0:
-    resolution: {integrity: sha512-us4j03/499KhbGP8BU7Hrzrgseo+KdfJYWcbcajCOqsAyb8Gk0Yn2kiUIcZISYCb1JFaZfIuG3b42HmguVOKCQ==}
+  unplugin@2.1.2:
+    resolution: {integrity: sha512-Q3LU0e4zxKfRko1wMV2HmP8lB9KWislY7hxXpxd+lGx0PRInE4vhMBVEZwpdVYHvtqzhSrzuIfErsob6bQfCzw==}
     engines: {node: '>=18.12.0'}
 
   uri-js@4.4.1:
@@ -5062,8 +5062,8 @@ packages:
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
-  zx@8.2.4:
-    resolution: {integrity: sha512-g9wVU+5+M+zVen/3IyAZfsZFmeqb6vDfjqFggakviz5uLK7OAejOirX+jeTOkyvAh/OYRlCgw+SdqzN7F61QVQ==}
+  zx@8.3.0:
+    resolution: {integrity: sha512-L8mY3yfJwo3a8ZDD6f9jZzAcRWJZYcV8GauZmBxLB/aSTwaMzMIEVpPp2Kyx+7yF0gdvuxKnMxAZRft9UCawiw==}
     engines: {node: '>= 12.17.0'}
     hasBin: true
 
@@ -5733,28 +5733,28 @@ snapshots:
   '@oxc-resolver/binding-win32-x64-msvc@1.12.0':
     optional: true
 
-  '@oxc-transform/binding-darwin-arm64@0.43.0':
+  '@oxc-transform/binding-darwin-arm64@0.44.0':
     optional: true
 
-  '@oxc-transform/binding-darwin-x64@0.43.0':
+  '@oxc-transform/binding-darwin-x64@0.44.0':
     optional: true
 
-  '@oxc-transform/binding-linux-arm64-gnu@0.43.0':
+  '@oxc-transform/binding-linux-arm64-gnu@0.44.0':
     optional: true
 
-  '@oxc-transform/binding-linux-arm64-musl@0.43.0':
+  '@oxc-transform/binding-linux-arm64-musl@0.44.0':
     optional: true
 
-  '@oxc-transform/binding-linux-x64-gnu@0.43.0':
+  '@oxc-transform/binding-linux-x64-gnu@0.44.0':
     optional: true
 
-  '@oxc-transform/binding-linux-x64-musl@0.43.0':
+  '@oxc-transform/binding-linux-x64-musl@0.44.0':
     optional: true
 
-  '@oxc-transform/binding-win32-arm64-msvc@0.43.0':
+  '@oxc-transform/binding-win32-arm64-msvc@0.44.0':
     optional: true
 
-  '@oxc-transform/binding-win32-x64-msvc@0.43.0':
+  '@oxc-transform/binding-win32-x64-msvc@0.44.0':
     optional: true
 
   '@pkgjs/parseargs@0.11.0':
@@ -8287,16 +8287,16 @@ snapshots:
       '@oxc-resolver/binding-win32-arm64-msvc': 1.12.0
       '@oxc-resolver/binding-win32-x64-msvc': 1.12.0
 
-  oxc-transform@0.43.0:
+  oxc-transform@0.44.0:
     optionalDependencies:
-      '@oxc-transform/binding-darwin-arm64': 0.43.0
-      '@oxc-transform/binding-darwin-x64': 0.43.0
-      '@oxc-transform/binding-linux-arm64-gnu': 0.43.0
-      '@oxc-transform/binding-linux-arm64-musl': 0.43.0
-      '@oxc-transform/binding-linux-x64-gnu': 0.43.0
-      '@oxc-transform/binding-linux-x64-musl': 0.43.0
-      '@oxc-transform/binding-win32-arm64-msvc': 0.43.0
-      '@oxc-transform/binding-win32-x64-msvc': 0.43.0
+      '@oxc-transform/binding-darwin-arm64': 0.44.0
+      '@oxc-transform/binding-darwin-x64': 0.44.0
+      '@oxc-transform/binding-linux-arm64-gnu': 0.44.0
+      '@oxc-transform/binding-linux-arm64-musl': 0.44.0
+      '@oxc-transform/binding-linux-x64-gnu': 0.44.0
+      '@oxc-transform/binding-linux-x64-musl': 0.44.0
+      '@oxc-transform/binding-win32-arm64-msvc': 0.44.0
+      '@oxc-transform/binding-win32-x64-msvc': 0.44.0
 
   p-finally@2.0.1: {}
 
@@ -9219,7 +9219,7 @@ snapshots:
 
   unpipe@1.0.0: {}
 
-  unplugin@2.1.0:
+  unplugin@2.1.2:
     dependencies:
       acorn: 8.14.0
       webpack-virtual-modules: 0.6.2
@@ -9663,7 +9663,7 @@ snapshots:
 
   zwitch@2.0.4: {}
 
-  zx@8.2.4:
+  zx@8.3.0:
     optionalDependencies:
       '@types/fs-extra': 11.0.4
       '@types/node': 22.10.0

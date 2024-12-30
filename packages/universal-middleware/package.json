@@ -118,9 +118,9 @@
     "@universal-middleware/hono": "workspace:^",
     "@universal-middleware/vercel": "workspace:^",
     "@universal-middleware/webroute": "workspace:^",
-    "oxc-transform": "^0.43.0",
+    "oxc-transform": "^0.44.0",
     "package-up": "^5.0.0",
-    "unplugin": "^2.1.0"
+    "unplugin": "^2.1.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.2",
