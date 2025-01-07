@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@swc/core": "catalog:",
-    "@types/bun": "^1.1.14",
+    "@types/bun": "^1.1.15",
     "@types/node": "catalog:",
     "@cloudflare/workers-types": "catalog:",
     "@hattip/core": "catalog:",
