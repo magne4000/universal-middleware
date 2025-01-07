@@ -720,6 +720,9 @@ importers:
       hono:
         specifier: 'catalog:'
         version: 4.6.12
+      tsup:
+        specifier: ^8.3.5
+        version: 8.3.5(@swc/core@1.9.3)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.6.1)
       tsx:
         specifier: 'catalog:'
         version: 4.19.2
