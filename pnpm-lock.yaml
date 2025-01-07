@@ -342,8 +342,8 @@ importers:
         version: 5.0.0
     devDependencies:
       '@fastify/helmet':
-        specifier: ^13.0.0
-        version: 13.0.0
+        specifier: ^13.0.1
+        version: 13.0.1
       '@swc/core':
         specifier: 'catalog:'
         version: 1.9.3
@@ -1345,8 +1345,8 @@ packages:
   '@fastify/fast-json-stringify-compiler@5.0.1':
     resolution: {integrity: sha512-f2d3JExJgFE3UbdFcpPwqNUEoHWmt8pAKf8f+9YuLESdefA0WgqxeT6DrGL4Yrf/9ihXNSKOqpjEmurV405meA==}
 
-  '@fastify/helmet@13.0.0':
-    resolution: {integrity: sha512-7Ksj/9UDelZ9VhUUzVkBMRRzSSiX71T/ICT5+3m2GHmrWgnARu8OlE7ZaR7DjZhZjWzUWACst4oLjNdPSkVslw==}
+  '@fastify/helmet@13.0.1':
+    resolution: {integrity: sha512-i+ifqazG3d0HwHL3zuZdg6B/WPc9Ee6kVfGpwGho4nxm0UaK1htss0zq+1rVhOoAorZlCgTZ3/i4S58hUGkkoA==}
 
   '@fastify/merge-json-schemas@0.1.1':
     resolution: {integrity: sha512-fERDVz7topgNjtXsJTTW1JKLy0rhuLRcquYqNR9rF7OcVpCa2OVW49ZPDIhaRRCaUuvVxI+N416xUoF76HNSXA==}
@@ -5383,7 +5383,7 @@ snapshots:
     dependencies:
       fast-json-stringify: 6.0.0
 
-  '@fastify/helmet@13.0.0':
+  '@fastify/helmet@13.0.1':
     dependencies:
       fastify-plugin: 5.0.1
       helmet: 8.0.0
