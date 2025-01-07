@@ -14,7 +14,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsx src/hono-entry.ts",
-    "build": "rimraf dist && tsup",
+    "build": "tsup",
     "test": "vitest --typecheck run",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
@@ -28,6 +28,7 @@
   "devDependencies": {
     "@hono/node-server": "^1.13.7",
     "hono": "catalog:",
+    "tsup": "^8.3.5",
     "tsx": "catalog:"
   }
 }
