@@ -33,7 +33,7 @@ export enum MiddlewareOrder {
   CUSTOM_POST_PROCESSING = 700, // Custom post-processing middleware: Any custom logic after the response is generated.
 }
 
-export type HttpMethod = "GET";
+export type HttpMethod = "GET" | "POST";
 export type WithRoute<T> = T & { [methodSymbol]: HttpMethod; [pathSymbol]: string };
 export type WithOrder<T> = T & { [orderSymbol]: MiddlewareOrder | number };
 export type RouteDefinition = WithRoute<UniversalHandler>;
