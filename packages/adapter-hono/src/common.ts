@@ -21,11 +21,10 @@ interface UniversalEnv {
   };
 }
 
-export type HonoHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, Handler<UniversalEnv>>;
-export type HonoMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
-  UniversalMiddleware<In, Out>,
-  MiddlewareHandler<UniversalEnv>
->;
+// biome-ignore lint/suspicious/noExplicitAny: extends
+export type HonoHandler<H extends UniversalHandler<any>> = UniversalFn<H, Handler<UniversalEnv>>;
+// biome-ignore lint/suspicious/noExplicitAny: extends
+export type HonoMiddleware<M extends UniversalMiddleware<any, any>> = UniversalFn<M, MiddlewareHandler<UniversalEnv>>;
 
 function getExecutionCtx(honoContext: HonoContext): ExecutionContext | undefined {
   try {
@@ -38,9 +37,11 @@ function getExecutionCtx(honoContext: HonoContext): ExecutionContext | undefined
 /**
  * Creates a request handler to be passed to app.all() or any other route function
  */
-export function createHandler<T extends unknown[], InContext extends Universal.Context>(
-  handlerFactory: Get<T, UniversalHandler<InContext>>,
-): Get<T, HonoHandler<InContext>> {
+export function createHandler<
+  T extends unknown[],
+  InContext extends Universal.Context,
+  H extends UniversalHandler<InContext>,
+>(handlerFactory: Get<T, H>): Get<T, HonoHandler<H>> {
   return (...args) => {
     const handler = handlerFactory(...args);
 
@@ -59,9 +60,8 @@ export function createMiddleware<
   T extends unknown[],
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
->(
-  middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
-): Get<T, HonoMiddleware<InContext, OutContext>> {
+  M extends UniversalMiddleware<InContext, OutContext>,
+>(middlewareFactory: Get<T, M>): Get<T, HonoMiddleware<M>> {
   return (...args) => {
     const middleware = middlewareFactory(...args);
 

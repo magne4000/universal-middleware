@@ -8,6 +8,7 @@ export const pathSymbol = Symbol.for("unPath");
 export const methodSymbol = Symbol.for("unMethod");
 export const orderSymbol = Symbol.for("unOrder");
 
+// TODO: tweak this list
 export enum MiddlewareOrder {
   // Pre-handler Middlewares
   GUARD = -1000, // Guard middleware: Ensures specific conditions or headers are met before proceeding.
@@ -33,12 +34,14 @@ export enum MiddlewareOrder {
 }
 
 export type HttpMethod = "GET";
-export type RouteDefinition = UniversalHandler & { [methodSymbol]: HttpMethod; [pathSymbol]: string };
-export type MiddlewareDefinition = UniversalMiddleware & { [orderSymbol]: MiddlewareOrder | number };
+export type WithRoute<T> = T & { [methodSymbol]: HttpMethod; [pathSymbol]: string };
+export type WithOrder<T> = T & { [orderSymbol]: MiddlewareOrder | number };
+export type RouteDefinition = WithRoute<UniversalHandler>;
+export type MiddlewareDefinition = WithOrder<UniversalMiddleware>;
 
 export interface UniversalRouterInterface {
-  use(middleware: MiddlewareDefinition): this;
-  route(handler: RouteDefinition): this;
+  use(middleware: UniversalMiddleware | { [universalSymbol]: UniversalMiddleware }): this;
+  route(handler: RouteDefinition | { [universalSymbol]: RouteDefinition }): this;
 }
 
 function cloneFunction<F extends AnyFn>(originalFn: F): F {
@@ -51,19 +54,43 @@ function cloneFunction<F extends AnyFn>(originalFn: F): F {
   return clonedFn;
 }
 
-export function withOrder(middleware: UniversalMiddleware, order: MiddlewareOrder | number): MiddlewareDefinition {
-  const m = cloneFunction(middleware) as MiddlewareDefinition;
+export function withOrder<F extends AnyFn>(middleware: F, order: MiddlewareOrder | number): WithOrder<F> {
+  const m = cloneFunction(middleware) as WithOrder<F>;
   m[orderSymbol] = order;
   return m;
 }
 
-export function withRoute(handler: UniversalHandler, method: HttpMethod, path: string): RouteDefinition {
-  const h = cloneFunction(handler) as RouteDefinition;
+export function withRoute<F extends AnyFn>(handler: F, method: HttpMethod, path: string): WithRoute<F> {
+  const h = cloneFunction(handler) as WithRoute<F>;
   h[methodSymbol] = method;
   h[pathSymbol] = path;
   return h;
 }
 
+// TODO: core utils?
+function getUniversal<T extends object>(subject: T | { [universalSymbol]: T }): T {
+  return universalSymbol in subject ? subject[universalSymbol] : subject;
+}
+
+function getUniversalProp<T extends object>(
+  subject: T | { [universalSymbol]: T },
+  prop: typeof methodSymbol,
+): HttpMethod | undefined;
+function getUniversalProp<T extends object>(
+  subject: T | { [universalSymbol]: T },
+  prop: typeof pathSymbol,
+): string | undefined;
+function getUniversalProp<T extends object>(
+  subject: T | { [universalSymbol]: T },
+  prop: typeof orderSymbol,
+): MiddlewareOrder | number | undefined;
+function getUniversalProp<T extends object>(subject: T | { [universalSymbol]: T }, prop: symbol): unknown {
+  if (prop in subject) return (subject as Record<symbol, unknown>)[prop];
+  if (universalSymbol in subject) return (subject as Record<symbol, Record<symbol, unknown>>)[universalSymbol][prop];
+  return undefined;
+}
+
+// Can be used to handle +middleware.ts
 export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<UniversalHandler>;
   #middlewares: MiddlewareDefinition[];
@@ -74,26 +101,28 @@ export class UniversalRouter implements UniversalRouterInterface {
     this.#middlewares = [];
   }
 
-  use(middleware: UniversalMiddleware, order?: number) {
+  use(middleware: MiddlewareDefinition | { [universalSymbol]: MiddlewareDefinition }) {
     this.#computedMiddleware = undefined;
-    this.#middlewares.push(withOrder(middleware, order ?? 0));
+    this.#middlewares.push(getUniversal(middleware));
     return this;
   }
 
-  route(handler: RouteDefinition) {
-    addRoute(this.router, handler[methodSymbol], handler[pathSymbol], handler);
+  route(handler: RouteDefinition | { [universalSymbol]: RouteDefinition }) {
+    const umHandler = getUniversal(handler);
+
+    const method = getUniversalProp(handler, methodSymbol);
+    if (!method) {
+      throw new Error("TODO: METHOD must be defined");
+    }
+
+    const path = getUniversalProp(handler, pathSymbol);
+    if (!path) {
+      throw new Error("TODO: PATH must be defined");
+    }
+
+    addRoute(this.router, method, path, umHandler);
     return this;
   }
-
-  // TODO? routes to adapter?
-  //  Or UniversalRouter extends per adapter, e.g. UniversalHonoRouter
-  // routes() {
-  //   this.router.root;
-  // }
-  //
-  // middlewares() {
-  //   return ordered(this.#middlewares);
-  // }
 
   get [universalSymbol](): UniversalMiddleware {
     if (!this.#computedMiddleware && this.#middlewares.length > 0) {
@@ -104,6 +133,7 @@ export class UniversalRouter implements UniversalRouterInterface {
       const url = new URL(request.url);
       const router = findRoute(this.router, request.method, url.pathname);
 
+      // TODO handle middlewares like Logging. Probably requires updating all adapters too.
       if (router) {
         const handler = this.#computedMiddleware ? pipe(this.#computedMiddleware, router.data) : router.data;
         return handler(request, ctx, runtime);
@@ -123,24 +153,41 @@ export class UniversalHonoRouter implements UniversalRouterInterface {
     this.#app = app;
   }
 
-  use(middleware: UniversalMiddleware) {
-    this.#app.use(createMiddleware(() => middleware)());
+  use(middleware: MiddlewareDefinition | { [universalSymbol]: MiddlewareDefinition }) {
+    this.#app.use(createMiddleware(() => getUniversal(middleware))());
     return this;
   }
 
-  route(handler: RouteDefinition) {
-    this.#app[handler[methodSymbol].toLocaleLowerCase() as Lowercase<HttpMethod>](
-      handler[pathSymbol],
-      createHandler(() => handler)(),
-    );
+  route(handler: RouteDefinition | { [universalSymbol]: RouteDefinition }) {
+    const umHandler = getUniversal(handler);
+
+    const method = getUniversalProp(handler, methodSymbol);
+    if (!method) {
+      throw new Error("TODO: METHOD must be defined");
+    }
+
+    const path = getUniversalProp(handler, pathSymbol);
+    if (!path) {
+      throw new Error("TODO: PATH must be defined");
+    }
+
+    this.#app[method.toLocaleLowerCase() as Lowercase<HttpMethod>](path, createHandler(() => umHandler)());
     return this;
   }
 }
 
 export function apply(
   router: UniversalRouterInterface,
-  routes?: RouteDefinition[],
-  middlewares?: MiddlewareDefinition[],
+  routes?: (
+    | RouteDefinition
+    | { [universalSymbol]: RouteDefinition }
+    | (WithRoute<AnyFn> & { [universalSymbol]: UniversalHandler })
+  )[],
+  middlewares?: (
+    | MiddlewareDefinition
+    | { [universalSymbol]: MiddlewareDefinition }
+    | (WithRoute<AnyFn> & { [universalSymbol]: UniversalMiddleware })
+  )[],
 ) {
   if (middlewares) {
     const ms = ordered(middlewares);
@@ -155,13 +202,14 @@ export function apply(
   }
 }
 
-function ordered(middlewares: MiddlewareDefinition[]) {
+function ordered(
+  middlewares: (
+    | MiddlewareDefinition
+    | { [universalSymbol]: MiddlewareDefinition }
+    | (WithRoute<AnyFn> & { [universalSymbol]: UniversalMiddleware })
+  )[],
+) {
   return Array.from(middlewares)
-    .sort((a, b) => a[orderSymbol] - b[orderSymbol])
-    .map((x) => x);
+    .sort((a, b) => (getUniversalProp(a, orderSymbol) ?? 0) - (getUniversalProp(b, orderSymbol) ?? 0))
+    .map(getUniversal);
 }
-
-// middlewares
-//   order
-// routes
-//   handlers
