@@ -714,9 +714,15 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1
     devDependencies:
+      '@hono/node-server':
+        specifier: ^1.13.7
+        version: 1.13.7(hono@4.6.12)
       hono:
         specifier: 'catalog:'
         version: 4.6.12
+      tsx:
+        specifier: 'catalog:'
+        version: 4.19.2
 
   packages/tests:
     dependencies:
