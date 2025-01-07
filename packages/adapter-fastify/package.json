@@ -27,7 +27,7 @@
     "fastify-raw-body": "^5.0.0"
   },
   "devDependencies": {
-    "@fastify/helmet": "^13.0.0",
+    "@fastify/helmet": "^13.0.1",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
