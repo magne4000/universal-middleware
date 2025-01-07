@@ -176,29 +176,28 @@ export class UniversalHonoRouter implements UniversalRouterInterface {
   }
 }
 
-export function apply(
-  router: UniversalRouterInterface,
-  routes?: (
-    | RouteDefinition
-    | { [universalSymbol]: RouteDefinition }
-    | (WithRoute<AnyFn> & { [universalSymbol]: UniversalHandler })
-  )[],
-  middlewares?: (
-    | MiddlewareDefinition
-    | { [universalSymbol]: MiddlewareDefinition }
-    | (WithRoute<AnyFn> & { [universalSymbol]: UniversalMiddleware })
-  )[],
-) {
-  if (middlewares) {
-    const ms = ordered(middlewares);
-    for (const m of ms) {
-      router.use(m);
-    }
+type Routes =
+  | RouteDefinition
+  | { [universalSymbol]: RouteDefinition }
+  | (WithRoute<AnyFn> & { [universalSymbol]: UniversalHandler });
+type Middlewares =
+  | MiddlewareDefinition
+  | { [universalSymbol]: MiddlewareDefinition }
+  | (WithRoute<AnyFn> & { [universalSymbol]: UniversalMiddleware });
+
+export function apply(router: UniversalRouterInterface, routesAndMiddlewares: (Routes | Middlewares)[]) {
+  const routes = routesAndMiddlewares.filter((x) => getUniversalProp(x, pathSymbol)) as Routes[];
+  const middlewares = routesAndMiddlewares.filter((x) => !getUniversalProp(x, pathSymbol)) as Middlewares[];
+
+  // middlewares
+  const ms = ordered(middlewares);
+  for (const m of ms) {
+    router.use(m);
   }
-  if (routes) {
-    for (const r of routes) {
-      router.route(r);
-    }
+
+  // routes
+  for (const r of routes) {
+    router.route(r);
   }
 }
 
