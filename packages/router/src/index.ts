@@ -284,6 +284,10 @@ export function applyHono(app: Hono, middlewares: DecoratedMiddleware[]) {
   apply(router, middlewares);
 }
 
+// TODO check if a user adds a route manually, before catch-all,
+//      does this route call all middlewares? (they are declared AFTER, so probably server dependant?)
+//      If not, some server `apply` function would need to be split into 2 funtions,
+//      not calling `applyCatchAll` in the first one, and the second one only calling it.
 export function applyExpress(app: Express, middlewares: DecoratedMiddleware[]) {
   const router = new UniversalExpressRouter(app);
   apply(router, middlewares);
