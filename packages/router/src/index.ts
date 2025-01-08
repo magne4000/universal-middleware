@@ -153,12 +153,12 @@ export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<UniversalHandler>;
   #middlewares: DecoratedMiddleware[];
   #computedMiddleware?: UniversalMiddleware;
-  #pipeMiddlewareInUniversalRoute: boolean;
+  #pipeMiddlewaresInUniversalRoute: boolean;
 
-  constructor(pipeMiddlewareInUniversalRoute = true) {
+  constructor(pipeMiddlewaresInUniversalRoute = true) {
     this.router = createRouter<UniversalHandler>();
     this.#middlewares = [];
-    this.#pipeMiddlewareInUniversalRoute = pipeMiddlewareInUniversalRoute;
+    this.#pipeMiddlewaresInUniversalRoute = pipeMiddlewaresInUniversalRoute;
   }
 
   use(middleware: DecoratedMiddleware) {
@@ -178,7 +178,7 @@ export class UniversalRouter implements UniversalRouterInterface {
   applyCatchAll() {}
 
   get [universalSymbol](): UniversalMiddleware {
-    if (this.#pipeMiddlewareInUniversalRoute && !this.#computedMiddleware && this.#middlewares.length > 0) {
+    if (this.#pipeMiddlewaresInUniversalRoute && !this.#computedMiddleware && this.#middlewares.length > 0) {
       // TODO update `pipe` so that it's aware of `order` and `method`
       this.#computedMiddleware = pipe(...ordered(this.#middlewares).map(getUniversal));
     }
@@ -190,7 +190,7 @@ export class UniversalRouter implements UniversalRouterInterface {
       // TODO handle middlewares like Logging. Probably requires updating all adapters too.
       if (router) {
         const handler =
-          this.#pipeMiddlewareInUniversalRoute && this.#computedMiddleware
+          this.#pipeMiddlewaresInUniversalRoute && this.#computedMiddleware
             ? pipe(this.#computedMiddleware, router.data)
             : router.data;
         if (router.params) {
@@ -199,7 +199,7 @@ export class UniversalRouter implements UniversalRouterInterface {
         }
         return handler(request, ctx, runtime);
       }
-      if (this.#pipeMiddlewareInUniversalRoute && this.#computedMiddleware) {
+      if (this.#pipeMiddlewaresInUniversalRoute && this.#computedMiddleware) {
         return this.#computedMiddleware(request, ctx, runtime);
       }
       // TODO should always fallback to 404, some servers might automatically do this, some others don't
