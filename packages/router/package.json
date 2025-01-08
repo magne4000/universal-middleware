@@ -29,6 +29,8 @@
     "@hono/node-server": "^1.13.7",
     "hono": "catalog:",
     "tsup": "^8.3.5",
-    "tsx": "catalog:"
+    "tsx": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   }
 }
