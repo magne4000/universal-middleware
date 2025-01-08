@@ -707,6 +707,9 @@ importers:
       '@universal-middleware/core':
         specifier: link:../core
         version: link:../core
+      '@universal-middleware/express':
+        specifier: link:../adapter-express
+        version: link:../adapter-express
       '@universal-middleware/hono':
         specifier: link:../adapter-hono
         version: link:../adapter-hono
@@ -717,6 +720,12 @@ importers:
       '@hono/node-server':
         specifier: ^1.13.7
         version: 1.13.7(hono@4.6.12)
+      '@types/express':
+        specifier: 'catalog:'
+        version: 4.17.21
+      express:
+        specifier: 'catalog:'
+        version: 4.21.1
       hono:
         specifier: 'catalog:'
         version: 4.6.12

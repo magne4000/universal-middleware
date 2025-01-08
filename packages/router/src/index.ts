@@ -1,6 +1,14 @@
 import type { AnyFn, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { pipe, universalSymbol } from "@universal-middleware/core";
-import { createHandler, createMiddleware } from "@universal-middleware/hono";
+import {
+  createHandler as createHandlerExpress,
+  createMiddleware as createMiddlewareExpress,
+} from "@universal-middleware/express";
+import {
+  createHandler as createHandlerHono,
+  createMiddleware as createMiddlewareHono,
+} from "@universal-middleware/hono";
+import type { Express } from "express";
 import type { Hono } from "hono";
 import { type RouterContext, addRoute, createRouter, findRoute } from "rou3";
 
@@ -193,7 +201,7 @@ export class UniversalHonoRouter implements UniversalRouterInterface {
   }
 
   use(middleware: DecoratedMiddleware) {
-    this.#app.use(createMiddleware(() => getUniversal(middleware))());
+    this.#app.use(createMiddlewareHono(() => getUniversal(middleware))());
     return this;
   }
 
@@ -203,7 +211,31 @@ export class UniversalHonoRouter implements UniversalRouterInterface {
 
     this.#app[method.toLocaleLowerCase() as Lowercase<HttpMethod>](
       path,
-      createHandler(() => umHandler as UniversalHandler)(),
+      createHandlerHono(() => umHandler as UniversalHandler)(),
+    );
+    return this;
+  }
+}
+
+export class UniversalExpressRouter implements UniversalRouterInterface {
+  #app: Express;
+
+  constructor(app: Express) {
+    this.#app = app;
+  }
+
+  use(middleware: DecoratedMiddleware) {
+    this.#app.use(createMiddlewareExpress(() => getUniversal(middleware))());
+    return this;
+  }
+
+  route(handler: DecoratedMiddleware) {
+    const { path, method } = assertRoute(handler);
+    const umHandler = getUniversal(handler);
+
+    this.#app[method.toLocaleLowerCase() as Lowercase<HttpMethod>](
+      path,
+      createHandlerExpress(() => umHandler as UniversalHandler)(),
     );
     return this;
   }
@@ -222,6 +254,11 @@ export function apply(router: UniversalRouterInterface, middlewares: DecoratedMi
 
 export function applyHono(app: Hono, middlewares: DecoratedMiddleware[]) {
   const router = new UniversalHonoRouter(app);
+  apply(router, middlewares);
+}
+
+export function applyExpress(app: Express, middlewares: DecoratedMiddleware[]) {
+  const router = new UniversalExpressRouter(app);
   apply(router, middlewares);
 }
 
