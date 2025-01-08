@@ -49,17 +49,6 @@ export interface UniversalSymbols {
   [orderSymbol]: MiddlewareOrder | number;
 }
 
-export interface UniversalOptions {
-  name: string;
-  method: HttpMethod;
-  path: string;
-  order: MiddlewareOrder | number;
-}
-
-export interface UniversalOptionsArg extends Partial<UniversalOptions> {
-  immutable?: boolean;
-}
-
 const optionsToSymbols = {
   name: nameSymbol,
   method: methodSymbol,
@@ -68,6 +57,14 @@ const optionsToSymbols = {
 } as const;
 
 type OptionsToSymbols = typeof optionsToSymbols;
+
+export type UniversalOptions = {
+  [K in keyof OptionsToSymbols]: UniversalSymbols[OptionsToSymbols[K]];
+};
+
+export interface UniversalOptionsArg extends Partial<UniversalOptions> {
+  immutable?: boolean;
+}
 
 export type WithUniversalSymbols<T extends UniversalOptionsArg> = Pick<
   UniversalSymbols,
@@ -85,6 +82,7 @@ export type DecoratedMiddleware =
 export interface UniversalRouterInterface {
   use(middleware: DecoratedMiddleware): this;
   route(handler: DecoratedMiddleware): this;
+  applyCatchAll(): void;
 }
 
 // TODO: merge this with bindUniversal?
@@ -155,10 +153,12 @@ export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<UniversalHandler>;
   #middlewares: DecoratedMiddleware[];
   #computedMiddleware?: UniversalMiddleware;
+  #pipeMiddlewareInUniversalRoute: boolean;
 
-  constructor() {
+  constructor(pipeMiddlewareInUniversalRoute = true) {
     this.router = createRouter<UniversalHandler>();
     this.#middlewares = [];
+    this.#pipeMiddlewareInUniversalRoute = pipeMiddlewareInUniversalRoute;
   }
 
   use(middleware: DecoratedMiddleware) {
@@ -175,9 +175,11 @@ export class UniversalRouter implements UniversalRouterInterface {
     return this;
   }
 
+  applyCatchAll() {}
+
   get [universalSymbol](): UniversalMiddleware {
-    if (!this.#computedMiddleware && this.#middlewares.length > 0) {
-      this.#computedMiddleware = pipe(...ordered(this.#middlewares));
+    if (this.#pipeMiddlewareInUniversalRoute && !this.#computedMiddleware && this.#middlewares.length > 0) {
+      this.#computedMiddleware = pipe(...ordered(this.#middlewares).map(getUniversal));
     }
     return (request, ctx, runtime) => {
       // TODO core helper to cache the result
@@ -186,10 +188,17 @@ export class UniversalRouter implements UniversalRouterInterface {
 
       // TODO handle middlewares like Logging. Probably requires updating all adapters too.
       if (router) {
-        const handler = this.#computedMiddleware ? pipe(this.#computedMiddleware, router.data) : router.data;
+        const handler =
+          this.#pipeMiddlewareInUniversalRoute && this.#computedMiddleware
+            ? pipe(this.#computedMiddleware, router.data)
+            : router.data;
+        if (router.params) {
+          runtime.params ??= {};
+          Object.assign(runtime.params, router.params);
+        }
         return handler(request, ctx, runtime);
       }
-      if (this.#computedMiddleware) {
+      if (this.#pipeMiddlewareInUniversalRoute && this.#computedMiddleware) {
         return this.#computedMiddleware(request, ctx, runtime);
       }
       // else do nothing
@@ -197,10 +206,11 @@ export class UniversalRouter implements UniversalRouterInterface {
   }
 }
 
-export class UniversalHonoRouter implements UniversalRouterInterface {
+export class UniversalHonoRouter extends UniversalRouter {
   #app: Hono;
 
   constructor(app: Hono) {
+    super(false);
     this.#app = app;
   }
 
@@ -209,22 +219,27 @@ export class UniversalHonoRouter implements UniversalRouterInterface {
     return this;
   }
 
-  route(handler: DecoratedMiddleware) {
-    const { path, method } = assertRoute(handler);
-    const umHandler = getUniversal(handler);
+  // route(handler: DecoratedMiddleware) {
+  //   const { path, method } = assertRoute(handler);
+  //   const umHandler = getUniversal(handler);
+  //
+  //   this.#app[method.toLocaleLowerCase() as Lowercase<HttpMethod>](
+  //     path,
+  //     createHandlerHono(() => umHandler as UniversalHandler)(),
+  //   );
+  //   return this;
+  // }
 
-    this.#app[method.toLocaleLowerCase() as Lowercase<HttpMethod>](
-      path,
-      createHandlerHono(() => umHandler as UniversalHandler)(),
-    );
-    return this;
+  applyCatchAll() {
+    this.#app.all("/**", createHandlerHono(() => this[universalSymbol] as UniversalHandler)());
   }
 }
 
-export class UniversalExpressRouter implements UniversalRouterInterface {
+export class UniversalExpressRouter extends UniversalRouter {
   #app: Express;
 
   constructor(app: Express) {
+    super(false);
     this.#app = app;
   }
 
@@ -233,15 +248,19 @@ export class UniversalExpressRouter implements UniversalRouterInterface {
     return this;
   }
 
-  route(handler: DecoratedMiddleware) {
-    const { path, method } = assertRoute(handler);
-    const umHandler = getUniversal(handler);
+  // route(handler: DecoratedMiddleware) {
+  //   const { path, method } = assertRoute(handler);
+  //   const umHandler = getUniversal(handler);
+  //
+  //   this.#app[method.toLocaleLowerCase() as Lowercase<HttpMethod>](
+  //     path,
+  //     createHandlerExpress(() => umHandler as UniversalHandler)(),
+  //   );
+  //   return this;
+  // }
 
-    this.#app[method.toLocaleLowerCase() as Lowercase<HttpMethod>](
-      path,
-      createHandlerExpress(() => umHandler as UniversalHandler)(),
-    );
-    return this;
+  applyCatchAll() {
+    this.#app.all("/**", createHandlerExpress(() => this[universalSymbol] as UniversalHandler)());
   }
 }
 
@@ -254,6 +273,7 @@ export function apply(router: UniversalRouterInterface, middlewares: DecoratedMi
       router.use(m);
     }
   }
+  router.applyCatchAll();
 }
 
 export function applyHono(app: Hono, middlewares: DecoratedMiddleware[]) {
@@ -267,7 +287,7 @@ export function applyExpress(app: Express, middlewares: DecoratedMiddleware[]) {
 }
 
 function ordered(middlewares: DecoratedMiddleware[]) {
-  return Array.from(middlewares)
-    .sort((a, b) => (getUniversalProp(a, orderSymbol) ?? 0) - (getUniversalProp(b, orderSymbol) ?? 0))
-    .map(getUniversal);
+  return Array.from(middlewares).sort(
+    (a, b) => (getUniversalProp(a, orderSymbol) ?? 0) - (getUniversalProp(b, orderSymbol) ?? 0),
+  );
 }
