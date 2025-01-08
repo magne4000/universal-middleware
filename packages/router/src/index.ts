@@ -15,6 +15,7 @@ import { type RouterContext, addRoute, createRouter, findRoute } from "rou3";
 export const pathSymbol = Symbol.for("unPath");
 export const methodSymbol = Symbol.for("unMethod");
 export const orderSymbol = Symbol.for("unOrder");
+export const nameSymbol = Symbol.for("unName");
 
 // TODO: tweak this list
 export enum MiddlewareOrder {
@@ -42,12 +43,14 @@ export enum MiddlewareOrder {
 }
 
 export interface UniversalSymbols {
+  [nameSymbol]: string;
   [methodSymbol]: HttpMethod;
   [pathSymbol]: string;
   [orderSymbol]: MiddlewareOrder | number;
 }
 
 export interface UniversalOptions {
+  name: string;
   method: HttpMethod;
   path: string;
   order: MiddlewareOrder | number;
@@ -58,6 +61,7 @@ export interface UniversalOptionsArg extends Partial<UniversalOptions> {
 }
 
 const optionsToSymbols = {
+  name: nameSymbol,
   method: methodSymbol,
   path: pathSymbol,
   order: orderSymbol,
