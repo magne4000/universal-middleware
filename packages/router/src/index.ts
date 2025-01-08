@@ -179,6 +179,7 @@ export class UniversalRouter implements UniversalRouterInterface {
 
   get [universalSymbol](): UniversalMiddleware {
     if (this.#pipeMiddlewareInUniversalRoute && !this.#computedMiddleware && this.#middlewares.length > 0) {
+      // TODO update `pipe` so that it's aware of `order` and `method`
       this.#computedMiddleware = pipe(...ordered(this.#middlewares).map(getUniversal));
     }
     return (request, ctx, runtime) => {
