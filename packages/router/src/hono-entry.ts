@@ -2,14 +2,14 @@ import { serve } from "@hono/node-server";
 import { type UniversalHandler, params } from "@universal-middleware/core";
 import { createHandler } from "@universal-middleware/hono";
 import { Hono } from "hono";
-import { UniversalHonoRouter, apply, withRoute } from "./index";
+import { UniversalHonoRouter, apply, decorate } from "./index";
 
 const app = new Hono();
 
 const router = new UniversalHonoRouter(app);
 
 const paramsHandler = (() =>
-  withRoute(
+  decorate(
     (request, _context, runtime) => {
       const myParams = params(request, runtime, undefined);
 
@@ -24,8 +24,10 @@ const paramsHandler = (() =>
 
       return new Response(`User name is: ${myParams.name}`);
     },
-    "GET",
-    "/user/:name",
+    {
+      method: "GET",
+      path: "/user/:name",
+    },
   )) satisfies () => UniversalHandler;
 
 // 1. Auto register UNIVERSAL routes and middlewares defined as ejectable
@@ -33,7 +35,13 @@ const paramsHandler = (() =>
 // 3. Manually register SPECIFIC routes and middlewares imported by user
 // 3. Manually register SPECIFIC routes and middlewares from FileSystem (i.e. cloudflare pages)??
 // apply(router, [paramsHandler(), withRoute(() => new Response("OK"), "GET", "/")]);
-apply(router, [createHandler(paramsHandler)(), withRoute(createHandler(() => () => new Response("OK"))(), "GET", "/")]);
+apply(router, [
+  createHandler(paramsHandler)(),
+  decorate(createHandler(() => () => new Response("OK"))(), {
+    method: "GET",
+    path: "/",
+  }),
+]);
 
 serve(app, (info) => {
   console.log(`Listening on http://localhost:${info.port}`); // Listening on http://localhost:3000
