@@ -220,6 +220,11 @@ export function apply(router: UniversalRouterInterface, middlewares: DecoratedMi
   }
 }
 
+export function applyHono(app: Hono, middlewares: DecoratedMiddleware[]) {
+  const router = new UniversalHonoRouter(app);
+  apply(router, middlewares);
+}
+
 function ordered(middlewares: DecoratedMiddleware[]) {
   return Array.from(middlewares)
     .sort((a, b) => (getUniversalProp(a, orderSymbol) ?? 0) - (getUniversalProp(b, orderSymbol) ?? 0))
