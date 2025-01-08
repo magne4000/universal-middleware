@@ -12,7 +12,7 @@ catalog:
   '@types/node': ^20.17.9
   '@webroute/route': ^0.8.0
   elysia: ^1.1.25
-  express: ^4.21.1
+  express: ^4.21.2
   fastify: ^5.1.0
   h3: ^1.13.0
   hono: ^4.6.12
