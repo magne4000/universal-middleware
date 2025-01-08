@@ -288,6 +288,8 @@ export function applyHono(app: Hono, middlewares: DecoratedMiddleware[]) {
 //      does this route call all middlewares? (they are declared AFTER, so probably server dependant?)
 //      If not, some server `apply` function would need to be split into 2 funtions,
 //      not calling `applyCatchAll` in the first one, and the second one only calling it.
+//      Another solution could be to have a router.pipe(serverHandler) function to wrap a server handler with all
+//      middlewares declared in `router`.
 export function applyExpress(app: Express, middlewares: DecoratedMiddleware[]) {
   const router = new UniversalExpressRouter(app);
   apply(router, middlewares);
