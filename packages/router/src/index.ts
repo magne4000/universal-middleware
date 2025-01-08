@@ -33,9 +33,33 @@ export enum MiddlewareOrder {
   CUSTOM_POST_PROCESSING = 700, // Custom post-processing middleware: Any custom logic after the response is generated.
 }
 
+export interface UniversalSymbols {
+  [methodSymbol]: HttpMethod;
+  [pathSymbol]: string;
+  [orderSymbol]: MiddlewareOrder | number;
+}
+
+export interface UniversalOptions {
+  method: HttpMethod;
+  path: string;
+  order: MiddlewareOrder | number;
+}
+
+export interface UniversalOptionsArg extends Partial<UniversalOptions> {
+  immutable?: boolean;
+}
+
+const optionsToSymbols = {
+  method: methodSymbol,
+  path: pathSymbol,
+  order: orderSymbol,
+} as const;
+
+type OptionsToSymbols = typeof optionsToSymbols;
+
 export type HttpMethod = "GET" | "POST";
-export type WithRoute<T> = T & { [methodSymbol]: HttpMethod; [pathSymbol]: string };
-export type WithOrder<T> = T & { [orderSymbol]: MiddlewareOrder | number };
+export type WithRoute<T> = T & Pick<UniversalSymbols, typeof methodSymbol | typeof pathSymbol>;
+export type WithOrder<T> = T & Pick<UniversalSymbols, typeof orderSymbol>;
 export type RouteDefinition = WithRoute<UniversalHandler>;
 export type MiddlewareDefinition = WithOrder<UniversalMiddleware>;
 
@@ -56,39 +80,47 @@ export function cloneFunction<F extends AnyFn>(originalFn: F): F {
   return extendedFunction as F;
 }
 
-export function withOrder<F extends AnyFn>(middleware: F, order: MiddlewareOrder | number): WithOrder<F> {
-  const m = cloneFunction(middleware) as WithOrder<F>;
-  m[orderSymbol] = order;
+type WithUniversalSymbols<T extends UniversalOptionsArg> = Pick<
+  UniversalSymbols,
+  OptionsToSymbols[keyof T & keyof OptionsToSymbols]
+>;
+
+export function decorate<F extends AnyFn, O extends UniversalOptionsArg>(
+  middleware: F,
+  options: O,
+): F & WithUniversalSymbols<O> {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const m: any = options.immutable === false ? middleware : cloneFunction(middleware);
+  for (const [key, value] of Object.entries(options)) {
+    m[optionsToSymbols[key as keyof UniversalOptions]] = value;
+  }
   return m;
 }
 
-export function withRoute<F extends AnyFn>(handler: F, method: HttpMethod, path: string): WithRoute<F> {
-  const h = cloneFunction(handler) as WithRoute<F>;
-  h[methodSymbol] = method;
-  h[pathSymbol] = path;
-  return h;
-}
+// export function withOrder<F extends AnyFn>(middleware: F, order: MiddlewareOrder | number): WithOrder<F> {
+//   const m = cloneFunction(middleware) as WithOrder<F>;
+//   m[orderSymbol] = order;
+//   return m;
+// }
+//
+// export function withRoute<F extends AnyFn>(handler: F, method: HttpMethod, path: string): WithRoute<F> {
+//   const h = cloneFunction(handler) as WithRoute<F>;
+//   h[methodSymbol] = method;
+//   h[pathSymbol] = path;
+//   return h;
+// }
 
 // TODO: core utils?
 function getUniversal<T extends object>(subject: T | { [universalSymbol]: T }): T {
   return universalSymbol in subject ? subject[universalSymbol] : subject;
 }
 
-function getUniversalProp<T extends object>(
+function getUniversalProp<T extends object, K extends keyof UniversalSymbols>(
   subject: T | { [universalSymbol]: T },
-  prop: typeof methodSymbol,
-): HttpMethod | undefined;
-function getUniversalProp<T extends object>(
-  subject: T | { [universalSymbol]: T },
-  prop: typeof pathSymbol,
-): string | undefined;
-function getUniversalProp<T extends object>(
-  subject: T | { [universalSymbol]: T },
-  prop: typeof orderSymbol,
-): MiddlewareOrder | number | undefined;
-function getUniversalProp<T extends object>(subject: T | { [universalSymbol]: T }, prop: symbol): unknown {
-  if (prop in subject) return (subject as Record<symbol, unknown>)[prop];
-  if (universalSymbol in subject) return (subject as Record<symbol, Record<symbol, unknown>>)[universalSymbol][prop];
+  prop: K,
+): UniversalSymbols[K] | undefined {
+  if (prop in subject) return (subject as UniversalSymbols)[prop];
+  if (universalSymbol in subject) return (subject as Record<symbol, UniversalSymbols>)[universalSymbol][prop];
   return undefined;
 }
 
