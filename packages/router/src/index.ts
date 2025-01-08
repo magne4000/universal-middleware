@@ -44,14 +44,16 @@ export interface UniversalRouterInterface {
   route(handler: RouteDefinition | { [universalSymbol]: RouteDefinition }): this;
 }
 
-function cloneFunction<F extends AnyFn>(originalFn: F): F {
-  // Create a clone of the function
-  const clonedFn = originalFn.bind(null) as F;
+// TODO: merge this with bindUniversal?
+export function cloneFunction<F extends AnyFn>(originalFn: F): F {
+  const extendedFunction = function (this: unknown, ...args: unknown[]) {
+    // Use Reflect.apply to invoke the original function
+    return Reflect.apply(Object.getPrototypeOf(extendedFunction), this, args);
+  };
 
-  // Copy over all properties from the original function to the clone
-  Object.defineProperties(clonedFn, Object.getOwnPropertyDescriptors(originalFn));
+  Object.setPrototypeOf(extendedFunction, originalFn);
 
-  return clonedFn;
+  return extendedFunction as F;
 }
 
 export function withOrder<F extends AnyFn>(middleware: F, order: MiddlewareOrder | number): WithOrder<F> {
