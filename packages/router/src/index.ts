@@ -202,6 +202,7 @@ export class UniversalRouter implements UniversalRouterInterface {
       if (this.#pipeMiddlewareInUniversalRoute && this.#computedMiddleware) {
         return this.#computedMiddleware(request, ctx, runtime);
       }
+      // TODO should always fallback to 404, some servers might automatically do this, some others don't
       // else do nothing
     };
   }
@@ -232,7 +233,8 @@ export class UniversalHonoRouter extends UniversalRouter {
   // }
 
   applyCatchAll() {
-    this.#app.all("/**", createHandlerHono(() => this[universalSymbol] as UniversalHandler)());
+    // `/**` will not match `/`
+    this.#app.all("/*", createHandlerHono(() => this[universalSymbol] as UniversalHandler)());
   }
 }
 
