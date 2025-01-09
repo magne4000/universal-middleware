@@ -7,6 +7,7 @@ export default defineConfig([
       cookie: "./src/cookies/index.ts",
     },
     format: ["esm"],
+    noExternal: ["rou3"],
     platform: "node",
     target: "node18",
     dts: true,

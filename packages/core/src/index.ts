@@ -11,3 +11,4 @@ export { pipe } from "./pipe.js";
 export { params } from "./route.js";
 export { env } from "./env.js";
 export { universalSymbol } from "./const.js";
+export { UniversalRouter, decorate } from "./router";
