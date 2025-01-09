@@ -112,6 +112,7 @@ function ordered(middlewares: EnhancedMiddleware[]) {
 function assertRoute(middleware: EnhancedMiddleware) {
   const path = getUniversalProp(middleware, pathSymbol);
   const method = getUniversalProp(middleware, methodSymbol);
+  // TODO better error message names, using `name` when possible
   if (!path) {
     throw new Error("decorate: at least one route is missing a `path`");
   }
