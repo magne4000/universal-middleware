@@ -2,7 +2,6 @@ import { serve } from "@hono/node-server";
 import { type UniversalHandler, params } from "@universal-middleware/core";
 import { createHandler } from "@universal-middleware/hono";
 import { Hono } from "hono";
-import { applyHono, decorate } from "./index";
 
 const app = new Hono();
 

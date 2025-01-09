@@ -13,9 +13,6 @@
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
-    "dev:hono": "tsx src/hono-entry.ts",
-    "dev:express": "tsx src/express-entry.ts",
-    "build": "tsup",
     "test": "vitest --typecheck run",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"

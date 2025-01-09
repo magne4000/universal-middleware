@@ -1,7 +1,6 @@
 import { type UniversalHandler, params } from "@universal-middleware/core";
 import { createHandler } from "@universal-middleware/express";
 import express from "express";
-import { applyExpress, decorate } from "./index";
 
 const app = express();
 

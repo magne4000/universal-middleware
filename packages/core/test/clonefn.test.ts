@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { cloneFunction } from "../src/index";
+import { cloneFunction } from "../src/utils";
 
 describe.each([
   {
