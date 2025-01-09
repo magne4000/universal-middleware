@@ -1,5 +1,5 @@
 import { type RouterContext, addRoute, createRouter, findRoute } from "rou3";
-import { methodSymbol, optionsToSymbols, orderSymbol, pathSymbol, universalSymbol } from "./const";
+import { methodSymbol, nameSymbol, optionsToSymbols, orderSymbol, pathSymbol, universalSymbol } from "./const";
 import { pipe } from "./pipe";
 import type {
   AnyFn,
@@ -109,13 +109,21 @@ function ordered(middlewares: EnhancedMiddleware[]) {
 
 function assertRoute(middleware: EnhancedMiddleware) {
   const path = getUniversalProp(middleware, pathSymbol);
-  const method = getUniversalProp(middleware, methodSymbol);
-  // TODO better error message names, using `name` when possible
   if (!path) {
-    throw new Error("decorate: at least one route is missing a `path`");
+    const name = getUniversalProp(middleware, nameSymbol);
+    throw new TypeError(assertRouteErrorMessage("path", name));
   }
+  const method = getUniversalProp(middleware, methodSymbol);
   if (!method) {
-    throw new Error("decorate: at least one route is missing a `method`");
+    const name = getUniversalProp(middleware, nameSymbol);
+    throw new TypeError(assertRouteErrorMessage("method", name));
   }
   return { path, method };
+}
+
+function assertRouteErrorMessage(key: string, name: string | undefined) {
+  if (name) {
+    return `Route ${name} is defined without a "${key}". See https://universal-middleware.dev/helpers/enhance for details.`;
+  }
+  return `Unnamed route is defined without a "${key}". See https://universal-middleware.dev/helpers/enhance for details.`;
 }
