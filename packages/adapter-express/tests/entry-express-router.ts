@@ -1,4 +1,3 @@
-import { enhance } from "@universal-middleware/core";
 import { args } from "@universal-middleware/tests";
 import { handler, middlewares, routeParamHandler } from "@universal-middleware/tests/utils";
 import express from "express";
@@ -9,19 +8,7 @@ const app = express();
 
 app.use(helmet());
 
-apply(app, [
-  middlewares[0](),
-  middlewares[1](),
-  middlewares[2](),
-  enhance(routeParamHandler(), {
-    path: "/user/:name",
-    method: "GET",
-  }),
-  enhance(handler(), {
-    path: "/",
-    method: "GET",
-  }),
-]);
+apply(app, [middlewares[0](), middlewares[1](), middlewares[2](), routeParamHandler(), handler()]);
 
 const port = args.port ? Number.parseInt(args.port) : 3000;
 
