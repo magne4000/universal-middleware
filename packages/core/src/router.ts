@@ -17,10 +17,13 @@ export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
   middleware: F,
   options: O,
 ): F & WithUniversalSymbols<O> {
+  const { immutable, ...rest } = options;
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const m: any = options.immutable === false ? middleware : cloneFunction(middleware);
-  for (const [key, value] of Object.entries(options)) {
-    m[optionsToSymbols[key as keyof UniversalOptions]] = value;
+  const m: any = immutable === false ? middleware : cloneFunction(middleware);
+  for (const [key, value] of Object.entries(rest)) {
+    if (key in optionsToSymbols) {
+      m[optionsToSymbols[key as keyof UniversalOptions]] = value;
+    }
   }
   return m;
 }
