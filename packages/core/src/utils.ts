@@ -1,5 +1,5 @@
 import type { OutgoingHttpHeaders } from "node:http";
-import { unboundSymbol, universalSymbol } from "./const";
+import { unboundSymbol, universalSymbol, urlSymbol } from "./const";
 import type { AnyFn, SetThis, UniversalFn, UniversalHandler, UniversalMiddleware, UniversalSymbols } from "./types";
 
 export function isBodyInit(value: unknown): value is BodyInit {
@@ -47,6 +47,10 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
     return value.join(", ");
   }
   return (value as string) || "";
+}
+
+export function url(request: { url: string; [urlSymbol]?: URL }): URL {
+  return request[urlSymbol] ?? (request[urlSymbol] = new URL(request.url));
 }
 
 export function getUniversal<T extends object>(subject: T | { [universalSymbol]: T }): T {

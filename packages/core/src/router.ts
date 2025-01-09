@@ -11,7 +11,7 @@ import type {
   UniversalRouterInterface,
   WithUniversalSymbols,
 } from "./types";
-import { cloneFunction, getUniversal, getUniversalProp } from "./utils";
+import { url, cloneFunction, getUniversal, getUniversalProp } from "./utils";
 
 export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
   middleware: F,
@@ -66,9 +66,7 @@ export class UniversalRouter implements UniversalRouterInterface {
       this.#computedMiddleware = pipe(...ordered(this.#middlewares).map(getUniversal));
     }
     return (request, ctx, runtime) => {
-      // TODO core helper to cache the result
-      const url = new URL(request.url);
-      const router = findRoute(this.router, request.method, url.pathname);
+      const router = findRoute(this.router, request.method, url(request).pathname);
 
       // TODO handle middlewares like Logging. Probably requires updating all adapters too.
       if (router) {
