@@ -44,7 +44,7 @@ export enum MiddlewareOrder {
 
 export interface UniversalSymbols {
   [nameSymbol]: string;
-  [methodSymbol]: HttpMethod;
+  [methodSymbol]: HttpMethod | HttpMethod[];
   [pathSymbol]: string;
   [orderSymbol]: MiddlewareOrder | number;
 }
@@ -89,7 +89,6 @@ export interface UniversalRouterInterface {
   applyCatchAll(): void;
 }
 
-// TODO: merge this with bindUniversal?
 export function cloneFunction<F extends AnyFn>(originalFn: F): F {
   const extendedFunction = function (this: unknown, ...args: unknown[]) {
     // Use Reflect.apply to invoke the original function
@@ -112,19 +111,6 @@ export function decorate<F extends AnyFn, O extends UniversalOptionsArg>(
   }
   return m;
 }
-
-// export function withOrder<F extends AnyFn>(middleware: F, order: MiddlewareOrder | number): WithOrder<F> {
-//   const m = cloneFunction(middleware) as WithOrder<F>;
-//   m[orderSymbol] = order;
-//   return m;
-// }
-//
-// export function withRoute<F extends AnyFn>(handler: F, method: HttpMethod, path: string): WithRoute<F> {
-//   const h = cloneFunction(handler) as WithRoute<F>;
-//   h[methodSymbol] = method;
-//   h[pathSymbol] = path;
-//   return h;
-// }
 
 // TODO: core utils?
 function getUniversal<T extends object>(subject: T | { [universalSymbol]: T }): T {
@@ -152,7 +138,6 @@ function assertRoute(middleware: DecoratedMiddleware) {
   return { path, method };
 }
 
-// Can be used to handle +middleware.ts
 export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<UniversalHandler>;
   #middlewares: DecoratedMiddleware[];
@@ -175,7 +160,14 @@ export class UniversalRouter implements UniversalRouterInterface {
     const { path, method } = assertRoute(handler);
     const umHandler = getUniversal(handler);
 
-    addRoute(this.router, method, path, umHandler);
+    if (Array.isArray(method)) {
+      for (const m of method) {
+        addRoute(this.router, m, path, umHandler);
+      }
+    } else {
+      addRoute(this.router, method, path, umHandler);
+    }
+
     return this;
   }
 
