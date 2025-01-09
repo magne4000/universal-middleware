@@ -6,9 +6,17 @@ declare global {
 
 export type * from "./types.js";
 export { getAdapterRuntime } from "./adapter.js";
-export { mergeHeadersInto, nodeHeadersToWeb, isBodyInit, bindUniversal, attachUniversal } from "./utils.js";
+export {
+  mergeHeadersInto,
+  nodeHeadersToWeb,
+  isBodyInit,
+  bindUniversal,
+  attachUniversal,
+  getUniversal,
+  getUniversalProp,
+} from "./utils.js";
 export { pipe } from "./pipe.js";
 export { params } from "./route.js";
 export { env } from "./env.js";
-export { universalSymbol } from "./const.js";
-export { UniversalRouter, decorate } from "./router";
+export { universalSymbol, methodSymbol, nameSymbol, orderSymbol, pathSymbol } from "./const.js";
+export { UniversalRouter, decorate, apply } from "./router";
