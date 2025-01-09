@@ -25,18 +25,6 @@ export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
   return m;
 }
 
-function assertRoute(middleware: EnhancedMiddleware) {
-  const path = getUniversalProp(middleware, pathSymbol);
-  const method = getUniversalProp(middleware, methodSymbol);
-  if (!path) {
-    throw new Error("decorate: at least one route is missing a `path`");
-  }
-  if (!method) {
-    throw new Error("decorate: at least one route is missing a `method`");
-  }
-  return { path, method };
-}
-
 export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<UniversalHandler>;
   #middlewares: EnhancedMiddleware[];
@@ -119,4 +107,16 @@ function ordered(middlewares: EnhancedMiddleware[]) {
   return Array.from(middlewares).sort(
     (a, b) => getUniversalProp(a, orderSymbol, 0) - getUniversalProp(b, orderSymbol, 0),
   );
+}
+
+function assertRoute(middleware: EnhancedMiddleware) {
+  const path = getUniversalProp(middleware, pathSymbol);
+  const method = getUniversalProp(middleware, methodSymbol);
+  if (!path) {
+    throw new Error("decorate: at least one route is missing a `path`");
+  }
+  if (!method) {
+    throw new Error("decorate: at least one route is missing a `method`");
+  }
+  return { path, method };
 }
