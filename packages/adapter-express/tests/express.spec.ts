@@ -19,6 +19,11 @@ const runs: Run[] = [
     command: "pnpm run test:run-express:deno",
     port: port++,
   },
+  {
+    name: "adapter-express: router: node",
+    command: "pnpm run test:run-express-router:node",
+    port: port++,
+  },
 ];
 
 runTests(runs, {

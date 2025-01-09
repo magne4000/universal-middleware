@@ -1,5 +1,5 @@
 import {
-  type DecoratedMiddleware,
+  type EnhancedMiddleware,
   type UniversalHandler,
   UniversalRouter,
   type UniversalRouterInterface,
@@ -18,7 +18,7 @@ export class UniversalHonoRouter extends UniversalRouter implements UniversalRou
     this.#app = app;
   }
 
-  use(middleware: DecoratedMiddleware) {
+  use(middleware: EnhancedMiddleware) {
     this.#app.use(createMiddleware(() => getUniversal(middleware))());
     return this;
   }
@@ -39,7 +39,7 @@ export class UniversalHonoRouter extends UniversalRouter implements UniversalRou
   }
 }
 
-export function apply(app: Hono, middlewares: DecoratedMiddleware[]) {
+export function apply(app: Hono, middlewares: EnhancedMiddleware[]) {
   const router = new UniversalHonoRouter(app);
   applyCore(router, middlewares);
 }
