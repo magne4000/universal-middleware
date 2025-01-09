@@ -103,35 +103,6 @@ export class UniversalRouter implements UniversalRouterInterface {
   }
 }
 
-// export class UniversalHonoRouter extends UniversalRouter implements UniversalRouterInterface {
-//   #app: Hono;
-//
-//   constructor(app: Hono) {
-//     super(false);
-//     this.#app = app;
-//   }
-//
-//   use(middleware: DecoratedMiddleware) {
-//     this.#app.use(createMiddlewareHono(() => getUniversal(middleware))());
-//     return this;
-//   }
-//
-//   // route(handler: DecoratedMiddleware) {
-//   //   const { path, method } = assertRoute(handler);
-//   //   const umHandler = getUniversal(handler);
-//   //
-//   //   this.#app[method.toLocaleLowerCase() as Lowercase<HttpMethod>](
-//   //     path,
-//   //     createHandlerHono(() => umHandler as UniversalHandler)(),
-//   //   );
-//   //   return this;
-//   // }
-//
-//   applyCatchAll() {
-//     // `/**` will not match `/`
-//     this.#app.all("/*", createHandlerHono(() => this[universalSymbol] as UniversalHandler)());
-//   }
-// }
 //
 // export class UniversalExpressRouter extends UniversalRouter implements UniversalRouterInterface {
 //   #app: Express;
@@ -161,24 +132,19 @@ export class UniversalRouter implements UniversalRouterInterface {
 //     this.#app.all("/**", createHandlerExpress(() => this[universalSymbol] as UniversalHandler)());
 //   }
 // }
-//
-// export function apply(router: UniversalRouterInterface, middlewares: DecoratedMiddleware[]) {
-//   const ms = ordered(middlewares);
-//   for (const m of ms) {
-//     if (getUniversalProp(m, pathSymbol)) {
-//       router.route(m);
-//     } else {
-//       router.use(m);
-//     }
-//   }
-//   router.applyCatchAll();
-// }
-//
-// export function applyHono(app: Hono, middlewares: DecoratedMiddleware[]) {
-//   const router = new UniversalHonoRouter(app);
-//   apply(router, middlewares);
-// }
-//
+
+export function apply(router: UniversalRouterInterface, middlewares: DecoratedMiddleware[]) {
+  const ms = ordered(middlewares);
+  for (const m of ms) {
+    if (getUniversalProp(m, pathSymbol)) {
+      router.route(m);
+    } else {
+      router.use(m);
+    }
+  }
+  router.applyCatchAll();
+}
+
 // // TODO check if a user adds a route manually, before catch-all,
 // //      does this route call all middlewares? (they are declared AFTER, so probably server dependant?)
 // //      If not, some server `apply` function would need to be split into 2 funtions,
