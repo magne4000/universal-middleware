@@ -63,6 +63,9 @@ export type UniversalOptions = {
 };
 
 export interface UniversalOptionsArg extends Partial<UniversalOptions> {
+  /**
+   * @default true
+   */
   immutable?: boolean;
 }
 
@@ -71,7 +74,8 @@ export type WithUniversalSymbols<T extends UniversalOptionsArg> = Pick<
   OptionsToSymbols[keyof T & keyof OptionsToSymbols]
 >;
 
-export type HttpMethod = "GET" | "POST";
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+export type HttpMethod = "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH";
 export type Decorate<T> = T & Partial<UniversalSymbols>;
 
 export type DecoratedMiddleware =
@@ -208,7 +212,7 @@ export class UniversalRouter implements UniversalRouterInterface {
   }
 }
 
-export class UniversalHonoRouter extends UniversalRouter {
+export class UniversalHonoRouter extends UniversalRouter implements UniversalRouterInterface {
   #app: Hono;
 
   constructor(app: Hono) {
@@ -238,7 +242,7 @@ export class UniversalHonoRouter extends UniversalRouter {
   }
 }
 
-export class UniversalExpressRouter extends UniversalRouter {
+export class UniversalExpressRouter extends UniversalRouter implements UniversalRouterInterface {
   #app: Express;
 
   constructor(app: Express) {
