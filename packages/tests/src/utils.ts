@@ -3,6 +3,7 @@ import {
   type Get,
   type UniversalHandler,
   type UniversalMiddleware,
+  enhance,
   params,
 } from "@universal-middleware/core";
 
@@ -43,32 +44,46 @@ export const middlewares = [
   },
 ] as const satisfies Get<[], UniversalMiddleware>[];
 
-export const handler: Get<[], UniversalHandler> = () => (_request, context) => {
-  context.long = "a".repeat(1024);
-  return new Response(JSON.stringify(context, null, 2), {
-    headers: {
-      "x-should-be-removed": "universal-middleware",
-      "content-type": "application/json; charset=utf-8",
+export const handler: Get<[], UniversalHandler> = () =>
+  enhance(
+    (_request, context) => {
+      context.long = "a".repeat(1024);
+      return new Response(JSON.stringify(context, null, 2), {
+        headers: {
+          "x-should-be-removed": "universal-middleware",
+          "content-type": "application/json; charset=utf-8",
+        },
+      });
     },
-  });
-};
+    {
+      path: "/",
+      method: "GET",
+    },
+  );
 
 interface RouteParamOption {
   route?: string;
 }
 
-export const routeParamHandler = ((options?) => (request, context, runtime) => {
-  const myParams = params(request, runtime, options?.route);
+export const routeParamHandler = ((options?) =>
+  enhance(
+    (request, context, runtime) => {
+      const myParams = params(request, runtime, options?.route);
 
-  if (myParams === null || !myParams.name) {
-    // Provide a useful error message to the user
-    throw new Error(
-      "A route parameter named `:name` is required. " +
-        "You can set your server route as `/user/:name`, or use the `route` option of this middleware " +
-        "to achieve the same purpose.",
-    );
-  }
+      if (myParams === null || !myParams.name) {
+        // Provide a useful error message to the user
+        throw new Error(
+          "A route parameter named `:name` is required. " +
+            "You can set your server route as `/user/:name`, or use the `route` option of this middleware " +
+            "to achieve the same purpose.",
+        );
+      }
 
-  // ...
-  return new Response(`User name is: ${myParams.name}`);
-}) satisfies (options?: RouteParamOption) => UniversalHandler;
+      // ...
+      return new Response(`User name is: ${myParams.name}`);
+    },
+    {
+      path: "/user/:name",
+      method: "GET",
+    },
+  )) satisfies (options?: RouteParamOption) => UniversalHandler;
