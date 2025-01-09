@@ -289,15 +289,15 @@ export type WithUniversalSymbols<T extends UniversalOptionsArg> = Pick<
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
 export type HttpMethod = "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH";
-export type Decorate<T> = T & Partial<UniversalSymbols>;
+export type Enhance<T> = T & Partial<UniversalSymbols>;
 
-export type DecoratedMiddleware =
-  | Decorate<UniversalMiddleware>
-  | { [universalSymbol]: Decorate<UniversalMiddleware> }
-  | (Decorate<AnyFn> & { [universalSymbol]: UniversalMiddleware });
+export type EnhancedMiddleware =
+  | Enhance<UniversalMiddleware>
+  | { [universalSymbol]: Enhance<UniversalMiddleware> }
+  | (Enhance<AnyFn> & { [universalSymbol]: UniversalMiddleware });
 
 export interface UniversalRouterInterface {
-  use(middleware: DecoratedMiddleware): this;
-  route(handler: DecoratedMiddleware): this;
+  use(middleware: EnhancedMiddleware): this;
+  route(handler: EnhancedMiddleware): this;
   applyCatchAll(): void;
 }

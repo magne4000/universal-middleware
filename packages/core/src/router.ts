@@ -3,7 +3,7 @@ import { methodSymbol, optionsToSymbols, orderSymbol, pathSymbol, universalSymbo
 import { pipe } from "./pipe";
 import type {
   AnyFn,
-  DecoratedMiddleware,
+  EnhancedMiddleware,
   UniversalHandler,
   UniversalMiddleware,
   UniversalOptions,
@@ -13,7 +13,7 @@ import type {
 } from "./types";
 import { cloneFunction, getUniversal, getUniversalProp } from "./utils";
 
-export function decorate<F extends AnyFn, O extends UniversalOptionsArg>(
+export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
   middleware: F,
   options: O,
 ): F & WithUniversalSymbols<O> {
@@ -25,7 +25,7 @@ export function decorate<F extends AnyFn, O extends UniversalOptionsArg>(
   return m;
 }
 
-function assertRoute(middleware: DecoratedMiddleware) {
+function assertRoute(middleware: EnhancedMiddleware) {
   const path = getUniversalProp(middleware, pathSymbol);
   const method = getUniversalProp(middleware, methodSymbol);
   if (!path) {
@@ -39,7 +39,7 @@ function assertRoute(middleware: DecoratedMiddleware) {
 
 export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<UniversalHandler>;
-  #middlewares: DecoratedMiddleware[];
+  #middlewares: EnhancedMiddleware[];
   #computedMiddleware?: UniversalMiddleware;
   #pipeMiddlewaresInUniversalRoute: boolean;
 
@@ -49,13 +49,13 @@ export class UniversalRouter implements UniversalRouterInterface {
     this.#pipeMiddlewaresInUniversalRoute = pipeMiddlewaresInUniversalRoute;
   }
 
-  use(middleware: DecoratedMiddleware) {
+  use(middleware: EnhancedMiddleware) {
     this.#computedMiddleware = undefined;
     this.#middlewares.push(middleware);
     return this;
   }
 
-  route(handler: DecoratedMiddleware) {
+  route(handler: EnhancedMiddleware) {
     const { path, method } = assertRoute(handler);
     const umHandler = getUniversal(handler);
 
@@ -103,7 +103,7 @@ export class UniversalRouter implements UniversalRouterInterface {
   }
 }
 
-export function apply(router: UniversalRouterInterface, middlewares: DecoratedMiddleware[]) {
+export function apply(router: UniversalRouterInterface, middlewares: EnhancedMiddleware[]) {
   const ms = ordered(middlewares);
   for (const m of ms) {
     if (getUniversalProp(m, pathSymbol)) {
@@ -115,8 +115,8 @@ export function apply(router: UniversalRouterInterface, middlewares: DecoratedMi
   router.applyCatchAll();
 }
 
-function ordered(middlewares: DecoratedMiddleware[]) {
+function ordered(middlewares: EnhancedMiddleware[]) {
   return Array.from(middlewares).sort(
-    (a, b) => (getUniversalProp(a, orderSymbol) ?? 0) - (getUniversalProp(b, orderSymbol) ?? 0),
+    (a, b) => getUniversalProp(a, orderSymbol, 0) - getUniversalProp(b, orderSymbol, 0),
   );
 }

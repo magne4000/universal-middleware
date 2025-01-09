@@ -56,10 +56,20 @@ export function getUniversal<T extends object>(subject: T | { [universalSymbol]:
 export function getUniversalProp<T extends object, K extends keyof UniversalSymbols>(
   subject: T | { [universalSymbol]: T },
   prop: K,
+): UniversalSymbols[K] | undefined;
+export function getUniversalProp<T extends object, K extends keyof UniversalSymbols>(
+  subject: T | { [universalSymbol]: T },
+  prop: K,
+  defaultValue: UniversalSymbols[K],
+): UniversalSymbols[K];
+export function getUniversalProp<T extends object, K extends keyof UniversalSymbols>(
+  subject: T | { [universalSymbol]: T },
+  prop: K,
+  defaultValue?: UniversalSymbols[K] | undefined,
 ): UniversalSymbols[K] | undefined {
   if (prop in subject) return (subject as UniversalSymbols)[prop];
   if (universalSymbol in subject) return (subject as Record<symbol, UniversalSymbols>)[universalSymbol][prop];
-  return undefined;
+  return defaultValue;
 }
 
 /**
