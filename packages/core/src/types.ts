@@ -303,4 +303,3 @@ export interface UniversalRouterInterface {
   route(handler: EnhancedMiddleware): this;
   applyCatchAll(): void;
 }
-}
