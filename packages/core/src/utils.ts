@@ -50,7 +50,14 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
 }
 
 export function url(request: { url: string; [urlSymbol]?: URL }): URL {
-  return request[urlSymbol] ?? (request[urlSymbol] = new URL(request.url));
+  if (request[urlSymbol]) {
+    return request[urlSymbol];
+  }
+  if (Object.isFrozen(request) || Object.isSealed(request)) {
+    return new URL(request.url);
+  }
+  request[urlSymbol] = new URL(request.url);
+  return request[urlSymbol];
 }
 
 export function getUniversal<T extends object>(subject: T | { [universalSymbol]: T }): T {

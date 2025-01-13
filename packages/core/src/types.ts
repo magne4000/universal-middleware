@@ -238,16 +238,18 @@ export type Get<T extends unknown[], U> = (...args: T) => U;
 
 // Router
 
+/**
+ * @alpha
+ */
 export enum MiddlewareOrder {
   // Pre-handler Middlewares
-  GUARD = -1000, // Guard middleware: Ensures specific conditions or headers are met before proceeding.
+  RATE_LIMITING = -1000, // Rate limiting middleware: Prevents excessive requests from a client.
   AUTHENTICATION = -900, // Authentication middleware: Verifies user credentials or tokens.
   AUTHORIZATION = -800, // Authorization middleware: Ensures the user has permissions for the route.
-  RATE_LIMITING = -700, // Rate limiting middleware: Prevents excessive requests from a client.
-  INPUT_VALIDATION = -600, // Input validation middleware: Validates the request payload or query parameters.
-  CORS = -500, // CORS middleware: Handles Cross-Origin Resource Sharing settings.
-  PARSING = -400, // Parsing middleware: Parses body payloads (e.g., JSON, URL-encoded, multipart).
-  CUSTOM_PRE_PROCESSING = -300, // Custom pre-processing middleware: Any custom logic before the main handler.
+  INPUT_VALIDATION = -700, // Input validation middleware: Validates the request payload or query parameters.
+  CORS = -600, // CORS middleware: Handles Cross-Origin Resource Sharing settings.
+  PARSING = -500, // Parsing middleware: Parses body payloads (e.g., JSON, URL-encoded, multipart).
+  CUSTOM_PRE_PROCESSING = -400, // Custom pre-processing middleware: Any custom logic before the main handler.
 
   // Main Handler
   HANDLER = 0, // Main handler that generates the response.
@@ -300,4 +302,5 @@ export interface UniversalRouterInterface {
   use(middleware: EnhancedMiddleware): this;
   route(handler: EnhancedMiddleware): this;
   applyCatchAll(): void;
+}
 }
