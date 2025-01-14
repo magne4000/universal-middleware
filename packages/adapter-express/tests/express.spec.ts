@@ -5,9 +5,25 @@ let port = 3100;
 
 const runs: Run[] = [
   {
-    name: "adapter-express: node",
+    name: "adapter-express: node simple",
     command: "pnpm run test:run-express:node",
     port: port++,
+  },
+  {
+    name: "adapter-express: node router",
+    command: "pnpm run test:run-express:node",
+    port: port++,
+    env: {
+      TEST_CASE: "router",
+    },
+  },
+  {
+    name: "adapter-express: node router enhanced",
+    command: "pnpm run test:run-express:node",
+    port: port++,
+    env: {
+      TEST_CASE: "router_enhanced",
+    },
   },
   {
     name: "adapter-express: bun",
@@ -17,11 +33,6 @@ const runs: Run[] = [
   {
     name: "adapter-express: deno",
     command: "pnpm run test:run-express:deno",
-    port: port++,
-  },
-  {
-    name: "adapter-express: router: node",
-    command: "pnpm run test:run-express-router:node",
     port: port++,
   },
 ];

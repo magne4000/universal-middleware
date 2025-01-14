@@ -1,15 +1,15 @@
 import {
   type CloudflareWorkerdRuntime,
+  enhance,
   type Get,
+  MiddlewareOrder,
+  params,
   type UniversalHandler,
   type UniversalMiddleware,
-  enhance,
-  params,
 } from "@universal-middleware/core";
 
-export const middlewares = [
-  // universal middleware that updates the context synchronously
-  () => () => {
+export const middlewares = {
+  contextSync() {
     return {
       something: {
         a: 1,
@@ -17,8 +17,7 @@ export const middlewares = [
       },
     };
   },
-  // universal middleware that update the response headers asynchronously
-  () => () => {
+  updateHeaders() {
     return async (response: Response) => {
       response.headers.set("x-test-value", "universal-middleware");
       response.headers.delete("x-should-be-removed");
@@ -28,8 +27,7 @@ export const middlewares = [
       return response;
     };
   },
-  // universal middleware that updates the context asynchronously
-  () => async (_request: Request, context: Universal.Context, runtime) => {
+  async contextAsync(_request, context, runtime) {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     return {
@@ -42,7 +40,19 @@ export const middlewares = [
       waitUntil: typeof (runtime as CloudflareWorkerdRuntime)?.ctx?.waitUntil,
     };
   },
-] as const satisfies Get<[], UniversalMiddleware>[];
+} satisfies Record<string, UniversalMiddleware>;
+
+export const enhancedMiddlewares = {
+  contextSync: enhance(middlewares.contextSync, {
+    order: MiddlewareOrder.CUSTOM_PRE_PROCESSING,
+  }),
+  updateHeaders: enhance(middlewares.updateHeaders, {
+    order: MiddlewareOrder.CUSTOM_PRE_PROCESSING,
+  }),
+  contextAsync: enhance(middlewares.contextAsync, {
+    order: MiddlewareOrder.CUSTOM_PRE_PROCESSING,
+  }),
+};
 
 export const handler: Get<[], UniversalHandler> = () =>
   enhance(

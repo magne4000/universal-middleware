@@ -8,6 +8,7 @@ export interface Run {
   port: number;
   waitUntilType?: "undefined" | "function";
   delay?: number;
+  env?: Record<string, string>;
 }
 
 export interface Options {
@@ -29,7 +30,7 @@ declare global {
 export function runTests(runs: Run[], options: Options) {
   options.vitest.describe.concurrent.each(runs)("$name", (run) => {
     let server: ChildProcess | undefined = undefined;
-    const { command, port, delay } = run;
+    const { command, port, delay, env } = run;
     let host = `http://localhost:${port}`;
 
     options.vitest.beforeAll(async () => {
@@ -38,6 +39,7 @@ export function runTests(runs: Run[], options: Options) {
         stdio: "inherit",
         env: {
           ...process.env,
+          ...env,
         },
       });
 

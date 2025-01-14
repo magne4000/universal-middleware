@@ -20,7 +20,6 @@
     "test:run-express:node": "tsx tests/entry-express.ts",
     "test:run-express:bun": "bun tests/entry-express.ts",
     "test:run-express:deno": "deno run --unstable-byonm --unstable-sloppy-imports -A tests/entry-express.ts",
-    "test:run-express-router:node": "tsx tests/entry-express-router.ts",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
