@@ -82,7 +82,11 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
       try {
         req[contextSymbol] ??= {} as InContext;
         const request = requestAdapter(req);
-        const response = await this[universalSymbol](request, req[contextSymbol], getRuntime(req, res));
+        const response: Response | undefined = await this[universalSymbol](
+          request,
+          req[contextSymbol],
+          getRuntime(req, res),
+        );
 
         if (response === null || response === undefined) {
           // Will result in a 404

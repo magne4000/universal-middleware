@@ -83,6 +83,7 @@ export class UniversalRouter implements UniversalRouterInterface {
         const middlewares = noCastPipe(...(this.#middlewares as any[])) as UniversalMiddleware;
         return middlewares(request, ctx, runtime);
       }
+      // Each adapter is then responsible to properly propagate 404
     };
   }
 }
