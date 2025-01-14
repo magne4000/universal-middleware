@@ -7,7 +7,7 @@ import type {
   UniversalMiddleware,
 } from "@universal-middleware/core";
 import { attachUniversal, bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
-import { Elysia, type Context as ElysiaContext, type Handler } from "elysia";
+import { type Context as ElysiaContext, Elysia, type Handler } from "elysia";
 
 export const contextSymbol = Symbol.for("unContext");
 export const pendingSymbol = Symbol.for("unPending");
@@ -16,7 +16,7 @@ export const pendingHandledSymbol = Symbol.for("unPendingHandled");
 export type ElysiaHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, Handler>;
 export type ElysiaMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
   UniversalMiddleware<In, Out>,
-  ReturnType<typeof createMiddleware>
+  typeof initPlugin
 >;
 
 /**
