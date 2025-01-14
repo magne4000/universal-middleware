@@ -6,6 +6,7 @@ import {
   params,
   type UniversalHandler,
   type UniversalMiddleware,
+  url,
 } from "@universal-middleware/core";
 
 export const middlewares = {
@@ -40,6 +41,14 @@ export const middlewares = {
       waitUntil: typeof (runtime as CloudflareWorkerdRuntime)?.ctx?.waitUntil,
     };
   },
+  guard(request) {
+    if (url(request).pathname === "/guarded") {
+      return new Response("Unauthorized", {
+        status: 401,
+        statusText: "Unauthorized",
+      });
+    }
+  },
 } satisfies Record<string, UniversalMiddleware>;
 
 export const enhancedMiddlewares = {
@@ -51,6 +60,9 @@ export const enhancedMiddlewares = {
   }),
   contextAsync: enhance(middlewares.contextAsync, {
     order: MiddlewareOrder.CUSTOM_PRE_PROCESSING,
+  }),
+  guard: enhance(middlewares.guard, {
+    order: MiddlewareOrder.AUTHORIZATION,
   }),
 };
 
@@ -97,3 +109,14 @@ export const routeParamHandler = ((options?) =>
       method: "GET",
     },
   )) satisfies (options?: RouteParamOption) => UniversalHandler;
+
+export const guarded: Get<[], UniversalHandler> = () =>
+  enhance(
+    () => {
+      return new Response("Oups, you should not be able to see this");
+    },
+    {
+      path: "/guarded",
+      method: ["GET", "POST"],
+    },
+  );

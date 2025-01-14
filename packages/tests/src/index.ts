@@ -103,6 +103,13 @@ export function runTests(runs: Run[], options: Options) {
       await options?.test?.(response, body, run);
     });
 
+    options.vitest.test("guarded route", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${options.prefix ?? ""}/guarded`);
+      const body = await response.text();
+      options.vitest.expect(response.status).toBe(401);
+      options.vitest.expect(body).toBe("Unauthorized");
+    });
+
     options.vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {
       const response = await fetch(`${host}${options.prefix ?? ""}/user/magne4000`);
       const body = await response.text();
