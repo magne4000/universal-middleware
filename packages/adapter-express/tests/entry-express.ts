@@ -24,9 +24,11 @@ switch (TEST_CASE) {
       middlewares.updateHeaders,
       middlewares.contextAsync,
       routeParamHandler(),
-      guarded(),
       handler(),
     ]);
+
+    // Test registering /guarded manually to see if `guard` middleware still applies
+    app.get("/guarded", createHandler(guarded)());
 
     break;
   }
