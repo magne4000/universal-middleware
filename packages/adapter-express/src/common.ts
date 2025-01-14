@@ -88,8 +88,8 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
           getRuntime(req, res),
         );
 
-        if (response === null || response === undefined) {
-          // Will result in a 404
+        if (!response) {
+          // Will default to 404
           next?.();
         } else {
           await sendResponse(response, res);
