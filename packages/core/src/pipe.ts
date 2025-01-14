@@ -107,7 +107,11 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
  * @see {@link https://universal-middleware.dev/helpers/pipe}
  * @returns A new middleware function that applies the input middleware functions in sequence.
  */
-export function pipe<F extends AnyMiddleware[]>(...a: Pipe<F> extends F ? F : Pipe<F>): ComposeReturnType<F> {
+export function pipe<F extends AnyMiddleware[]>(
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+  this: { noCast?: boolean } | void,
+  ...a: Pipe<F> extends F ? F : Pipe<F>
+): ComposeReturnType<F> {
   const ordererArgs = ordered(a);
   const fn: UniversalMiddleware<any, any> = async function pipeInternal(request, context, runtime) {
     const pending: ((response: Response) => Awaitable<Response>)[] = [];
@@ -145,9 +149,11 @@ export function pipe<F extends AnyMiddleware[]>(...a: Pipe<F> extends F ? F : Pi
     return _response;
   };
 
-  const lastMiddleware = (a as AnyMiddleware[]).at(-1);
-  if (lastMiddleware && universalSymbol in lastMiddleware) {
-    return bindUniversal(fn, lastMiddleware) as ComposeReturnType<F>;
+  if (!this?.noCast) {
+    const lastMiddleware = (a as AnyMiddleware[]).at(-1);
+    if (lastMiddleware && universalSymbol in lastMiddleware) {
+      return bindUniversal(fn, lastMiddleware) as ComposeReturnType<F>;
+    }
   }
 
   return fn as ComposeReturnType<F>;

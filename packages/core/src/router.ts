@@ -31,7 +31,6 @@ export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
 export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<UniversalHandler>;
   #middlewares: EnhancedMiddleware[];
-  #computedMiddleware?: UniversalMiddleware;
   #pipeMiddlewaresInUniversalRoute: boolean;
 
   constructor(pipeMiddlewaresInUniversalRoute = true) {
@@ -41,7 +40,6 @@ export class UniversalRouter implements UniversalRouterInterface {
   }
 
   use(middleware: EnhancedMiddleware) {
-    this.#computedMiddleware = undefined;
     this.#middlewares.push(middleware);
     return this;
   }
@@ -64,18 +62,16 @@ export class UniversalRouter implements UniversalRouterInterface {
   applyCatchAll() {}
 
   get [universalSymbol](): UniversalMiddleware {
-    if (this.#pipeMiddlewaresInUniversalRoute && !this.#computedMiddleware && this.#middlewares.length > 0) {
-      // TODO update `pipe` so that it's aware of `order` and `method`
-      this.#computedMiddleware = pipe(...ordered(this.#middlewares).map(getUniversal));
-    }
+    const noCastPipe = pipe.bind({ noCast: true });
     return (request, ctx, runtime) => {
       const router = findRoute(this.router, request.method, url(request).pathname);
 
-      // TODO handle middlewares like Logging. Probably requires updating all adapters too.
       if (router) {
+        // TODO update each adapters to take orderSymbol into account
         const handler =
-          this.#pipeMiddlewaresInUniversalRoute && this.#computedMiddleware
-            ? pipe(this.#computedMiddleware, router.data)
+          this.#pipeMiddlewaresInUniversalRoute && this.#middlewares.length > 0
+            ? // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+              (noCastPipe(...(this.#middlewares as any[]), router.data) as UniversalHandler)
             : router.data;
         if (router.params) {
           runtime.params ??= {};
@@ -83,8 +79,10 @@ export class UniversalRouter implements UniversalRouterInterface {
         }
         return handler(request, ctx, runtime);
       }
-      if (this.#pipeMiddlewaresInUniversalRoute && this.#computedMiddleware) {
-        return this.#computedMiddleware(request, ctx, runtime);
+      if (this.#pipeMiddlewaresInUniversalRoute && this.#middlewares.length > 0) {
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        const middlewares = noCastPipe(...(this.#middlewares as any[])) as UniversalMiddleware;
+        return middlewares(request, ctx, runtime);
       }
       // TODO should always fallback to 404, some servers might automatically do this, some others don't
       // else do nothing
