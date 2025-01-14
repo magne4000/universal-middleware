@@ -21,3 +21,4 @@ export { params } from "./route.js";
 export { env } from "./env.js";
 export { universalSymbol, methodSymbol, nameSymbol, orderSymbol, pathSymbol } from "./const.js";
 export { UniversalRouter, enhance, apply } from "./router";
+export { MiddlewareOrder } from "./const";

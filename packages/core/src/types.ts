@@ -7,7 +7,15 @@ import type { Context as ElysiaContext } from "elysia";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { H3Event } from "h3";
 import type { Context as HonoContext } from "hono";
-import type { methodSymbol, nameSymbol, optionsToSymbols, orderSymbol, pathSymbol, universalSymbol } from "./const";
+import type {
+  methodSymbol,
+  MiddlewareOrder,
+  nameSymbol,
+  optionsToSymbols,
+  orderSymbol,
+  pathSymbol,
+  universalSymbol
+} from "./const"; // Helpers
 
 // Helpers
 
@@ -237,32 +245,6 @@ export type UniversalHandler<InContext extends Universal.Context = Universal.Con
 export type Get<T extends unknown[], U> = (...args: T) => U;
 
 // Router
-
-/**
- * @alpha
- */
-export enum MiddlewareOrder {
-  // Pre-handler Middlewares
-  RATE_LIMITING = -1000, // Rate limiting middleware: Prevents excessive requests from a client.
-  AUTHENTICATION = -900, // Authentication middleware: Verifies user credentials or tokens.
-  AUTHORIZATION = -800, // Authorization middleware: Ensures the user has permissions for the route.
-  INPUT_VALIDATION = -700, // Input validation middleware: Validates the request payload or query parameters.
-  CORS = -600, // CORS middleware: Handles Cross-Origin Resource Sharing settings.
-  PARSING = -500, // Parsing middleware: Parses body payloads (e.g., JSON, URL-encoded, multipart).
-  CUSTOM_PRE_PROCESSING = -400, // Custom pre-processing middleware: Any custom logic before the main handler.
-
-  // Main Handler
-  HANDLER = 0, // Main handler that generates the response.
-
-  // Post-handler Middlewares
-  RESPONSE_TRANSFORM = 100, // Response transformation middleware: Modifies the response payload.
-  HEADER_MANAGEMENT = 200, // Header management middleware: Adds or modifies HTTP headers (e.g., caching, content type).
-  RESPONSE_COMPRESSION = 300, // Response compression middleware: Compresses the response payload (e.g., gzip, brotli).
-  RESPONSE_CACHING = 400, // Response caching middleware: Implements caching strategies (e.g., ETag, cache-control).
-  LOGGING = 500, // Logging middleware: Logs request and response information.
-  ERROR_HANDLING = 600, // Error handling middleware: Processes errors and returns user-friendly responses.
-  CUSTOM_POST_PROCESSING = 700, // Custom post-processing middleware: Any custom logic after the response is generated.
-}
 
 export interface UniversalSymbols {
   [nameSymbol]: string;

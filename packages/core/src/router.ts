@@ -1,5 +1,5 @@
-import { type RouterContext, addRoute, createRouter, findRoute } from "rou3";
-import { methodSymbol, nameSymbol, optionsToSymbols, orderSymbol, pathSymbol, universalSymbol } from "./const";
+import { addRoute, createRouter, findRoute, type RouterContext } from "rou3";
+import { methodSymbol, nameSymbol, optionsToSymbols, pathSymbol, universalSymbol } from "./const";
 import { pipe } from "./pipe";
 import type {
   AnyFn,
@@ -11,7 +11,7 @@ import type {
   UniversalRouterInterface,
   WithUniversalSymbols,
 } from "./types";
-import { url, cloneFunction, getUniversal, getUniversalProp } from "./utils";
+import { cloneFunction, getUniversal, getUniversalProp, ordered, url } from "./utils";
 
 export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
   middleware: F,
@@ -102,12 +102,6 @@ export function apply(router: UniversalRouterInterface, middlewares: EnhancedMid
     }
   }
   router.applyCatchAll();
-}
-
-function ordered(middlewares: EnhancedMiddleware[]) {
-  return Array.from(middlewares).sort(
-    (a, b) => getUniversalProp(a, orderSymbol, 0) - getUniversalProp(b, orderSymbol, 0),
-  );
 }
 
 function assertRoute(middleware: EnhancedMiddleware) {

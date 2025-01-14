@@ -1,6 +1,14 @@
 import type { OutgoingHttpHeaders } from "node:http";
-import { unboundSymbol, universalSymbol, urlSymbol } from "./const";
-import type { AnyFn, SetThis, UniversalFn, UniversalHandler, UniversalMiddleware, UniversalSymbols } from "./types";
+import { orderSymbol, unboundSymbol, universalSymbol, urlSymbol } from "./const";
+import type {
+  AnyFn,
+  EnhancedMiddleware,
+  SetThis,
+  UniversalFn,
+  UniversalHandler,
+  UniversalMiddleware,
+  UniversalSymbols
+} from "./types";
 
 export function isBodyInit(value: unknown): value is BodyInit {
   return (
@@ -81,6 +89,15 @@ export function getUniversalProp<T extends object, K extends keyof UniversalSymb
   if (prop in subject) return (subject as UniversalSymbols)[prop];
   if (universalSymbol in subject) return (subject as Record<symbol, UniversalSymbols>)[universalSymbol][prop];
   return defaultValue;
+}
+
+/**
+ * @internal
+ */
+export function ordered(middlewares: EnhancedMiddleware[]) {
+  return Array.from(middlewares).sort(
+    (a, b) => getUniversalProp(a, orderSymbol, 0) - getUniversalProp(b, orderSymbol, 0),
+  );
 }
 
 /**

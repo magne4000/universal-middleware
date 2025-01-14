@@ -1,6 +1,6 @@
 import { universalSymbol } from "./const";
-import type { AnyFn, Awaitable, SetThisMiddleware, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
-import { bindUniversal } from "./utils";
+import type { AnyFn, Awaitable, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
+import { bindUniversal, getUniversal, ordered } from "./utils";
 
 type _Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
 type Out<T> = T extends UniversalFn<infer X, infer _> ? _Out<X> : _Out<T>;
@@ -108,23 +108,22 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
  * @returns A new middleware function that applies the input middleware functions in sequence.
  */
 export function pipe<F extends AnyMiddleware[]>(...a: Pipe<F> extends F ? F : Pipe<F>): ComposeReturnType<F> {
-  const middlewares: UniversalMiddleware<any, any>[] = (a as AnyMiddleware[]).map((m) =>
-    universalSymbol in m ? (m[universalSymbol] as SetThisMiddleware<any>) : m,
-  );
-
+  const ordererArgs = ordered(a);
   const fn: UniversalMiddleware<any, any> = async function pipeInternal(request, context, runtime) {
     const pending: ((response: Response) => Awaitable<Response>)[] = [];
 
     let _response: Response | undefined = undefined;
-    for (const m of middlewares) {
-      const response = await m(request, context ?? {}, runtime);
+    for (const m of ordererArgs) {
+      const um = getUniversal(m);
+      const response = await um(request, context ?? {}, runtime);
 
       if (typeof response === "function") {
         pending.push(response);
       } else if (response !== null && typeof response === "object") {
-        if (response instanceof Response) {
+        // Do not override response if it already exists.
+        // The only to actually update the response is through a Response Function.
+        if (!_response && response instanceof Response) {
           _response = response;
-          break;
         }
         // Update context
         // biome-ignore lint/style/noParameterAssign: <explanation>
