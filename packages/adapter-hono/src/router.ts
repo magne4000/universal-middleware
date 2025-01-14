@@ -1,10 +1,10 @@
 import {
+  apply as applyCore,
   type EnhancedMiddleware,
+  getUniversal,
   type UniversalHandler,
   UniversalRouter,
   type UniversalRouterInterface,
-  apply as applyCore,
-  getUniversal,
   universalSymbol,
 } from "@universal-middleware/core";
 import type { Hono } from "hono";
@@ -22,17 +22,6 @@ export class UniversalHonoRouter extends UniversalRouter implements UniversalRou
     this.#app.use(createMiddleware(() => getUniversal(middleware))());
     return this;
   }
-
-  // route(handler: DecoratedMiddleware) {
-  //   const { path, method } = assertRoute(handler);
-  //   const umHandler = getUniversal(handler);
-  //
-  //   this.#app[method.toLocaleLowerCase() as Lowercase<HttpMethod>](
-  //     path,
-  //     createHandlerHono(() => umHandler as UniversalHandler)(),
-  //   );
-  //   return this;
-  // }
 
   applyCatchAll() {
     this.#app.all("/*", createHandler(() => this[universalSymbol] as UniversalHandler)());

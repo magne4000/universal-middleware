@@ -6,7 +6,7 @@ import type {
   UniversalMiddleware,
 } from "@universal-middleware/core";
 import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
-import type { Env, ExecutionContext, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
+import type { Context as HonoContext, Env, ExecutionContext, Handler, MiddlewareHandler } from "hono";
 
 export const contextSymbol = Symbol.for("unContext");
 
@@ -45,10 +45,19 @@ export function createHandler<
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return bindUniversal(handler, function universalHandlerHono(honoContext) {
+    return bindUniversal(handler, async function universalHandlerHono(honoContext) {
       const context = initContext<InContext>(honoContext);
 
-      return this[universalSymbol](honoContext.req.raw, context, getRuntime(honoContext));
+      const response: Response | undefined = await this[universalSymbol](
+        honoContext.req.raw,
+        context,
+        getRuntime(honoContext),
+      );
+
+      if (response) {
+        return response;
+      }
+      return honoContext.notFound();
     });
   };
 }

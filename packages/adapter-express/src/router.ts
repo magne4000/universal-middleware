@@ -23,17 +23,6 @@ export class UniversalExpressRouter extends UniversalRouter implements Universal
     return this;
   }
 
-  // route(handler: DecoratedMiddleware) {
-  //   const { path, method } = assertRoute(handler);
-  //   const umHandler = getUniversal(handler);
-  //
-  //   this.#app[method.toLocaleLowerCase() as Lowercase<HttpMethod>](
-  //     path,
-  //     createHandlerExpress(() => umHandler as UniversalHandler)(),
-  //   );
-  //   return this;
-  // }
-
   applyCatchAll() {
     this.#app.all("/**", createHandler(() => this[universalSymbol] as UniversalHandler)());
   }

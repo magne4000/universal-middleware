@@ -10,19 +10,35 @@ const runs: Run[] = [
     port: port,
   },
   {
+    name: "adapter-hono: node router",
+    command: "pnpm run test:run-hono:node",
+    port: port + 1,
+    env: {
+      TEST_CASE: "router",
+    },
+  },
+  {
+    name: "adapter-hono: node router enhanced",
+    command: "pnpm run test:run-hono:node",
+    port: port + 2,
+    env: {
+      TEST_CASE: "router_enhanced",
+    },
+  },
+  {
     name: "adapter-hono: bun",
     command: "pnpm run test:run-hono:bun",
-    port: port + 1,
+    port: port + 3,
   },
   {
     name: "adapter-hono: deno",
     command: "pnpm run test:run-hono:deno",
-    port: port + 2,
+    port: port + 4,
   },
   {
     name: "adapter-hono: wrangler",
-    command: `pnpm run test:run-hono:wrangler --inspector-port ${port + 10000 + 3}`,
-    port: port + 3,
+    command: `pnpm run test:run-hono:wrangler --inspector-port ${port + 10000 + 5}`,
+    port: port + 5,
     waitUntilType: "function",
     delay: 1000,
   },
