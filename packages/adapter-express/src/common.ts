@@ -9,7 +9,7 @@ import type {
   UniversalMiddleware,
 } from "@universal-middleware/core";
 import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
-import { type NodeRequestAdapterOptions, createRequestAdapter } from "./request.js";
+import { createRequestAdapter, type NodeRequestAdapterOptions } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
 
 export const contextSymbol = Symbol.for("unContext");
@@ -84,7 +84,12 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
         const request = requestAdapter(req);
         const response = await this[universalSymbol](request, req[contextSymbol], getRuntime(req, res));
 
-        await sendResponse(response, res);
+        if (response === null || response === undefined) {
+          // Will result in a 404
+          next?.();
+        } else {
+          await sendResponse(response, res);
+        }
       } catch (error) {
         if (next) {
           next(error);

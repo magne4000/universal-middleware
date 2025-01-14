@@ -1,10 +1,10 @@
 import {
+  apply as applyCore,
   type EnhancedMiddleware,
+  getUniversal,
   type UniversalHandler,
   UniversalRouter,
   type UniversalRouterInterface,
-  apply as applyCore,
-  getUniversal,
   universalSymbol,
 } from "@universal-middleware/core";
 import type { Express } from "express";
@@ -39,12 +39,6 @@ export class UniversalExpressRouter extends UniversalRouter implements Universal
   }
 }
 
-// TODO check if a user adds a route manually, before catch-all,
-//      does this route call all middlewares? (they are declared AFTER, so probably server dependant?)
-//      If not, some server `apply` function would need to be split into 2 funtions,
-//      not calling `applyCatchAll` in the first one, and the second one only calling it.
-//      Another solution could be to have a router.pipe(serverHandler) function to wrap a server handler with all
-//      middlewares declared in `router`.
 export function apply(app: Express, middlewares: EnhancedMiddleware[]) {
   const router = new UniversalExpressRouter(app);
   applyCore(router, middlewares);

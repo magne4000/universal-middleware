@@ -117,6 +117,11 @@ export function runTests(runs: Run[], options: Options) {
       options.vitest.expect(body).toBe("User name is: magne4000");
     });
 
+    options.vitest.test("404", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${options.prefix ?? ""}/404`);
+      options.vitest.expect(response.status).toBe(404);
+    });
+
     if (options?.testPost) {
       options.vitest.test("post", { retry: 3, timeout: 30_000 }, async () => {
         const response = await fetch(`${host}${options.prefix ?? ""}/post`, {
