@@ -705,46 +705,6 @@ importers:
         specifier: 'catalog:'
         version: 2.1.7(@edge-runtime/vm@3.2.0)(@types/node@20.17.9)
 
-  packages/router:
-    dependencies:
-      '@universal-middleware/core':
-        specifier: link:../core
-        version: link:../core
-      '@universal-middleware/express':
-        specifier: link:../adapter-express
-        version: link:../adapter-express
-      '@universal-middleware/hono':
-        specifier: link:../adapter-hono
-        version: link:../adapter-hono
-      rou3:
-        specifier: ^0.5.1
-        version: 0.5.1
-    devDependencies:
-      '@hono/node-server':
-        specifier: ^1.13.7
-        version: 1.13.7(hono@4.6.12)
-      '@types/express':
-        specifier: ^4.17.21
-        version: 4.17.21
-      express:
-        specifier: ^4.21.2
-        version: 4.21.2
-      hono:
-        specifier: 'catalog:'
-        version: 4.6.12
-      tsup:
-        specifier: ^8.3.5
-        version: 8.3.5(@swc/core@1.9.3)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.6.1)
-      tsx:
-        specifier: 'catalog:'
-        version: 4.19.2
-      vite:
-        specifier: 'catalog:'
-        version: 6.0.2(@types/node@22.10.0)(tsx@4.19.2)(yaml@2.6.1)
-      vitest:
-        specifier: 'catalog:'
-        version: 2.1.7(@edge-runtime/vm@3.2.0)(@types/node@22.10.0)
-
   packages/tests:
     dependencies:
       mri:
