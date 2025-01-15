@@ -62,7 +62,7 @@ export function createMiddleware<
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
 >(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>) {
-  return (...args: T) => {
+  return (...args: T): ReturnType<typeof initPlugin> => {
     const middleware = middlewareFactory(...args);
 
     return attachUniversal(
@@ -105,7 +105,8 @@ export function createMiddleware<
           }
 
           return currentResponse;
-        }),
+          // biome-ignore lint/suspicious/noExplicitAny: avoid recursive type error
+        }) as any,
     );
   };
 }
