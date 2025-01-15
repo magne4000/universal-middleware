@@ -25,6 +25,7 @@ export class UniversalHattipRouter extends UniversalRouter implements UniversalR
 
   applyCatchAll() {
     this.#app.use("/*", createHandler(() => this[universalSymbol] as UniversalHandler)());
+    return this;
   }
 }
 

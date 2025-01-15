@@ -42,7 +42,7 @@ export const middlewares = {
     };
   },
   guard(request) {
-    if (url(request).pathname === "/guarded") {
+    if (url(request).pathname.endsWith("/guarded")) {
       return new Response("Unauthorized", {
         status: 401,
         statusText: "Unauthorized",

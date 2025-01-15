@@ -25,6 +25,7 @@ export class UniversalH3Router extends UniversalRouter implements UniversalRoute
 
   applyCatchAll() {
     this.#app.use(createHandler(() => this[universalSymbol] as UniversalHandler)());
+    return this;
   }
 }
 

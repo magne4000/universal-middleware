@@ -24,8 +24,10 @@ export class UniversalFastifyRouter extends UniversalRouter implements Universal
     return this;
   }
 
+  // @ts-ignore ReturnType mismatch with UniversalRouter
   async applyCatchAll() {
     this.#app.all("/*", createHandler(() => this[universalSymbol] as UniversalHandler)());
+    return this;
   }
 }
 

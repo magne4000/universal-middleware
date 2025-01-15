@@ -25,6 +25,7 @@ export class UniversalElysiaRouter extends UniversalRouter implements UniversalR
 
   applyCatchAll() {
     this.#app.all("/*", createHandler(() => this[universalSymbol] as UniversalHandler)());
+    return this;
   }
 }
 

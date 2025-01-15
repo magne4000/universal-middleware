@@ -5,7 +5,7 @@ import {
   guarded,
   handler,
   middlewares,
-  routeParamHandler
+  routeParamHandler,
 } from "@universal-middleware/tests/utils";
 import { apply, createHandler, createMiddleware } from "../src/index.js";
 

@@ -25,6 +25,7 @@ export class UniversalExpressRouter extends UniversalRouter implements Universal
 
   applyCatchAll() {
     this.#app.all("/**", createHandler(() => this[universalSymbol] as UniversalHandler)());
+    return this;
   }
 }
 

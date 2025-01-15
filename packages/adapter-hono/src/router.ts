@@ -25,6 +25,7 @@ export class UniversalHonoRouter extends UniversalRouter implements UniversalRou
 
   applyCatchAll() {
     this.#app.all("/*", createHandler(() => this[universalSymbol] as UniversalHandler)());
+    return this;
   }
 }
 

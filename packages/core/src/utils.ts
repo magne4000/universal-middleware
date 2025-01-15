@@ -7,7 +7,7 @@ import type {
   UniversalFn,
   UniversalHandler,
   UniversalMiddleware,
-  UniversalSymbols
+  UniversalSymbols,
 } from "./types";
 
 export function isBodyInit(value: unknown): value is BodyInit {

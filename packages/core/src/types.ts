@@ -14,7 +14,7 @@ import type {
   optionsToSymbols,
   orderSymbol,
   pathSymbol,
-  universalSymbol
+  universalSymbol,
 } from "./const"; // Helpers
 
 // Helpers
@@ -283,5 +283,5 @@ export type EnhancedMiddleware =
 export interface UniversalRouterInterface<T extends "sync" | "async" = "sync"> {
   use(middleware: EnhancedMiddleware): T extends "async" ? this | Promise<this> : this;
   route(handler: EnhancedMiddleware): T extends "async" ? this | Promise<this> : this;
-  applyCatchAll(): T extends "async" ? void | Promise<void> : void;
+  applyCatchAll(): T extends "async" ? this | Promise<this> : this;
 }

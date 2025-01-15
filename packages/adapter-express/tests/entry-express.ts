@@ -4,7 +4,7 @@ import {
   guarded,
   handler,
   middlewares,
-  routeParamHandler
+  routeParamHandler,
 } from "@universal-middleware/tests/utils";
 import express from "express";
 import helmet from "helmet";
