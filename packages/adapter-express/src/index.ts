@@ -9,4 +9,4 @@ export {
 } from "./common.js";
 export { createRequestAdapter } from "./request.js";
 export { sendResponse } from "./response.js";
-export { UniversalExpressRouter, apply } from "./router.js";
+export { type UniversalExpressRouter, apply } from "./router.js";

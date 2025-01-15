@@ -6,4 +6,4 @@ export {
   type HonoHandler,
   type HonoMiddleware,
 } from "./common.js";
-export { UniversalHonoRouter, apply } from "./router.js";
+export { type UniversalHonoRouter, apply } from "./router.js";

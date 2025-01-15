@@ -280,8 +280,8 @@ export type EnhancedMiddleware =
   | { [universalSymbol]: Enhance<UniversalMiddleware> }
   | (Enhance<AnyFn> & { [universalSymbol]: UniversalMiddleware });
 
-export interface UniversalRouterInterface {
-  use(middleware: EnhancedMiddleware): this;
-  route(handler: EnhancedMiddleware): this;
-  applyCatchAll(): void;
+export interface UniversalRouterInterface<T extends "sync" | "async" = "sync"> {
+  use(middleware: EnhancedMiddleware): T extends "async" ? this | Promise<this> : this;
+  route(handler: EnhancedMiddleware): T extends "async" ? this | Promise<this> : this;
+  applyCatchAll(): T extends "async" ? void | Promise<void> : void;
 }

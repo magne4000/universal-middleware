@@ -5,3 +5,4 @@ export {
   type FastifyHandler,
   type FastifyMiddleware,
 } from "./common.js";
+export { type UniversalFastifyRouter, apply } from "./router.js";
