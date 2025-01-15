@@ -51,7 +51,7 @@
     "playwright": "^1.49.1",
     "rimraf": "catalog:",
     "typescript": "catalog:",
-    "vercel": "^39.2.5",
+    "vercel": "^39.3.0",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
