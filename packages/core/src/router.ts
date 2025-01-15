@@ -32,11 +32,13 @@ export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<UniversalHandler>;
   #middlewares: EnhancedMiddleware[];
   #pipeMiddlewaresInUniversalRoute: boolean;
+  #handle404: boolean;
 
-  constructor(pipeMiddlewaresInUniversalRoute = true) {
+  constructor(pipeMiddlewaresInUniversalRoute = true, handle404 = false) {
     this.router = createRouter<UniversalHandler>();
     this.#middlewares = [];
     this.#pipeMiddlewaresInUniversalRoute = pipeMiddlewaresInUniversalRoute;
+    this.#handle404 = handle404;
   }
 
   use(middleware: EnhancedMiddleware) {
@@ -59,7 +61,18 @@ export class UniversalRouter implements UniversalRouterInterface {
     return this;
   }
 
-  applyCatchAll() {}
+  applyCatchAll() {
+    if (this.#handle404) {
+      for (const method of ["GET", "POST", "PATCH"]) {
+        addRoute(this.router, method, "/**", () => {
+          return new Response("NOT FOUND", {
+            status: 404,
+          });
+        });
+      }
+    }
+    return this;
+  }
 
   get [universalSymbol](): UniversalMiddleware {
     const noCastPipe = pipe.bind({ noCast: true });
@@ -83,7 +96,11 @@ export class UniversalRouter implements UniversalRouterInterface {
         const middlewares = noCastPipe(...(this.#middlewares as any[])) as UniversalMiddleware;
         return middlewares(request, ctx, runtime);
       }
-      // Each adapter is then responsible to properly propagate 404
+      if (this.#handle404) {
+        return new Response("NOT FOUND", {
+          status: 404,
+        });
+      }
     };
   }
 }
