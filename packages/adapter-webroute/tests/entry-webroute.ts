@@ -1,5 +1,5 @@
 import { args, bun, deno } from "@universal-middleware/tests";
-import { handler, middlewares, routeParamHandler } from "@universal-middleware/tests/utils";
+import { guarded, handler, middlewares, routeParamHandler } from "@universal-middleware/tests/utils";
 import { createAdapter } from "@webroute/middleware";
 import { Route, route } from "@webroute/route";
 import { createRadixRouter } from "@webroute/router";
@@ -9,10 +9,6 @@ import { createHandler, createMiddleware } from "../src/index.js";
 
 const app = new Hono();
 
-const m1 = middlewares[0];
-const m2 = middlewares[1];
-const m3 = middlewares[2];
-
 const router = createRadixRouter([
   Route.normalise(route("/user/:name").method("get").handle(createHandler(routeParamHandler)())),
   // @ts-ignore
@@ -21,10 +17,20 @@ const router = createRadixRouter([
       .method("get")
       // `createMiddleware(m1)()` or `m1()` are roughly equivalent is some cases (if not using the context or runtime).
       // Usually prefer wrapping in `createMiddleware` for better compatibility
-      .use(m1())
-      .use(createMiddleware(m2)())
-      .use(createMiddleware(m3)())
+      .use(middlewares.contextSync)
+      .use(createMiddleware(() => middlewares.updateHeaders)())
+      .use(createMiddleware(() => middlewares.contextAsync)())
       .handle(createHandler(handler)()),
+  ),
+  // @ts-ignore
+  Route.normalise(
+    route("/guarded")
+      .method("get")
+      .use(middlewares.guard)
+      .use(middlewares.contextSync)
+      .use(createMiddleware(() => middlewares.updateHeaders)())
+      .use(createMiddleware(() => middlewares.contextAsync)())
+      .handle(createHandler(guarded)()),
   ),
 ]);
 
@@ -58,7 +64,7 @@ app.use(
     if (handler) {
       return handler(c.req.raw);
     }
-    return new Response("NOT FOUND", { status: 404 });
+    return c.notFound();
   }),
 );
 
