@@ -7,7 +7,7 @@ import type {
   UniversalMiddleware,
 } from "@universal-middleware/core";
 import { attachUniversal, bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
-import { type Context as ElysiaContext, Elysia, type Handler } from "elysia";
+import { type Context as ElysiaContext, Elysia, type Handler, NotFoundError } from "elysia";
 
 export const contextSymbol = Symbol.for("unContext");
 export const pendingSymbol = Symbol.for("unPending");
@@ -28,7 +28,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
   return (...args: T) => {
     const handler = handlerFactory(...args);
 
-    return bindUniversal(handler, function universalHandlerElysia(elysiaContext) {
+    return bindUniversal(handler, async function universalHandlerElysia(elysiaContext) {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       let context = (elysiaContext as any)[contextSymbol];
 
@@ -40,7 +40,16 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
         context = (elysiaContext as any)[contextSymbol];
       }
 
-      return this[universalSymbol](elysiaContext.request, context, getRuntime(elysiaContext));
+      const response: Response | undefined = await this[universalSymbol](
+        elysiaContext.request,
+        context,
+        getRuntime(elysiaContext),
+      );
+
+      if (response) {
+        return response;
+      }
+      throw new NotFoundError();
     });
   };
 }
