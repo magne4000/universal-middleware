@@ -1,10 +1,12 @@
 import { describe, expect, test } from "vitest";
 import {
+  bindUniversal,
+  enhance,
+  MiddlewareOrder,
   type RuntimeAdapter,
   type UniversalFn,
   type UniversalHandler,
   type UniversalMiddleware,
-  bindUniversal,
   universalSymbol,
 } from "../src/index";
 import { pipe } from "../src/pipe";
@@ -170,5 +172,60 @@ describe("pipe", () => {
 
     const body = await (await response).text();
     expect(body).toBe("Hello World!");
+  });
+
+  test("context middleware |> handler |> response handler", async () => {
+    const handler = pipe(
+      () => ({ a: 1 }),
+      (_: Request) => new Response("Hello"),
+      (_: Request) => {
+        return async (response: Response) => {
+          const body = await response.text();
+          return new Response(`${body} World!`);
+        };
+      },
+    ) as UniversalHandler;
+    const response = handler(request, context, runtime);
+    await expect(response).resolves.toBeInstanceOf(Response);
+
+    const body = await (await response).text();
+    expect(body).toBe("Hello World!");
+  });
+
+  test("handler |> logger", async () => {
+    let logged = false;
+    const handler = pipe(
+      (_: Request) => new Response(logged ? "Logged" : "Hello"),
+      (_: Request) => {
+        logged = true;
+      },
+    ) as UniversalHandler;
+    const response = handler(request, context, runtime);
+    await expect(response).resolves.toBeInstanceOf(Response);
+
+    const body = await (await response).text();
+    expect(body).toBe("Hello");
+    expect(logged).toBe(true);
+  });
+
+  test("enhanced logger |> handler", async () => {
+    let logged = false;
+    const handler = pipe(
+      enhance(
+        (_: Request) => {
+          logged = true;
+        },
+        {
+          order: MiddlewareOrder.LOGGING,
+        },
+      ),
+      (_: Request) => new Response(logged ? "Logged" : "Hello"),
+    ) as UniversalHandler;
+    const response = handler(request, context, runtime);
+    await expect(response).resolves.toBeInstanceOf(Response);
+
+    const body = await (await response).text();
+    expect(body).toBe("Hello");
+    expect(logged).toBe(true);
   });
 });

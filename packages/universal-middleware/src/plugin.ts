@@ -150,7 +150,10 @@ function getVirtualInputs(
   );
 }
 
-function filterInput(input: string) {
+function filterInput(input: string, importer?: string | undefined) {
+  if (importer !== undefined && !importer.startsWith("virtual:universal-middleware")) {
+    return null;
+  }
   if (input.match(/(^|\.|\/|\\\\)handler\.[cm]?[jt]sx?$/)) {
     return "handler";
   }
@@ -199,7 +202,7 @@ function normalizeInput(
     );
 
     if (!options?.ignoreRecommendations && i >= 2) {
-      console.warn("Prefer using an object for esbuild `entryPoints` instead of an array");
+      console.warn("Prefer using an object for esbuild/rollup `entryPoints` instead of an array");
     }
 
     return res;
@@ -492,14 +495,28 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
     name: namespace,
     enforce: "post",
     rollup: {
-      resolveId(id) {
-        if (id.startsWith(namespace) || filterInput(id)) {
+      resolveId(id, importer) {
+        if (id.startsWith(namespace) || filterInput(id, importer)) {
           return id;
         }
       },
 
       options(opts) {
         normalizedInput = normalizeInput(opts.input, options);
+
+        opts.onwarn = (warning, handler) => {
+          // Elysia and Typebox warnings
+          if (
+            warning.code === "THIS_IS_UNDEFINED" ||
+            (warning.code === "CIRCULAR_DEPENDENCY" && warning.message.includes("typebox")) ||
+            (warning.code === "CIRCULAR_DEPENDENCY" && warning.message.includes("elysia"))
+          ) {
+            return;
+          }
+
+          // console.warn everything else
+          handler(warning);
+        };
         if (normalizedInput) {
           opts.input = normalizedInput;
           appendVirtualInputs(opts.input, options?.servers);

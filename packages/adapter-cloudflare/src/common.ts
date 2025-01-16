@@ -1,9 +1,9 @@
 import type {
-  Response as CloudflareResponse,
   EventContext,
   ExecutionContext,
   ExportedHandlerFetchHandler,
   PagesFunction,
+  Response as CloudflareResponse,
 } from "@cloudflare/workers-types";
 import type {
   Get,
@@ -44,7 +44,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
     return {
       fetch: bindUniversal(handler, async function universalHandlerCloudflare(request, env, ctx) {
         const universalContext = initContext<InContext>(env);
-        const response = await this[universalSymbol](
+        const response: Response | undefined = await this[universalSymbol](
           request as unknown as Request,
           universalContext,
           getRuntime(env, ctx),

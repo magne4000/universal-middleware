@@ -8,6 +8,7 @@ export interface Run {
   port: number;
   waitUntilType?: "undefined" | "function";
   delay?: number;
+  env?: Record<string, string>;
 }
 
 export interface Options {
@@ -29,7 +30,7 @@ declare global {
 export function runTests(runs: Run[], options: Options) {
   options.vitest.describe.concurrent.each(runs)("$name", (run) => {
     let server: ChildProcess | undefined = undefined;
-    const { command, port, delay } = run;
+    const { command, port, delay, env } = run;
     let host = `http://localhost:${port}`;
 
     options.vitest.beforeAll(async () => {
@@ -38,6 +39,7 @@ export function runTests(runs: Run[], options: Options) {
         stdio: "inherit",
         env: {
           ...process.env,
+          ...env,
         },
       });
 
@@ -101,11 +103,23 @@ export function runTests(runs: Run[], options: Options) {
       await options?.test?.(response, body, run);
     });
 
+    options.vitest.test("guarded route", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${options.prefix ?? ""}/guarded`);
+      const body = await response.text();
+      options.vitest.expect(response.status).toBe(401);
+      options.vitest.expect(body).toBe("Unauthorized");
+    });
+
     options.vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {
       const response = await fetch(`${host}${options.prefix ?? ""}/user/magne4000`);
       const body = await response.text();
       options.vitest.expect(response.status).toBe(200);
       options.vitest.expect(body).toBe("User name is: magne4000");
+    });
+
+    options.vitest.test("404", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${options.prefix ?? ""}/404`);
+      options.vitest.expect(response.status).toBe(404);
     });
 
     if (options?.testPost) {

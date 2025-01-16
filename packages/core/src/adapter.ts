@@ -19,5 +19,5 @@ export function getAdapterRuntime<K extends Adapter["adapter"]>(
   const a = getAdapter(adapter, adapterArgs);
   const r = getRuntime(runtimeArgs);
 
-  return Object.freeze({ ...r, ...a });
+  return { ...r, ...a };
 }

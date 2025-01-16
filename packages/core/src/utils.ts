@@ -1,6 +1,14 @@
 import type { OutgoingHttpHeaders } from "node:http";
-import { unboundSymbol, universalSymbol } from "./const";
-import type { AnyFn, SetThis, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
+import { orderSymbol, unboundSymbol, universalSymbol, urlSymbol } from "./const";
+import type {
+  AnyFn,
+  EnhancedMiddleware,
+  SetThis,
+  UniversalFn,
+  UniversalHandler,
+  UniversalMiddleware,
+  UniversalSymbols,
+} from "./types";
 
 export function isBodyInit(value: unknown): value is BodyInit {
   return (
@@ -47,6 +55,63 @@ function normalizeHttpHeader(value: string | string[] | number | undefined): str
     return value.join(", ");
   }
   return (value as string) || "";
+}
+
+export function url(request: { url: string; [urlSymbol]?: URL }): URL {
+  if (request[urlSymbol]) {
+    return request[urlSymbol];
+  }
+  if (Object.isFrozen(request) || Object.isSealed(request)) {
+    return new URL(request.url);
+  }
+  request[urlSymbol] = new URL(request.url);
+  return request[urlSymbol];
+}
+
+export function getUniversal<T extends object>(subject: T | { [universalSymbol]: T }): T {
+  return universalSymbol in subject ? subject[universalSymbol] : subject;
+}
+
+export function getUniversalProp<T extends object, K extends keyof UniversalSymbols>(
+  subject: T | { [universalSymbol]: T },
+  prop: K,
+): UniversalSymbols[K] | undefined;
+export function getUniversalProp<T extends object, K extends keyof UniversalSymbols>(
+  subject: T | { [universalSymbol]: T },
+  prop: K,
+  defaultValue: UniversalSymbols[K],
+): UniversalSymbols[K];
+export function getUniversalProp<T extends object, K extends keyof UniversalSymbols>(
+  subject: T | { [universalSymbol]: T },
+  prop: K,
+  defaultValue?: UniversalSymbols[K] | undefined,
+): UniversalSymbols[K] | undefined {
+  if (prop in subject) return (subject as UniversalSymbols)[prop];
+  if (universalSymbol in subject) return (subject as Record<symbol, UniversalSymbols>)[universalSymbol][prop];
+  return defaultValue;
+}
+
+/**
+ * @internal
+ */
+export function ordered(middlewares: EnhancedMiddleware[]) {
+  return Array.from(middlewares).sort(
+    (a, b) => getUniversalProp(a, orderSymbol, 0) - getUniversalProp(b, orderSymbol, 0),
+  );
+}
+
+/**
+ * @internal
+ */
+export function cloneFunction<F extends AnyFn>(originalFn: F): F {
+  const extendedFunction = function (this: unknown, ...args: unknown[]) {
+    // Use Reflect.apply to invoke the original function
+    return Reflect.apply(Object.getPrototypeOf(extendedFunction), this, args);
+  };
+
+  Object.setPrototypeOf(extendedFunction, originalFn);
+
+  return extendedFunction as F;
 }
 
 /**
