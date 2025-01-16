@@ -7,7 +7,7 @@ import { env, type Get, type UniversalMiddleware } from "@universal-middleware/c
 
 const handler = (() => (request, context, runtime) => {
   // process.env.DATABASE_URL on supported environment
-  // Done.env.get("DATABASE_URL") for Deno
+  // Deno.env.get("DATABASE_URL") for Deno
   // runtime.env.DATABASE_URL for Cloudflare
   const { DATABASE_URL } = env<{ DATABASE_URL: string }>(runtime);
   
