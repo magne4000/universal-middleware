@@ -7,7 +7,15 @@ import type { Context as ElysiaContext } from "elysia";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { H3Event } from "h3";
 import type { Context as HonoContext } from "hono";
-import type { universalSymbol } from "./const";
+import type {
+  methodSymbol,
+  MiddlewareOrder,
+  nameSymbol,
+  optionsToSymbols,
+  orderSymbol,
+  pathSymbol,
+  universalSymbol,
+} from "./const"; // Helpers
 
 // Helpers
 
@@ -235,3 +243,45 @@ export type UniversalHandler<InContext extends Universal.Context = Universal.Con
 ) => Awaitable<Response>;
 
 export type Get<T extends unknown[], U> = (...args: T) => U;
+
+// Router
+
+export interface UniversalSymbols {
+  [nameSymbol]: string;
+  [methodSymbol]: HttpMethod | HttpMethod[];
+  [pathSymbol]: string;
+  [orderSymbol]: MiddlewareOrder | number;
+}
+
+type OptionsToSymbols = typeof optionsToSymbols;
+
+export type UniversalOptions = {
+  [K in keyof OptionsToSymbols]: UniversalSymbols[OptionsToSymbols[K]];
+};
+
+export interface UniversalOptionsArg extends Partial<UniversalOptions> {
+  /**
+   * @default true
+   */
+  immutable?: boolean;
+}
+
+export type WithUniversalSymbols<T extends UniversalOptionsArg> = Pick<
+  UniversalSymbols,
+  OptionsToSymbols[keyof T & keyof OptionsToSymbols]
+>;
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+export type HttpMethod = "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH";
+export type Enhance<T> = T & Partial<UniversalSymbols>;
+
+export type EnhancedMiddleware =
+  | Enhance<UniversalMiddleware>
+  | { [universalSymbol]: Enhance<UniversalMiddleware> }
+  | (Enhance<AnyFn> & { [universalSymbol]: UniversalMiddleware });
+
+export interface UniversalRouterInterface<T extends "sync" | "async" = "sync"> {
+  use(middleware: EnhancedMiddleware): T extends "async" ? this | Promise<this> : this;
+  route(handler: EnhancedMiddleware): T extends "async" ? this | Promise<this> : this;
+  applyCatchAll(): T extends "async" ? this | Promise<this> : this;
+}

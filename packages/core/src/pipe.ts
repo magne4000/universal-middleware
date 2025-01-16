@@ -1,6 +1,6 @@
 import { universalSymbol } from "./const";
-import type { AnyFn, Awaitable, SetThisMiddleware, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
-import { bindUniversal } from "./utils";
+import type { AnyFn, Awaitable, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
+import { bindUniversal, getUniversal, ordered } from "./utils";
 
 type _Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
 type Out<T> = T extends UniversalFn<infer X, infer _> ? _Out<X> : _Out<T>;
@@ -17,15 +17,17 @@ type AnyMiddleware<In extends Universal.Context = any, Out extends Universal.Con
 
 type ExtractUF<T> = T extends UniversalFn<infer _, infer Fn> ? Fn : never;
 
-type ComposeReturnType<T extends AnyMiddleware[]> = Last<T> extends UniversalHandler<any>
-  ? UniversalHandler<In<First<T>>>
-  : Last<T> extends UniversalMiddleware<any, any>
-    ? UniversalMiddleware<In<First<T>>, In<Last<T>>>
-    : Last<T> extends UniversalFn<UniversalHandler<any>, infer _>
-      ? UniversalFn<UniversalHandler<In<First<T>>>, ExtractUF<Last<T>>>
-      : Last<T> extends UniversalFn<UniversalMiddleware<any, any>, infer _>
-        ? UniversalFn<UniversalMiddleware<In<First<T>>, In<Last<T>>>, ExtractUF<Last<T>>>
-        : never;
+type ComposeReturnType<T extends AnyMiddleware[]> = Last<T> extends never
+  ? T[number]
+  : Last<T> extends UniversalHandler<any>
+    ? UniversalHandler<In<First<T>>>
+    : Last<T> extends UniversalMiddleware<any, any>
+      ? UniversalMiddleware<In<First<T>>, In<Last<T>>>
+      : Last<T> extends UniversalFn<UniversalHandler<any>, infer _>
+        ? UniversalFn<UniversalHandler<In<First<T>>>, ExtractUF<Last<T>>>
+        : Last<T> extends UniversalFn<UniversalMiddleware<any, any>, infer _>
+          ? UniversalFn<UniversalMiddleware<In<First<T>>, In<Last<T>>>, ExtractUF<Last<T>>>
+          : never;
 
 type Cast<
   T extends AnyMiddleware,
@@ -105,24 +107,27 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
  * @see {@link https://universal-middleware.dev/helpers/pipe}
  * @returns A new middleware function that applies the input middleware functions in sequence.
  */
-export function pipe<F extends AnyMiddleware[]>(...a: Pipe<F> extends F ? F : Pipe<F>): ComposeReturnType<F> {
-  const middlewares: UniversalMiddleware<any, any>[] = (a as AnyMiddleware[]).map((m) =>
-    universalSymbol in m ? (m[universalSymbol] as SetThisMiddleware<any>) : m,
-  );
-
+export function pipe<F extends AnyMiddleware[]>(
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+  this: { noCast?: boolean } | void,
+  ...a: Pipe<F> extends F ? F : Pipe<F>
+): ComposeReturnType<F> {
+  const ordererArgs = ordered(a);
   const fn: UniversalMiddleware<any, any> = async function pipeInternal(request, context, runtime) {
     const pending: ((response: Response) => Awaitable<Response>)[] = [];
 
     let _response: Response | undefined = undefined;
-    for (const m of middlewares) {
-      const response = await m(request, context ?? {}, runtime);
+    for (const m of ordererArgs) {
+      const um = getUniversal(m);
+      const response = await um(request, context ?? {}, runtime);
 
       if (typeof response === "function") {
         pending.push(response);
       } else if (response !== null && typeof response === "object") {
-        if (response instanceof Response) {
+        // Do not override response if it already exists.
+        // The only to actually update the response is through a Response Function.
+        if (!_response && response instanceof Response) {
           _response = response;
-          break;
         }
         // Update context
         // biome-ignore lint/style/noParameterAssign: <explanation>
@@ -144,9 +149,11 @@ export function pipe<F extends AnyMiddleware[]>(...a: Pipe<F> extends F ? F : Pi
     return _response;
   };
 
-  const lastMiddleware = (a as AnyMiddleware[]).at(-1);
-  if (lastMiddleware && universalSymbol in lastMiddleware) {
-    return bindUniversal(fn, lastMiddleware) as ComposeReturnType<F>;
+  if (!this?.noCast) {
+    const lastMiddleware = (a as AnyMiddleware[]).at(-1);
+    if (lastMiddleware && universalSymbol in lastMiddleware) {
+      return bindUniversal(fn, lastMiddleware) as ComposeReturnType<F>;
+    }
   }
 
   return fn as ComposeReturnType<F>;

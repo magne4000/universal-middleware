@@ -10,6 +10,22 @@ const runs: Run[] = [
     port: port++,
   },
   {
+    name: "adapter-fastify: node router",
+    command: "pnpm run test:run-fastify:node",
+    port: port++,
+    env: {
+      TEST_CASE: "router",
+    },
+  },
+  {
+    name: "adapter-fastify: node router enhanced",
+    command: "pnpm run test:run-fastify:node",
+    port: port++,
+    env: {
+      TEST_CASE: "router_enhanced",
+    },
+  },
+  {
     name: "adapter-fastify: bun",
     command: "pnpm run test:run-fastify:bun",
     port: port++,

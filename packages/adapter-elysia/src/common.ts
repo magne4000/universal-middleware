@@ -7,7 +7,7 @@ import type {
   UniversalMiddleware,
 } from "@universal-middleware/core";
 import { attachUniversal, bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
-import { Elysia, type Context as ElysiaContext, type Handler } from "elysia";
+import { type Context as ElysiaContext, Elysia, type Handler, NotFoundError } from "elysia";
 
 export const contextSymbol = Symbol.for("unContext");
 export const pendingSymbol = Symbol.for("unPending");
@@ -16,7 +16,7 @@ export const pendingHandledSymbol = Symbol.for("unPendingHandled");
 export type ElysiaHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, Handler>;
 export type ElysiaMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
   UniversalMiddleware<In, Out>,
-  ReturnType<typeof createMiddleware>
+  typeof initPlugin
 >;
 
 /**
@@ -28,7 +28,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
   return (...args: T) => {
     const handler = handlerFactory(...args);
 
-    return bindUniversal(handler, function universalHandlerElysia(elysiaContext) {
+    return bindUniversal(handler, async function universalHandlerElysia(elysiaContext) {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       let context = (elysiaContext as any)[contextSymbol];
 
@@ -40,7 +40,16 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
         context = (elysiaContext as any)[contextSymbol];
       }
 
-      return this[universalSymbol](elysiaContext.request, context, getRuntime(elysiaContext));
+      const response: Response | undefined = await this[universalSymbol](
+        elysiaContext.request,
+        context,
+        getRuntime(elysiaContext),
+      );
+
+      if (response) {
+        return response;
+      }
+      throw new NotFoundError();
     });
   };
 }
@@ -53,7 +62,7 @@ export function createMiddleware<
   InContext extends Universal.Context,
   OutContext extends Universal.Context,
 >(middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>) {
-  return (...args: T) => {
+  return (...args: T): ReturnType<typeof initPlugin> => {
     const middleware = middlewareFactory(...args);
 
     return attachUniversal(
@@ -96,7 +105,8 @@ export function createMiddleware<
           }
 
           return currentResponse;
-        }),
+          // biome-ignore lint/suspicious/noExplicitAny: avoid recursive type error
+        }) as any,
     );
   };
 }

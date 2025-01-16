@@ -6,3 +6,4 @@ export {
   type CloudflareHandler,
   type CloudflarePagesFunction,
 } from "./common.js";
+export { apply } from "./router.js";

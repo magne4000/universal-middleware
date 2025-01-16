@@ -18,6 +18,8 @@ export type VercelNodeHandler<In extends Universal.Context> = UniversalFn<
 export function createEdgeHandler<T extends unknown[], InContext extends Universal.Context>(
   handlerFactory: Get<T, UniversalHandler<InContext>>,
 ): Get<T, VercelEdgeHandler<InContext>> {
+  const requestAdapter = createRequestAdapter();
+
   return (...args) => {
     const handler = handlerFactory(...args);
 

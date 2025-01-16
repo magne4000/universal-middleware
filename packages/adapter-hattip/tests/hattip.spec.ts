@@ -10,19 +10,35 @@ const runs: Run[] = [
     port: port,
   },
   {
+    name: "adapter-hattip: node router",
+    command: "pnpm run test:run-hattip:node",
+    port: port + 1,
+    env: {
+      TEST_CASE: "router",
+    },
+  },
+  {
+    name: "adapter-hattip: node router enhanced",
+    command: "pnpm run test:run-hattip:node",
+    port: port + 2,
+    env: {
+      TEST_CASE: "router_enhanced",
+    },
+  },
+  {
     name: "adapter-hattip: bun",
     command: "pnpm run test:run-hattip:bun",
-    port: port + 1,
+    port: port + 3,
   },
   {
     name: "adapter-hattip: deno",
     command: "pnpm run test:run-hattip:deno",
-    port: port + 2,
+    port: port + 4,
   },
   {
     name: "adapter-hattip: cloudflare worker",
-    command: `pnpm run test:run-hattip:worker --inspector-port ${port + 10000 + 3}`,
-    port: port + 3,
+    command: `pnpm run test:run-hattip:worker --inspector-port ${port + 10000 + 5}`,
+    port: port + 5,
     waitUntilType: "function",
     delay: 1000,
   },

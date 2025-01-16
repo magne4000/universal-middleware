@@ -10,9 +10,25 @@ const runs: Run[] = [
     port: port,
   },
   {
-    name: "adapter-elysia: worker",
-    command: `pnpm run test:run-elysia:worker --inspector-port ${port + 10000 + 1}`,
+    name: "adapter-elysia: bun router",
+    command: "pnpm run test:run-elysia:bun",
     port: port + 1,
+    env: {
+      TEST_CASE: "router",
+    },
+  },
+  {
+    name: "adapter-elysia: bun router enhanced",
+    command: "pnpm run test:run-elysia:bun",
+    port: port + 2,
+    env: {
+      TEST_CASE: "router_enhanced",
+    },
+  },
+  {
+    name: "adapter-elysia: worker",
+    command: `pnpm run test:run-elysia:worker --inspector-port ${port + 10000 + 3}`,
+    port: port + 3,
     waitUntilType: "function",
     delay: 1000,
   },

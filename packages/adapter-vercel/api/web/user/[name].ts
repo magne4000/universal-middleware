@@ -3,5 +3,5 @@ import { middlewares, routeParamHandler } from "@universal-middleware/tests/util
 import { createEdgeHandler } from "../../../src/index.js";
 
 export const GET = createEdgeHandler(() =>
-  pipe(middlewares[0](), middlewares[1](), middlewares[2](), routeParamHandler()),
+  pipe(middlewares.contextSync, middlewares.updateHeaders, middlewares.contextAsync, routeParamHandler()),
 )();

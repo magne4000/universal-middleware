@@ -10,6 +10,22 @@ const runs: Run[] = [
     port: port++,
   },
   {
+    name: "adapter-h3: node router",
+    command: "pnpm run test:run-h3:node",
+    port: port++,
+    env: {
+      TEST_CASE: "router",
+    },
+  },
+  {
+    name: "adapter-h3: node router enhanced",
+    command: "pnpm run test:run-h3:node",
+    port: port++,
+    env: {
+      TEST_CASE: "router_enhanced",
+    },
+  },
+  {
     name: "adapter-h3: bun",
     command: "pnpm run test:run-h3:bun",
     port: port++,

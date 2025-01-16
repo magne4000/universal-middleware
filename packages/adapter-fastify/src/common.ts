@@ -14,7 +14,7 @@ import {
   mergeHeadersInto,
   universalSymbol,
 } from "@universal-middleware/core";
-import { type DecoratedRequest, createRequestAdapter } from "@universal-middleware/express";
+import { createRequestAdapter, type DecoratedRequest } from "@universal-middleware/express";
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import fp from "fastify-plugin";
 
@@ -127,7 +127,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
 
     return bindUniversal(handler, async function universalHandlerFastify(request, reply) {
       const ctx = initContext<InContext>(request);
-      const response = await this[universalSymbol](
+      const response: Response | undefined = await this[universalSymbol](
         requestAdapter(getRawRequest(request)),
         ctx,
         getRuntime(request, reply),
@@ -140,6 +140,8 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
 
         return reply.send(response);
       }
+
+      reply.callNotFound();
     });
   };
 }
