@@ -3,7 +3,7 @@
 `@universal-middleware/compress` provides compression capabilities for `Response` body.
 
 > [!NOTE]
-> **Cloudflare** middlewares are not generated, as Cloudflare compresses responses by default.
+> No support for **Cloudflare** adapter, as Cloudflare compresses responses by default.
 
 ## Usage
 
