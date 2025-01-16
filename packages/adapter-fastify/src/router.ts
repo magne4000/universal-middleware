@@ -1,5 +1,5 @@
 import {
-  apply as applyCore,
+  applyAsync as applyAsyncCore,
   type EnhancedMiddleware,
   getUniversal,
   type UniversalHandler,
@@ -33,5 +33,5 @@ export class UniversalFastifyRouter extends UniversalRouter implements Universal
 
 export function apply(app: FastifyInstance, middlewares: EnhancedMiddleware[]) {
   const router = new UniversalFastifyRouter(app);
-  return applyCore(router, middlewares, true);
+  return applyAsyncCore(router, middlewares);
 }

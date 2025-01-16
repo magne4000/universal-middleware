@@ -105,31 +105,9 @@ export class UniversalRouter implements UniversalRouterInterface {
   }
 }
 
-export function apply(router: UniversalRouterInterface, middlewares: EnhancedMiddleware[]): void;
-export function apply(
-  router: UniversalRouterInterface<"async">,
-  middlewares: EnhancedMiddleware[],
-  async: true,
-): Promise<void>;
-export function apply<T extends "sync" | "async" = "sync">(
-  router: UniversalRouterInterface<T>,
-  middlewares: EnhancedMiddleware[],
-  async?: boolean,
-) {
+export function apply(router: UniversalRouterInterface, middlewares: EnhancedMiddleware[]) {
   const ms = ordered(middlewares);
 
-  if (async) {
-    return (async () => {
-      for (const m of ms) {
-        if (getUniversalProp(m, pathSymbol)) {
-          await router.route(m);
-        } else {
-          await router.use(m);
-        }
-      }
-      await router.applyCatchAll();
-    })();
-  }
   for (const m of ms) {
     if (getUniversalProp(m, pathSymbol)) {
       router.route(m);
@@ -138,6 +116,19 @@ export function apply<T extends "sync" | "async" = "sync">(
     }
   }
   router.applyCatchAll();
+}
+
+export async function applyAsync(router: UniversalRouterInterface<"async">, middlewares: EnhancedMiddleware[]) {
+  const ms = ordered(middlewares);
+
+  for (const m of ms) {
+    if (getUniversalProp(m, pathSymbol)) {
+      await router.route(m);
+    } else {
+      await router.use(m);
+    }
+  }
+  await router.applyCatchAll();
 }
 
 function assertRoute(middleware: EnhancedMiddleware) {
