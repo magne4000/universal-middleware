@@ -1,32 +1,8 @@
 import { addRoute, createRouter, findRoute, type RouterContext } from "rou3";
-import { methodSymbol, nameSymbol, optionsToSymbols, pathSymbol, universalSymbol } from "./const";
+import { methodSymbol, nameSymbol, orderSymbol, pathSymbol, universalSymbol } from "./const";
 import { pipe } from "./pipe";
-import type {
-  AnyFn,
-  EnhancedMiddleware,
-  UniversalHandler,
-  UniversalMiddleware,
-  UniversalOptions,
-  UniversalOptionsArg,
-  UniversalRouterInterface,
-  WithUniversalSymbols,
-} from "./types";
-import { cloneFunction, getUniversal, getUniversalProp, ordered, url } from "./utils";
-
-export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
-  middleware: F,
-  options: O,
-): F & WithUniversalSymbols<O> {
-  const { immutable, ...rest } = options;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const m: any = immutable === false ? middleware : cloneFunction(middleware);
-  for (const [key, value] of Object.entries(rest)) {
-    if (key in optionsToSymbols) {
-      m[optionsToSymbols[key as keyof UniversalOptions]] = value;
-    }
-  }
-  return m;
-}
+import type { EnhancedMiddleware, UniversalHandler, UniversalMiddleware, UniversalRouterInterface, } from "./types";
+import { getUniversal, getUniversalProp, ordered, url } from "./utils";
 
 export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<UniversalHandler>;
@@ -105,11 +81,25 @@ export class UniversalRouter implements UniversalRouterInterface {
   }
 }
 
+/**
+ * A middleware is considered a handler if:
+ * - It has an order equal to 0
+ * - It has a path and no order
+ */
+function isHandler(m: EnhancedMiddleware) {
+  const order = getUniversalProp(m, orderSymbol);
+  if (typeof order === "number") {
+    return order === 0;
+  }
+  return Boolean(getUniversalProp(m, pathSymbol));
+}
+
+// TODO handle path for middlewares
 export function apply(router: UniversalRouterInterface, middlewares: EnhancedMiddleware[]) {
   const ms = ordered(middlewares);
 
   for (const m of ms) {
-    if (getUniversalProp(m, pathSymbol)) {
+    if (isHandler(m)) {
       router.route(m);
     } else {
       router.use(m);
@@ -122,7 +112,7 @@ export async function applyAsync(router: UniversalRouterInterface<"async">, midd
   const ms = ordered(middlewares);
 
   for (const m of ms) {
-    if (getUniversalProp(m, pathSymbol)) {
+    if (isHandler(m)) {
       await router.route(m);
     } else {
       await router.use(m);

@@ -1,5 +1,5 @@
 import type { OutgoingHttpHeaders } from "node:http";
-import { orderSymbol, unboundSymbol, universalSymbol, urlSymbol } from "./const";
+import { optionsToSymbols, orderSymbol, unboundSymbol, universalSymbol, urlSymbol } from "./const";
 import type {
   AnyFn,
   EnhancedMiddleware,
@@ -7,7 +7,10 @@ import type {
   UniversalFn,
   UniversalHandler,
   UniversalMiddleware,
+  UniversalOptions,
+  UniversalOptionsArg,
   UniversalSymbols,
+  WithUniversalSymbols,
 } from "./types";
 
 export function isBodyInit(value: unknown): value is BodyInit {
@@ -89,6 +92,21 @@ export function getUniversalProp<T extends object, K extends keyof UniversalSymb
   if (prop in subject) return (subject as UniversalSymbols)[prop];
   if (universalSymbol in subject) return (subject as Record<symbol, UniversalSymbols>)[universalSymbol][prop];
   return defaultValue;
+}
+
+export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
+  middleware: F,
+  options: O,
+): F & WithUniversalSymbols<O> {
+  const { immutable, ...rest } = options;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const m: any = immutable === false ? middleware : cloneFunction(middleware);
+  for (const [key, value] of Object.entries(rest)) {
+    if (key in optionsToSymbols) {
+      m[optionsToSymbols[key as keyof UniversalOptions]] = value;
+    }
+  }
+  return m;
 }
 
 /**
