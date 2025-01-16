@@ -94,6 +94,11 @@ export function getUniversalProp<T extends object, K extends keyof UniversalSymb
   return defaultValue;
 }
 
+/**
+ * The enhance helper provides a way to attach metadata to Middlewares and Handlers.
+ * This metadata can include routing information like path and method, as well as order for automatic middleware sequencing.
+ * @see {@link https://d80b2041.universal-middleware.pages.dev/helpers/enhance}
+ */
 export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
   middleware: F,
   options: O,
