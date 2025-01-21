@@ -19,5 +19,6 @@ export default defineConfig([
       opts.outbase = "src";
     },
     bundle: true,
+    treeshake: true,
   },
 ]);

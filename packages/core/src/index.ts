@@ -15,10 +15,10 @@ export {
   getUniversal,
   getUniversalProp,
   url,
+  enhance,
 } from "./utils.js";
 export { pipe } from "./pipe.js";
 export { params } from "./route.js";
 export { env } from "./env.js";
-export { universalSymbol, methodSymbol, nameSymbol, orderSymbol, pathSymbol } from "./const.js";
-export { UniversalRouter, enhance, apply } from "./router";
-export { MiddlewareOrder } from "./const";
+export { universalSymbol, methodSymbol, nameSymbol, orderSymbol, pathSymbol, MiddlewareOrder } from "./const.js";
+export { UniversalRouter, apply, applyAsync } from "./router.js";

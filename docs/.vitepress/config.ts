@@ -93,6 +93,10 @@ export default defineConfig({
             text: "Pipe",
             link: "/helpers/pipe",
           },
+          {
+            text: "Enhance",
+            link: "/helpers/enhance",
+          },
         ],
       },
       {

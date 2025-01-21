@@ -1,32 +1,8 @@
 import { addRoute, createRouter, findRoute, type RouterContext } from "rou3";
-import { methodSymbol, nameSymbol, optionsToSymbols, pathSymbol, universalSymbol } from "./const";
+import { methodSymbol, nameSymbol, orderSymbol, pathSymbol, universalSymbol } from "./const";
 import { pipe } from "./pipe";
-import type {
-  AnyFn,
-  EnhancedMiddleware,
-  UniversalHandler,
-  UniversalMiddleware,
-  UniversalOptions,
-  UniversalOptionsArg,
-  UniversalRouterInterface,
-  WithUniversalSymbols,
-} from "./types";
-import { cloneFunction, getUniversal, getUniversalProp, ordered, url } from "./utils";
-
-export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
-  middleware: F,
-  options: O,
-): F & WithUniversalSymbols<O> {
-  const { immutable, ...rest } = options;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const m: any = immutable === false ? middleware : cloneFunction(middleware);
-  for (const [key, value] of Object.entries(rest)) {
-    if (key in optionsToSymbols) {
-      m[optionsToSymbols[key as keyof UniversalOptions]] = value;
-    }
-  }
-  return m;
-}
+import type { EnhancedMiddleware, UniversalHandler, UniversalMiddleware, UniversalRouterInterface } from "./types";
+import { getUniversal, getUniversalProp, ordered, url } from "./utils";
 
 export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<UniversalHandler>;
@@ -105,39 +81,53 @@ export class UniversalRouter implements UniversalRouterInterface {
   }
 }
 
-export function apply(router: UniversalRouterInterface, middlewares: EnhancedMiddleware[]): void;
-export function apply(
-  router: UniversalRouterInterface<"async">,
-  middlewares: EnhancedMiddleware[],
-  async: true,
-): Promise<void>;
-export function apply<T extends "sync" | "async" = "sync">(
-  router: UniversalRouterInterface<T>,
-  middlewares: EnhancedMiddleware[],
-  async?: boolean,
-) {
+/**
+ * A middleware is considered a handler if:
+ * - It has an order equal to 0
+ * - It has a path and no order
+ */
+function isHandler(m: EnhancedMiddleware) {
+  const order = getUniversalProp(m, orderSymbol);
+  const path = getUniversalProp(m, pathSymbol);
+  if (typeof order === "number") {
+    if (order !== 0 && path) {
+      // `pathSymbol` not supported for middlewares (yet?)
+      console.warn(
+        `Found a Universal Middleware with "path" metadata. ` +
+          "This will lead to unpredictable behaviour. " +
+          "Please open an issue at https://github.com/magne4000/universal-middleware and explain your use case with the expected behaviour.",
+      );
+    }
+    return order === 0;
+  }
+  return Boolean(path);
+}
+
+// TODO handle path for middlewares
+export function apply(router: UniversalRouterInterface, middlewares: EnhancedMiddleware[]) {
   const ms = ordered(middlewares);
 
-  if (async) {
-    return (async () => {
-      for (const m of ms) {
-        if (getUniversalProp(m, pathSymbol)) {
-          await router.route(m);
-        } else {
-          await router.use(m);
-        }
-      }
-      await router.applyCatchAll();
-    })();
-  }
   for (const m of ms) {
-    if (getUniversalProp(m, pathSymbol)) {
+    if (isHandler(m)) {
       router.route(m);
     } else {
       router.use(m);
     }
   }
   router.applyCatchAll();
+}
+
+export async function applyAsync(router: UniversalRouterInterface<"async">, middlewares: EnhancedMiddleware[]) {
+  const ms = ordered(middlewares);
+
+  for (const m of ms) {
+    if (isHandler(m)) {
+      await router.route(m);
+    } else {
+      await router.use(m);
+    }
+  }
+  await router.applyCatchAll();
 }
 
 function assertRoute(middleware: EnhancedMiddleware) {
