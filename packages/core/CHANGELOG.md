@@ -5,6 +5,19 @@
 
 * new type RuntimeAdapterTarget ([8768e6d](https://github.com/magne4000/universal-middleware/commit/8768e6dd6f1e7e7bfcbe88baf13a21bbaae842c6))
 
+## [0.4.0](https://github.com/magne4000/universal-middleware/compare/core-v0.3.3...core-v0.4.0) (2025-01-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for Deno v1
+
+### Features
+
+* Default to 404 when a `UniversalHandler` does not return a Response ([cc44c7c](https://github.com/magne4000/universal-middleware/commit/cc44c7cc1ef6f29df278ddabc093b4225b7e7bd5))
+* Universal Router support for most adapters ([cc44c7c](https://github.com/magne4000/universal-middleware/commit/cc44c7cc1ef6f29df278ddabc093b4225b7e7bd5))
+* update Deno support ([cc44c7c](https://github.com/magne4000/universal-middleware/commit/cc44c7cc1ef6f29df278ddabc093b4225b7e7bd5))
+
 ## [0.3.2](https://github.com/magne4000/universal-middleware/compare/core-v0.3.1...core-v0.3.2) (2024-12-09)
 
 

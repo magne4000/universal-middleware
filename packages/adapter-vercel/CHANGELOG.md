@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.4.0](https://github.com/magne4000/universal-middleware/compare/vercel-v0.3.3...vercel-v0.4.0) (2025-01-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for Deno v1
+
+### Features
+
+* Default to 404 when a `UniversalHandler` does not return a Response ([cc44c7c](https://github.com/magne4000/universal-middleware/commit/cc44c7cc1ef6f29df278ddabc093b4225b7e7bd5))
+* Universal Router support for most adapters ([cc44c7c](https://github.com/magne4000/universal-middleware/commit/cc44c7cc1ef6f29df278ddabc093b4225b7e7bd5))
+* update Deno support ([cc44c7c](https://github.com/magne4000/universal-middleware/commit/cc44c7cc1ef6f29df278ddabc093b4225b7e7bd5))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#88](https://github.com/magne4000/universal-middleware/issues/88)) ([105940c](https://github.com/magne4000/universal-middleware/commit/105940c4f2527370f4ccdd69651a1dee9a8c2a8c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.0
+    * @universal-middleware/express bumped to 0.4.0
+
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/vercel-v0.3.2...vercel-v0.3.3) (2024-12-09)
 
 
