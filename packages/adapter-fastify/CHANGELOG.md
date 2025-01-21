@@ -8,6 +8,27 @@
     * @universal-middleware/core bumped to 0.3.3
     * @universal-middleware/express bumped to 0.3.3
 
+## [0.5.0](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.3...fastify-v0.5.0) (2025-01-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for Deno v1
+
+### Features
+
+* Default to 404 when a `UniversalHandler` does not return a Response ([cc44c7c](https://github.com/magne4000/universal-middleware/commit/cc44c7cc1ef6f29df278ddabc093b4225b7e7bd5))
+* Universal Router support for most adapters ([cc44c7c](https://github.com/magne4000/universal-middleware/commit/cc44c7cc1ef6f29df278ddabc093b4225b7e7bd5))
+* update Deno support ([cc44c7c](https://github.com/magne4000/universal-middleware/commit/cc44c7cc1ef6f29df278ddabc093b4225b7e7bd5))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.0
+    * @universal-middleware/express bumped to 0.4.0
+
 ## [0.4.2](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.1...fastify-v0.4.2) (2024-12-09)
 
 
