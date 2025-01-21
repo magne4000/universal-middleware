@@ -27,6 +27,6 @@ features:
 
 
 ::: tip Who is this for?
-- Library authors looking to create cross-platform middleware that works seamlessly across multiple web servers and cloud platforms
-- Framework developers who want to provide flexibility by allowing users to choose their preferred server runtime and deployment target
+- **Library authors** looking to create cross-platform middleware that works seamlessly across multiple web servers and cloud platforms
+- **Framework developers** who want to provide flexibility by allowing users to choose their preferred server runtime and deployment target
 :::
