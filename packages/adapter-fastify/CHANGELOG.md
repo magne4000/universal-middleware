@@ -1,22 +1,3 @@
-## [0.4.0](https://github.com/magne4000/universal-middleware/compare/fastify-v0.3.7...fastify-v0.4.0) (2024-11-28)
-
-
-### ⚠ BREAKING CHANGES
-
-* add Context typings to FastifyHandler and FastifyMiddleware
-
-### Features
-
-* add the ability to `pipe` adapter middlewares in addition to universal ones ([#66](https://github.com/magne4000/universal-middleware/issues/66)) ([28332e3](https://github.com/magne4000/universal-middleware/commit/28332e3e2bc3c2730191655ae77f56ab6a33d771))
-
-
-### Dependencies
-
-* The following workspace dependencies were updated
-  * dependencies
-    * @universal-middleware/core bumped to 0.3.0
-    * @universal-middleware/express bumped to 0.3.0
-
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.2...fastify-v0.4.3) (2024-12-09)
 
 
@@ -51,6 +32,25 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.1
     * @universal-middleware/express bumped to 0.3.1
+
+## [0.4.0](https://github.com/magne4000/universal-middleware/compare/fastify-v0.3.7...fastify-v0.4.0) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* add Context typings to FastifyHandler and FastifyMiddleware
+
+### Features
+
+* add the ability to `pipe` adapter middlewares in addition to universal ones ([#66](https://github.com/magne4000/universal-middleware/issues/66)) ([28332e3](https://github.com/magne4000/universal-middleware/commit/28332e3e2bc3c2730191655ae77f56ab6a33d771))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.0
+    * @universal-middleware/express bumped to 0.3.0
 
 ## [0.3.7](https://github.com/magne4000/universal-middleware/compare/fastify-v0.3.6...fastify-v0.3.7) (2024-11-27)
 

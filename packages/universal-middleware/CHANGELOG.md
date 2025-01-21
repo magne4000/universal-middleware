@@ -1,7 +1,3 @@
-## [0.3.8](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.3.7...universal-middleware@0.3.8) (2024-10-10)
-
-
-
 ## [0.5.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.4...universal-middleware-v0.5.5) (2024-12-09)
 
 
@@ -157,6 +153,8 @@
     * @universal-middleware/fastify bumped to 0.3.6
     * @universal-middleware/hono bumped to 0.2.12
     * @universal-middleware/webroute bumped to 0.2.8
+
+## [0.3.8](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.3.7...universal-middleware@0.3.8) (2024-10-10)
 
 ## [0.3.7](https://github.com/magne4000/universal-handler/compare/universal-middleware@0.3.6...universal-middleware@0.3.7) (2024-10-09)
 

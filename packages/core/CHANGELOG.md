@@ -1,7 +1,3 @@
-## [0.2.13](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.12...@universal-middleware/core@0.2.13) (2024-10-09)
-
-
-
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/core-v0.3.2...core-v0.3.3) (2024-12-09)
 
 
@@ -40,6 +36,8 @@
 ### Features
 
 * Add `vercel-edge` and `vercel-node` support ([f0b33f8](https://github.com/magne4000/universal-middleware/commit/f0b33f8fcb751d50f7062f4b450b7a2c30d9a460))
+
+## [0.2.13](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.12...@universal-middleware/core@0.2.13) (2024-10-09)
 
 ## [0.2.12](https://github.com/magne4000/universal-handler/compare/@universal-middleware/core@0.2.11...@universal-middleware/core@0.2.12) (2024-10-08)
 

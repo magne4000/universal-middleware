@@ -1,21 +1,3 @@
-## [0.3.0](https://github.com/magne4000/universal-middleware/compare/hono-v0.2.13...hono-v0.3.0) (2024-11-28)
-
-
-### ⚠ BREAKING CHANGES
-
-* add Context typings to HonoHandler and HonoMiddleware
-
-### Features
-
-* add the ability to `pipe` adapter middlewares in addition to universal ones ([#66](https://github.com/magne4000/universal-middleware/issues/66)) ([28332e3](https://github.com/magne4000/universal-middleware/commit/28332e3e2bc3c2730191655ae77f56ab6a33d771))
-
-
-### Dependencies
-
-* The following workspace dependencies were updated
-  * dependencies
-    * @universal-middleware/core bumped to 0.3.0
-
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/hono-v0.3.2...hono-v0.3.3) (2024-12-09)
 
 
@@ -47,6 +29,24 @@
 * The following workspace dependencies were updated
   * dependencies
     * @universal-middleware/core bumped to 0.3.1
+
+## [0.3.0](https://github.com/magne4000/universal-middleware/compare/hono-v0.2.13...hono-v0.3.0) (2024-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* add Context typings to HonoHandler and HonoMiddleware
+
+### Features
+
+* add the ability to `pipe` adapter middlewares in addition to universal ones ([#66](https://github.com/magne4000/universal-middleware/issues/66)) ([28332e3](https://github.com/magne4000/universal-middleware/commit/28332e3e2bc3c2730191655ae77f56ab6a33d771))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.3.0
 
 ## [0.2.13](https://github.com/magne4000/universal-middleware/compare/hono-v0.2.12...hono-v0.2.13) (2024-11-27)
 
