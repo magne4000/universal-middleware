@@ -22,7 +22,7 @@
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@brillout/test-e2e": "^0.5.38",
+    "@brillout/test-e2e": "^0.6.2",
     "@hattip/adapter-node": "^0.0.49",
     "@hattip/router": "catalog:",
     "@hono/vite-dev-server": "^0.18.1",
