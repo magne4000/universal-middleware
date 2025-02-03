@@ -32,7 +32,7 @@
     "tsup": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "vercel": "^39.3.0",
+    "vercel": "^39.4.2",
     "vite": "catalog:",
     "vitest": "catalog:"
   },

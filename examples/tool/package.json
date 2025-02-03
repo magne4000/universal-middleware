@@ -337,7 +337,7 @@
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@hono/node-server": "^1.13.7",
+    "@hono/node-server": "^1.13.8",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/core": "workspace:*",
