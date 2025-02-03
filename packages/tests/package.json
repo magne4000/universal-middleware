@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "mri": "^1.2.0",
-    "zx": "^8.3.0"
+    "zx": "^8.3.2"
   },
   "devDependencies": {
     "@swc/core": "catalog:",
