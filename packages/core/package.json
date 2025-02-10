@@ -72,6 +72,6 @@
   "sideEffects": false,
   "dependencies": {
     "regexparam": "^3.0.0",
-    "tough-cookie": "^5.1.0"
+    "tough-cookie": "^5.1.1"
   }
 }

@@ -36,9 +36,9 @@
       "@vercel/node>ts-node": "^10.9.2",
       "@vercel/node>typescript": "catalog:",
       "@webroute/middleware": "^0.10.0",
-      "esbuild": "^0.24.2",
+      "esbuild": "^0.25.0",
       "universal-middleware": "link:./packages/universal-middleware"
     }
   },
-  "packageManager": "pnpm@9.15.4"
+  "packageManager": "pnpm@9.15.5"
 }
