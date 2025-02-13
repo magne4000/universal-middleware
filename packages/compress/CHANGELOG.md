@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.10](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.9...compress-v0.2.10) (2025-02-13)
+
+
+### Bug Fixes
+
+* Handle redirect when converting node response to standard ([#107](https://github.com/magne4000/universal-middleware/issues/107)) ([7f1afdb](https://github.com/magne4000/universal-middleware/commit/7f1afdb1c5adadfd55a4eac26c8c0da46e8e2305))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * universal-middleware bumped to 0.6.1
+
 ## [0.2.9](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.8...compress-v0.2.9) (2025-01-21)
 
 

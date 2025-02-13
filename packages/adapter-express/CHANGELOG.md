@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.1](https://github.com/magne4000/universal-middleware/compare/express-v0.4.0...express-v0.4.1) (2025-02-13)
+
+
+### Bug Fixes
+
+* Handle redirect when converting node response to standard ([#107](https://github.com/magne4000/universal-middleware/issues/107)) ([7f1afdb](https://github.com/magne4000/universal-middleware/commit/7f1afdb1c5adadfd55a4eac26c8c0da46e8e2305))
+
 ## [0.4.0](https://github.com/magne4000/universal-middleware/compare/express-v0.3.3...express-v0.4.0) (2025-01-21)
 
 
