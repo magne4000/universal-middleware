@@ -145,7 +145,8 @@ function getFullUrl(pathname: string, req: IncomingMessage): string {
 }
 
 export function responseAdapter(nodeResponse: DecoratedServerResponse, bodyInit?: BodyInit | null): Response {
-  if (nodeResponse.statusCode >= 300 && nodeResponse.statusCode < 400 && nodeResponse.req) {
+  // https://developer.mozilla.org/en-US/docs/Web/API/Response/redirect_static#status
+  if ([301, 302, 303, 307, 308].includes(nodeResponse.statusCode) && nodeResponse.req) {
     // Try to get redirect URL from request
     const redirectPath = nodeResponse.req.url;
     if (redirectPath) {
