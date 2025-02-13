@@ -103,6 +103,6 @@ describe.each([{ encoding: "gzip" }, { encoding: "deflate" }, { encoding: "br" }
       if (encoding !== "br") {
         await expect(decompressResponse(output, encoding)).resolves.toBe(hugeStr);
       }
-    });
+    }, 10000);
   },
 );

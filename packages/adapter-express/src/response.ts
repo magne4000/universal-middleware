@@ -1,4 +1,4 @@
-import type { ServerResponse } from "node:http";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
 import { nodeHeadersToWeb } from "@universal-middleware/core";
@@ -133,6 +133,36 @@ function overrideWriteHead<T extends DecoratedServerResponse>(nodeResponse: T, c
   };
 }
 
+function getFullUrl(pathname: string, req: IncomingMessage): string {
+  const protocol = (req.socket as any)?.encrypted || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
+  const host = req.headers.host || "localhost";
+
+  // Remove leading double slashes if present
+  const cleanPath = pathname.replace(/^\/\//, "/");
+
+  // Construct full URL
+  return `${protocol}://${host}${cleanPath}`;
+}
+
+export function responseAdapter(nodeResponse: DecoratedServerResponse, bodyInit?: BodyInit | null): Response {
+  // https://developer.mozilla.org/en-US/docs/Web/API/Response/redirect_static#status
+  if ([301, 302, 303, 307, 308].includes(nodeResponse.statusCode) && nodeResponse.req) {
+    // Try to get redirect URL from request
+    const redirectPath = nodeResponse.req.url;
+    if (redirectPath) {
+      // Convert pathname to full URL
+      const fullUrl = getFullUrl(redirectPath, nodeResponse.req);
+      return Response.redirect(fullUrl, nodeResponse.statusCode);
+    }
+  }
+
+  return new Response([204, 304].includes(nodeResponse.statusCode) ? null : bodyInit, {
+    status: nodeResponse.statusCode,
+    statusText: nodeResponse.statusMessage,
+    headers: nodeHeadersToWeb(nodeResponse.getHeaders()),
+  });
+}
+
 export function wrapResponse(nodeResponse: DecoratedServerResponse) {
   if (nodeResponse[wrappedResponseSymbol]) return;
   nodeResponse[wrappedResponseSymbol] = true;
@@ -158,13 +188,7 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
       delete nodeResponse[pendingMiddlewaresSymbol];
       let response = await middlewares.reduce(
         async (prev, curr) => curr(await prev),
-        Promise.resolve(
-          new Response(reader1, {
-            status: nodeResponse.statusCode,
-            statusText: nodeResponse.statusMessage,
-            headers: nodeHeadersToWeb(nodeResponse.getHeaders()),
-          }),
-        ),
+        Promise.resolve(responseAdapter(nodeResponse, reader1)),
       );
 
       if (response.body && response.body !== reader1) {
