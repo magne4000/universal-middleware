@@ -156,7 +156,7 @@ export function responseAdapter(nodeResponse: DecoratedServerResponse, bodyInit?
     }
   }
 
-  return new Response(bodyInit, {
+  return new Response([204, 304].includes(nodeResponse.statusCode) ? null : bodyInit, {
     status: nodeResponse.statusCode,
     statusText: nodeResponse.statusMessage,
     headers: nodeHeadersToWeb(nodeResponse.getHeaders()),
