@@ -33,6 +33,10 @@
   ],
   "packageRules": [
     {
+      "matchDepTypes": ["peerDependencies"],
+      "enabled": false
+    },
+    {
       "matchPackageNames": [
         "fastify",
         "/^@fastify/",
