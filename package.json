@@ -17,7 +17,7 @@
     "@biomejs/biome": "^1.9.4",
     "@types/node": "catalog:",
     "playwright": "^1.50.1",
-    "release-please": "^16.15.0",
+    "release-please": "^16.17.0",
     "turbo": "^2.4.2",
     "typescript": "catalog:"
   },
@@ -40,5 +40,5 @@
       "universal-middleware": "link:./packages/universal-middleware"
     }
   },
-  "packageManager": "pnpm@9.15.5"
+  "packageManager": "pnpm@9.15.6"
 }
