@@ -1,5 +1,5 @@
 import type { OutgoingHttpHeaders } from "node:http";
-import { optionsToSymbols, orderSymbol, unboundSymbol, universalSymbol, urlSymbol } from "./const";
+import { optionsToSymbols, orderSymbol, pathSymbol, unboundSymbol, universalSymbol, urlSymbol } from "./const";
 import type {
   AnyFn,
   EnhancedMiddleware,
@@ -161,4 +161,27 @@ export function attachUniversal<
   T extends {},
 >(universal: U, subject: T): T & { [universalSymbol]: U } {
   return Object.assign(subject, { [universalSymbol]: universal });
+}
+
+/**
+ * A middleware is considered a handler if:
+ * - It has an order equal to 0
+ * - It has a path and no order
+ * @internal
+ */
+export function isHandler(m: EnhancedMiddleware) {
+  const order = getUniversalProp(m, orderSymbol);
+  const path = getUniversalProp(m, pathSymbol);
+  if (typeof order === "number") {
+    if (order !== 0 && path) {
+      // `pathSymbol` not supported for middlewares (yet?)
+      console.warn(
+        `Found a Universal Middleware with "path" metadata. ` +
+          "This will lead to unpredictable behaviour. " +
+          "Please open an issue at https://github.com/magne4000/universal-middleware and explain your use case with the expected behaviour.",
+      );
+    }
+    return order === 0;
+  }
+  return Boolean(path);
 }
