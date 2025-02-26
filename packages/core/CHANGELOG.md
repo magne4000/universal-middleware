@@ -5,6 +5,13 @@
 
 * new type RuntimeAdapterTarget ([8768e6d](https://github.com/magne4000/universal-middleware/commit/8768e6dd6f1e7e7bfcbe88baf13a21bbaae842c6))
 
+## [0.4.1](https://github.com/magne4000/universal-middleware/compare/core-v0.4.0...core-v0.4.1) (2025-02-26)
+
+
+### Bug Fixes
+
+* **pipe:** do not execute multiple handlers if we already have a response ([dc7c7bb](https://github.com/magne4000/universal-middleware/commit/dc7c7bb9babfec11d9bdcfde7a98ab367792777d))
+
 ## [0.4.0](https://github.com/magne4000/universal-middleware/compare/core-v0.3.3...core-v0.4.0) (2025-01-21)
 
 
