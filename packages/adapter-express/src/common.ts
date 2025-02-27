@@ -65,6 +65,15 @@ export type NodeHandler<In extends Universal.Context> = UniversalFn<
 export interface NodeAdapterHandlerOptions extends NodeRequestAdapterOptions {}
 export interface NodeAdapterMiddlewareOptions extends NodeRequestAdapterOptions {}
 
+function nextOr404(res: ServerResponse, next?: () => unknown) {
+  if (next) {
+    next();
+  } else {
+    res.statusCode = 404;
+    res.end();
+  }
+}
+
 /**
  * Creates a request handler to be passed to http.createServer() or used as a
  * middleware in Connect-style frameworks like Express.
@@ -89,8 +98,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
         );
 
         if (!response) {
-          // Will default to 404
-          next?.();
+          nextOr404(res, next);
         } else {
           await sendResponse(response, res);
         }
@@ -136,7 +144,7 @@ export function createMiddleware<
         const response = await this[universalSymbol](request, getContext(req), getRuntime(req, res));
 
         if (!response) {
-          return next?.();
+          return nextOr404(res, next);
         }
         if (typeof response === "function") {
           if (res.headersSent) {
@@ -148,13 +156,13 @@ export function createMiddleware<
           res[pendingMiddlewaresSymbol] ??= [];
           // `wrapResponse` takes care of calling those middlewares right before sending the response
           res[pendingMiddlewaresSymbol].push(response);
-          return next?.();
+          return nextOr404(res, next);
         }
         if (response instanceof Response) {
           await sendResponse(response, res);
         } else {
           req[contextSymbol] = response as unknown as InContext;
-          return next?.();
+          return nextOr404(res, next);
         }
       } catch (error) {
         if (next) {
