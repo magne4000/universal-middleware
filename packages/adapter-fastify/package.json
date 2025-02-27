@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/fastify",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "type": "module",
   "description": "fastify adapter for universal middlewares",
   "files": [
