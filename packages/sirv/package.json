@@ -7,6 +7,13 @@
     "dist"
   ],
   "author": "Joël Charles <joel.charles91@gmail.com>",
+  "contributors": [
+    {
+      "name": "Luke Edwards",
+      "email": "luke@lukeed.com",
+      "url": "https://lukeed.com"
+    }
+  ],
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
@@ -39,5 +46,47 @@
   "dependencies": {
     "mrmime": "^2.0.1",
     "totalist": "^3.0.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/middleware.d.ts",
+      "import": "./dist/middleware.js",
+      "default": "./dist/middleware.js"
+    },
+    "./hono": {
+      "types": "./dist/universal-hono-middleware-middleware.d.ts",
+      "import": "./dist/universal-hono-middleware-middleware.js",
+      "default": "./dist/universal-hono-middleware-middleware.js"
+    },
+    "./express": {
+      "types": "./dist/universal-express-middleware-middleware.d.ts",
+      "import": "./dist/universal-express-middleware-middleware.js",
+      "default": "./dist/universal-express-middleware-middleware.js"
+    },
+    "./hattip": {
+      "types": "./dist/universal-hattip-middleware-middleware.d.ts",
+      "import": "./dist/universal-hattip-middleware-middleware.js",
+      "default": "./dist/universal-hattip-middleware-middleware.js"
+    },
+    "./fastify": {
+      "types": "./dist/universal-fastify-middleware-middleware.d.ts",
+      "import": "./dist/universal-fastify-middleware-middleware.js",
+      "default": "./dist/universal-fastify-middleware-middleware.js"
+    },
+    "./h3": {
+      "types": "./dist/universal-h3-middleware-middleware.d.ts",
+      "import": "./dist/universal-h3-middleware-middleware.js",
+      "default": "./dist/universal-h3-middleware-middleware.js"
+    },
+    "./webroute": {
+      "types": "./dist/universal-webroute-middleware-middleware.d.ts",
+      "import": "./dist/universal-webroute-middleware-middleware.js",
+      "default": "./dist/universal-webroute-middleware-middleware.js"
+    },
+    "./elysia": {
+      "types": "./dist/universal-elysia-middleware-middleware.d.ts",
+      "import": "./dist/universal-elysia-middleware-middleware.js",
+      "default": "./dist/universal-elysia-middleware-middleware.js"
+    }
   }
 }

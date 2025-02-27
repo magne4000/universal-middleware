@@ -18,7 +18,7 @@ export default defineConfig([
     esbuildOptions(opts) {
       opts.outbase = "src";
     },
-    external: ["node:zlib"],
+    external: [/node:.*/],
     bundle: true,
     treeshake: true,
   },

@@ -4,7 +4,8 @@ import { join, normalize, resolve } from "node:path";
 import { totalist } from "totalist/sync";
 import { lookup } from "mrmime";
 import { Readable } from "node:stream";
-import type { UniversalMiddleware } from "@universal-middleware/core";
+import type { UniversalHandler } from "@universal-middleware/core";
+import { url as getUrl } from "@universal-middleware/core";
 
 type SetHeadersFunction = (res: Response, pathname: string, stats: fs.Stats) => void;
 
@@ -44,15 +45,16 @@ function toAssume(uri: string, extns: string[]): string[] {
   let i = 0;
   let x: string;
   const len = uri.length - 1;
+  let uri_ = uri;
   if (uri.charCodeAt(len) === 47) {
-    uri = uri.substring(0, len);
+    uri_ = uri.substring(0, len);
   }
 
   const arr: string[] = [];
-  const tmp = `${uri}/index`;
+  const tmp = `${uri_}/index`;
   for (; i < extns.length; i++) {
     x = extns[i] ? `.${extns[i]}` : "";
-    if (uri) arr.push(uri + x);
+    if (uri_) arr.push(uri_ + x);
     arr.push(tmp + x);
   }
 
@@ -98,7 +100,7 @@ function is404() {
 function send(req: Request, file: string, stats: fs.Stats, headers: Record<string, string>): Response | undefined {
   let code = 200;
   const opts: { start?: number; end?: number } = {};
-  headers = { ...headers };
+  const newHeaders = { ...headers };
 
   const rangeHeader = req.headers.get("range");
 
@@ -123,16 +125,16 @@ function send(req: Request, file: string, stats: fs.Stats, headers: Record<strin
       });
     }
 
-    headers["Content-Range"] = `bytes ${start}-${end}/${stats.size}`;
-    headers["Content-Length"] = (end - start + 1).toString();
-    headers["Accept-Ranges"] = "bytes";
+    newHeaders["Content-Range"] = `bytes ${start}-${end}/${stats.size}`;
+    newHeaders["Content-Length"] = (end - start + 1).toString();
+    newHeaders["Accept-Ranges"] = "bytes";
   }
 
   const webStream = Readable.toWeb(fs.createReadStream(file)) as unknown as ReadableStream<Uint8Array>;
 
   return new Response(webStream, {
     status: code,
-    headers,
+    headers: newHeaders,
   });
 }
 
@@ -162,7 +164,6 @@ function toHeaders(name: string, stats: fs.Stats, isEtag: boolean): Record<strin
 
 // Create a universal middleware that accepts standard Request
 function createUniversalMiddleware(
-  dir: string,
   isEtag: boolean,
   isSPA: boolean,
   ignores: RegExp[],
@@ -173,10 +174,10 @@ function createUniversalMiddleware(
   setHeaders: SetHeadersFunction,
   isNotFound: (req: Request) => Response,
   fallback: string,
-): UniversalMiddleware {
+): UniversalHandler {
   return (request: Request): Response => {
     const extns = [""];
-    const url = new URL(request.url);
+    const url = getUrl(request);
     let pathname = url.pathname;
     const acceptEncoding = request.headers.get("accept-encoding") || "";
 
@@ -211,7 +212,8 @@ function createUniversalMiddleware(
   };
 }
 
-export default function serveStatic(dir?: string, opts: ServeOptions = {}): UniversalMiddleware {
+export default function serveStatic(dir?: string, opts: ServeOptions = {}): UniversalHandler {
+  // biome-ignore lint/style/noParameterAssign: <explanation>
   dir = resolve(dir || ".");
 
   const isNotFound: (req: Request) => Response = opts.onNoMatch || is404;
@@ -236,7 +238,8 @@ export default function serveStatic(dir?: string, opts: ServeOptions = {}): Univ
     ignores.push(/[/]([A-Za-z\s\d~$._-]+\.\w+){1,}$/); // any extn
     if (opts.dotfiles) ignores.push(/\/\.\w/);
     else ignores.push(/\/\.well-known/);
-    for (const x of [].concat(opts.ignores || [])) {
+    const optsIgnores = Array.isArray(opts.ignores) ? opts.ignores : opts.ignores ? [opts.ignores] : [];
+    for (const x of optsIgnores) {
       ignores.push(new RegExp(x, "i"));
     }
   }
@@ -263,7 +266,6 @@ export default function serveStatic(dir?: string, opts: ServeOptions = {}): Univ
     : (uri: string, extns: string[]) => viaCache(FILES, uri, extns);
 
   return createUniversalMiddleware(
-    dir,
     isEtag,
     isSPA,
     ignores,

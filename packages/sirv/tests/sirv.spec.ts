@@ -1,5 +1,5 @@
 import { assert, suite } from "vitest";
-import sirv from "../src/index";
+import sirv from "../src/middleware";
 import * as utils from "./helpers";
 
 const types = suite("types");

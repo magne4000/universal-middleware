@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import type { AddressInfo } from "node:net";
 import { createMiddleware } from "@universal-middleware/express";
 import * as mime from "mrmime";
-import sirv, { type ServeOptions } from "../src/index";
+import sirv, { type ServeOptions } from "../src/middleware";
 import { assert } from "vitest";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -66,7 +66,7 @@ export async function lookup(filepath: string, enc: BufferEncoding) {
   return CACHE[filepath];
 }
 
-export async function matches(res: Response, code: number, filepath: string, enc: string) {
+export async function matches(res: Response, code: number, filepath: string, enc: BufferEncoding) {
   const file = await lookup(filepath, enc);
   assert.equal(res.headers.get("content-length"), String(file.size));
   assert.equal(res.headers.get("content-type"), file.type);
