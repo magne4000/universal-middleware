@@ -705,6 +705,55 @@ importers:
         specifier: 'catalog:'
         version: 3.0.6(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.19)(tsx@4.19.3)(yaml@2.7.0)
 
+  packages/sirv:
+    dependencies:
+      mrmime:
+        specifier: ^2.0.1
+        version: 2.0.1
+      totalist:
+        specifier: ^3.0.1
+        version: 3.0.1
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.10.18
+      '@types/bun':
+        specifier: ^1.2.3
+        version: 1.2.3
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.17.19
+      '@universal-middleware/core':
+        specifier: link:../core
+        version: link:../core
+      '@universal-middleware/express':
+        specifier: link:../adapter-express
+        version: link:../adapter-express
+      elysia:
+        specifier: 'catalog:'
+        version: 1.2.21(typescript@5.7.3)
+      h3:
+        specifier: 'catalog:'
+        version: 1.15.1
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      tsup:
+        specifier: 'catalog:'
+        version: 8.3.6(@swc/core@1.10.18)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.7.3)(yaml@2.7.0)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+      universal-middleware:
+        specifier: link:../universal-middleware
+        version: link:../universal-middleware
+      vite:
+        specifier: 'catalog:'
+        version: 6.1.1(@types/node@20.17.19)(tsx@4.19.3)(yaml@2.7.0)
+      vitest:
+        specifier: 'catalog:'
+        version: 3.0.6(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.19)(tsx@4.19.3)(yaml@2.7.0)
+
   packages/tests:
     dependencies:
       mri:
@@ -3753,6 +3802,10 @@ packages:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
 
+  mrmime@2.0.1:
+    resolution: {integrity: sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ==}
+    engines: {node: '>=10'}
+
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
 
@@ -4574,6 +4627,10 @@ packages:
 
   toposort@2.0.2:
     resolution: {integrity: sha512-0a5EOkAUp8D4moMi2W8ZF8jcga7BgZd91O/yabJCFY8az+XSzeGyTKs0Aoo897iV1Nj6guFq8orWDS96z91oGg==}
+
+  totalist@3.0.1:
+    resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
+    engines: {node: '>=6'}
 
   tough-cookie@5.1.1:
     resolution: {integrity: sha512-Ek7HndSVkp10hmHP9V4qZO1u+pn1RU5sI0Fw+jCU3lyvuMZcgqsNgc6CmJJZyByK4Vm/qotGRJlfgAX8q+4JiA==}
@@ -8230,6 +8287,8 @@ snapshots:
 
   mri@1.2.0: {}
 
+  mrmime@2.0.1: {}
+
   ms@2.0.0: {}
 
   ms@2.1.1: {}
@@ -9105,6 +9164,8 @@ snapshots:
 
   toposort@2.0.2:
     optional: true
+
+  totalist@3.0.1: {}
 
   tough-cookie@5.1.1:
     dependencies:

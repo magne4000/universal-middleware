@@ -1,0 +1,43 @@
+{
+  "name": "@universal-middleware/sirv",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Universal static file serving middleware",
+  "files": [
+    "dist"
+  ],
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "repository": "https://github.com/magne4000/universal-middleware",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsup",
+    "test": "vitest",
+    "prepack": "pnpm build",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@types/bun": "^1.2.3",
+    "@types/node": "catalog:",
+    "@universal-middleware/core": "workspace:^",
+    "@universal-middleware/express": "workspace:^",
+    "elysia": "catalog:",
+    "h3": "catalog:",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "universal-middleware": "workspace:^",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "universal-middleware",
+    "sirv-middleware",
+    "sirv"
+  ],
+  "dependencies": {
+    "mrmime": "^2.0.1",
+    "totalist": "^3.0.1"
+  }
+}
