@@ -106,6 +106,10 @@ export default defineConfig({
             text: "Compress",
             link: "/middlewares/compress",
           },
+          {
+            text: "Sirv",
+            link: "/middlewares/sirv",
+          },
         ],
       },
       {

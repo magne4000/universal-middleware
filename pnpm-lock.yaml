@@ -145,6 +145,9 @@ importers:
       '@universal-middleware/hono':
         specifier: link:../packages/adapter-hono
         version: link:../packages/adapter-hono
+      '@universal-middleware/sirv':
+        specifier: workspace:*
+        version: link:../packages/sirv
       '@universal-middleware/vercel':
         specifier: link:../packages/adapter-vercel
         version: link:../packages/adapter-vercel

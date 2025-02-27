@@ -27,6 +27,7 @@
     "@universal-middleware/h3": "workspace:*",
     "@universal-middleware/hattip": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
+    "@universal-middleware/sirv": "workspace:*",
     "@universal-middleware/vercel": "workspace:*",
     "elysia": "catalog:",
     "fastify": "catalog:",
