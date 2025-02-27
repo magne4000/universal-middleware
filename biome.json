@@ -5,7 +5,8 @@
       "dist/",
       "package.json",
       ".release-please-manifest.json",
-      ".vercel/"
+      ".vercel/",
+      "packages/sirv/tests/public/"
     ]
   },
   "formatter": {
@@ -14,6 +15,7 @@
   },
   "javascript": {
     "formatter": {
+      "semicolons": "always",
       "lineWidth": 120
     }
   },

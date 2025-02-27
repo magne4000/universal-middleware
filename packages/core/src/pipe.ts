@@ -2,20 +2,20 @@ import { universalSymbol } from "./const";
 import type { AnyFn, Awaitable, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
 import { bindUniversal, getUniversal, isHandler, ordered } from "./utils";
 
-type _Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never
-type Out<T> = T extends UniversalFn<infer X, infer _> ? _Out<X> : _Out<T>
-type _In<T> = T extends UniversalHandler<infer C> ? C : T extends UniversalMiddleware<infer C, any> ? C : never
-type In<T> = T extends UniversalFn<infer X, infer _> ? _In<X> : _In<T>
-type First<T extends any[]> = T extends [infer X, ...any[]] ? X : never
-type Last<T extends any[]> = T extends [...any[], infer X] ? X : never
+type _Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
+type Out<T> = T extends UniversalFn<infer X, infer _> ? _Out<X> : _Out<T>;
+type _In<T> = T extends UniversalHandler<infer C> ? C : T extends UniversalMiddleware<infer C, any> ? C : never;
+type In<T> = T extends UniversalFn<infer X, infer _> ? _In<X> : _In<T>;
+type First<T extends any[]> = T extends [infer X, ...any[]] ? X : never;
+type Last<T extends any[]> = T extends [...any[], infer X] ? X : never;
 
 type AnyMiddleware<In extends Universal.Context = any, Out extends Universal.Context = any, Fn extends AnyFn = AnyFn> =
   | UniversalHandler<In>
   | UniversalMiddleware<In, Out>
   | UniversalFn<UniversalHandler<In>, Fn>
-  | UniversalFn<UniversalMiddleware<In, Out>, Fn>
+  | UniversalFn<UniversalMiddleware<In, Out>, Fn>;
 
-type ExtractUF<T> = T extends UniversalFn<infer _, infer Fn> ? Fn : never
+type ExtractUF<T> = T extends UniversalFn<infer _, infer Fn> ? Fn : never;
 
 type ComposeReturnType<T extends AnyMiddleware[]> = Last<T> extends never
   ? T[number]
@@ -27,19 +27,19 @@ type ComposeReturnType<T extends AnyMiddleware[]> = Last<T> extends never
         ? UniversalFn<UniversalHandler<In<First<T>>>, ExtractUF<Last<T>>>
         : Last<T> extends UniversalFn<UniversalMiddleware<any, any>, infer _>
           ? UniversalFn<UniversalMiddleware<In<First<T>>, In<Last<T>>>, ExtractUF<Last<T>>>
-          : never
+          : never;
 
 type Cast<
   T extends AnyMiddleware,
   NewIn extends Universal.Context,
-  NewOut extends Universal.Context
+  NewOut extends Universal.Context,
 > = T extends UniversalMiddleware<any, any>
   ? UniversalMiddleware<NewIn, NewOut>
   : T extends UniversalFn<UniversalHandler<any>, infer Fn>
     ? UniversalFn<UniversalHandler<NewIn>, Fn>
     : T extends UniversalFn<UniversalMiddleware<any, any>, infer Fn>
       ? UniversalFn<UniversalMiddleware<NewIn, NewOut>, Fn>
-      : never
+      : never;
 
 type Pipe<F extends AnyMiddleware[]> = F extends []
   ? F
@@ -49,7 +49,7 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
       ? [Cast<F1, In<F1>, Out<F1>>, Cast<F2, Out<F1>, Out<F2>>]
       : F extends [...infer X extends AnyMiddleware[], infer Y extends AnyMiddleware, infer L extends AnyMiddleware]
         ? [...Pipe<[...X, Y]>, Cast<L, Out<Y>, Out<L>>]
-        : never
+        : never;
 
 /**
  * Composes a sequence of middlewares into a single middleware.
@@ -112,54 +112,54 @@ export function pipe<F extends AnyMiddleware[]>(
   this: { noCast?: boolean } | void,
   ...a: Pipe<F> extends F ? F : Pipe<F>
 ): ComposeReturnType<F> {
-  const ordererArgs = ordered(a)
+  const ordererArgs = ordered(a);
   const fn: UniversalMiddleware<any, any> = async function pipeInternal(request, context, runtime) {
-    const pending: ((response: Response) => Awaitable<Response>)[] = []
+    const pending: ((response: Response) => Awaitable<Response>)[] = [];
 
-    let _response: Response | undefined = undefined
+    let _response: Response | undefined = undefined;
     for (const m of ordererArgs) {
       // only execute a handler if we still have no response
       if (isHandler(m) && _response) {
-        continue
+        continue;
       }
 
-      const um = getUniversal(m)
-      const response = await um(request, context ?? {}, runtime)
+      const um = getUniversal(m);
+      const response = await um(request, context ?? {}, runtime);
 
-      if (typeof response === 'function') {
-        pending.push(response)
-      } else if (response !== null && typeof response === 'object') {
+      if (typeof response === "function") {
+        pending.push(response);
+      } else if (response !== null && typeof response === "object") {
         // Do not override response if it already exists.
         // The only to actually update the response is through a Response Function.
         if (!_response && response instanceof Response) {
-          _response = response
+          _response = response;
         }
         // Update context
         // biome-ignore lint/style/noParameterAssign: <explanation>
-        context = response as any
+        context = response as any;
       }
     }
 
     if (!_response) {
-      throw new Error('No Response found')
+      throw new Error("No Response found");
     }
 
     for (const m of pending) {
-      const r = await m(_response)
+      const r = await m(_response);
       if (r) {
-        _response = r
+        _response = r;
       }
     }
 
-    return _response
-  }
+    return _response;
+  };
 
   if (!this?.noCast) {
-    const lastMiddleware = (a as AnyMiddleware[]).at(-1)
+    const lastMiddleware = (a as AnyMiddleware[]).at(-1);
     if (lastMiddleware && universalSymbol in lastMiddleware) {
-      return bindUniversal(fn, lastMiddleware) as ComposeReturnType<F>
+      return bindUniversal(fn, lastMiddleware) as ComposeReturnType<F>;
     }
   }
 
-  return fn as ComposeReturnType<F>
+  return fn as ComposeReturnType<F>;
 }
