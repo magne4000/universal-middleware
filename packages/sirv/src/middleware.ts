@@ -94,10 +94,6 @@ function viaLocal(dir: string, isEtag: boolean, uri: string, extns: string[]): F
   return undefined
 }
 
-function is404() {
-  return new Response('Not Found', { status: 404 })
-}
-
 function send(req: Request, file: string, stats: fs.Stats, headers: Record<string, string>): Response | undefined {
   let code = 200
   const opts: { start?: number; end?: number } = {}
@@ -173,7 +169,7 @@ function createUniversalMiddleware(
   gzips: false | string[] | undefined,
   brots: false | string[] | undefined,
   setHeaders: SetHeadersFunction,
-  isNotFound: OnNoMatch,
+  isNotFound: OnNoMatch | undefined,
   fallback: string
 ): UniversalMiddleware {
   return (request) => {
@@ -195,7 +191,7 @@ function createUniversalMiddleware(
     }
 
     const data = lookup(pathname, extns) || (isSPA && !isMatch(pathname, ignores) && lookup(fallback, extns))
-    if (!data) return isNotFound(request)
+    if (!data) return isNotFound ? isNotFound(request) : undefined
 
     // biome-ignore lint/complexity/useLiteralKeys: <explanation>
     if (isEtag && request.headers.get('if-none-match') === data.headers['ETag']) {
@@ -217,7 +213,7 @@ export default function serveStatic(dir?: string, opts: ServeOptions = {}): Univ
   // biome-ignore lint/style/noParameterAssign: <explanation>
   dir = resolve(dir || '.')
 
-  const isNotFound: OnNoMatch = opts.onNoMatch || is404
+  const isNotFound: OnNoMatch | undefined = opts.onNoMatch
   const setHeaders: SetHeadersFunction = opts.setHeaders || noop
 
   const extensions: string[] = opts.extensions || ['html', 'htm']
