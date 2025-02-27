@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.3](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.2...sirv-v0.1.3) (2025-02-27)
+
+
+### Bug Fixes
+
+* **sirv:** do not fallback to 404 by default ([d72f086](https://github.com/magne4000/universal-middleware/commit/d72f0860287e52f69908832cdaaac8090611cab8))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @universal-middleware/express bumped to 0.4.3
+    * universal-middleware bumped to 0.6.3
+
 ## [0.1.2](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.1...sirv-v0.1.2) (2025-02-27)
 
 

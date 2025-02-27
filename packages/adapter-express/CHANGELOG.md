@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.3](https://github.com/magne4000/universal-middleware/compare/express-v0.4.2...express-v0.4.3) (2025-02-27)
+
+
+### Bug Fixes
+
+* **express:** fallback to 404 if next does not exist ([0a771ee](https://github.com/magne4000/universal-middleware/commit/0a771eee52967c86f9315a5fa09bc788fe1df054))
+
 ## [0.4.2](https://github.com/magne4000/universal-middleware/compare/express-v0.4.1...express-v0.4.2) (2025-02-26)
 
 
