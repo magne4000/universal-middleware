@@ -17,6 +17,7 @@
     "packages/adapter-webroute": {},
     "packages/compress": {},
     "packages/core": {},
+    "packages/sirv": {},
     "packages/universal-middleware": {}
   }
 }
