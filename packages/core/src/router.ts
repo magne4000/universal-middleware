@@ -108,6 +108,18 @@ export async function applyAsync(router: UniversalRouterInterface<"async">, midd
   await router.applyCatchAll();
 }
 
+/**
+ * @beta
+ */
+export function pipeRoute(
+  middlewares: EnhancedMiddleware[],
+  { pipeMiddlewaresInUniversalRoute = true, handle404 = false },
+) {
+  const router = new UniversalRouter(pipeMiddlewaresInUniversalRoute, handle404);
+  apply(router, middlewares);
+  return router[universalSymbol];
+}
+
 function assertRoute(middleware: EnhancedMiddleware) {
   const path = getUniversalProp(middleware, pathSymbol);
   if (!path) {
