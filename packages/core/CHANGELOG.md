@@ -5,6 +5,13 @@
 
 * new type RuntimeAdapterTarget ([8768e6d](https://github.com/magne4000/universal-middleware/commit/8768e6dd6f1e7e7bfcbe88baf13a21bbaae842c6))
 
+## [0.4.2](https://github.com/magne4000/universal-middleware/compare/core-v0.4.1...core-v0.4.2) (2025-03-03)
+
+
+### Features
+
+* new `pipeRoute` util ([bc7148a](https://github.com/magne4000/universal-middleware/commit/bc7148a3561a00cdb910059606c4054c05a5b312))
+
 ## [0.4.1](https://github.com/magne4000/universal-middleware/compare/core-v0.4.0...core-v0.4.1) (2025-02-26)
 
 
