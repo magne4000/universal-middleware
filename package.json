@@ -17,8 +17,8 @@
     "@biomejs/biome": "^1.9.4",
     "@types/node": "catalog:",
     "playwright": "^1.50.1",
-    "release-please": "^16.17.0",
-    "turbo": "^2.4.2",
+    "release-please": "^16.18.0",
+    "turbo": "^2.4.4",
     "typescript": "catalog:"
   },
   "pnpm": {
