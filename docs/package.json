@@ -15,7 +15,7 @@
   "license": "MIT",
   "devDependencies": {
     "@hattip/router": "catalog:",
-    "@shikijs/vitepress-twoslash": "^2.5.0",
+    "@shikijs/vitepress-twoslash": "^3.1.0",
     "@types/express": "catalog:",
     "@universal-middleware-examples/tool": "workspace:*",
     "@universal-middleware/cloudflare": "workspace:*",
