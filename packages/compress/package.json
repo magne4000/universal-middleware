@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@swc/core": "catalog:",
-    "@types/bun": "^1.2.3",
+    "@types/bun": "^1.2.4",
     "@types/node": "catalog:",
     "@universal-middleware/core": "workspace:^",
     "elysia": "catalog:",
