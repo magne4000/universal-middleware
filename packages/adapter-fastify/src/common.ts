@@ -191,7 +191,7 @@ export function createMiddleware<
                   patchBody(response);
                 }
 
-                reply.send(response);
+                await reply.send(response);
               } else {
                 setContext(request, response);
               }
