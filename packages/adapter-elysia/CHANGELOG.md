@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.3](https://github.com/magne4000/universal-middleware/compare/elysia-v0.4.2...elysia-v0.4.3) (2025-03-04)
+
+
+### Bug Fixes
+
+* **elysia:** better elysia apply function type ([c2419c6](https://github.com/magne4000/universal-middleware/commit/c2419c6fd9a5346c9e81dda1d94b42569ab9cd3e))
+
 ## [0.4.2](https://github.com/magne4000/universal-middleware/compare/elysia-v0.4.1...elysia-v0.4.2) (2025-03-03)
 
 

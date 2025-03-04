@@ -5,6 +5,15 @@
 
 * export Target and RuntimeAdapter from generated code ([056df5f](https://github.com/magne4000/universal-middleware/commit/056df5f8a48039eb93805f868f8f938c001423a9))
 
+## [0.6.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.6.4...universal-middleware-v0.6.5) (2025-03-04)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/elysia bumped to 0.4.3
+
 ## [0.6.4](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.6.3...universal-middleware-v0.6.4) (2025-03-03)
 
 
