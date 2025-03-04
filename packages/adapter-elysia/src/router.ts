@@ -7,13 +7,13 @@ import {
   type UniversalRouterInterface,
   universalSymbol,
 } from "@universal-middleware/core";
-import type { Elysia } from "elysia";
+import type { AnyElysia } from "elysia";
 import { createHandler, createMiddleware } from "./common";
 
 export class UniversalElysiaRouter extends UniversalRouter implements UniversalRouterInterface {
-  #app: Elysia;
+  #app: AnyElysia;
 
-  constructor(app: Elysia) {
+  constructor(app: AnyElysia) {
     super(false);
     this.#app = app;
   }
@@ -29,7 +29,7 @@ export class UniversalElysiaRouter extends UniversalRouter implements UniversalR
   }
 }
 
-export function apply(app: Elysia, middlewares: EnhancedMiddleware[]) {
+export function apply(app: AnyElysia, middlewares: EnhancedMiddleware[]) {
   const router = new UniversalElysiaRouter(app);
   applyCore(router, middlewares);
 }
