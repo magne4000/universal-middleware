@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.5](https://github.com/magne4000/universal-middleware/compare/express-v0.4.4...express-v0.4.5) (2025-03-04)
+
+
+### Bug Fixes
+
+* **express:** better back-pressure handling ([509a6aa](https://github.com/magne4000/universal-middleware/commit/509a6aad3ab63d256b888a2cf02add566f56116c))
+
 ## [0.4.4](https://github.com/magne4000/universal-middleware/compare/express-v0.4.3...express-v0.4.4) (2025-03-03)
 
 
