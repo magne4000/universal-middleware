@@ -8,6 +8,13 @@
     * @universal-middleware/core bumped to 0.3.3
     * @universal-middleware/express bumped to 0.3.3
 
+## [0.5.5](https://github.com/magne4000/universal-middleware/compare/fastify-v0.5.4...fastify-v0.5.5) (2025-03-04)
+
+
+### Bug Fixes
+
+* **fastify:** ensure that early responses are awaited ([a989eea](https://github.com/magne4000/universal-middleware/commit/a989eea9ef39b3bc01b1cb40a3e91202bcedc79d))
+
 ## [0.5.4](https://github.com/magne4000/universal-middleware/compare/fastify-v0.5.3...fastify-v0.5.4) (2025-03-03)
 
 
