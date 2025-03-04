@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.3](https://github.com/magne4000/universal-middleware/compare/hono-v0.4.2...hono-v0.4.3) (2025-03-04)
+
+
+### Bug Fixes
+
+* **hono:** better hono apply function type ([03faf92](https://github.com/magne4000/universal-middleware/commit/03faf92789eb111ac6188b92778cc07c9df0e787))
+
 ## [0.4.2](https://github.com/magne4000/universal-middleware/compare/hono-v0.4.1...hono-v0.4.2) (2025-03-03)
 
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.15](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.14...compress-v0.2.15) (2025-03-04)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * universal-middleware bumped to 0.6.6
+
 ## [0.2.14](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.13...compress-v0.2.14) (2025-03-04)
 
 
