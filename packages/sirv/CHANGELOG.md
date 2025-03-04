@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.8](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.7...sirv-v0.1.8) (2025-03-04)
+
+
+### Bug Fixes
+
+* **h3:** memoize request ([7bc79af](https://github.com/magne4000/universal-middleware/commit/7bc79af17c716152d54b72b83c795fb5ccf92ddd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * universal-middleware bumped to 0.6.8
+
 ## [0.1.7](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.6...sirv-v0.1.7) (2025-03-04)
 
 

@@ -5,6 +5,15 @@
 
 * export Target and RuntimeAdapter from generated code ([056df5f](https://github.com/magne4000/universal-middleware/commit/056df5f8a48039eb93805f868f8f938c001423a9))
 
+## [0.6.8](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.6.7...universal-middleware-v0.6.8) (2025-03-04)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/h3 bumped to 0.4.3
+
 ## [0.6.7](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.6.6...universal-middleware-v0.6.7) (2025-03-04)
 
 

@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.3](https://github.com/magne4000/universal-middleware/compare/h3-v0.4.2...h3-v0.4.3) (2025-03-04)
+
+
+### Bug Fixes
+
+* **h3:** memoize request ([7bc79af](https://github.com/magne4000/universal-middleware/commit/7bc79af17c716152d54b72b83c795fb5ccf92ddd))
+
 ## [0.4.2](https://github.com/magne4000/universal-middleware/compare/h3-v0.4.1...h3-v0.4.2) (2025-03-03)
 
 
