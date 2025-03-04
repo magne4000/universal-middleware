@@ -30,8 +30,19 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
       const reader = (fetchBody as ReadableStream).getReader();
       body = new Readable({
         async read() {
-          const { done, value } = await reader.read();
-          this.push(done ? null : value);
+          try {
+            const { done, value } = await reader.read();
+            if (done) {
+              this.push(null);
+            } else {
+              const canContinue = this.push(value);
+              if (!canContinue) {
+                reader.releaseLock(); // Pause reading if backpressure occurs
+              }
+            }
+          } catch (e) {
+            this.destroy(e as Error)
+          }
         },
       });
     }
@@ -43,10 +54,23 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
 
   if (body) {
     body.pipe(nodeResponse);
-    await new Promise((resolve, reject) => {
-      body.on("error", reject);
+    await new Promise<void>((resolve, reject) => {
+      body.on("error", (err) => {
+        nodeResponse.destroy(err);
+        reject(err);
+      });
+
+      nodeResponse.on("error", (err) => {
+        body.destroy(err);
+        reject(err);
+      });
+
       nodeResponse.on("finish", resolve);
-      nodeResponse.on("error", reject);
+
+      // Add drain event handler for backpressure
+      nodeResponse.on("drain", () => {
+        body.resume(); // Resume reading when client can accept more data
+      });
     });
   } else {
     nodeResponse.setHeader("content-length", "0");
