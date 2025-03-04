@@ -10,10 +10,13 @@ import {
 import type { Hono } from "hono";
 import { createHandler, createMiddleware } from "./common";
 
-export class UniversalHonoRouter extends UniversalRouter implements UniversalRouterInterface {
-  #app: Hono;
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+type AnyHono = Hono<any, any, any>;
 
-  constructor(app: Hono) {
+export class UniversalHonoRouter extends UniversalRouter implements UniversalRouterInterface {
+  #app: AnyHono;
+
+  constructor(app: AnyHono) {
     super(false);
     this.#app = app;
   }
@@ -29,7 +32,7 @@ export class UniversalHonoRouter extends UniversalRouter implements UniversalRou
   }
 }
 
-export function apply(app: Hono, middlewares: EnhancedMiddleware[]) {
+export function apply(app: AnyHono, middlewares: EnhancedMiddleware[]) {
   const router = new UniversalHonoRouter(app);
   applyCore(router, middlewares);
 }
