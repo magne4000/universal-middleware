@@ -113,7 +113,7 @@ export async function applyAsync(router: UniversalRouterInterface<"async">, midd
  */
 export function pipeRoute(
   middlewares: EnhancedMiddleware[],
-  { pipeMiddlewaresInUniversalRoute = true, handle404 = false },
+  { pipeMiddlewaresInUniversalRoute = true, handle404 = false } = {},
 ) {
   const router = new UniversalRouter(pipeMiddlewaresInUniversalRoute, handle404);
   apply(router, middlewares);
