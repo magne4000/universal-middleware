@@ -14,13 +14,13 @@ import {
   universalSymbol,
 } from "@universal-middleware/core";
 import {
-  type EventHandler,
-  type H3Event,
   defineResponseMiddleware,
+  type EventHandler,
   eventHandler,
   getResponseHeaders,
   getResponseStatus,
   getResponseStatusText,
+  type H3Event,
   sendWebResponse,
   toWebRequest,
 } from "h3";
@@ -45,6 +45,15 @@ declare module "h3" {
   }
 }
 
+function memToWebRequest(event: H3Event): Request {
+  if (!event.web?.request) {
+    event.web ??= {}
+    event.web.request = toWebRequest(event)
+  }
+
+  return event.web.request;
+}
+
 /**
  * Creates a request handler to be passed to app.all() or any other route function
  */
@@ -63,7 +72,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
         event,
       ) {
         const ctx = initContext<InContext>(event);
-        return this[universalSymbol](toWebRequest(event), ctx, getRuntime(event));
+        return this[universalSymbol](memToWebRequest(event), ctx, getRuntime(event));
       }),
       eventHandler,
     );
@@ -130,7 +139,7 @@ export function createMiddleware<
         event,
       ) {
         const ctx = initContext<InContext>(event);
-        const response = await this[universalSymbol](toWebRequest(event), ctx, getRuntime(event));
+        const response = await this[universalSymbol](memToWebRequest(event), ctx, getRuntime(event));
 
         if (typeof response === "function") {
           event.context[pendingMiddlewaresSymbol] ??= [];
