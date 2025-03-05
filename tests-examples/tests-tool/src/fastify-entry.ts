@@ -8,7 +8,7 @@ import rawBody from "fastify-raw-body";
 import { args } from "./utils";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { sendBigFile } from "@universal-middleware/tests/utils";
+import { sendBigFile } from "@universal-middleware/tests/utils-node";
 import { createHandler } from "@universal-middleware/fastify";
 
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));

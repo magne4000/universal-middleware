@@ -5,7 +5,7 @@ import paramsHandler from "@universal-middleware-examples/tool/params-handler-ex
 import compress from "@universal-middleware/compress/express";
 import express from "express";
 import { args } from "./utils";
-import { sendBigFile } from "@universal-middleware/tests/utils";
+import { sendBigFile } from "@universal-middleware/tests/utils-node";
 import { createHandler } from "@universal-middleware/express";
 
 const app = express();

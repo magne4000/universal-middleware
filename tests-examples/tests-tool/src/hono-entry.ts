@@ -7,7 +7,7 @@ import compress from "@universal-middleware/compress/hono";
 import { Hono } from "hono";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { sendBigFile } from "@universal-middleware/tests/utils";
+import { sendBigFile } from "@universal-middleware/tests/utils-node";
 
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 

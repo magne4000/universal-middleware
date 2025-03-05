@@ -8,7 +8,7 @@ import { createApp, createRouter, toNodeListener } from "h3";
 import { args } from "./utils";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { sendBigFile } from "@universal-middleware/tests/utils";
+import { sendBigFile } from "@universal-middleware/tests/utils-node";
 
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 
