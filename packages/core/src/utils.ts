@@ -71,6 +71,29 @@ export function url(request: { url: string; [urlSymbol]?: URL }): URL {
   return request[urlSymbol];
 }
 
+export function cloneRequest(request: Request, fields?: RequestInit & { url?: string }) {
+  if (!fields) {
+    return request.clone();
+  }
+
+  return new Request(fields?.url ?? request.url, {
+    method: request.method,
+    headers: request.headers,
+    body: request.body,
+    mode: request.mode,
+    credentials: request.credentials,
+    cache: request.cache,
+    redirect: request.redirect,
+    referrer: request.referrer,
+    integrity: request.integrity,
+    keepalive: request.keepalive,
+    referrerPolicy: request.referrerPolicy,
+    signal: request.signal,
+    // @ts-ignore RequestInit: duplex option is required when sending a body
+    duplex: "half",
+  });
+}
+
 export function getUniversal<T extends object>(subject: T | { [universalSymbol]: T }): T {
   return universalSymbol in subject ? subject[universalSymbol] : subject;
 }
