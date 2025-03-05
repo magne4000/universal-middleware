@@ -2,12 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
 import { nodeHeadersToWeb } from "@universal-middleware/core";
-import {
-  type DecoratedServerResponse,
-  pendingMiddlewaresSymbol,
-  pendingWritesSymbol,
-  wrappedResponseSymbol,
-} from "./common.js";
+import { type DecoratedServerResponse, pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./common.js";
 
 // @ts-ignore
 const deno = typeof Deno !== "undefined";
@@ -41,7 +36,7 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
               }
             }
           } catch (e) {
-            this.destroy(e as Error)
+            this.destroy(e as Error);
           }
         },
       });
@@ -78,16 +73,16 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
   }
 }
 
-function createTransformStream(): TransformStream<Uint8Array | string | Buffer, Uint8Array> {
+function createTransformStream() {
   const textEncoder = new TextEncoder();
-  return new TransformStream({
-    transform(chunk, controller) {
+  return new TransformStream<Uint8Array | string | Buffer, Uint8Array>({
+    transform(chunk, ctrl) {
       if (typeof chunk === "string") {
-        controller.enqueue(textEncoder.encode(chunk));
+        ctrl.enqueue(textEncoder.encode(chunk));
       } else if (chunk instanceof Uint8Array) {
-        controller.enqueue(chunk);
+        ctrl.enqueue(chunk);
       } else {
-        controller.enqueue(new Uint8Array(chunk));
+        ctrl.enqueue(new Uint8Array(chunk));
       }
     },
   });
@@ -109,9 +104,9 @@ function override<T extends DecoratedServerResponse>(
       // console.log("write", args[0]);
       forwardTo.write(args[0]).catch(console.error);
     }
-    if (key === "end" && !forwardTo.closed) {
+    if (key === "end") {
       // console.log("end");
-      forwardTo.close().catch(console.error);
+      forwardTo.close().catch(() => {});
     }
     return true;
   };
@@ -129,19 +124,15 @@ function override<T extends DecoratedServerResponse>(
 
 function overrideWriteHead<T extends DecoratedServerResponse>(nodeResponse: T, callback: () => Promise<unknown>) {
   const original = nodeResponse.writeHead;
+  let alreadyCalled = false;
 
-  nodeResponse.writeHead = (...args) => {
-    // console.log("called", "writeHead", args);
-    const p = callback();
-    nodeResponse[pendingWritesSymbol] ??= [];
-    nodeResponse[pendingWritesSymbol].push(p);
-    p.then(() => {
-      if (nodeResponse.headersSent) {
-        // console.log("writeHead", args);
-        return nodeResponse;
-      }
-      original.apply(nodeResponse, args as any);
-    });
+  // Upon first call to `writeHead`, trigger pending middlewares
+  // Upon further call while pending middlewares are still running, it should no-op
+  nodeResponse.writeHead = () => {
+    if (!alreadyCalled) {
+      callback().catch(console.error);
+      alreadyCalled = true;
+    }
 
     return nodeResponse;
   };
@@ -195,64 +186,46 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
   const writer = body.writable.getWriter();
   const [reader1, reader2] = body.readable.tee();
 
-  let readableToOriginal = reader2;
-
-  const restore = [
-    override(nodeResponse, "write", writer),
-    override(nodeResponse, "end", writer),
-    overrideWriteHead(nodeResponse, triggerPendingMiddlewares),
-  ] as const;
-  let resolve: () => void;
-  // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
-  const pendingResponse: Promise<void> = new Promise((r) => (resolve = r));
+  const original = {
+    write: override(nodeResponse, "write", writer),
+    end: override(nodeResponse, "end", writer),
+    writeHead: overrideWriteHead(nodeResponse, triggerPendingMiddlewares),
+  } as const;
 
   async function triggerPendingMiddlewares() {
-    if (nodeResponse[pendingMiddlewaresSymbol]) {
-      const middlewares = nodeResponse[pendingMiddlewaresSymbol];
-      delete nodeResponse[pendingMiddlewaresSymbol];
-      let response = await middlewares.reduce(
-        async (prev, curr) => curr(await prev),
-        Promise.resolve(responseAdapter(nodeResponse, reader1)),
-      );
-
-      if (response.body && response.body !== reader1) {
-        // console.log("tee");
-        const [body1, body2] = response.body.tee();
-        response = new Response(body1, response);
-        readableToOriginal = body2;
-      }
-
-      setHeaders(response, nodeResponse, true);
-
-      nodeResponse.flushHeaders();
-
-      const wait = readableToOriginal.pipeTo(
-        new WritableStream({
-          write(chunk) {
-            Promise.all(nodeResponse[pendingWritesSymbol] ?? []).then(() => {
-              restore[0].original(chunk);
-            });
-          },
-          close() {
-            Promise.all(nodeResponse[pendingWritesSymbol] ?? []).then(() => {
-              restore[1].original();
-            });
-          },
-        }),
-      );
-
-      // console.log("close");
-      await Promise.all([wait, writer.close()]);
-      // console.log("closed");
-
-      resolve();
-      // biome-ignore lint/complexity/noForEach: <explanation>
-      restore.forEach((r) => r.restore());
-    } else {
-      // console.log("pendingResponse");
-      await pendingResponse;
-      // console.log("pendingResponse DONE");
+    if (!nodeResponse[pendingMiddlewaresSymbol]) {
+      return;
     }
+    const middlewares = nodeResponse[pendingMiddlewaresSymbol];
+    delete nodeResponse[pendingMiddlewaresSymbol];
+    const response = await middlewares.reduce(
+      async (prev, curr) => curr(await prev),
+      Promise.resolve(responseAdapter(nodeResponse, reader1)),
+    );
+
+    const readableToOriginal = response.body ?? reader2;
+
+    setHeaders(response, nodeResponse, true);
+    original.writeHead.restore();
+    nodeResponse.flushHeaders();
+
+    const wait = readableToOriginal.pipeTo(
+      new WritableStream({
+        write(chunk) {
+          original.write.original(chunk);
+        },
+        close() {
+          original.end.original();
+        },
+        abort() {
+          original.end.original();
+        },
+      }),
+    );
+
+    await wait;
+    original.write.restore();
+    original.end.restore();
   }
 }
 

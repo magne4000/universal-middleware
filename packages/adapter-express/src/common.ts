@@ -16,7 +16,6 @@ export const contextSymbol = Symbol.for("unContext");
 export const requestSymbol = Symbol.for("unRequest");
 export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
 export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
-export const pendingWritesSymbol = Symbol.for("unPendingWrites");
 
 export const env: Record<string, string | undefined> =
   typeof globalThis.process?.env !== "undefined"
@@ -48,7 +47,6 @@ export interface DecoratedRequest<C extends Universal.Context = Universal.Contex
 export interface DecoratedServerResponse extends ServerResponse {
   [pendingMiddlewaresSymbol]?: ((response: Response) => Awaitable<Response>)[];
   [wrappedResponseSymbol]?: boolean;
-  [pendingWritesSymbol]?: Promise<unknown>[];
 }
 
 /** Connect/Express style request listener/middleware */
