@@ -90,8 +90,8 @@ export function cloneRequest(request: Request, fields?: RequestInit & { url?: st
     referrerPolicy: request.referrerPolicy,
     signal: request.signal,
     // @ts-ignore RequestInit: duplex option is required when sending a body
-    duplex: 'half'
-  })
+    duplex: "half",
+  });
 }
 
 export function getUniversal<T extends object>(subject: T | { [universalSymbol]: T }): T {
@@ -126,7 +126,7 @@ export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
   middleware: F,
   options: O,
 ): F & WithUniversalSymbols<O> {
-  const {immutable, ...rest} = options;
+  const { immutable, ...rest } = options;
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const m: any = immutable === false ? middleware : cloneFunction(middleware);
   for (const [key, value] of Object.entries(rest)) {
@@ -169,7 +169,7 @@ export function bindUniversal<
   F extends UniversalFn<U, AnyFn>,
 >(universal: U, fn: SetThis<F, { [universalSymbol]: U }>, wrapper?: AnyFn): F {
   const unboundFn = unboundSymbol in fn ? (fn[unboundSymbol] as F) : fn;
-  const self = {[universalSymbol]: universal, [unboundSymbol]: unboundFn};
+  const self = { [universalSymbol]: universal, [unboundSymbol]: unboundFn };
   const boundFn = unboundFn.bind(self) as F;
   Object.assign(boundFn, self);
   return wrapper ? (wrapper(boundFn) as F) : boundFn;
@@ -183,7 +183,7 @@ export function attachUniversal<
   U extends UniversalHandler<any> | UniversalMiddleware<any, any>,
   T extends {},
 >(universal: U, subject: T): T & { [universalSymbol]: U } {
-  return Object.assign(subject, {[universalSymbol]: universal});
+  return Object.assign(subject, { [universalSymbol]: universal });
 }
 
 /**
@@ -200,8 +200,8 @@ export function isHandler(m: EnhancedMiddleware) {
       // `pathSymbol` not supported for middlewares (yet?)
       console.warn(
         `Found a Universal Middleware with "path" metadata. ` +
-        "This will lead to unpredictable behaviour. " +
-        "Please open an issue at https://github.com/magne4000/universal-middleware and explain your use case with the expected behaviour.",
+          "This will lead to unpredictable behaviour. " +
+          "Please open an issue at https://github.com/magne4000/universal-middleware and explain your use case with the expected behaviour.",
       );
     }
     return order === 0;

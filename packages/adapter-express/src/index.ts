@@ -15,6 +15,6 @@ export {
   createServerResponse,
   type ConnectMiddleware,
   type ConnectMiddlewareBoolean,
-  type WebHandler
+  type WebHandler,
 } from "./utils.js";
 export { type UniversalExpressRouter, apply } from "./router.js";
