@@ -1,4 +1,9 @@
 import { expect, fetch, getServerUrl, run, test } from "@brillout/test-e2e";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 
 type RunOptions = Parameters<typeof run>[1] & {
   portCommand?: string;
@@ -8,7 +13,7 @@ type RunOptions = Parameters<typeof run>[1] & {
 };
 
 export function testRun(
-  cmd: `pnpm run dev:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia" | "vercel"}${string}`,
+  cmd: `pnpm run ${"dev" | "prod"}:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia" | "vercel"}${string}`,
   port: number,
   options?: RunOptions,
 ) {
@@ -41,4 +46,14 @@ export function testRun(
 
     expect(content).toBe("User name is: magne4000");
   });
+
+  if (!options?.noMiddleware && !options?.noCompression) {
+    test("/big-file", async () => {
+      const response = await fetch(`${getServerUrl()}${options?.prefix ?? ""}/big-file`);
+
+      expect(response.headers.get("content-encoding")).toMatch(/gzip|deflate/);
+      const content = await response.text();
+      expect(content).toBe(readFileSync(join(_dirname, "..", "..", "packages", "tests", "big-file.txt"), "utf-8"));
+    });
+  }
 }

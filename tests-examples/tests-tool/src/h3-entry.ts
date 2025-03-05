@@ -3,9 +3,14 @@ import contextMiddleware from "@universal-middleware-examples/tool/middlewares/c
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-h3";
 import paramsHandler from "@universal-middleware-examples/tool/params-handler-h3";
 import compress from "@universal-middleware/compress/h3";
-import { universalOnBeforeResponse } from "@universal-middleware/h3";
+import { createHandler, universalOnBeforeResponse } from "@universal-middleware/h3";
 import { createApp, createRouter, toNodeListener } from "h3";
 import { args } from "./utils";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { sendBigFile } from "@universal-middleware/tests/utils-node";
+
+const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 
 const app = createApp({
   // /!\ This is required for universal-middleware to operate properly
@@ -25,6 +30,8 @@ app.use(compress());
 const router = createRouter();
 
 router.get("/user/:name", paramsHandler());
+
+router.get("/big-file", createHandler(sendBigFile)());
 
 router.get("/", handler());
 
