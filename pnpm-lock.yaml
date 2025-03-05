@@ -902,6 +902,9 @@ importers:
       '@universal-middleware/core':
         specifier: link:../../packages/core
         version: link:../../packages/core
+      '@universal-middleware/elysia':
+        specifier: link:../../packages/adapter-elysia
+        version: link:../../packages/adapter-elysia
       '@universal-middleware/express':
         specifier: link:../../packages/adapter-express
         version: link:../../packages/adapter-express

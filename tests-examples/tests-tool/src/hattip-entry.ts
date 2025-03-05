@@ -6,9 +6,10 @@ import headersMiddleware from "@universal-middleware-examples/tool/middlewares/h
 import paramsHandler from "@universal-middleware-examples/tool/params-handler-hattip";
 import compress from "@universal-middleware/compress/hattip";
 import { args } from "./utils";
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { sendBigFile } from "@universal-middleware/tests/utils";
+import { createHandler } from "@universal-middleware/hattip";
 
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 
@@ -26,12 +27,7 @@ app.use(compress());
 
 app.get("/user/:name", paramsHandler());
 
-app.get("/compression", () => {
-  const context = readFileSync(join(_dirname, "..", "public", "big-file.txt"), "utf-8");
-  return new Response(context, {
-    status: 200,
-  });
-});
+app.get("/big-file", createHandler(sendBigFile)());
 
 app.get("/", handler());
 

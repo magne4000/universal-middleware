@@ -2,11 +2,12 @@ import handler from "@universal-middleware-examples/tool/dummy-handler-hono";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hono";
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hono";
 import paramsHandler from "@universal-middleware-examples/tool/params-handler-hono";
+import { createHandler } from "@universal-middleware/hono";
 import compress from "@universal-middleware/compress/hono";
 import { Hono } from "hono";
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { sendBigFile } from "@universal-middleware/tests/utils";
 
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 
@@ -24,12 +25,7 @@ app.use(compress());
 
 app.get("/user/:name", paramsHandler());
 
-app.get("/compression", () => {
-  const context = readFileSync(join(_dirname, "..", "public", "big-file.txt"), "utf-8");
-  return new Response(context, {
-    status: 200,
-  });
-});
+app.get("/big-file", createHandler(sendBigFile)());
 
 app.get("/", handler());
 
