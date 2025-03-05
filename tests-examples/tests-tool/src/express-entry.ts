@@ -5,6 +5,8 @@ import paramsHandler from "@universal-middleware-examples/tool/params-handler-ex
 import compress from "@universal-middleware/compress/express";
 import express from "express";
 import { args } from "./utils";
+import { sendBigFile } from "@universal-middleware/tests/utils";
+import { createHandler } from "@universal-middleware/express";
 
 const app = express();
 
@@ -19,6 +21,8 @@ app.use(headersMiddleware());
 app.use(compress());
 
 app.get("/user/:name", paramsHandler());
+
+app.get("/big-file", createHandler(sendBigFile)());
 
 app.get("/", handler());
 

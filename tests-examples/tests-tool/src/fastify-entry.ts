@@ -6,6 +6,11 @@ import compress from "@universal-middleware/compress/fastify";
 import fastify from "fastify";
 import rawBody from "fastify-raw-body";
 import { args } from "./utils";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 
 const app = fastify();
 
@@ -23,6 +28,11 @@ app.register(headersMiddleware());
 app.register(compress());
 
 app.get("/user/:name", paramsHandler());
+
+app.get("/compression", (request, reply) => {
+  const context = readFileSync(join(_dirname, '..', 'public', 'big-file.txt'), 'utf-8');
+  reply.status(200).send(context);
+});
 
 app.get("/", handler());
 
