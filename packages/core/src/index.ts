@@ -10,6 +10,7 @@ export {
   mergeHeadersInto,
   nodeHeadersToWeb,
   isBodyInit,
+  updateRequest,
   bindUniversal,
   attachUniversal,
   getUniversal,
