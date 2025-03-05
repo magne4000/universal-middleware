@@ -5,6 +5,24 @@
 
 * export Target and RuntimeAdapter from generated code ([056df5f](https://github.com/magne4000/universal-middleware/commit/056df5f8a48039eb93805f868f8f938c001423a9))
 
+## [0.6.11](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.6.10...universal-middleware-v0.6.11) (2025-03-05)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/cloudflare bumped to 0.4.4
+    * @universal-middleware/core bumped to 0.4.3
+    * @universal-middleware/elysia bumped to 0.4.4
+    * @universal-middleware/express bumped to 0.4.7
+    * @universal-middleware/fastify bumped to 0.5.8
+    * @universal-middleware/h3 bumped to 0.4.5
+    * @universal-middleware/hattip bumped to 0.4.4
+    * @universal-middleware/hono bumped to 0.4.5
+    * @universal-middleware/vercel bumped to 0.4.7
+    * @universal-middleware/webroute bumped to 0.4.3
+
 ## [0.6.10](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.6.9...universal-middleware-v0.6.10) (2025-03-05)
 
 

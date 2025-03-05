@@ -8,6 +8,16 @@
     * @universal-middleware/core bumped to 0.3.3
     * @universal-middleware/express bumped to 0.3.3
 
+## [0.5.8](https://github.com/magne4000/universal-middleware/compare/fastify-v0.5.7...fastify-v0.5.8) (2025-03-05)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.3
+    * @universal-middleware/express bumped to 0.4.7
+
 ## [0.5.7](https://github.com/magne4000/universal-middleware/compare/fastify-v0.5.6...fastify-v0.5.7) (2025-03-05)
 
 
