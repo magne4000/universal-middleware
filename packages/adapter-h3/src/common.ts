@@ -47,8 +47,8 @@ declare module "h3" {
 
 function memToWebRequest(event: H3Event): Request {
   if (!event.web?.request) {
-    event.web ??= {}
-    event.web.request = toWebRequest(event)
+    event.web ??= {};
+    event.web.request = toWebRequest(event);
   }
 
   return event.web.request;

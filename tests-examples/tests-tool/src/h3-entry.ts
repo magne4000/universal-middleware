@@ -32,10 +32,10 @@ const router = createRouter();
 router.get("/user/:name", paramsHandler());
 
 router.get("/compression", () => {
-  const context = readFileSync(join(_dirname, '..', 'public', 'big-file.txt'), 'utf-8');
+  const context = readFileSync(join(_dirname, "..", "public", "big-file.txt"), "utf-8");
   return new Response(context, {
-    status: 200
-  })
+    status: 200,
+  });
 });
 
 router.get("/", handler());

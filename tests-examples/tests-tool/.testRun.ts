@@ -53,7 +53,7 @@ export function testRun(
 
       expect(response.headers.get("content-encoding")).toMatch(/gzip|deflate/);
       const content = await response.text();
-      expect(content).toBe(readFileSync(join(_dirname, '..', '..', 'packages', 'tests', 'src', 'big-file.txt'), 'utf-8'));
+      expect(content).toBe(readFileSync(join(_dirname, "..", "..", "packages", "tests", "big-file.txt"), "utf-8"));
     });
   }
 }

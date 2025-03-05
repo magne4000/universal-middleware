@@ -8,7 +8,7 @@ export default defineConfig([
     format: "esm",
     bundle: true,
     minify: false,
-    outDir: 'dist',
+    outDir: "dist",
     banner: {
       js: `import {createRequire as __createRequire} from 'module';var require=__createRequire(import.meta.url);`,
     },

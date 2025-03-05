@@ -25,10 +25,10 @@ app.use(compress());
 app.get("/user/:name", paramsHandler());
 
 app.get("/compression", () => {
-  const context = readFileSync(join(_dirname, '..', 'public', 'big-file.txt'), 'utf-8');
+  const context = readFileSync(join(_dirname, "..", "public", "big-file.txt"), "utf-8");
   return new Response(context, {
-    status: 200
-  })
+    status: 200,
+  });
 });
 
 app.get("/", handler());

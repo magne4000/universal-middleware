@@ -130,15 +130,15 @@ export const guarded: Get<[], UniversalHandler> = () =>
 export const sendBigFile: Get<[], UniversalHandler> = () =>
   enhance(
     () => {
-      console.log('stream creating')
-      const webStream = Readable.toWeb(createReadStream(join(_dirname, '..', 'big-file.txt'), 'utf-8')) as unknown as ReadableStream<Uint8Array>;
+      const webStream = Readable.toWeb(
+        createReadStream(join(_dirname, "..", "big-file.txt"), "utf-8"),
+      ) as unknown as ReadableStream<Uint8Array>;
 
-      console.log('stream created')
       return new Response(webStream, {
         headers: {
-          'content-type': "text/plain; charset=utf-8"
+          "content-type": "text/plain; charset=utf-8",
         },
-        status: 200
+        status: 200,
       });
     },
     {

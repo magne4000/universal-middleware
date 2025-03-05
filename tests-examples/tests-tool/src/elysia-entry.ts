@@ -19,10 +19,10 @@ new Elysia()
   .use(compress())
   .get("/user/:name", paramsHandler())
   .get("/compression", () => {
-    const context = readFileSync(join(_dirname, '..', 'public', 'big-file.txt'), 'utf-8');
+    const context = readFileSync(join(_dirname, "..", "public", "big-file.txt"), "utf-8");
     return new Response(context, {
-      status: 200
-    })
+      status: 200,
+    });
   })
   .get("/", handler())
   .listen(port, () => {

@@ -30,7 +30,7 @@ app.register(compress());
 app.get("/user/:name", paramsHandler());
 
 app.get("/compression", (request, reply) => {
-  const context = readFileSync(join(_dirname, '..', 'public', 'big-file.txt'), 'utf-8');
+  const context = readFileSync(join(_dirname, "..", "public", "big-file.txt"), "utf-8");
   reply.status(200).send(context);
 });
 
