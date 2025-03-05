@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.6](https://github.com/magne4000/universal-middleware/compare/express-v0.4.5...express-v0.4.6) (2025-03-05)
+
+
+### Bug Fixes
+
+* **express:** large streams are no longer terminated unexpectedly ([#123](https://github.com/magne4000/universal-middleware/issues/123)) ([82c43f1](https://github.com/magne4000/universal-middleware/commit/82c43f12f254d0b26505a19f7d58c3480ab7883a))
+
 ## [0.4.5](https://github.com/magne4000/universal-middleware/compare/express-v0.4.4...express-v0.4.5) (2025-03-04)
 
 

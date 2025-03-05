@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.4](https://github.com/magne4000/universal-middleware/compare/h3-v0.4.3...h3-v0.4.4) (2025-03-05)
+
+
+### Bug Fixes
+
+* **express:** large streams are no longer terminated unexpectedly ([#123](https://github.com/magne4000/universal-middleware/issues/123)) ([82c43f1](https://github.com/magne4000/universal-middleware/commit/82c43f12f254d0b26505a19f7d58c3480ab7883a))
+
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/h3-v0.4.2...h3-v0.4.3) (2025-03-04)
 
 
