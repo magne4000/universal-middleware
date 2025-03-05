@@ -120,4 +120,3 @@ export const guarded: Get<[], UniversalHandler> = () =>
       method: ["GET", "POST"],
     },
   );
-
