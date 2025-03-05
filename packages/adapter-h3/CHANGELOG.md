@@ -7,6 +7,15 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.5](https://github.com/magne4000/universal-middleware/compare/h3-v0.4.4...h3-v0.4.5) (2025-03-05)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.3
+
 ## [0.4.4](https://github.com/magne4000/universal-middleware/compare/h3-v0.4.3...h3-v0.4.4) (2025-03-05)
 
 
