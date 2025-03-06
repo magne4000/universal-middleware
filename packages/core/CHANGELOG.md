@@ -5,6 +5,13 @@
 
 * new type RuntimeAdapterTarget ([8768e6d](https://github.com/magne4000/universal-middleware/commit/8768e6dd6f1e7e7bfcbe88baf13a21bbaae842c6))
 
+## [0.4.4](https://github.com/magne4000/universal-middleware/compare/core-v0.4.3...core-v0.4.4) (2025-03-06)
+
+
+### Features
+
+* **core:** export getRuntimeKey ([27a97a9](https://github.com/magne4000/universal-middleware/commit/27a97a9d03c1e9d55186758d31e3b6b2389f596a))
+
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/core-v0.4.2...core-v0.4.3) (2025-03-05)
 
 
