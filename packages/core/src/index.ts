@@ -6,6 +6,7 @@ declare global {
 
 export type * from "./types.js";
 export { getAdapterRuntime } from "./adapter.js";
+export { getRuntimeKey } from "./runtime.js";
 export {
   mergeHeadersInto,
   nodeHeadersToWeb,
