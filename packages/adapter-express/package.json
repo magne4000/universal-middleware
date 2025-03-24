@@ -31,7 +31,7 @@
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "express": "catalog:",
-    "helmet": "^8.0.0",
+    "helmet": "^8.1.0",
     "rimraf": "catalog:",
     "tsup": "catalog:",
     "tsx": "catalog:",
