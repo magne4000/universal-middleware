@@ -28,7 +28,7 @@
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@brillout/test-e2e": "^0.6.3",
+    "@brillout/test-e2e": "^0.6.4",
     "@hattip/adapter-node": "^0.0.49",
     "@hattip/router": "catalog:",
     "@hono/vite-dev-server": "^0.19.0",
@@ -56,7 +56,7 @@
     "hono": "catalog:",
     "mri": "^1.2.0",
     "npm-run-all2": "^7.0.2",
-    "playwright": "^1.51.0",
+    "playwright": "^1.51.1",
     "rimraf": "catalog:",
     "tsup": "^8.4.0",
     "typescript": "catalog:",
