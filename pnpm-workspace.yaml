@@ -22,4 +22,4 @@ catalog:
   typescript: ^5.8.2
   vite: ^6.2.2
   vitest: ^3.0.8
-  wrangler: ^3.114.0
+  wrangler: ^4.4.0
