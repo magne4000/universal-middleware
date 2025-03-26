@@ -124,8 +124,8 @@ export function createMiddleware<
           }
 
           return currentResponse;
-          // biome-ignore lint/suspicious/noExplicitAny: avoid recursive type error
         })
+        // biome-ignore lint/suspicious/noExplicitAny: avoid recursive type error
         .as("plugin") as any,
     );
   };
