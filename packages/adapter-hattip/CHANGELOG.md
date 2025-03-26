@@ -7,6 +7,15 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.6](https://github.com/magne4000/universal-middleware/compare/hattip-v0.4.5...hattip-v0.4.6) (2025-03-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.5
+
 ## [0.4.5](https://github.com/magne4000/universal-middleware/compare/hattip-v0.4.4...hattip-v0.4.5) (2025-03-06)
 
 

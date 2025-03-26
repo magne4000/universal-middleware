@@ -5,6 +5,13 @@
 
 * new type RuntimeAdapterTarget ([8768e6d](https://github.com/magne4000/universal-middleware/commit/8768e6dd6f1e7e7bfcbe88baf13a21bbaae842c6))
 
+## [0.4.5](https://github.com/magne4000/universal-middleware/compare/core-v0.4.4...core-v0.4.5) (2025-03-26)
+
+
+### Bug Fixes
+
+* **elysia:** middlewares returning early responses are handled correctly ([#134](https://github.com/magne4000/universal-middleware/issues/134)) ([0d8f22a](https://github.com/magne4000/universal-middleware/commit/0d8f22a16f01430cb4d13bf45c5aa0ad5622db70))
+
 ## [0.4.4](https://github.com/magne4000/universal-middleware/compare/core-v0.4.3...core-v0.4.4) (2025-03-06)
 
 
