@@ -7,6 +7,20 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.6](https://github.com/magne4000/universal-middleware/compare/elysia-v0.4.5...elysia-v0.4.6) (2025-03-26)
+
+
+### Bug Fixes
+
+* **elysia:** middlewares returning early responses are handled correctly ([#134](https://github.com/magne4000/universal-middleware/issues/134)) ([0d8f22a](https://github.com/magne4000/universal-middleware/commit/0d8f22a16f01430cb4d13bf45c5aa0ad5622db70))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.5
+
 ## [0.4.5](https://github.com/magne4000/universal-middleware/compare/elysia-v0.4.4...elysia-v0.4.5) (2025-03-06)
 
 

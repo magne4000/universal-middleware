@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/compress",
-  "version": "0.2.21",
+  "version": "0.2.22",
   "type": "module",
   "description": "Universal compress middleware",
   "files": [
