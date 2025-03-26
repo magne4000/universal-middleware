@@ -77,18 +77,18 @@ export function cloneRequest(request: Request, fields?: RequestInit & { url?: st
   }
 
   return new Request(fields?.url ?? request.url, {
-    method: request.method,
-    headers: request.headers,
-    body: request.body,
-    mode: request.mode,
-    credentials: request.credentials,
-    cache: request.cache,
-    redirect: request.redirect,
-    referrer: request.referrer,
-    integrity: request.integrity,
-    keepalive: request.keepalive,
-    referrerPolicy: request.referrerPolicy,
-    signal: request.signal,
+    method: fields?.method ?? request.method,
+    headers: fields?.headers ?? request.headers,
+    body: fields?.body ?? request.body,
+    mode: fields?.mode ?? request.mode,
+    credentials: fields?.credentials ?? request.credentials,
+    cache: fields?.cache ?? request.cache,
+    redirect: fields?.redirect ?? request.redirect,
+    referrer: fields?.referrer ?? request.referrer,
+    integrity: fields?.integrity ?? request.integrity,
+    keepalive: fields?.keepalive ?? request.keepalive,
+    referrerPolicy: fields?.referrerPolicy ?? request.referrerPolicy,
+    signal: fields?.signal ?? request.signal,
     // @ts-ignore RequestInit: duplex option is required when sending a body
     duplex: "half",
   });

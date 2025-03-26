@@ -6,7 +6,14 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { attachUniversal, bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import {
+  attachUniversal,
+  bindUniversal,
+  cloneRequest,
+  getAdapterRuntime,
+  isBodyInit,
+  universalSymbol,
+} from "@universal-middleware/core";
 import { type Context as ElysiaContext, Elysia, type Handler, NotFoundError } from "elysia";
 
 export const contextSymbol = Symbol.for("unContext");
@@ -18,6 +25,16 @@ export type ElysiaMiddleware<In extends Universal.Context, Out extends Universal
   UniversalMiddleware<In, Out>,
   typeof initPlugin
 >;
+
+function cloneRequestWithBody(request: Request, body: unknown) {
+  let bodyInit: BodyInit | undefined = undefined;
+  if (isBodyInit(body)) {
+    bodyInit = body;
+  } else if (typeof body === "object" && body !== null) {
+    bodyInit = JSON.stringify(body);
+  }
+  return cloneRequest(request, { body: bodyInit });
+}
 
 /**
  * Creates a request handler to be passed to app.all() or any other route function
@@ -41,7 +58,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
       }
 
       const response: Response | undefined = await this[universalSymbol](
-        elysiaContext.request,
+        cloneRequestWithBody(elysiaContext.request, elysiaContext.body),
         context,
         getRuntime(elysiaContext),
       );
@@ -69,26 +86,28 @@ export function createMiddleware<
       middleware,
       new Elysia()
         .use(initPlugin<InContext>())
-        .onBeforeHandle(
-          { as: "global" },
-          bindUniversal(middleware, async function universalMiddlewareElysia(elysiaContext) {
-            const response = await this[universalSymbol](
-              elysiaContext.request,
-              elysiaContext.getContext(),
-              getRuntime(elysiaContext),
-            );
-            if (typeof response === "function") {
-              elysiaContext[pendingSymbol].push(response);
-            } else if (response !== null && typeof response === "object") {
-              if (response instanceof Response) {
-                return response;
+        .onBeforeHandle((elysiaContext1) => {
+          return bindUniversal(
+            middleware,
+            async function universalMiddlewareElysia(elysiaContext: typeof elysiaContext1) {
+              const response = await this[universalSymbol](
+                cloneRequestWithBody(elysiaContext.request, elysiaContext.body),
+                elysiaContext.getContext(),
+                getRuntime(elysiaContext),
+              );
+              if (typeof response === "function") {
+                elysiaContext[pendingSymbol].push(response);
+              } else if (response !== null && typeof response === "object") {
+                if (response instanceof Response) {
+                  return response;
+                }
+                // Update context
+                elysiaContext.setContext(response);
               }
-              // Update context
-              elysiaContext.setContext(response);
-            }
-          }),
-        )
-        .onAfterHandle({ as: "global" }, async (elysiaContext) => {
+            },
+          )(elysiaContext1);
+        })
+        .onAfterHandle(async (elysiaContext) => {
           if (elysiaContext[pendingHandledSymbol]) return;
 
           Object.defineProperty(elysiaContext, pendingHandledSymbol, {
@@ -106,21 +125,22 @@ export function createMiddleware<
 
           return currentResponse;
           // biome-ignore lint/suspicious/noExplicitAny: avoid recursive type error
-        }) as any,
+        })
+        .as("plugin") as any,
     );
   };
 }
 
 function initPlugin<Context extends Universal.Context = Universal.Context>() {
   return new Elysia({ name: "universal-middleware-context" })
-    .derive({ as: "global" }, () => {
+    .derive(() => {
       return {
         [contextSymbol]: {} as Context,
         [pendingSymbol]: [] as ((response: Response) => Awaitable<Response>)[],
         [pendingHandledSymbol]: false as boolean,
       };
     })
-    .derive({ as: "global" }, (elysiaContext) => {
+    .derive((elysiaContext) => {
       return {
         getContext() {
           return elysiaContext[contextSymbol];
@@ -131,7 +151,8 @@ function initPlugin<Context extends Universal.Context = Universal.Context>() {
           });
         },
       };
-    });
+    })
+    .as("plugin");
 }
 
 export function getRuntime(elysiaContext: ElysiaContext): RuntimeAdapter {
