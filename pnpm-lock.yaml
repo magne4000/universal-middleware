@@ -34,8 +34,8 @@ catalogs:
       specifier: ^4.21.2
       version: 4.21.2
     fastify:
-      specifier: ^5.2.1
-      version: 5.2.1
+      specifier: ^5.2.2
+      version: 5.2.2
     h3:
       specifier: ^1.15.1
       version: 1.15.1
@@ -156,7 +156,7 @@ importers:
         version: 1.2.25(typescript@5.8.2)
       fastify:
         specifier: 'catalog:'
-        version: 5.2.1
+        version: 5.2.2
       h3:
         specifier: 'catalog:'
         version: 1.15.1
@@ -358,7 +358,7 @@ importers:
         version: link:../tests
       fastify:
         specifier: 'catalog:'
-        version: 5.2.1
+        version: 5.2.2
       fastify-plugin:
         specifier: ^5.0.1
         version: 5.0.1
@@ -682,7 +682,7 @@ importers:
         version: 1.2.25(typescript@5.8.2)
       fastify:
         specifier: 'catalog:'
-        version: 5.2.1
+        version: 5.2.2
       h3:
         specifier: 'catalog:'
         version: 1.15.1
@@ -937,7 +937,7 @@ importers:
         version: 4.21.2
       fastify:
         specifier: 'catalog:'
-        version: 5.2.1
+        version: 5.2.2
       fastify-raw-body:
         specifier: ^5.0.0
         version: 5.0.0
@@ -3139,8 +3139,8 @@ packages:
     resolution: {integrity: sha512-2qfoaQ3BQDhZ1gtbkKZd6n0kKxJISJGM6u/skD9ljdWItAscjXrtZ1lnjr7PavmXX9j4EyCPmBDiIsLn07d5vA==}
     engines: {node: '>= 10'}
 
-  fastify@5.2.1:
-    resolution: {integrity: sha512-rslrNBF67eg8/Gyn7P2URV8/6pz8kSAscFL4EThZJ8JBMaXacVdVE4hmUcnPNKERl5o/xTiBSLfdowBRhVF1WA==}
+  fastify@5.2.2:
+    resolution: {integrity: sha512-22T/PnhquWozuFXg3Ish4md5ipsF1Nx1mJ9ulLdZPXSk14WFj/wMlyNB/yll9sQOojKRgOIxT2inK3Xpjg5hyw==}
 
   fastq@1.19.1:
     resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
@@ -7357,7 +7357,7 @@ snapshots:
       raw-body: 3.0.0
       secure-json-parse: 2.7.0
 
-  fastify@5.2.1:
+  fastify@5.2.2:
     dependencies:
       '@fastify/ajv-compiler': 4.0.2
       '@fastify/error': 4.0.0
