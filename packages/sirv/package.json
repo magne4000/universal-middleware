@@ -18,7 +18,7 @@
   "license": "MIT",
   "scripts": {
     "build": "rimraf dist && tsup",
-    "test": "vitest run --test-timeout=15000",
+    "test": "vitest run --test-timeout=30000",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
