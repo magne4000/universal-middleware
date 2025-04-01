@@ -6,6 +6,7 @@ export interface Run {
   name: string;
   command: string;
   port: number;
+  portOption?: string;
   waitUntilType?: "undefined" | "function";
   delay?: number;
   env?: Record<string, string>;
@@ -41,11 +42,11 @@ declare global {
 export function runTests(runs: Run[], options: Options) {
   options.vitest.describe.concurrent.each(runs)("$name", (run) => {
     let server: ChildProcess | undefined = undefined;
-    const { command, port, delay, env } = run;
+    const { command, port, delay, env, portOption } = run;
     let host = `http://localhost:${port}`;
 
     options.vitest.beforeAll(async () => {
-      server = spawn(`${command} --port ${port}`, {
+      server = spawn(`${command} ${portOption ?? "--port"} ${port}`, {
         shell: true,
         stdio: "inherit",
         env: {

@@ -5,11 +5,27 @@ const port = 3800;
 
 const token = process.env.VERCEL_TOKEN ? ` --token=${process.env.VERCEL_TOKEN}` : "";
 
+const expectInternalServerError = {
+  tests: {
+    throwLate: {
+      expectedBody: "A server error has occurred",
+    },
+    throwEarlyAndLate: {
+      expectedBody: "A server error has occurred",
+    },
+    throwEarly: {
+      expectedBody: "A server error has occurred",
+    },
+  },
+} satisfies Pick<Run, "tests">;
+
 const runs: Run[] = [
   {
     name: "adapter-vercel: node",
     command: `pnpm run test:run-vercel:node${token}`,
     port,
+    portOption: "--listen",
+    ...expectInternalServerError,
   },
 ];
 
