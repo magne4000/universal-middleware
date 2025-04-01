@@ -32,7 +32,7 @@ declare module "fastify" {
   export interface FastifyRequest {
     [pendingMiddlewaresSymbol]?: ((
       response: Response,
-    ) => Response | Promise<Response> | undefined | Promise<undefined>)[];
+    ) => Response | Promise<Response | undefined> | undefined | Promise<undefined>)[];
     [wrappedResponseSymbol]?: boolean;
   }
 
@@ -211,7 +211,7 @@ export function createMiddleware<
               headers: new Headers(getHeaders(reply)),
               status: reply.statusCode,
             });
-          } else {
+          } else if (payload !== undefined) {
             throw new TypeError("Payload is not a Response or BodyInit compatible");
           }
 
@@ -226,7 +226,12 @@ export function createMiddleware<
             Promise.resolve(payload as Response),
           );
 
-          return newResponse ?? payload;
+          const r = newResponse ?? payload;
+          if (!r) {
+            reply.callNotFound();
+          } else {
+            return r;
+          }
         });
       }),
     );

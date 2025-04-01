@@ -1,5 +1,13 @@
 import { args, bun, deno } from "@universal-middleware/tests";
-import { guarded, handler, middlewares, routeParamHandler } from "@universal-middleware/tests/utils";
+import {
+  guarded,
+  handler,
+  middlewares,
+  routeParamHandler,
+  throwEarlyAndLateHandler,
+  throwEarlyHandler,
+  throwLateHandler,
+} from "@universal-middleware/tests/utils";
 import { createAdapter } from "@webroute/middleware";
 import { Route, route } from "@webroute/route";
 import { createRadixRouter } from "@webroute/router";
@@ -31,6 +39,37 @@ const router = createRadixRouter([
       .use(createMiddleware(() => middlewares.updateHeaders)())
       .use(createMiddleware(() => middlewares.contextAsync)())
       .handle(createHandler(guarded)()),
+  ),
+  // @ts-ignore
+  Route.normalise(
+    route("/throw-early")
+      .method("get")
+      .use(middlewares.throwEarly)
+      .use(middlewares.contextSync)
+      .use(createMiddleware(() => middlewares.updateHeaders)())
+      .use(createMiddleware(() => middlewares.contextAsync)())
+      .handle(createHandler(throwEarlyHandler)()),
+  ),
+  // @ts-ignore
+  Route.normalise(
+    route("/throw-late")
+      .method("get")
+      .use(middlewares.throwLate)
+      .use(middlewares.contextSync)
+      .use(createMiddleware(() => middlewares.updateHeaders)())
+      .use(createMiddleware(() => middlewares.contextAsync)())
+      .handle(createHandler(throwLateHandler)()),
+  ),
+  // @ts-ignore
+  Route.normalise(
+    route("/throw-early-and-late")
+      .method("get")
+      .use(middlewares.throwEarly)
+      .use(middlewares.throwLate)
+      .use(middlewares.contextSync)
+      .use(createMiddleware(() => middlewares.updateHeaders)())
+      .use(createMiddleware(() => middlewares.contextAsync)())
+      .handle(createHandler(throwEarlyAndLateHandler)()),
   ),
 ]);
 

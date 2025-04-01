@@ -3,11 +3,26 @@ import * as vitest from "vitest";
 
 const port = 3050;
 
+const expectInternalServerError = {
+  tests: {
+    throwLate: {
+      expectedBody: "Internal Server Error",
+    },
+    throwEarlyAndLate: {
+      expectedBody: "Internal Server Error",
+    },
+    throwEarly: {
+      expectedBody: "Internal Server Error",
+    },
+  },
+} satisfies Pick<Run, "tests">;
+
 const runs: Run[] = [
   {
     name: "adapter-hono: node",
     command: "pnpm run test:run-hono:node",
     port: port,
+    ...expectInternalServerError,
   },
   {
     name: "adapter-hono: node router",
@@ -16,6 +31,7 @@ const runs: Run[] = [
     env: {
       TEST_CASE: "router",
     },
+    ...expectInternalServerError,
   },
   {
     name: "adapter-hono: node router enhanced",
@@ -24,16 +40,19 @@ const runs: Run[] = [
     env: {
       TEST_CASE: "router_enhanced",
     },
+    ...expectInternalServerError,
   },
   {
     name: "adapter-hono: bun",
     command: "pnpm run test:run-hono:bun",
     port: port + 3,
+    ...expectInternalServerError,
   },
   {
     name: "adapter-hono: deno",
     command: "pnpm run test:run-hono:deno",
     port: port + 4,
+    ...expectInternalServerError,
   },
   {
     name: "adapter-hono: wrangler",

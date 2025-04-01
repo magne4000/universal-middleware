@@ -136,7 +136,7 @@ function initPlugin<Context extends Universal.Context = Universal.Context>() {
     .derive(() => {
       return {
         [contextSymbol]: {} as Context,
-        [pendingSymbol]: [] as ((response: Response) => Awaitable<Response>)[],
+        [pendingSymbol]: [] as ((response: Response) => Awaitable<Response | undefined>)[],
         [pendingHandledSymbol]: false as boolean,
       };
     })
