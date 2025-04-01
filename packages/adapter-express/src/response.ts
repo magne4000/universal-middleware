@@ -178,7 +178,7 @@ export function responseAdapter(nodeResponse: DecoratedServerResponse, bodyInit?
   });
 }
 
-export function wrapResponse(nodeResponse: DecoratedServerResponse) {
+export function wrapResponse(nodeResponse: DecoratedServerResponse, next?: (err?: unknown) => unknown) {
   if (nodeResponse[wrappedResponseSymbol]) return;
   nodeResponse[wrappedResponseSymbol] = true;
 
@@ -198,10 +198,28 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse) {
     }
     const middlewares = nodeResponse[pendingMiddlewaresSymbol];
     delete nodeResponse[pendingMiddlewaresSymbol];
-    const response = await middlewares.reduce(
-      async (prev, curr) => curr(await prev),
-      Promise.resolve(responseAdapter(nodeResponse, reader1)),
-    );
+    let response: Response | undefined = undefined;
+    try {
+      response = responseAdapter(nodeResponse, reader1);
+      for (const middleware of middlewares) {
+        const tmp = await middleware(response);
+        // Do not hard-fail when encountering an undefined Response
+        if (tmp) response = tmp;
+      }
+    } catch (e) {
+      response = undefined;
+      await writer.abort();
+      original.writeHead.restore();
+      original.write.restore();
+      original.end.restore();
+      if (next) {
+        next(e);
+      } else {
+        throw e;
+      }
+    }
+
+    if (!response) return;
 
     const readableToOriginal = response.body ?? reader2;
 

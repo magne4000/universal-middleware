@@ -150,7 +150,10 @@ export function createMiddleware<
               "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-middleware",
             );
           }
-          wrapResponse(res);
+          // Deno fix
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          if (req.complete === undefined) req.complete = (req as any)._readableState?.ended ?? true;
+          wrapResponse(res, next);
           res[pendingMiddlewaresSymbol] ??= [];
           // `wrapResponse` takes care of calling those middlewares right before sending the response
           res[pendingMiddlewaresSymbol].push(response);

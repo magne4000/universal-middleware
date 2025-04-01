@@ -73,7 +73,7 @@ export const enhancedMiddlewares = {
     order: MiddlewareOrder.AUTHORIZATION,
   }),
   throw: enhance(middlewares.throw, {
-    order: MiddlewareOrder.AUTHORIZATION,
+    order: MiddlewareOrder.ERROR_HANDLING,
   }),
 };
 

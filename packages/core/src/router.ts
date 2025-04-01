@@ -92,7 +92,8 @@ export function apply(router: UniversalRouterInterface, middlewares: EnhancedMid
       router.use(m);
     }
   }
-  router.applyCatchAll();
+  // defer microtask
+  Promise.resolve().then(() => router.applyCatchAll());
 }
 
 export async function applyAsync(router: UniversalRouterInterface<"async">, middlewares: EnhancedMiddleware[]) {
@@ -105,7 +106,8 @@ export async function applyAsync(router: UniversalRouterInterface<"async">, midd
       await router.use(m);
     }
   }
-  await router.applyCatchAll();
+  // defer microtask
+  Promise.resolve().then(() => router.applyCatchAll());
 }
 
 /**

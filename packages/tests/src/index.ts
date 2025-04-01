@@ -110,6 +110,13 @@ export function runTests(runs: Run[], options: Options) {
       options.vitest.expect(body).toBe("Unauthorized");
     });
 
+    options.vitest.test("throw route", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${options.prefix ?? ""}/throw`);
+      const body = await response.text();
+      options.vitest.expect(response.status).toBe(500);
+      options.vitest.expect(body).toContain("universal-middleware throw test");
+    });
+
     options.vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {
       const response = await fetch(`${host}${options.prefix ?? ""}/user/magne4000`);
       const body = await response.text();

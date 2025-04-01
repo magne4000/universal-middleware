@@ -31,6 +31,7 @@ switch (TEST_CASE) {
 
     // Test registering /guarded manually to see if `guard` middleware still applies
     app.get("/guarded", createHandler(guarded)());
+    app.get("/throw", createHandler(throwHandler)());
 
     break;
   }
