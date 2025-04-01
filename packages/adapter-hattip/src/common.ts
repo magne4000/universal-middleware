@@ -32,7 +32,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return bindUniversal(handler, function universalHandlerHattip(context) {
+    return bindUniversal(handler, async function universalHandlerHattip(context) {
       const ctx = initContext<InContext>(context);
       return this[universalSymbol](context.request, ctx, getRuntime(context));
     });
@@ -58,7 +58,8 @@ export function createMiddleware<
 
       if (typeof response === "function") {
         const res = await context.next();
-        return response(res);
+        const actualRes = await response(res);
+        return actualRes ?? res;
       }
       if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
