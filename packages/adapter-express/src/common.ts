@@ -45,7 +45,7 @@ export interface DecoratedRequest<C extends Universal.Context = Universal.Contex
 }
 
 export interface DecoratedServerResponse extends ServerResponse {
-  [pendingMiddlewaresSymbol]?: ((response: Response) => Awaitable<Response>)[];
+  [pendingMiddlewaresSymbol]?: ((response: Response) => Awaitable<Response | undefined>)[];
   [wrappedResponseSymbol]?: boolean;
 }
 

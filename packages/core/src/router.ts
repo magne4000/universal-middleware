@@ -82,7 +82,7 @@ export class UniversalRouter implements UniversalRouterInterface {
 }
 
 // TODO handle path for middlewares
-export function apply(router: UniversalRouterInterface, middlewares: EnhancedMiddleware[]) {
+export function apply(router: UniversalRouterInterface, middlewares: EnhancedMiddleware[], defer?: boolean) {
   const ms = ordered(middlewares);
 
   for (const m of ms) {
@@ -92,11 +92,16 @@ export function apply(router: UniversalRouterInterface, middlewares: EnhancedMid
       router.use(m);
     }
   }
-  // defer microtask
-  Promise.resolve().then(() => router.applyCatchAll());
+  if (!defer) {
+    router.applyCatchAll();
+  }
 }
 
-export async function applyAsync(router: UniversalRouterInterface<"async">, middlewares: EnhancedMiddleware[]) {
+export async function applyAsync(
+  router: UniversalRouterInterface<"async">,
+  middlewares: EnhancedMiddleware[],
+  defer?: boolean,
+) {
   const ms = ordered(middlewares);
 
   for (const m of ms) {
@@ -106,8 +111,9 @@ export async function applyAsync(router: UniversalRouterInterface<"async">, midd
       await router.use(m);
     }
   }
-  // defer microtask
-  Promise.resolve().then(() => router.applyCatchAll());
+  if (!defer) {
+    await router.applyCatchAll();
+  }
 }
 
 /**

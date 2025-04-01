@@ -31,5 +31,7 @@ export class UniversalExpressRouter extends UniversalRouter implements Universal
 
 export function apply(app: Express, middlewares: EnhancedMiddleware[]) {
   const router = new UniversalExpressRouter(app);
-  applyCore(router, middlewares);
+  applyCore(router, middlewares, true);
+  // defer
+  Promise.resolve().then(() => router.applyCatchAll());
 }

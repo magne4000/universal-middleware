@@ -114,7 +114,7 @@ export function pipe<F extends AnyMiddleware[]>(
 ): ComposeReturnType<F> {
   const ordererArgs = ordered(a);
   const fn: UniversalMiddleware<any, any> = async function pipeInternal(request, context, runtime) {
-    const pending: ((response: Response) => Awaitable<Response>)[] = [];
+    const pending: ((response: Response) => Awaitable<Response | undefined>)[] = [];
 
     let _response: Response | undefined = undefined;
     for (const m of ordererArgs) {

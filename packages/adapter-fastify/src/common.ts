@@ -32,7 +32,7 @@ declare module "fastify" {
   export interface FastifyRequest {
     [pendingMiddlewaresSymbol]?: ((
       response: Response,
-    ) => Response | Promise<Response> | undefined | Promise<undefined>)[];
+    ) => Response | Promise<Response | undefined> | undefined | Promise<undefined>)[];
     [wrappedResponseSymbol]?: boolean;
   }
 
