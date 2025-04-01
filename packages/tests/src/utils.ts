@@ -49,6 +49,14 @@ export const middlewares = {
       });
     }
   },
+  throw(request) {
+    // @ts-expect-error
+    return (): Response => {
+      if (url(request).pathname.endsWith("/throw")) {
+        throw new Error("universal-middleware throw test");
+      }
+    };
+  },
 } satisfies Record<string, UniversalMiddleware>;
 
 export const enhancedMiddlewares = {
@@ -62,6 +70,9 @@ export const enhancedMiddlewares = {
     order: MiddlewareOrder.CUSTOM_PRE_PROCESSING,
   }),
   guard: enhance(middlewares.guard, {
+    order: MiddlewareOrder.AUTHORIZATION,
+  }),
+  throw: enhance(middlewares.throw, {
     order: MiddlewareOrder.AUTHORIZATION,
   }),
 };
@@ -117,6 +128,17 @@ export const guarded: Get<[], UniversalHandler> = () =>
     },
     {
       path: "/guarded",
+      method: ["GET", "POST"],
+    },
+  );
+
+export const throwHandler: Get<[], UniversalHandler> = () =>
+  enhance(
+    () => {
+      return new Response("Oups, you should not be able to see this");
+    },
+    {
+      path: "/throw",
       method: ["GET", "POST"],
     },
   );

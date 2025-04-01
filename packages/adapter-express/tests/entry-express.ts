@@ -5,6 +5,7 @@ import {
   handler,
   middlewares,
   routeParamHandler,
+  throwHandler,
 } from "@universal-middleware/tests/utils";
 import express from "express";
 import helmet from "helmet";
@@ -19,6 +20,7 @@ const TEST_CASE = process.env.TEST_CASE;
 switch (TEST_CASE) {
   case "router": {
     apply(app, [
+      middlewares.throw,
       middlewares.guard,
       middlewares.contextSync,
       middlewares.updateHeaders,
@@ -35,23 +37,27 @@ switch (TEST_CASE) {
   case "router_enhanced": {
     apply(app, [
       routeParamHandler(),
+      throwHandler(),
       guarded(),
       handler(),
       enhancedMiddlewares.contextSync,
       enhancedMiddlewares.updateHeaders,
       enhancedMiddlewares.contextAsync,
       enhancedMiddlewares.guard,
+      enhancedMiddlewares.throw,
     ]);
 
     break;
   }
   default: {
+    app.use(createMiddleware(() => middlewares.throw)());
     app.use(createMiddleware(() => middlewares.guard)());
     app.use(createMiddleware(() => middlewares.contextSync)());
     app.use(createMiddleware(() => middlewares.updateHeaders)());
     app.use(createMiddleware(() => middlewares.contextAsync)());
     app.get("/user/:name", createHandler(routeParamHandler)());
     app.get("/guarded", createHandler(guarded)());
+    app.get("/throw", createHandler(throwHandler)());
     app.get("/", createHandler(handler)());
   }
 }
