@@ -8,8 +8,14 @@ const expectInternalServerError = {
     throwLate: {
       expectedBody: "Internal Server Error",
     },
+    throwEarlyAndLate: {
+      expectedBody: "Internal Server Error",
+    },
+    throwEarly: {
+      expectedBody: "Internal Server Error",
+    },
   },
-};
+} satisfies Pick<Run, "tests">;
 
 const runs: Run[] = [
   {

@@ -51,14 +51,14 @@ export const middlewares = {
   },
   throwEarly(request) {
     if (url(request).pathname.endsWith("/throw-early") || url(request).pathname.endsWith("/throw-early-and-late")) {
-      throw new Error("universal-middleware throw test");
+      throw new Error("universal-middleware throw early test");
     }
   },
   throwLate(request) {
     // @ts-expect-error
     return (): Response => {
       if (url(request).pathname.endsWith("/throw-late") || url(request).pathname.endsWith("/throw-early-and-late")) {
-        throw new Error("universal-middleware throw test");
+        throw new Error("universal-middleware throw late test");
       }
     };
   },

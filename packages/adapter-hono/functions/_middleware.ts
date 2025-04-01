@@ -4,6 +4,7 @@ import { createMiddleware } from "../src/index.js";
 
 export const onRequest = [
   // Prefer using createMiddleware from @universal-middleware/cloudflare directly here
+  handleMiddleware(createMiddleware(() => middlewares.throwEarly)()),
   handleMiddleware(createMiddleware(() => middlewares.throwLate)()),
   handleMiddleware(createMiddleware(() => middlewares.guard)()),
   handleMiddleware(createMiddleware(() => middlewares.contextSync)()),

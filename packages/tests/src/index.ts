@@ -121,11 +121,31 @@ export function runTests(runs: Run[], options: Options) {
       options.vitest.expect(body).toBe("Unauthorized");
     });
 
+    options.vitest.test("throw early route", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${options.prefix ?? ""}/throw-early`);
+      const body = await response.text();
+      options.vitest.expect(response.status).toBe(500);
+      options.vitest
+        .expect(body)
+        .toContain(run?.tests?.throwEarly?.expectedBody ?? "universal-middleware throw early test");
+    });
+
     options.vitest.test("throw late route", { retry: 3, timeout: 30_000 }, async () => {
       const response = await fetch(`${host}${options.prefix ?? ""}/throw-late`);
       const body = await response.text();
       options.vitest.expect(response.status).toBe(500);
-      options.vitest.expect(body).toContain(run?.tests?.throwLate?.expectedBody ?? "universal-middleware throw test");
+      options.vitest
+        .expect(body)
+        .toContain(run?.tests?.throwLate?.expectedBody ?? "universal-middleware throw late test");
+    });
+
+    options.vitest.test("throw early and late route", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${options.prefix ?? ""}/throw-early-and-late`);
+      const body = await response.text();
+      options.vitest.expect(response.status).toBe(500);
+      options.vitest
+        .expect(body)
+        .toContain(run?.tests?.throwEarlyAndLate?.expectedBody ?? "universal-middleware throw early test");
     });
 
     options.vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {
