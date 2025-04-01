@@ -49,10 +49,15 @@ export const middlewares = {
       });
     }
   },
-  throw(request) {
+  throwEarly(request) {
+    if (url(request).pathname.endsWith("/throw-early") || url(request).pathname.endsWith("/throw-early-and-late")) {
+      throw new Error("universal-middleware throw test");
+    }
+  },
+  throwLate(request) {
     // @ts-expect-error
     return (): Response => {
-      if (url(request).pathname.endsWith("/throw")) {
+      if (url(request).pathname.endsWith("/throw-late") || url(request).pathname.endsWith("/throw-early-and-late")) {
         throw new Error("universal-middleware throw test");
       }
     };
@@ -72,8 +77,11 @@ export const enhancedMiddlewares = {
   guard: enhance(middlewares.guard, {
     order: MiddlewareOrder.AUTHORIZATION,
   }),
-  throw: enhance(middlewares.throw, {
-    order: MiddlewareOrder.ERROR_HANDLING,
+  throwEarly: enhance(middlewares.throwEarly, {
+    order: MiddlewareOrder.AUTHORIZATION,
+  }),
+  throwLate: enhance(middlewares.throwLate, {
+    order: MiddlewareOrder.RESPONSE_TRANSFORM,
   }),
 };
 
@@ -132,13 +140,35 @@ export const guarded: Get<[], UniversalHandler> = () =>
     },
   );
 
-export const throwHandler: Get<[], UniversalHandler> = () =>
+export const throwEarlyHandler: Get<[], UniversalHandler> = () =>
   enhance(
     () => {
       return new Response("Oups, you should not be able to see this");
     },
     {
-      path: "/throw",
+      path: "/throw-early",
+      method: ["GET", "POST"],
+    },
+  );
+
+export const throwLateHandler: Get<[], UniversalHandler> = () =>
+  enhance(
+    () => {
+      return new Response("Oups, you should not be able to see this");
+    },
+    {
+      path: "/throw-late",
+      method: ["GET", "POST"],
+    },
+  );
+
+export const throwEarlyAndLateHandler: Get<[], UniversalHandler> = () =>
+  enhance(
+    () => {
+      return new Response("Oups, you should not be able to see this");
+    },
+    {
+      path: "/throw-early-and-late",
       method: ["GET", "POST"],
     },
   );

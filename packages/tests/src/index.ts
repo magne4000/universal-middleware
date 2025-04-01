@@ -10,7 +10,13 @@ export interface Run {
   delay?: number;
   env?: Record<string, string>;
   tests?: {
-    throw?: {
+    throwLate?: {
+      expectedBody?: string;
+    };
+    throwEarly?: {
+      expectedBody?: string;
+    };
+    throwEarlyAndLate?: {
       expectedBody?: string;
     };
   };
@@ -115,11 +121,11 @@ export function runTests(runs: Run[], options: Options) {
       options.vitest.expect(body).toBe("Unauthorized");
     });
 
-    options.vitest.test("throw route", { retry: 3, timeout: 30_000 }, async () => {
-      const response = await fetch(`${host}${options.prefix ?? ""}/throw`);
+    options.vitest.test("throw late route", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${options.prefix ?? ""}/throw-late`);
       const body = await response.text();
       options.vitest.expect(response.status).toBe(500);
-      options.vitest.expect(body).toContain(run?.tests?.throw?.expectedBody ?? "universal-middleware throw test");
+      options.vitest.expect(body).toContain(run?.tests?.throwLate?.expectedBody ?? "universal-middleware throw test");
     });
 
     options.vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {

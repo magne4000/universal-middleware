@@ -5,7 +5,7 @@ const port = 3050;
 
 const expectInternalServerError = {
   tests: {
-    throw: {
+    throwLate: {
       expectedBody: "Internal Server Error",
     },
   },
