@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.11](https://github.com/magne4000/universal-middleware/compare/express-v0.4.10...express-v0.4.11) (2025-04-01)
+
+
+### Bug Fixes
+
+* **express:** redirect to correct URL ([a01268a](https://github.com/magne4000/universal-middleware/commit/a01268a6e1c7820a43fedeb62f3331007ec2458b))
+
 ## [0.4.10](https://github.com/magne4000/universal-middleware/compare/express-v0.4.9...express-v0.4.10) (2025-04-01)
 
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.11](https://github.com/magne4000/universal-middleware/compare/vercel-v0.4.10...vercel-v0.4.11) (2025-04-01)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/express bumped to 0.4.11
+
 ## [0.4.10](https://github.com/magne4000/universal-middleware/compare/vercel-v0.4.9...vercel-v0.4.10) (2025-04-01)
 
 
