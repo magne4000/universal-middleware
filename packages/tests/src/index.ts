@@ -9,6 +9,11 @@ export interface Run {
   waitUntilType?: "undefined" | "function";
   delay?: number;
   env?: Record<string, string>;
+  tests?: {
+    throw?: {
+      expectedBody?: string;
+    };
+  };
 }
 
 export interface Options {
@@ -114,7 +119,7 @@ export function runTests(runs: Run[], options: Options) {
       const response = await fetch(`${host}${options.prefix ?? ""}/throw`);
       const body = await response.text();
       options.vitest.expect(response.status).toBe(500);
-      options.vitest.expect(body).toContain("universal-middleware throw test");
+      options.vitest.expect(body).toContain(run?.tests?.throw?.expectedBody ?? "universal-middleware throw test");
     });
 
     options.vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {
