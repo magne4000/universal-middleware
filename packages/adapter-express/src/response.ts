@@ -162,11 +162,10 @@ function getFullUrl(pathname: string, req: IncomingMessage): string {
 export function responseAdapter(nodeResponse: DecoratedServerResponse, bodyInit?: BodyInit | null): Response {
   // https://developer.mozilla.org/en-US/docs/Web/API/Response/redirect_static#status
   if ([301, 302, 303, 307, 308].includes(nodeResponse.statusCode) && nodeResponse.req) {
-    // Try to get redirect URL from request
-    const redirectPath = nodeResponse.req.url;
-    if (redirectPath) {
+    const location = nodeResponse.getHeader("location") as string | undefined;
+    if (location) {
       // Convert pathname to full URL
-      const fullUrl = getFullUrl(redirectPath, nodeResponse.req);
+      const fullUrl = getFullUrl(location, nodeResponse.req);
       return Response.redirect(fullUrl, nodeResponse.statusCode);
     }
   }
