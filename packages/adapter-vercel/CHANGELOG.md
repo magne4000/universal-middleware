@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.4.10](https://github.com/magne4000/universal-middleware/compare/vercel-v0.4.9...vercel-v0.4.10) (2025-04-01)
+
+
+### Bug Fixes
+
+* ensure late errors are forwarded as expected ([#138](https://github.com/magne4000/universal-middleware/issues/138)) ([f37cac7](https://github.com/magne4000/universal-middleware/commit/f37cac764b8b2fe054b297a52bbf12cde7076949))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.6
+    * @universal-middleware/express bumped to 0.4.10
+
 ## [0.4.9](https://github.com/magne4000/universal-middleware/compare/vercel-v0.4.8...vercel-v0.4.9) (2025-03-26)
 
 

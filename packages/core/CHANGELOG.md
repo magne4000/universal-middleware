@@ -5,6 +5,13 @@
 
 * new type RuntimeAdapterTarget ([8768e6d](https://github.com/magne4000/universal-middleware/commit/8768e6dd6f1e7e7bfcbe88baf13a21bbaae842c6))
 
+## [0.4.6](https://github.com/magne4000/universal-middleware/compare/core-v0.4.5...core-v0.4.6) (2025-04-01)
+
+
+### Bug Fixes
+
+* ensure late errors are forwarded as expected ([#138](https://github.com/magne4000/universal-middleware/issues/138)) ([f37cac7](https://github.com/magne4000/universal-middleware/commit/f37cac764b8b2fe054b297a52bbf12cde7076949))
+
 ## [0.4.5](https://github.com/magne4000/universal-middleware/compare/core-v0.4.4...core-v0.4.5) (2025-03-26)
 
 
