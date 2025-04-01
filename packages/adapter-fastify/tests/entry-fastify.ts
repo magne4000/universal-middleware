@@ -7,6 +7,9 @@ import {
   handler,
   middlewares,
   routeParamHandler,
+  throwEarlyAndLateHandler,
+  throwEarlyHandler,
+  throwLateHandler,
 } from "@universal-middleware/tests/utils";
 import fastify from "fastify";
 import rawBody from "fastify-raw-body";
@@ -35,6 +38,8 @@ const TEST_CASE = process.env.TEST_CASE;
 switch (TEST_CASE) {
   case "router": {
     await apply(app, [
+      middlewares.throwEarly,
+      middlewares.throwLate,
       middlewares.guard,
       middlewares.contextSync,
       middlewares.updateHeaders,
@@ -49,12 +54,18 @@ switch (TEST_CASE) {
 
     // Test registering /guarded manually to see if `guard` middleware still applies
     app.get("/guarded", createHandler(guarded)());
+    app.get("/throw-early", createHandler(throwEarlyHandler)());
+    app.get("/throw-late", createHandler(throwLateHandler)());
+    app.get("/throw-early-and-late", createHandler(throwEarlyAndLateHandler)());
 
     break;
   }
   case "router_enhanced": {
     await apply(app, [
       routeParamHandler(),
+      throwEarlyHandler(),
+      throwLateHandler(),
+      throwEarlyAndLateHandler(),
       guarded(),
       handler(),
       enhance(post, {
@@ -65,17 +76,24 @@ switch (TEST_CASE) {
       enhancedMiddlewares.updateHeaders,
       enhancedMiddlewares.contextAsync,
       enhancedMiddlewares.guard,
+      enhancedMiddlewares.throwEarly,
+      enhancedMiddlewares.throwLate,
     ]);
 
     break;
   }
   default: {
+    await app.register(createMiddleware(() => middlewares.throwEarly)());
+    await app.register(createMiddleware(() => middlewares.throwLate)());
     await app.register(createMiddleware(() => middlewares.guard)());
     await app.register(createMiddleware(() => middlewares.contextSync)());
     await app.register(createMiddleware(() => middlewares.updateHeaders)());
     await app.register(createMiddleware(() => middlewares.contextAsync)());
     app.get("/user/:name", createHandler(routeParamHandler)());
     app.get("/guarded", createHandler(guarded)());
+    app.get("/throw-early", createHandler(throwEarlyHandler)());
+    app.get("/throw-late", createHandler(throwLateHandler)());
+    app.get("/throw-early-and-late", createHandler(throwEarlyAndLateHandler)());
     app.get("/", createHandler(handler)());
     app.post("/post", createHandler(() => post)());
   }
