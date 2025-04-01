@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.14](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.13...sirv-v0.1.14) (2025-04-01)
+
+
+### Bug Fixes
+
+* ensure late errors are forwarded as expected ([#138](https://github.com/magne4000/universal-middleware/issues/138)) ([f37cac7](https://github.com/magne4000/universal-middleware/commit/f37cac764b8b2fe054b297a52bbf12cde7076949))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @universal-middleware/core bumped to 0.4.6
+    * @universal-middleware/express bumped to 0.4.10
+    * universal-middleware bumped to 0.6.14
+
 ## [0.1.13](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.12...sirv-v0.1.13) (2025-03-26)
 
 
