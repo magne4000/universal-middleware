@@ -148,15 +148,16 @@ function overrideWriteHead<T extends DecoratedServerResponse>(nodeResponse: T, c
   };
 }
 
-function getFullUrl(pathname: string, req: IncomingMessage): string {
-  const protocol = (req.socket as any)?.encrypted || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
-  const host = req.headers.host || "localhost";
+function getFullUrl(pathnameOrFull: string, req: IncomingMessage): string {
+  try {
+    return new URL(pathnameOrFull).href;
+  } catch {
+    const protocol = (req.socket as any)?.encrypted || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
+    const host = req.headers["x-forwarded-host"] || req.headers.host || "localhost";
+    const baseUrl = `${protocol}://${host}`;
 
-  // Remove leading double slashes if present
-  const cleanPath = pathname.replace(/^\/\//, "/");
-
-  // Construct full URL
-  return `${protocol}://${host}${cleanPath}`;
+    return new URL(pathnameOrFull, baseUrl).href;
+  }
 }
 
 export function responseAdapter(nodeResponse: DecoratedServerResponse, bodyInit?: BodyInit | null): Response {
