@@ -96,7 +96,6 @@ function getRawRequest(req: FastifyRequest): DecoratedRequest {
   if ("rawBody" in req) {
     Object.defineProperty(req.raw, "rawBody", {
       get() {
-        console.log(req.rawBody);
         return req.rawBody;
       },
       configurable: true,
