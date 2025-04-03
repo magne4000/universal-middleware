@@ -8,6 +8,13 @@
     * @universal-middleware/core bumped to 0.3.3
     * @universal-middleware/express bumped to 0.3.3
 
+## [0.5.14](https://github.com/magne4000/universal-middleware/compare/fastify-v0.5.13...fastify-v0.5.14) (2025-04-03)
+
+
+### Bug Fixes
+
+* **fastify:** remove console.log (fix [#107](https://github.com/magne4000/universal-middleware/issues/107)) ([642fb4b](https://github.com/magne4000/universal-middleware/commit/642fb4b119835c88f2da2c50abbcbd07fe1e9e11))
+
 ## [0.5.13](https://github.com/magne4000/universal-middleware/compare/fastify-v0.5.12...fastify-v0.5.13) (2025-04-02)
 
 
