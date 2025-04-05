@@ -1,8 +1,8 @@
-import { isCompressionStreamAvailable } from "./runtime";
+import { isZlibAvailable } from "./runtime";
 import type { CompressionAlgorithm, CompressionOptions, Compressor } from "./types";
 
 async function guessCompressor(encoding: CompressionAlgorithm): Promise<Compressor> {
-  if (encoding === "br" || !isCompressionStreamAvailable) {
+  if (isZlibAvailable) {
     const { compressStream } = await import("./zlib/stream.js");
 
     return (input) => compressStream(input, encoding);
