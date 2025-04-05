@@ -17,8 +17,8 @@ const algorithms = {
 
 const defaultOptions = {
   br: { flush: constants.BROTLI_OPERATION_FLUSH, params: { [constants.BROTLI_PARAM_QUALITY]: 4 } },
-  gzip: { flush: constants.Z_PARTIAL_FLUSH },
-  deflate: { flush: constants.Z_PARTIAL_FLUSH },
+  gzip: { flush: constants.Z_SYNC_FLUSH },
+  deflate: { flush: constants.Z_SYNC_FLUSH },
 } as const;
 
 export function compressStream<C extends CompressionAlgorithm, O extends Parameters<(typeof algorithms)[C]>[0]>(
