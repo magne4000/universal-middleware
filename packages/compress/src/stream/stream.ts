@@ -16,6 +16,8 @@ export function compressStream(
     case "deflate":
           compressor = new Deflate();
           break;
+    case "deflate-raw":
+          return input.pipeThrough(new CompressionStream(algorithm));
     default:
           throw new Error(`{ compressionMethod: "stream" } does not support "${algorithm}" encoding`);
   }
