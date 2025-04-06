@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/core",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "type": "module",
   "description": "Universal middlewares core utilities",
   "files": [

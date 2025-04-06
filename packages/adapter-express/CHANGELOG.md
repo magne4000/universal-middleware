@@ -7,6 +7,15 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.14](https://github.com/magne4000/universal-middleware/compare/express-v0.4.13...express-v0.4.14) (2025-04-06)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.7
+
 ## [0.4.13](https://github.com/magne4000/universal-middleware/compare/express-v0.4.12...express-v0.4.13) (2025-04-06)
 
 

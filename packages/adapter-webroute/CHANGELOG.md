@@ -7,6 +7,15 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.7](https://github.com/magne4000/universal-middleware/compare/webroute-v0.4.6...webroute-v0.4.7) (2025-04-06)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.7
+
 ## [0.4.6](https://github.com/magne4000/universal-middleware/compare/webroute-v0.4.5...webroute-v0.4.6) (2025-04-01)
 
 

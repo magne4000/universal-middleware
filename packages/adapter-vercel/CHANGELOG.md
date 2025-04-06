@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.4.14](https://github.com/magne4000/universal-middleware/compare/vercel-v0.4.13...vercel-v0.4.14) (2025-04-06)
+
+
+### Features
+
+* **compress:** compress stream are now flushable ([#144](https://github.com/magne4000/universal-middleware/issues/144)) ([8235847](https://github.com/magne4000/universal-middleware/commit/823584751041516889c7cc7ee077fffc74fa5b04))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.7
+    * @universal-middleware/express bumped to 0.4.14
+
 ## [0.4.13](https://github.com/magne4000/universal-middleware/compare/vercel-v0.4.12...vercel-v0.4.13) (2025-04-06)
 
 

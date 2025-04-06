@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.28](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.27...compress-v0.2.28) (2025-04-06)
+
+
+### Features
+
+* **compress:** compress stream are now flushable ([#144](https://github.com/magne4000/universal-middleware/issues/144)) ([8235847](https://github.com/magne4000/universal-middleware/commit/823584751041516889c7cc7ee077fffc74fa5b04))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @universal-middleware/core bumped to 0.4.7
+    * universal-middleware bumped to 0.6.19
+
 ## [0.2.27](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.26...compress-v0.2.27) (2025-04-06)
 
 

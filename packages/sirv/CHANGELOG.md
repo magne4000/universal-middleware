@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.19](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.18...sirv-v0.1.19) (2025-04-06)
+
+
+### Features
+
+* **compress:** compress stream are now flushable ([#144](https://github.com/magne4000/universal-middleware/issues/144)) ([8235847](https://github.com/magne4000/universal-middleware/commit/823584751041516889c7cc7ee077fffc74fa5b04))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @universal-middleware/core bumped to 0.4.7
+    * @universal-middleware/express bumped to 0.4.14
+    * universal-middleware bumped to 0.6.19
+
 ## [0.1.18](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.17...sirv-v0.1.18) (2025-04-06)
 
 

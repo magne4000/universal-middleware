@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/h3",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "type": "module",
   "description": "h3 adapter for universal middlewares",
   "files": [

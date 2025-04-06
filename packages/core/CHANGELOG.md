@@ -5,6 +5,13 @@
 
 * new type RuntimeAdapterTarget ([8768e6d](https://github.com/magne4000/universal-middleware/commit/8768e6dd6f1e7e7bfcbe88baf13a21bbaae842c6))
 
+## [0.4.7](https://github.com/magne4000/universal-middleware/compare/core-v0.4.6...core-v0.4.7) (2025-04-06)
+
+
+### Features
+
+* **compress:** compress stream are now flushable ([#144](https://github.com/magne4000/universal-middleware/issues/144)) ([8235847](https://github.com/magne4000/universal-middleware/commit/823584751041516889c7cc7ee077fffc74fa5b04))
+
 ## [0.4.6](https://github.com/magne4000/universal-middleware/compare/core-v0.4.5...core-v0.4.6) (2025-04-01)
 
 
