@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.18](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.17...sirv-v0.1.18) (2025-04-06)
+
+
+### Features
+
+* add support for express@5 ([#145](https://github.com/magne4000/universal-middleware/issues/145)) ([2d8703e](https://github.com/magne4000/universal-middleware/commit/2d8703e1ccc5e558c0dfb8a5bc70c4da00dd2c29))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @universal-middleware/express bumped to 0.4.13
+    * universal-middleware bumped to 0.6.18
+
 ## [0.1.17](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.16...sirv-v0.1.17) (2025-04-03)
 
 

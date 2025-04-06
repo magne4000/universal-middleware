@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.13](https://github.com/magne4000/universal-middleware/compare/express-v0.4.12...express-v0.4.13) (2025-04-06)
+
+
+### Features
+
+* add support for express@5 ([#145](https://github.com/magne4000/universal-middleware/issues/145)) ([2d8703e](https://github.com/magne4000/universal-middleware/commit/2d8703e1ccc5e558c0dfb8a5bc70c4da00dd2c29))
+
 ## [0.4.12](https://github.com/magne4000/universal-middleware/compare/express-v0.4.11...express-v0.4.12) (2025-04-02)
 
 
