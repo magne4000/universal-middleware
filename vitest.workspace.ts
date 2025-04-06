@@ -1,4 +1,4 @@
-import { defineWorkspace } from 'vitest/config'
+import { defineWorkspace } from "vitest/config";
 
 export default defineWorkspace([
   "./packages/adapter-fastify/vitest.config.ts",
@@ -14,5 +14,5 @@ export default defineWorkspace([
   "./packages/core/vitest.config.ts",
   "./packages/sirv/vitest.config.ts",
   "./packages/universal-middleware/vitest.config.ts",
-  "./tests-examples/tests-tool/vitest.config.ts"
-])
+  "./tests-examples/tests-tool/vitest.config.ts",
+]);

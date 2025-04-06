@@ -49,13 +49,10 @@ describe("WHATWG CompressionStream vs fflate", () => {
     const inputStream = createDelayedChunkStream(chunks, 50);
 
     // Use WHATWG CompressionStream
-    const compressedStream = inputStream.pipeThrough(
-      new CompressionStream("gzip")
-    );
+    const compressedStream = inputStream.pipeThrough(new CompressionStream("gzip"));
 
     // Collect compressed chunks
-    const { chunks: compressedChunks } =
-      await collectChunksWithTimestamps(compressedStream);
+    const { chunks: compressedChunks } = await collectChunksWithTimestamps(compressedStream);
 
     // WHATWG CompressionStream typically buffers and doesn't flush until the end
     // So we expect fewer chunks than we input, often just 1 or 2
@@ -89,8 +86,7 @@ describe("WHATWG CompressionStream vs fflate", () => {
     if (!compressedStream) {
       throw new Error("Expected compressStream to return a non-null stream");
     }
-    const { chunks: compressedChunks } =
-      await collectChunksWithTimestamps(compressedStream);
+    const { chunks: compressedChunks } = await collectChunksWithTimestamps(compressedStream);
 
     // fflate should produce at least as many chunks as we input due to proper flushing
     // It may produce more chunks due to internal buffering and flushing behavior
@@ -127,9 +123,7 @@ describe("WHATWG CompressionStream vs fflate", () => {
     if (!compressedStream) {
       throw new Error("Expected compressStream to return a non-null stream");
     }
-    const decompressedStream = compressedStream.pipeThrough(
-      new DecompressionStream("gzip")
-    );
+    const decompressedStream = compressedStream.pipeThrough(new DecompressionStream("gzip"));
 
     // Read the decompressed data
     const reader = decompressedStream.getReader();
@@ -142,9 +136,7 @@ describe("WHATWG CompressionStream vs fflate", () => {
     }
 
     // Combine chunks and convert to string
-    const combinedChunks = new Uint8Array(
-      chunks.reduce((acc, chunk) => acc + chunk.length, 0)
-    );
+    const combinedChunks = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
 
     let offset = 0;
     for (const chunk of chunks) {

@@ -17,19 +17,17 @@ const expectInternalServerError = {
   },
 } satisfies Pick<Run, "tests">;
 
-const token = process.env.VERCEL_TOKEN ? ` --token=${process.env.VERCEL_TOKEN}` : null;
+const token = process.env.VERCEL_TOKEN ? ` --token=${process.env.VERCEL_TOKEN}` : "";
 
-const runs: Run[] = token
-  ? [
-      {
-        name: "adapter-vercel: node",
-        command: `pnpm run test:run-vercel:node${token}`,
-        port,
-        portOption: "--listen",
-        ...expectInternalServerError,
-      },
-    ]
-  : [];
+const runs: Run[] = [
+  {
+    name: "adapter-vercel: node",
+    command: `pnpm run test:run-vercel:node${token}`,
+    port,
+    portOption: "--listen",
+    ...expectInternalServerError,
+  },
+];
 
 runTests(runs, {
   vitest,

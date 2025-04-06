@@ -10,7 +10,7 @@ function createControlledStream() {
   const stream = new ReadableStream<Uint8Array>({
     start(c) {
       controller = c;
-    }
+    },
   });
 
   // Method to push chunks with delays to simulate streaming
@@ -18,7 +18,7 @@ function createControlledStream() {
     for (const chunk of chunks) {
       controller?.enqueue(chunk);
       // Small delay to simulate streaming
-      await new Promise(resolve => setTimeout(resolve, delayMs));
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
     controller?.close();
   };
@@ -31,7 +31,7 @@ const encoder = new TextEncoder();
 
 // Helper to create chunks from strings
 function createChunks(strings: string[]): Uint8Array[] {
-  return strings.map(str => encoder.encode(str));
+  return strings.map((str) => encoder.encode(str));
 }
 
 // Helper to collect chunks from a ReadableStream
@@ -74,7 +74,7 @@ describe("Streaming Compression", () => {
       const inputChunks = createChunks([
         "This is the first chunk of data.",
         "This is the second chunk of data.",
-        "This is the third chunk of data."
+        "This is the third chunk of data.",
       ]);
 
       // Start pushing chunks in the background
@@ -107,9 +107,7 @@ describe("Streaming Compression", () => {
       // Decompress and verify content
       const decompressed = await decompressResponse(decompressedOutput, "gzip");
       expect(decompressed).toBe(
-        "This is the first chunk of data." +
-        "This is the second chunk of data." +
-        "This is the third chunk of data."
+        "This is the first chunk of data." + "This is the second chunk of data." + "This is the third chunk of data.",
       );
     });
 
@@ -118,7 +116,7 @@ describe("Streaming Compression", () => {
       const inputChunks = createChunks([
         "This is the first chunk of data.",
         "This is the second chunk of data.",
-        "This is the third chunk of data."
+        "This is the third chunk of data.",
       ]);
 
       // Start pushing chunks in the background
@@ -151,9 +149,7 @@ describe("Streaming Compression", () => {
       // Decompress and verify content
       const decompressed = await decompressResponse(decompressedOutput, "deflate");
       expect(decompressed).toBe(
-        "This is the first chunk of data." +
-        "This is the second chunk of data." +
-        "This is the third chunk of data."
+        "This is the first chunk of data." + "This is the second chunk of data." + "This is the third chunk of data.",
       );
     });
   });
@@ -169,7 +165,7 @@ describe("Streaming Compression", () => {
       const inputChunks = createChunks([
         "This is the first chunk of data.",
         "This is the second chunk of data.",
-        "This is the third chunk of data."
+        "This is the third chunk of data.",
       ]);
 
       // Start pushing chunks in the background
@@ -202,9 +198,7 @@ describe("Streaming Compression", () => {
       // Decompress and verify content
       const decompressed = await decompressResponse(decompressedOutput, "gzip");
       expect(decompressed).toBe(
-        "This is the first chunk of data." +
-        "This is the second chunk of data." +
-        "This is the third chunk of data."
+        "This is the first chunk of data." + "This is the second chunk of data." + "This is the third chunk of data.",
       );
     });
 
@@ -213,7 +207,7 @@ describe("Streaming Compression", () => {
       const inputChunks = createChunks([
         "This is the first chunk of data.",
         "This is the second chunk of data.",
-        "This is the third chunk of data."
+        "This is the third chunk of data.",
       ]);
 
       // Start pushing chunks in the background
@@ -246,9 +240,7 @@ describe("Streaming Compression", () => {
       // Decompress and verify content
       const decompressed = await decompressResponse(decompressedOutput, "deflate");
       expect(decompressed).toBe(
-        "This is the first chunk of data." +
-        "This is the second chunk of data." +
-        "This is the third chunk of data."
+        "This is the first chunk of data." + "This is the second chunk of data." + "This is the third chunk of data.",
       );
     });
   });

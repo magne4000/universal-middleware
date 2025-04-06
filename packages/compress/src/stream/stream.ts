@@ -9,18 +9,18 @@ export function compressStream(
   }
 
   let compressor: Gzip | Deflate | Zlib;
-  switch ((algorithm as string)) {
+  switch (algorithm as string) {
     case "gzip":
-          compressor = new Gzip();
-          break;
+      compressor = new Gzip();
+      break;
     case "deflate":
-          compressor = new Zlib();
-          break;
+      compressor = new Zlib();
+      break;
     case "deflate-raw":
-          compressor = new Deflate();
-          break;
+      compressor = new Deflate();
+      break;
     default:
-          throw new Error(`{ compressionMethod: "stream" } does not support "${algorithm}" encoding`);
+      throw new Error(`{ compressionMethod: "stream" } does not support "${algorithm}" encoding`);
   }
 
   const transformStream = new TransformStream({

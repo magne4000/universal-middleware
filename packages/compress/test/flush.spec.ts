@@ -19,11 +19,7 @@ class ChunkCollector {
 }
 
 // Helper function to test compression flushing behavior
-async function testCompressionFlushing(
-  importPath: string,
-  algorithm: string,
-  description: string
-) {
+async function testCompressionFlushing(importPath: string, algorithm: string, description: string) {
   it(`should flush ${description} data after each chunk`, async () => {
     // Import the implementation directly to test it
     const { compressStream } = await import(importPath);
@@ -33,8 +29,8 @@ async function testCompressionFlushing(
     const encoder = new TextEncoder();
     const chunks = [
       encoder.encode("ABCDEFGHIJKLMNOPQRSTUVWXYZ".repeat(100)), // Repetitive data chunk 1
-      encoder.encode("1234567890".repeat(200)),                 // Repetitive data chunk 2
-      encoder.encode("abcdefghijklmnopqrstuvwxyz".repeat(100))  // Repetitive data chunk 3
+      encoder.encode("1234567890".repeat(200)), // Repetitive data chunk 2
+      encoder.encode("abcdefghijklmnopqrstuvwxyz".repeat(100)), // Repetitive data chunk 3
     ];
 
     // Calculate total input size for comparison later
@@ -46,10 +42,10 @@ async function testCompressionFlushing(
         for (const chunk of chunks) {
           controller.enqueue(chunk);
           // Wait a bit between chunks
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
         }
         controller.close();
-      }
+      },
     });
 
     // Compress the stream
@@ -74,7 +70,7 @@ async function testCompressionFlushing(
           if (done) break;
           collector.ondata(value);
           // Small delay to simulate processing time
-          await new Promise(resolve => setTimeout(resolve, 5));
+          await new Promise((resolve) => setTimeout(resolve, 5));
         }
       } finally {
         clearTimeout(timeout);
@@ -98,8 +94,8 @@ async function testCompressionFlushing(
     // Verify compression format signatures where applicable
     if (algorithm === "gzip" && collector.chunks.length > 0) {
       // Gzip header starts with 0x1F 0x8B
-      expect(collector.chunks[0][0]).toBe(0x1F);
-      expect(collector.chunks[0][1]).toBe(0x8B);
+      expect(collector.chunks[0][0]).toBe(0x1f);
+      expect(collector.chunks[0][1]).toBe(0x8b);
     }
 
     // We don't test timing behavior as it can be unstable across different environments
