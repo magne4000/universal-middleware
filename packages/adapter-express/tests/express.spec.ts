@@ -35,6 +35,32 @@ const runs: Run[] = [
     command: "pnpm run test:run-express:deno",
     port: port++,
   },
+  {
+    name: "adapter-express: node simple express@4",
+    command: "pnpm run test:run-express:node",
+    port: port++,
+    env: {
+      EXPRESS_V4: "1",
+    },
+  },
+  {
+    name: "adapter-express: node router",
+    command: "pnpm run test:run-express:node",
+    port: port++,
+    env: {
+      TEST_CASE: "router",
+      EXPRESS_V4: "1",
+    },
+  },
+  {
+    name: "adapter-express: node router enhanced",
+    command: "pnpm run test:run-express:node",
+    port: port++,
+    env: {
+      TEST_CASE: "router_enhanced",
+      EXPRESS_V4: "1",
+    },
+  },
 ];
 
 runTests(runs, {

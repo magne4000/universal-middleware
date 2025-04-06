@@ -1,6 +1,10 @@
 import type { RuntimeAdapterTarget } from "@universal-middleware/core";
 import { type IncomingMessage, type OutgoingHttpHeader, type OutgoingHttpHeaders, ServerResponse } from "node:http";
 import { PassThrough, Readable } from "node:stream";
+import type { Express as Express5 } from "express";
+import type { Express as Express4 } from "express4";
+
+export type Express = Express4 | Express5;
 
 const statusCodesWithoutBody = [
   100, // Continue
@@ -181,4 +185,13 @@ function flattenHeaders(headers: OutgoingHttpHeaders): [string, string][] {
   }
 
   return flatHeaders;
+}
+
+// https://expressjs.com/en/guide/migrating-5.html#app.del
+export function isExpressV4(app: Express): app is Express4 {
+  return "del" in app;
+}
+
+export function isExpressV5(app: Express): app is Express5 {
+  return !isExpressV4(app);
 }
