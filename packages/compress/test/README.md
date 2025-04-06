@@ -19,15 +19,15 @@ Tests streaming compression with both zlib and fflate implementations, verifying
 ### whatwg-vs-fflate.spec.ts
 Demonstrates the difference between the WHATWG Compression API (which doesn't flush properly during streaming) and the fflate implementation (which does).
 
-## Key Improvements Tested
+## Features Tested
 
-1. **Proper Streaming Compression**: Tests verify that compressed data is flushed incrementally during streaming, rather than only at the end of the stream.
+1. **Streaming Compression**: Tests verify that compressed data is flushed incrementally during streaming, rather than only at the end of the stream.
 
-2. **Zlib Preference**: Tests verify that zlib is preferred when available, as it provides better control over flushing.
+2. **Cross-Environment Compatibility**: Tests verify compression works correctly in both Node.js (using zlib) and browser/edge environments (using fflate).
 
-3. **Fallback to fflate**: Tests verify that fflate provides proper streaming compression when zlib is unavailable.
+3. **Compression Algorithms**: Tests verify support for multiple compression algorithms (gzip, deflate, brotli) with proper headers and content encoding.
 
-4. **Flush Flags**: Tests verify that explicit flush flags (Z_SYNC_FLUSH for gzip/deflate and BROTLI_OPERATION_FLUSH for brotli) ensure compressed data is flushed at appropriate synchronization points.
+4. **Compression Efficiency**: Tests verify that both implementations provide similar compression ratios while maintaining streaming capabilities.
 
 ## Running Tests
 
@@ -35,8 +35,16 @@ Demonstrates the difference between the WHATWG Compression API (which doesn't fl
 pnpm test
 ```
 
-## Notes
+## Implementation Details
 
-- All tests are designed to run in a proper Node.js environment with the necessary APIs available.
+- **Node.js Environment**: Uses Node.js zlib module with appropriate flush flags (Z_SYNC_FLUSH for gzip/deflate and BROTLI_OPERATION_FLUSH for brotli).
+
+- **Browser/Edge Environment**: Uses fflate library configured to flush data after each chunk.
+
+- **Automatic Detection**: The package automatically selects the appropriate implementation based on the runtime environment.
+
+## Test Design Notes
+
+- Tests are primarily designed to run in a Node.js environment, as some tests specifically target Node.js zlib functionality.
 - Tests focus on stable assertions like chunk counts and compression ratios, avoiding timing-based assertions that could be unstable across different environments.
-- Tests verify that the number of output chunks is at least equal to the number of input chunks, ensuring proper flush behavior.
+- Tests verify that the number of output chunks is at least equal to the number of input chunks, ensuring proper flush behavior for streaming applications.
