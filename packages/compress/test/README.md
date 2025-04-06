@@ -21,13 +21,13 @@ Demonstrates the difference between the WHATWG Compression API (which doesn't fl
 
 ## Features Tested
 
-1. **Streaming Compression**: Tests verify that compressed data is flushed incrementally during streaming, rather than only at the end of the stream.
+1. **Streaming Compression**: Validates that compressed data is flushed incrementally during streaming, rather than only at the end of the stream.
 
-2. **Cross-Environment Compatibility**: Tests verify compression works correctly in both Node.js (using zlib) and browser/edge environments (using fflate).
+2. **Cross-Environment Compatibility**: Ensures compression works correctly in both Node.js (using zlib) and browser/edge environments (using fflate).
 
-3. **Compression Algorithms**: Tests verify support for multiple compression algorithms (gzip, deflate, brotli) with proper headers and content encoding.
+3. **Compression Algorithms**: Confirms support for multiple compression algorithms (gzip, deflate, deflate-raw, brotli) with proper headers and content encoding.
 
-4. **Compression Efficiency**: Tests verify that both implementations provide similar compression ratios while maintaining streaming capabilities.
+4. **Compression Efficiency**: Demonstrates that both implementations provide similar compression ratios while maintaining streaming capabilities.
 
 ## Running Tests
 
@@ -45,6 +45,6 @@ pnpm test
 
 ## Test Design Notes
 
-- Tests are primarily designed to run in a Node.js environment, as some tests specifically target Node.js zlib functionality.
-- Tests focus on stable assertions like chunk counts and compression ratios, avoiding timing-based assertions that could be unstable across different environments.
-- Tests verify that the number of output chunks is at least equal to the number of input chunks, ensuring proper flush behavior for streaming applications.
+- **Environment Compatibility**: Primarily designed to run in a Node.js environment, as some tests specifically target Node.js zlib functionality.
+- **Stability Focus**: Emphasizes stable assertions like chunk counts and compression ratios, avoiding timing-based assertions that could be unstable across different environments.
+- **Flush Behavior Verification**: Ensures that the number of output chunks is at least equal to the number of input chunks, confirming proper flush behavior for streaming applications.
