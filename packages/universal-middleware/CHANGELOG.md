@@ -5,6 +5,17 @@
 
 * export Target and RuntimeAdapter from generated code ([056df5f](https://github.com/magne4000/universal-middleware/commit/056df5f8a48039eb93805f868f8f938c001423a9))
 
+## [0.6.18](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.6.17...universal-middleware-v0.6.18) (2025-04-06)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/express bumped to 0.4.13
+    * @universal-middleware/fastify bumped to 0.5.15
+    * @universal-middleware/vercel bumped to 0.4.13
+
 ## [0.6.17](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.6.16...universal-middleware-v0.6.17) (2025-04-03)
 
 

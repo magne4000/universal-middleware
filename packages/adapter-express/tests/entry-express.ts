@@ -9,11 +9,12 @@ import {
   throwEarlyHandler,
   throwLateHandler,
 } from "@universal-middleware/tests/utils";
-import express from "express";
 import helmet from "helmet";
 import { apply, createHandler, createMiddleware } from "../src/index.js";
 
-const app = express();
+const { default: express } = await (process.env.EXPRESS_V4 ? import("express4") : import("express"));
+
+const app = express() as import("express").Express;
 
 app.use(helmet());
 
