@@ -2,9 +2,11 @@ import {
   constants,
   type BrotliCompress,
   type Deflate,
+  type DeflateRaw,
   type Gzip,
   createBrotliCompress,
   createDeflate,
+  createDeflateRaw,
   createGzip,
 } from "node:zlib";
 import type { CompressionAlgorithm } from "../types";
@@ -13,12 +15,14 @@ const algorithms = {
   br: createBrotliCompress,
   gzip: createGzip,
   deflate: createDeflate,
+  "deflate-raw": createDeflateRaw,
 } as const;
 
 const defaultOptions = {
   br: { flush: constants.BROTLI_OPERATION_FLUSH, params: { [constants.BROTLI_PARAM_QUALITY]: 4 } },
   gzip: { flush: constants.Z_SYNC_FLUSH },
   deflate: { flush: constants.Z_SYNC_FLUSH },
+  "deflate-raw": { flush: constants.Z_SYNC_FLUSH },
 } as const;
 
 export function compressStream<C extends CompressionAlgorithm, O extends Parameters<(typeof algorithms)[C]>[0]>(
@@ -30,7 +34,7 @@ export function compressStream<C extends CompressionAlgorithm, O extends Paramet
     return input;
   }
 
-  const compressionStream: BrotliCompress | Gzip | Deflate = algorithms[algorithm]({
+  const compressionStream: BrotliCompress | Gzip | Deflate | DeflateRaw = algorithms[algorithm]({
     ...defaultOptions[algorithm],
     ...options,
   });
