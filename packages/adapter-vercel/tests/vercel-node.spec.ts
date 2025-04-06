@@ -3,8 +3,6 @@ import * as vitest from "vitest";
 
 const port = 3800;
 
-const token = process.env.VERCEL_TOKEN ? ` --token=${process.env.VERCEL_TOKEN}` : "";
-
 const expectInternalServerError = {
   tests: {
     throwLate: {
@@ -18,6 +16,8 @@ const expectInternalServerError = {
     },
   },
 } satisfies Pick<Run, "tests">;
+
+const token = process.env.VERCEL_TOKEN ? ` --token=${process.env.VERCEL_TOKEN}` : "";
 
 const runs: Run[] = [
   {

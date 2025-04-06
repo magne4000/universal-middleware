@@ -1,3 +1,5 @@
+import { Gzip, Deflate, Zlib } from "fflate";
+
 export function compressStream(
   input: ReadableStream<Uint8Array> | null,
   algorithm: CompressionFormat,
@@ -6,11 +8,49 @@ export function compressStream(
     return input;
   }
 
-  if ((algorithm as string) === "br") {
-    throw new Error(`{ compressionMethod: "stream" } does not support "br" encoding`);
+  let compressor: Gzip | Deflate | Zlib;
+  switch (algorithm as string) {
+    case "gzip":
+      compressor = new Gzip();
+      break;
+    case "deflate":
+      compressor = new Zlib();
+      break;
+    case "deflate-raw":
+      compressor = new Deflate();
+      break;
+    default:
+      throw new Error(`{ compressionMethod: "stream" } does not support "${algorithm}" encoding`);
   }
 
-  const compressionStream = new CompressionStream(algorithm);
+  const transformStream = new TransformStream({
+    start(controller) {
+      compressor.ondata = (chunk, final) => {
+        try {
+          controller.enqueue(chunk);
+        } catch (err) {
+          controller.error(err);
+        }
+      };
+    },
 
-  return input.pipeThrough(compressionStream);
+    transform(chunk, controller) {
+      try {
+        compressor.push(chunk, false);
+        compressor.flush();
+      } catch (err) {
+        controller.error(err);
+      }
+    },
+
+    flush(controller) {
+      try {
+        compressor.push(new Uint8Array(), true);
+      } catch (err) {
+        controller.error(err);
+      }
+    },
+  });
+
+  return input.pipeThrough(transformStream);
 }

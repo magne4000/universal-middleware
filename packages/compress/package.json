@@ -21,6 +21,7 @@
     "@types/node": "catalog:",
     "@universal-middleware/core": "workspace:^",
     "elysia": "catalog:",
+    "fflate": "^0.8.2",
     "h3": "catalog:",
     "rimraf": "catalog:",
     "tsup": "catalog:",
