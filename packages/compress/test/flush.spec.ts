@@ -59,7 +59,10 @@ describe("Compression Flush Behavior", () => {
 
       // Collect the compressed chunks
       const collector = new ChunkCollector();
-      const reader = compressedStream!.getReader();
+      if (!compressedStream) {
+        throw new Error("Expected compressStream to return a non-null stream");
+      }
+      const reader = compressedStream.getReader();
 
       // Read all chunks
       const readChunks = async () => {
@@ -109,7 +112,10 @@ describe("Compression Flush Behavior", () => {
 
       // Collect the compressed chunks
       const collector = new ChunkCollector();
-      const reader = compressedStream!.getReader();
+      if (!compressedStream) {
+        throw new Error("Expected compressStream to return a non-null stream");
+      }
+      const reader = compressedStream.getReader();
 
       // Read all chunks
       const readChunks = async () => {
@@ -167,7 +173,10 @@ describe("Compression Flush Behavior", () => {
 
       // Collect the compressed chunks
       const collector = new ChunkCollector();
-      const reader = compressedStream!.getReader();
+      if (!compressedStream) {
+        throw new Error("Expected compressStream to return a non-null stream");
+      }
+      const reader = compressedStream.getReader();
 
       // Read all chunks
       const readChunks = async () => {
@@ -219,7 +228,10 @@ describe("Compression Flush Behavior", () => {
 
       // Collect the compressed chunks
       const collector = new ChunkCollector();
-      const reader = compressedStream!.getReader();
+      if (!compressedStream) {
+        throw new Error("Expected compressStream to return a non-null stream");
+      }
+      const reader = compressedStream.getReader();
 
       // Read all chunks
       const readChunks = async () => {

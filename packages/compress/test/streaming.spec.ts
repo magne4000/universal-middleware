@@ -14,7 +14,7 @@ function createControlledStream() {
   });
 
   // Method to push chunks with delays to simulate streaming
-  const pushChunks = async (chunks: Uint8Array[], delayMs: number = 10) => {
+  const pushChunks = async (chunks: Uint8Array[], delayMs = 10) => {
     for (const chunk of chunks) {
       controller?.enqueue(chunk);
       // Small delay to simulate streaming
@@ -88,7 +88,10 @@ describe("Streaming Compression", () => {
       expect(output.headers.get("Content-Encoding")).toBe("gzip");
 
       // Collect compressed chunks
-      const compressedChunks = await collectChunks(output.body!);
+      if (!output.body) {
+        throw new Error("Expected compressed response to have a body");
+      }
+      const compressedChunks = await collectChunks(output.body);
 
       // Wait for all chunks to be pushed
       await pushPromise;
@@ -129,7 +132,10 @@ describe("Streaming Compression", () => {
       expect(output.headers.get("Content-Encoding")).toBe("deflate");
 
       // Collect compressed chunks
-      const compressedChunks = await collectChunks(output.body!);
+      if (!output.body) {
+        throw new Error("Expected compressed response to have a body");
+      }
+      const compressedChunks = await collectChunks(output.body);
 
       // Wait for all chunks to be pushed
       await pushPromise;
@@ -177,7 +183,10 @@ describe("Streaming Compression", () => {
       expect(output.headers.get("Content-Encoding")).toBe("gzip");
 
       // Collect compressed chunks
-      const compressedChunks = await collectChunks(output.body!);
+      if (!output.body) {
+        throw new Error("Expected compressed response to have a body");
+      }
+      const compressedChunks = await collectChunks(output.body);
 
       // Wait for all chunks to be pushed
       await pushPromise;
@@ -218,7 +227,10 @@ describe("Streaming Compression", () => {
       expect(output.headers.get("Content-Encoding")).toBe("deflate");
 
       // Collect compressed chunks
-      const compressedChunks = await collectChunks(output.body!);
+      if (!output.body) {
+        throw new Error("Expected compressed response to have a body");
+      }
+      const compressedChunks = await collectChunks(output.body);
 
       // Wait for all chunks to be pushed
       await pushPromise;

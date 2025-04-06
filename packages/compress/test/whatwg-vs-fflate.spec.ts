@@ -4,7 +4,7 @@ import * as runtime from "../src/runtime";
 // These tests require CompressionStream to be available
 
 // Helper to create a stream that emits chunks with delays
-function createDelayedChunkStream(chunks: Uint8Array[], delayMs: number = 10) {
+function createDelayedChunkStream(chunks: Uint8Array[], delayMs = 10) {
   return new ReadableStream<Uint8Array>({
     async start(controller) {
       for (const chunk of chunks) {
@@ -46,7 +46,7 @@ describe("WHATWG CompressionStream vs fflate", () => {
     ];
 
     // Create a stream with delayed chunks
-    const inputStream = createDelayedChunkStream(chunks, 500);
+    const inputStream = createDelayedChunkStream(chunks, 50);
 
     // Use WHATWG CompressionStream
     const compressedStream = inputStream.pipeThrough(
@@ -86,8 +86,11 @@ describe("WHATWG CompressionStream vs fflate", () => {
     const compressedStream = compressStream(inputStream, "gzip");
 
     // Collect compressed chunks
+    if (!compressedStream) {
+      throw new Error("Expected compressStream to return a non-null stream");
+    }
     const { chunks: compressedChunks } =
-      await collectChunksWithTimestamps(compressedStream!);
+      await collectChunksWithTimestamps(compressedStream);
 
     // fflate should produce at least as many chunks as we input due to proper flushing
     // It may produce more chunks due to internal buffering and flushing behavior
@@ -121,7 +124,10 @@ describe("WHATWG CompressionStream vs fflate", () => {
     const compressedStream = compressStream(inputStream, "gzip");
 
     // Decompress with WHATWG DecompressionStream
-    const decompressedStream = compressedStream!.pipeThrough(
+    if (!compressedStream) {
+      throw new Error("Expected compressStream to return a non-null stream");
+    }
+    const decompressedStream = compressedStream.pipeThrough(
       new DecompressionStream("gzip")
     );
 
