@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-  pull_request:
+  pull_request_target:
     branches:
       - main
 
@@ -14,7 +14,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref || github.run_id }}"
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request_target.head.label || github.head_ref || github.ref || github.run_id }}"
   cancel-in-progress: true
 
 defaults:
@@ -90,7 +90,7 @@ jobs:
         working-directory: docs
 
   release-please-beta:
-    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'beta') }}
+    if: ${{ github.event_name == 'pull_request_target' && contains(github.event.pull_request_target.labels.*.name, 'beta') }}
     runs-on: ubuntu-latest
     needs:
       - test
