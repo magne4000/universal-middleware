@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/express",
-  "version": "0.4.13",
+  "version": "0.4.14",
   "type": "module",
   "description": "Express adapter for universal middlewares",
   "files": [

@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/sirv",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "type": "module",
   "description": "Universal static file serving middleware",
   "files": [

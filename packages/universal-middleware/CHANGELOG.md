@@ -5,6 +5,29 @@
 
 * export Target and RuntimeAdapter from generated code ([056df5f](https://github.com/magne4000/universal-middleware/commit/056df5f8a48039eb93805f868f8f938c001423a9))
 
+## [0.6.19](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.6.18...universal-middleware-v0.6.19) (2025-04-06)
+
+
+### Features
+
+* **compress:** compress stream are now flushable ([#144](https://github.com/magne4000/universal-middleware/issues/144)) ([8235847](https://github.com/magne4000/universal-middleware/commit/823584751041516889c7cc7ee077fffc74fa5b04))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/cloudflare bumped to 0.4.8
+    * @universal-middleware/core bumped to 0.4.7
+    * @universal-middleware/elysia bumped to 0.4.8
+    * @universal-middleware/express bumped to 0.4.14
+    * @universal-middleware/fastify bumped to 0.5.16
+    * @universal-middleware/h3 bumped to 0.4.9
+    * @universal-middleware/hattip bumped to 0.4.8
+    * @universal-middleware/hono bumped to 0.4.9
+    * @universal-middleware/vercel bumped to 0.4.14
+    * @universal-middleware/webroute bumped to 0.4.7
+
 ## [0.6.18](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.6.17...universal-middleware-v0.6.18) (2025-04-06)
 
 
