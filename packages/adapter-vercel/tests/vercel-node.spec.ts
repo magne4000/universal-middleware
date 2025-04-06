@@ -3,8 +3,6 @@ import * as vitest from "vitest";
 
 const port = 3800;
 
-const token = process.env.VERCEL_TOKEN ? ` --token=${process.env.VERCEL_TOKEN}` : "";
-
 const expectInternalServerError = {
   tests: {
     throwLate: {
@@ -19,15 +17,19 @@ const expectInternalServerError = {
   },
 } satisfies Pick<Run, "tests">;
 
-const runs: Run[] = [
-  {
-    name: "adapter-vercel: node",
-    command: `pnpm run test:run-vercel:node${token}`,
-    port,
-    portOption: "--listen",
-    ...expectInternalServerError,
-  },
-];
+const token = process.env.VERCEL_TOKEN ? ` --token=${process.env.VERCEL_TOKEN}` : null;
+
+const runs: Run[] = token
+  ? [
+      {
+        name: "adapter-vercel: node",
+        command: `pnpm run test:run-vercel:node${token}`,
+        port,
+        portOption: "--listen",
+        ...expectInternalServerError,
+      },
+    ]
+  : [];
 
 runTests(runs, {
   vitest,
