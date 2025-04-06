@@ -1,4 +1,4 @@
-import { Gzip, Deflate } from "fflate";
+import { Gzip, Deflate, Zlib } from "fflate";
 
 export function compressStream(
   input: ReadableStream<Uint8Array> | null,
@@ -8,16 +8,17 @@ export function compressStream(
     return input;
   }
 
-  let compressor: Gzip | Deflate;
+  let compressor: Gzip | Deflate | Zlib;
   switch ((algorithm as string)) {
     case "gzip":
           compressor = new Gzip();
           break;
     case "deflate":
-          compressor = new Deflate();
+          compressor = new Zlib();
           break;
     case "deflate-raw":
-          return input.pipeThrough(new CompressionStream(algorithm));
+          compressor = new Deflate();
+          break;
     default:
           throw new Error(`{ compressionMethod: "stream" } does not support "${algorithm}" encoding`);
   }
