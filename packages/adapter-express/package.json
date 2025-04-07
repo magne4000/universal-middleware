@@ -28,10 +28,10 @@
   "devDependencies": {
     "@swc/core": "catalog:",
     "@types/express": "catalog:",
-    "@types/express4": "npm:@types/express@^4",
+    "@types/express4": "npm:@types/express@^5.0.1",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
-    "express4": "npm:express@^4",
+    "express4": "npm:express@^5.1.0",
     "express": "catalog:",
     "helmet": "^8.1.0",
     "rimraf": "catalog:",
