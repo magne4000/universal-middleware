@@ -9,6 +9,8 @@ export function compressStream(
   }
 
   let compressor: Gzip | Deflate | Zlib;
+  let isCancelled = false;
+
   switch (algorithm as string) {
     case "gzip":
       compressor = new Gzip();
@@ -27,28 +29,37 @@ export function compressStream(
     start(controller) {
       compressor.ondata = (chunk, final) => {
         try {
-          controller.enqueue(chunk);
+          if (!isCancelled) {
+            controller.enqueue(chunk);
+          }
         } catch (err) {
           controller.error(err);
         }
       };
     },
-
     transform(chunk, controller) {
       try {
-        compressor.push(chunk, false);
-        compressor.flush();
+        if (!isCancelled) {
+          compressor.push(chunk, false);
+          compressor.flush();
+        }
       } catch (err) {
         controller.error(err);
       }
     },
-
     flush(controller) {
       try {
-        compressor.push(new Uint8Array(), true);
+        if (!isCancelled) {
+          compressor.push(new Uint8Array(), true);
+        }
       } catch (err) {
         controller.error(err);
       }
+    },
+    // Missing types for https://streams.spec.whatwg.org/#dom-transformer-cancel
+    // @ts-expect-error
+    cancel() {
+      isCancelled = true;
     },
   });
 
