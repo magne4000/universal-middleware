@@ -38,26 +38,36 @@ export function compressStream<C extends CompressionAlgorithm, O extends Paramet
     ...defaultOptions[algorithm],
     ...options,
   });
+  
+  let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
+  let cancelled = false;
+  
   return new ReadableStream<Uint8Array>({
     async start(controller) {
-      const reader = input.getReader();
+      reader = input.getReader();
 
       // Feed the compression stream manually with Uint8Array chunks
       compressionStream.on("data", (chunk: Buffer) => {
-        controller.enqueue(new Uint8Array(chunk));
+        if (!cancelled) {
+          controller.enqueue(new Uint8Array(chunk));
+        }
       });
 
       compressionStream.on("end", () => {
-        controller.close();
+        if (!cancelled) {
+          controller.close();
+        }
       });
 
       compressionStream.on("error", (err) => {
-        controller.error(err);
+        if (!cancelled) {
+          controller.error(err);
+        }
       });
 
       // Read the original input stream, write to the compression stream
       try {
-        while (true) {
+        while (!cancelled) {
           const { done, value } = await reader.read();
           if (done) {
             compressionStream.end();
@@ -68,8 +78,20 @@ export function compressStream<C extends CompressionAlgorithm, O extends Paramet
           compressionStream.write(value);
         }
       } catch (err) {
-        controller.error(err);
+        if (!cancelled) {
+          controller.error(err);
+        }
       }
     },
+    cancel() {
+      cancelled = true;
+      
+      if (reader) {
+        reader.releaseLock();
+        reader = null;
+      }
+      
+      compressionStream.destroy();
+    }
   });
 }

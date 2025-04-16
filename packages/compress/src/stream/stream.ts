@@ -33,7 +33,9 @@ export function compressStream(
             controller.enqueue(chunk);
           }
         } catch (err) {
-          controller.error(err);
+          if (!isCancelled) {
+            controller.error(err);
+          }
         }
       };
     },
@@ -44,7 +46,9 @@ export function compressStream(
           compressor.flush();
         }
       } catch (err) {
-        controller.error(err);
+        if (!isCancelled) {
+          controller.error(err);
+        }
       }
     },
     flush(controller) {
@@ -53,7 +57,9 @@ export function compressStream(
           compressor.push(new Uint8Array(), true);
         }
       } catch (err) {
-        controller.error(err);
+        if (!isCancelled) {
+          controller.error(err);
+        }
       }
     },
     // Missing types for https://streams.spec.whatwg.org/#dom-transformer-cancel
