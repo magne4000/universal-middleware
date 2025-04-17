@@ -44,7 +44,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
   return (...args) => {
     const handler = handlerFactory(...args);
 
-    return bindUniversal(handler, async function universalHandlerHono(honoContext) {
+    return bindUniversal(handler, async function universalHandlerHono(honoContext, next) {
       const context = initContext<InContext>(honoContext);
 
       const response: Response | undefined = await this[universalSymbol](
@@ -56,7 +56,8 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
       if (response) {
         return response;
       }
-      return honoContext.notFound();
+      // Will default to 404 if no other route matches this request
+      await next();
     });
   };
 }
