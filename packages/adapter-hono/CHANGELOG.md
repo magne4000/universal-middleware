@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.10](https://github.com/magne4000/universal-middleware/compare/hono-v0.4.9...hono-v0.4.10) (2025-04-17)
+
+
+### Bug Fixes
+
+* **hono:** handlers without a response now fallback to middleware chain before 404 ([084656a](https://github.com/magne4000/universal-middleware/commit/084656a92d381ac3c288f0d6bdddd3193993f049))
+
 ## [0.4.9](https://github.com/magne4000/universal-middleware/compare/hono-v0.4.8...hono-v0.4.9) (2025-04-06)
 
 

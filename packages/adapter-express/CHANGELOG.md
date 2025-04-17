@@ -7,6 +7,13 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.15](https://github.com/magne4000/universal-middleware/compare/express-v0.4.14...express-v0.4.15) (2025-04-17)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#148](https://github.com/magne4000/universal-middleware/issues/148)) ([c563509](https://github.com/magne4000/universal-middleware/commit/c563509d74b2c52ca3638f10b632684bc694a67a))
+
 ## [0.4.14](https://github.com/magne4000/universal-middleware/compare/express-v0.4.13...express-v0.4.14) (2025-04-06)
 
 

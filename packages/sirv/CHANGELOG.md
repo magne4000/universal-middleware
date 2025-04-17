@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.20](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.19...sirv-v0.1.20) (2025-04-17)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @universal-middleware/express bumped to 0.4.15
+    * universal-middleware bumped to 0.6.20
+
 ## [0.1.19](https://github.com/magne4000/universal-middleware/compare/sirv-v0.1.18...sirv-v0.1.19) (2025-04-06)
 
 
