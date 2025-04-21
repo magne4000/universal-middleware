@@ -38,10 +38,10 @@ export function compressStream<C extends CompressionAlgorithm, O extends Paramet
     ...defaultOptions[algorithm],
     ...options,
   });
-  
+
   let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
   let cancelled = false;
-  
+
   return new ReadableStream<Uint8Array>({
     async start(controller) {
       reader = input.getReader();
@@ -85,13 +85,13 @@ export function compressStream<C extends CompressionAlgorithm, O extends Paramet
     },
     cancel() {
       cancelled = true;
-      
+
       if (reader) {
         reader.releaseLock();
         reader = null;
       }
-      
+
       compressionStream.destroy();
-    }
+    },
   });
 }
