@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.30](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.29...compress-v0.2.30) (2025-04-21)
+
+
+### Features
+
+* add cancellation handling to compression transform ([#154](https://github.com/magne4000/universal-middleware/issues/154)) ([d61afe8](https://github.com/magne4000/universal-middleware/commit/d61afe80fc320ba7ea8b9cb50c2452d4aecb3b9b))
+
 ## [0.2.29](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.28...compress-v0.2.29) (2025-04-17)
 
 
