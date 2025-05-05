@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@cloudflare/workers-types':
-      specifier: ^4.20250428.0
-      version: 4.20250428.0
+      specifier: ^4.20250505.0
+      version: 4.20250505.0
     '@hattip/core':
       specifier: ^0.0.49
       version: 0.0.49
@@ -16,14 +16,14 @@ catalogs:
       specifier: ^0.0.49
       version: 0.0.49
     '@swc/core':
-      specifier: ^1.11.22
-      version: 1.11.22
+      specifier: ^1.11.24
+      version: 1.11.24
     '@types/express':
       specifier: ^5.0.1
       version: 5.0.1
     '@types/node':
-      specifier: ^20.17.30
-      version: 20.17.30
+      specifier: ^20.17.32
+      version: 20.17.32
     '@webroute/route':
       specifier: ^0.8.0
       version: 0.8.0
@@ -37,8 +37,8 @@ catalogs:
       specifier: ^5.3.2
       version: 5.3.2
     h3:
-      specifier: ^1.15.2
-      version: 1.15.2
+      specifier: ^1.15.3
+      version: 1.15.3
     hono:
       specifier: ^4.7.8
       version: 4.7.8
@@ -49,20 +49,20 @@ catalogs:
       specifier: ^8.4.0
       version: 8.4.0
     tsx:
-      specifier: ^4.19.3
-      version: 4.19.3
+      specifier: ^4.19.4
+      version: 4.19.4
     typescript:
       specifier: ^5.8.3
       version: 5.8.3
     vite:
-      specifier: ^6.3.3
-      version: 6.3.3
+      specifier: ^6.3.4
+      version: 6.3.4
     vitest:
       specifier: ^3.1.2
       version: 3.1.2
     wrangler:
-      specifier: ^4.13.2
-      version: 4.13.2
+      specifier: ^4.14.1
+      version: 4.14.1
 
 overrides:
   '@universal-middleware/cloudflare': link:./packages/adapter-cloudflare
@@ -90,7 +90,7 @@ importers:
         version: 1.9.4
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       playwright:
         specifier: ^1.52.0
         version: 1.52.0
@@ -159,7 +159,7 @@ importers:
         version: 5.3.2
       h3:
         specifier: 'catalog:'
-        version: 1.15.2
+        version: 1.15.3
       hono:
         specifier: 'catalog:'
         version: 4.7.8
@@ -180,10 +180,10 @@ importers:
         version: 1.14.1(hono@4.7.8)
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/core':
         specifier: link:../../packages/core
         version: link:../../packages/core
@@ -192,13 +192,13 @@ importers:
         version: 1.2.25(typescript@5.8.3)
       h3:
         specifier: 'catalog:'
-        version: 1.15.2
+        version: 1.15.3
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -214,13 +214,13 @@ importers:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 4.20250428.0
+        version: 4.20250505.0
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -229,22 +229,22 @@ importers:
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       tsx:
         specifier: 'catalog:'
-        version: 4.19.3
+        version: 4.19.4
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       wrangler:
         specifier: 'catalog:'
-        version: 4.13.2(@cloudflare/workers-types@4.20250428.0)
+        version: 4.14.1(@cloudflare/workers-types@4.20250505.0)
 
   packages/adapter-elysia:
     dependencies:
@@ -254,13 +254,13 @@ importers:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 4.20250428.0
+        version: 4.20250505.0
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -272,22 +272,22 @@ importers:
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       tsx:
         specifier: 'catalog:'
-        version: 4.19.3
+        version: 4.19.4
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       wrangler:
         specifier: 'catalog:'
-        version: 4.13.2(@cloudflare/workers-types@4.20250428.0)
+        version: 4.14.1(@cloudflare/workers-types@4.20250505.0)
 
   packages/adapter-express:
     dependencies:
@@ -297,7 +297,7 @@ importers:
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/express':
         specifier: 'catalog:'
         version: 5.0.1
@@ -306,7 +306,7 @@ importers:
         version: '@types/express@4.17.21'
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -324,19 +324,19 @@ importers:
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       tsx:
         specifier: 'catalog:'
-        version: 4.19.3
+        version: 4.19.4
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
 
   packages/adapter-fastify:
     dependencies:
@@ -355,10 +355,10 @@ importers:
         version: 13.0.1
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -373,19 +373,19 @@ importers:
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       tsx:
         specifier: 'catalog:'
-        version: 4.19.3
+        version: 4.19.4
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
 
   packages/adapter-h3:
     dependencies:
@@ -395,34 +395,34 @@ importers:
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
       h3:
         specifier: 'catalog:'
-        version: 1.15.2
+        version: 1.15.3
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       tsx:
         specifier: 'catalog:'
-        version: 4.19.3
+        version: 4.19.4
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
 
   packages/adapter-hattip:
     dependencies:
@@ -456,10 +456,10 @@ importers:
         version: 0.0.49
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -468,22 +468,22 @@ importers:
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       tsx:
         specifier: 'catalog:'
-        version: 4.19.3
+        version: 4.19.4
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       wrangler:
         specifier: 'catalog:'
-        version: 4.13.2(@cloudflare/workers-types@4.20250428.0)
+        version: 4.14.1(@cloudflare/workers-types@4.20250505.0)
 
   packages/adapter-hono:
     dependencies:
@@ -496,10 +496,10 @@ importers:
         version: 1.14.1(hono@4.7.8)
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -511,22 +511,22 @@ importers:
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       tsx:
         specifier: 'catalog:'
-        version: 4.19.3
+        version: 4.19.4
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       wrangler:
         specifier: 'catalog:'
-        version: 4.13.2(@cloudflare/workers-types@4.20250428.0)
+        version: 4.14.1(@cloudflare/workers-types@4.20250505.0)
 
   packages/adapter-vercel:
     dependencies:
@@ -539,10 +539,10 @@ importers:
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -551,22 +551,22 @@ importers:
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       tsx:
         specifier: 'catalog:'
-        version: 4.19.3
+        version: 4.19.4
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vercel:
-        specifier: ^41.6.2
-        version: 41.6.2(@swc/core@1.11.22)(rollup@4.40.1)
+        specifier: ^41.7.0
+        version: 41.7.0(@swc/core@1.11.24)(rollup@4.40.1)
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
 
   packages/adapter-webroute:
     dependencies:
@@ -579,10 +579,10 @@ importers:
         version: 1.14.1(hono@4.7.8)
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -603,31 +603,31 @@ importers:
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       tsx:
         specifier: 'catalog:'
-        version: 4.19.3
+        version: 4.19.4
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
 
   packages/compress:
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/bun':
-        specifier: ^1.2.10
-        version: 1.2.10
+        specifier: ^1.2.12
+        version: 1.2.12
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/core':
         specifier: link:../core
         version: link:../core
@@ -639,13 +639,13 @@ importers:
         version: 0.8.2
       h3:
         specifier: 'catalog:'
-        version: 1.15.2
+        version: 1.15.3
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -654,10 +654,10 @@ importers:
         version: link:../universal-middleware
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
 
   packages/core:
     dependencies:
@@ -670,19 +670,19 @@ importers:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 4.20250428.0
+        version: 4.20250505.0
       '@hattip/core':
         specifier: 'catalog:'
         version: 0.0.49
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/bun':
-        specifier: ^1.2.10
-        version: 1.2.10
+        specifier: ^1.2.12
+        version: 1.2.12
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@webroute/route':
         specifier: 'catalog:'
         version: 0.8.0
@@ -694,7 +694,7 @@ importers:
         version: 5.3.2
       h3:
         specifier: 'catalog:'
-        version: 1.15.2
+        version: 1.15.3
       hono:
         specifier: 'catalog:'
         version: 4.7.8
@@ -706,16 +706,16 @@ importers:
         version: 0.6.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
 
   packages/sirv:
     dependencies:
@@ -728,13 +728,13 @@ importers:
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/bun':
-        specifier: ^1.2.10
-        version: 1.2.10
+        specifier: ^1.2.12
+        version: 1.2.12
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/core':
         specifier: link:../core
         version: link:../core
@@ -746,13 +746,13 @@ importers:
         version: 1.2.25(typescript@5.8.3)
       h3:
         specifier: 'catalog:'
-        version: 1.15.2
+        version: 1.15.3
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -761,10 +761,10 @@ importers:
         version: link:../universal-middleware
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
 
   packages/tests:
     dependencies:
@@ -777,10 +777,10 @@ importers:
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware/core':
         specifier: link:../core
         version: link:../core
@@ -789,16 +789,16 @@ importers:
         version: 6.0.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
 
   packages/universal-middleware:
     dependencies:
@@ -833,8 +833,8 @@ importers:
         specifier: link:../adapter-webroute
         version: link:../adapter-webroute
       oxc-transform:
-        specifier: ^0.67.0
-        version: 0.67.0
+        specifier: ^0.68.1
+        version: 0.68.1
       package-up:
         specifier: ^5.0.0
         version: 5.0.0
@@ -853,7 +853,7 @@ importers:
         version: 12.1.2(rollup@4.40.1)(tslib@2.8.1)(typescript@5.8.3)
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.11.22
+        version: 1.11.24
       esbuild:
         specifier: ^0.25.3
         version: 0.25.3
@@ -865,16 +865,16 @@ importers:
         version: 4.40.1
       tsup:
         specifier: 'catalog:'
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@22.13.10)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@22.13.10)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@22.13.10)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@22.13.10)(tsx@4.19.4)(yaml@2.7.0)
 
   tests-examples/tests-tool:
     devDependencies:
@@ -889,16 +889,16 @@ importers:
         version: 0.0.49
       '@hono/vite-dev-server':
         specifier: ^0.19.0
-        version: 0.19.0(hono@4.7.8)(miniflare@4.20250424.1)(wrangler@4.13.2(@cloudflare/workers-types@4.20250428.0))
+        version: 0.19.0(hono@4.7.8)(miniflare@4.20250428.1)(wrangler@4.14.1(@cloudflare/workers-types@4.20250505.0))
       '@swc-node/register':
         specifier: ^1.10.10
-        version: 1.10.10(@swc/core@1.11.22)(@swc/types@0.1.21)(typescript@5.8.3)
+        version: 1.10.10(@swc/core@1.11.24)(@swc/types@0.1.21)(typescript@5.8.3)
       '@types/express':
         specifier: 'catalog:'
         version: 5.0.1
       '@types/node':
         specifier: 'catalog:'
-        version: 20.17.30
+        version: 20.17.32
       '@universal-middleware-examples/tool':
         specifier: workspace:*
         version: link:../../examples/tool
@@ -952,7 +952,7 @@ importers:
         version: 5.0.0
       h3:
         specifier: 'catalog:'
-        version: 1.15.2
+        version: 1.15.3
       hono:
         specifier: 'catalog:'
         version: 4.7.8
@@ -960,8 +960,8 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
       npm-run-all2:
-        specifier: ^7.0.2
-        version: 7.0.2
+        specifier: ^8.0.1
+        version: 8.0.1
       playwright:
         specifier: ^1.52.0
         version: 1.52.0
@@ -970,22 +970,22 @@ importers:
         version: 6.0.1
       tsup:
         specifier: ^8.4.0
-        version: 8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0)
+        version: 8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0)
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
       vercel:
-        specifier: ^41.6.2
-        version: 41.6.2(@swc/core@1.11.22)(rollup@4.40.1)
+        specifier: ^41.7.0
+        version: 41.7.0(@swc/core@1.11.24)(rollup@4.40.1)
       vite:
         specifier: 'catalog:'
-        version: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+        version: 3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       wrangler:
         specifier: 'catalog:'
-        version: 4.13.2(@cloudflare/workers-types@4.20250428.0)
+        version: 4.14.1(@cloudflare/workers-types@4.20250505.0)
 
 packages:
 
@@ -1162,38 +1162,38 @@ packages:
       workerd:
         optional: true
 
-  '@cloudflare/workerd-darwin-64@1.20250424.0':
-    resolution: {integrity: sha512-E+9tyQfwKwg7iz+vI50UeF9m9MhO6uCTnn6VPBTobhgi0rKcfmCteUGz6YJejG6ex9OIfFHg/tIcr1+ywGZtiA==}
+  '@cloudflare/workerd-darwin-64@1.20250428.0':
+    resolution: {integrity: sha512-6nVe9oV4Hdec6ctzMtW80TiDvNTd2oFPi3VsKqSDVaJSJbL+4b6seyJ7G/UEPI+si6JhHBSLV2/9lNXNGLjClA==}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [darwin]
 
-  '@cloudflare/workerd-darwin-arm64@1.20250424.0':
-    resolution: {integrity: sha512-5vReSs+Gx4vPNR3zoU3a7BVBoTEc7aoe2gGcaxSSQKMOvVkp3bo9poOGZbISodhYnCCRXltZcl8Vgyi0l/YZLA==}
+  '@cloudflare/workerd-darwin-arm64@1.20250428.0':
+    resolution: {integrity: sha512-/TB7bh7SIJ5f+6r4PHsAz7+9Qal/TK1cJuKFkUno1kqGlZbdrMwH0ATYwlWC/nBFeu2FB3NUolsTntEuy23hnQ==}
     engines: {node: '>=16'}
     cpu: [arm64]
     os: [darwin]
 
-  '@cloudflare/workerd-linux-64@1.20250424.0':
-    resolution: {integrity: sha512-8kBNy7LpW/E4XKGrx/1Xql3Hfy8viDb+tFudu+sN/b6A2tNczNoOzDyNeWeWa99/zfyzncah1l0Wl2RBmVvY+Q==}
+  '@cloudflare/workerd-linux-64@1.20250428.0':
+    resolution: {integrity: sha512-9eCbj+R3CKqpiXP6DfAA20DxKge+OTj7Hyw3ZewiEhWH9INIHiJwJQYybu4iq9kJEGjnGvxgguLFjSCWm26hgg==}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [linux]
 
-  '@cloudflare/workerd-linux-arm64@1.20250424.0':
-    resolution: {integrity: sha512-R4wLZNobQo5K96e3BEaTwCbZhyspeoW81k/yrkSRseLpSoIpLNguw6ckk5sGCjUkXEZQyu9TG6PzdYqlQo70gw==}
+  '@cloudflare/workerd-linux-arm64@1.20250428.0':
+    resolution: {integrity: sha512-D9NRBnW46nl1EQsP13qfkYb5lbt4C6nxl38SBKY/NOcZAUoHzNB5K0GaK8LxvpkM7X/97ySojlMfR5jh5DNXYQ==}
     engines: {node: '>=16'}
     cpu: [arm64]
     os: [linux]
 
-  '@cloudflare/workerd-windows-64@1.20250424.0':
-    resolution: {integrity: sha512-uwzZhNaKjJKq6NGFPd0hQWecpf5OTZCrlWKQZm4kkufZ7uIzkn5t3kOjh/J3L9puM/GvIPxCiDUE2aG66P6YxA==}
+  '@cloudflare/workerd-windows-64@1.20250428.0':
+    resolution: {integrity: sha512-RQCRj28eitjKD0tmei6iFOuWqMuHMHdNGEigRmbkmuTlpbWHNAoHikgCzZQ/dkKDdatA76TmcpbyECNf31oaTA==}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [win32]
 
-  '@cloudflare/workers-types@4.20250428.0':
-    resolution: {integrity: sha512-r/K1xuR+lW6SeGKRloVdR+BnK+9shBQci717070EBB2VLbcrZCCh0eo6NweLFa1rD8use5rE5JTVDZ/mXqMeNg==}
+  '@cloudflare/workers-types@4.20250505.0':
+    resolution: {integrity: sha512-pLQ/UaCupEy3fTTfy7yCR7FuAbawvCohYAdadGHPUfzssksA9MhkqBLlzYWRwIoC34R8grVn4XOCknEg+NMr0Q==}
 
   '@conventional-commits/parser@0.4.1':
     resolution: {integrity: sha512-H2ZmUVt6q+KBccXfMBhbBF14NlANeqHTXL4qCL6QGbMzrc4HDXyzWuxPxPNbz71f/5UkR5DrycP5VO9u7crahg==}
@@ -1786,61 +1786,61 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@oxc-transform/binding-darwin-arm64@0.67.0':
-    resolution: {integrity: sha512-P3zBMhpOQceNSys3/ZqvrjuRvcIbVzfGFN/tH34HlVkOjOmfGK1mOWjORsGAZtbgh1muXrF6mQETLzFjfYndXQ==}
+  '@oxc-transform/binding-darwin-arm64@0.68.1':
+    resolution: {integrity: sha512-YlyzH6V/6Ib0dRKQ2dBfcHtsFfijTUNsBo85YxlUd9+eqo0RglTT2BGv+b85Z1dvtOopuz5zEa3x5r/bMwjQdA==}
     engines: {node: '>=14.0.0'}
     cpu: [arm64]
     os: [darwin]
 
-  '@oxc-transform/binding-darwin-x64@0.67.0':
-    resolution: {integrity: sha512-B52aeo/C3spYHcwFQ4nAbDkwbMKf0K6ncWM8GrVUgGu8PPECLBhjPCW11kPW/lt9FxwrdgVYVzPYlZ6wmJmpEA==}
+  '@oxc-transform/binding-darwin-x64@0.68.1':
+    resolution: {integrity: sha512-NzCwmM8SymtXlftGU5EkLIgeoYoIGejC1Zs234tPNBuoJ9xTW4RVIe67+MV7ePRTUU1oTJSKC+RlIWJ4qvwzdQ==}
     engines: {node: '>=14.0.0'}
     cpu: [x64]
     os: [darwin]
 
-  '@oxc-transform/binding-linux-arm-gnueabihf@0.67.0':
-    resolution: {integrity: sha512-5Ir1eQrC9lvj/rR1TJVGwOR4yLgXTLmfKHIfpVH7GGSQrzK7VMUfHWX+dAsX1VutaeE8puXIqtYvf9cHLw78dw==}
+  '@oxc-transform/binding-linux-arm-gnueabihf@0.68.1':
+    resolution: {integrity: sha512-jgo1oEAFDR2jcp0BDF5bBRIMS9lyromAh5c9Kv914g8yPi6xMRGJmZkNkdBotjw3v0DG/Q7ECJUCgOABbmj5Lg==}
     engines: {node: '>=14.0.0'}
     cpu: [arm]
     os: [linux]
 
-  '@oxc-transform/binding-linux-arm64-gnu@0.67.0':
-    resolution: {integrity: sha512-zTqfPET5+hZfJ3/dMqJboKxrpXMXk+j2HVdvX0wVhW2MI7n7hwELl+In6Yu20nXuEyJkNQlWHbNPCUfpM+cBWw==}
+  '@oxc-transform/binding-linux-arm64-gnu@0.68.1':
+    resolution: {integrity: sha512-3ZMKijcDfdtX7SXGLmyRouTGGOlON+poHPXrYAC+iFcKAVDnuoZuo/APZ6n33HQv5CCEijbdFoip8hxxfmvMLw==}
     engines: {node: '>=14.0.0'}
     cpu: [arm64]
     os: [linux]
 
-  '@oxc-transform/binding-linux-arm64-musl@0.67.0':
-    resolution: {integrity: sha512-jzz/ATUhZ8wetb4gm5GwzheZns3Qj1CZ+DIMmD8nBxQXszmTS/fqnAPpgzruyLqkXBUuUfF3pHv5f/UmuHReuQ==}
+  '@oxc-transform/binding-linux-arm64-musl@0.68.1':
+    resolution: {integrity: sha512-sLsbrUuOxADLMPkzwxA+laDAa1GBIVxCf5UKoEtHwSqBR/v2Kmv5YYs94Hpjeqf8sHl34njRWVs3hGOhYag/cw==}
     engines: {node: '>=14.0.0'}
     cpu: [arm64]
     os: [linux]
 
-  '@oxc-transform/binding-linux-x64-gnu@0.67.0':
-    resolution: {integrity: sha512-Qy2+tfglJ8yX6guC1EDAnuuzRZIXciXO9UwOewxyiahLxwuTpj/wvvZN3Cb1SA3c14zrwb2TNMZvaXS1/OS5Pg==}
+  '@oxc-transform/binding-linux-x64-gnu@0.68.1':
+    resolution: {integrity: sha512-fcZo4h+9U7mETFIT5kJCFRTuo3X3Iflr82H86pFF0PdZCKdvFiQ29JGDHVhsgj77bP84DdEhGVxBVhvBwpMLlQ==}
     engines: {node: '>=14.0.0'}
     cpu: [x64]
     os: [linux]
 
-  '@oxc-transform/binding-linux-x64-musl@0.67.0':
-    resolution: {integrity: sha512-tHoYgDIRhgvh+/wIrzAk3cUoj/LSSoJAdsZW9XRlaixFW/TF2puxRyaS1hRco0bcKTwotXl/eDYqZmhIfUyGRQ==}
+  '@oxc-transform/binding-linux-x64-musl@0.68.1':
+    resolution: {integrity: sha512-ORwnm9SOyVlDHbOFrATQx9L8OGs87JXbWeXOW4mCEbvFdByd6Ps5MHVDI2bWPAoegCRKKiok1ytZKKLA/WncCQ==}
     engines: {node: '>=14.0.0'}
     cpu: [x64]
     os: [linux]
 
-  '@oxc-transform/binding-wasm32-wasi@0.67.0':
-    resolution: {integrity: sha512-ZPT+1HECf7WUnotodIuS8tvSkwaiCdC2DDw8HVRmlerbS6iPYIPKyBCvkSM4RyUx0kljZtB9AciLCkEbwy5/zA==}
+  '@oxc-transform/binding-wasm32-wasi@0.68.1':
+    resolution: {integrity: sha512-j34+k0j508K//mnjSRIU0FMUF6+7fdzDyRT2NwEAgxOx10HGgDQ+SYjBXIljYoL1jrVP0RV53rRm5c9nvranng==}
     engines: {node: '>=14.0.0'}
     cpu: [wasm32]
 
-  '@oxc-transform/binding-win32-arm64-msvc@0.67.0':
-    resolution: {integrity: sha512-+E3lOHCk4EuIk6IjshBAARknAUpgH+gHTtZxCPqK4AWYA+Tls2J6C0FVM48uZ4m3rZpAq8ZszM9JZVAkOaynBQ==}
+  '@oxc-transform/binding-win32-arm64-msvc@0.68.1':
+    resolution: {integrity: sha512-JFIfZbLr9i939nNXwjJ9j/k7ZJdXIfFjCAbRMhRC0xzMRRbLeCR4W15tn+ixu31nhBLXzaXiiUAnGfwrjI9yPA==}
     engines: {node: '>=14.0.0'}
     cpu: [arm64]
     os: [win32]
 
-  '@oxc-transform/binding-win32-x64-msvc@0.67.0':
-    resolution: {integrity: sha512-3pIIFb9g5aFrAODTQVJYitq+ONHgDJ4IYk/7pk+jsG6JpKUkURd0auUlxvriO11fFit5hdwy+wIbU4kBvyRUkg==}
+  '@oxc-transform/binding-win32-x64-msvc@0.68.1':
+    resolution: {integrity: sha512-LkZaBYXFil4K1GS6wgkUVNfVliZANrek1RTwC66vD0KfjTkkzeaibQ5gEk4wvIb3EgntK9mFdYKSSQJmtL5bfQ==}
     engines: {node: '>=14.0.0'}
     cpu: [x64]
     os: [win32]
@@ -2073,68 +2073,68 @@ packages:
   '@swc-node/sourcemap-support@0.5.1':
     resolution: {integrity: sha512-JxIvIo/Hrpv0JCHSyRpetAdQ6lB27oFYhv0PKCNf1g2gUXOjpeR1exrXccRxLMuAV5WAmGFBwRnNOJqN38+qtg==}
 
-  '@swc/core-darwin-arm64@1.11.22':
-    resolution: {integrity: sha512-upSiFQfo1TE2QM3+KpBcp5SrOdKKjoc+oUoD1mmBDU2Wv4Bjjv16Z2I5ADvIqMV+b87AhYW+4Qu6iVrQD7j96Q==}
+  '@swc/core-darwin-arm64@1.11.24':
+    resolution: {integrity: sha512-dhtVj0PC1APOF4fl5qT2neGjRLgHAAYfiVP8poJelhzhB/318bO+QCFWAiimcDoyMgpCXOhTp757gnoJJrheWA==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [darwin]
 
-  '@swc/core-darwin-x64@1.11.22':
-    resolution: {integrity: sha512-8PEuF/gxIMJVK21DjuCOtzdqstn2DqnxVhpAYfXEtm3WmMqLIOIZBypF/xafAozyaHws4aB/5xmz8/7rPsjavw==}
+  '@swc/core-darwin-x64@1.11.24':
+    resolution: {integrity: sha512-H/3cPs8uxcj2Fe3SoLlofN5JG6Ny5bl8DuZ6Yc2wr7gQFBmyBkbZEz+sPVgsID7IXuz7vTP95kMm1VL74SO5AQ==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [darwin]
 
-  '@swc/core-linux-arm-gnueabihf@1.11.22':
-    resolution: {integrity: sha512-NIPTXvqtn9e7oQHgdaxM9Z/anHoXC3Fg4ZAgw5rSGa1OlnKKupt5sdfJamNggSi+eAtyoFcyfkgqHnfe2u63HA==}
+  '@swc/core-linux-arm-gnueabihf@1.11.24':
+    resolution: {integrity: sha512-PHJgWEpCsLo/NGj+A2lXZ2mgGjsr96ULNW3+T3Bj2KTc8XtMUkE8tmY2Da20ItZOvPNC/69KroU7edyo1Flfbw==}
     engines: {node: '>=10'}
     cpu: [arm]
     os: [linux]
 
-  '@swc/core-linux-arm64-gnu@1.11.22':
-    resolution: {integrity: sha512-xZ+bgS60c5r8kAeYsLNjJJhhQNkXdidQ277pUabSlu5GjR0CkQUPQ+L9hFeHf8DITEqpPBPRiAiiJsWq5eqMBg==}
+  '@swc/core-linux-arm64-gnu@1.11.24':
+    resolution: {integrity: sha512-C2FJb08+n5SD4CYWCTZx1uR88BN41ZieoHvI8A55hfVf2woT8+6ZiBzt74qW2g+ntZ535Jts5VwXAKdu41HpBg==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
 
-  '@swc/core-linux-arm64-musl@1.11.22':
-    resolution: {integrity: sha512-JhrP/q5VqQl2eJR0xKYIkKTPjgf8CRsAmRnjJA2PtZhfQ543YbYvUqxyXSRyBOxdyX8JwzuAxIPEAlKlT7PPuQ==}
+  '@swc/core-linux-arm64-musl@1.11.24':
+    resolution: {integrity: sha512-ypXLIdszRo0re7PNNaXN0+2lD454G8l9LPK/rbfRXnhLWDBPURxzKlLlU/YGd2zP98wPcVooMmegRSNOKfvErw==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
 
-  '@swc/core-linux-x64-gnu@1.11.22':
-    resolution: {integrity: sha512-htmAVL+U01gk9GyziVUP0UWYaUQBgrsiP7Ytf6uDffrySyn/FclUS3MDPocNydqYsOpj3OpNKPxkaHK+F+X5fg==}
+  '@swc/core-linux-x64-gnu@1.11.24':
+    resolution: {integrity: sha512-IM7d+STVZD48zxcgo69L0yYptfhaaE9cMZ+9OoMxirNafhKKXwoZuufol1+alEFKc+Wbwp+aUPe/DeWC/Lh3dg==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
 
-  '@swc/core-linux-x64-musl@1.11.22':
-    resolution: {integrity: sha512-PL0VHbduWPX+ANoyOzr58jBiL2VnD0xGSFwPy7NRZ1Pr6SNWm4jw3x2u6RjLArGhS5EcWp64BSk9ZxqmTV3FEg==}
+  '@swc/core-linux-x64-musl@1.11.24':
+    resolution: {integrity: sha512-DZByJaMVzSfjQKKQn3cqSeqwy6lpMaQDQQ4HPlch9FWtDx/dLcpdIhxssqZXcR2rhaQVIaRQsCqwV6orSDGAGw==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
 
-  '@swc/core-win32-arm64-msvc@1.11.22':
-    resolution: {integrity: sha512-moJvFhhTVGoMeEThtdF7hQog80Q00CS06v5uB+32VRuv+I31+4WPRyGlTWHO+oY4rReNcXut/mlDHPH7p0LdFg==}
+  '@swc/core-win32-arm64-msvc@1.11.24':
+    resolution: {integrity: sha512-Q64Ytn23y9aVDKN5iryFi8mRgyHw3/kyjTjT4qFCa8AEb5sGUuSj//AUZ6c0J7hQKMHlg9do5Etvoe61V98/JQ==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [win32]
 
-  '@swc/core-win32-ia32-msvc@1.11.22':
-    resolution: {integrity: sha512-/jnsPJJz89F1aKHIb5ScHkwyzBciz2AjEq2m9tDvQdIdVufdJ4SpEDEN9FqsRNRLcBHjtbLs6bnboA+B+pRFXw==}
+  '@swc/core-win32-ia32-msvc@1.11.24':
+    resolution: {integrity: sha512-9pKLIisE/Hh2vJhGIPvSoTK4uBSPxNVyXHmOrtdDot4E1FUUI74Vi8tFdlwNbaj8/vusVnb8xPXsxF1uB0VgiQ==}
     engines: {node: '>=10'}
     cpu: [ia32]
     os: [win32]
 
-  '@swc/core-win32-x64-msvc@1.11.22':
-    resolution: {integrity: sha512-lc93Y8Mku7LCFGqIxJ91coXZp2HeoDcFZSHCL90Wttg5xhk5xVM9uUCP+OdQsSsEixLF34h5DbT9ObzP8rAdRw==}
+  '@swc/core-win32-x64-msvc@1.11.24':
+    resolution: {integrity: sha512-sybnXtOsdB+XvzVFlBVGgRHLqp3yRpHK7CrmpuDKszhj/QhmsaZzY/GHSeALlMtLup13M0gqbcQvsTNlAHTg3w==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [win32]
 
-  '@swc/core@1.11.22':
-    resolution: {integrity: sha512-mjPYbqq8XjwqSE0hEPT9CzaJDyxql97LgK4iyvYlwVSQhdN1uK0DBG4eP9PxYzCS2MUGAXB34WFLegdUj5HGpg==}
+  '@swc/core@1.11.24':
+    resolution: {integrity: sha512-MaQEIpfcEMzx3VWWopbofKJvaraqmL6HbLlw2bFZ7qYqYw3rkhM0cQVEgyzbHtTWwCwPMFZSC2DUbhlZgrMfLg==}
     engines: {node: '>=10'}
     peerDependencies:
       '@swc/helpers': '>=0.5.17'
@@ -2173,8 +2173,8 @@ packages:
   '@types/body-parser@1.19.5':
     resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
 
-  '@types/bun@1.2.10':
-    resolution: {integrity: sha512-eilv6WFM3M0c9ztJt7/g80BDusK98z/FrFwseZgT4bXCq2vPhXD4z8R3oddmAn+R/Nmz9vBn4kweJKmGTZj+lg==}
+  '@types/bun@1.2.12':
+    resolution: {integrity: sha512-lY/GQTXDGsolT/TiH72p1tuyUORuRrdV7VwOTOjDOt8uTBJQOJc5zz3ufwwDl0VBaoxotSk4LdP0hhjLJ6ypIQ==}
 
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
@@ -2234,8 +2234,8 @@ packages:
   '@types/node@16.18.11':
     resolution: {integrity: sha512-3oJbGBUWuS6ahSnEq1eN2XrCyf4YsWI8OyCvo7c64zQJNplk3mO84t53o8lfTk+2ji59g5ycfc6qQ3fdHliHuA==}
 
-  '@types/node@20.17.30':
-    resolution: {integrity: sha512-7zf4YyHA+jvBNfVrk2Gtvs6x7E8V+YDW05bNfG2XkWDJfYRXrTiP/DsB2zSYTaHX0bGIujTBQdMVAhb+j7mwpg==}
+  '@types/node@20.17.32':
+    resolution: {integrity: sha512-zeMXFn8zQ+UkjK4ws0RiOC9EWByyW1CcVmLe+2rQocXRsGEDxUCwPEIVgpsGcLHS/P8JkT0oa3839BRABS0oPw==}
 
   '@types/node@22.13.10':
     resolution: {integrity: sha512-I6LPUvlRH+O6VRUqYOcMudhaIdUVWfsjnZavnsraHvpBwaEyMN29ry+0UVJhImYL16xsscu0aske3yA+uPOWfw==}
@@ -2297,8 +2297,8 @@ packages:
   '@vercel/gatsby-plugin-vercel-analytics@1.0.11':
     resolution: {integrity: sha512-iTEA0vY6RBPuEzkwUTVzSHDATo1aF6bdLLspI68mQ/BTbi5UQEGjpjyzdKOVcSYApDtFU6M6vypZ1t4vIEnHvw==}
 
-  '@vercel/gatsby-plugin-vercel-builder@2.0.80':
-    resolution: {integrity: sha512-MC1Gx6eRfmqaARL1DczldYzA3NdMlnC5vY/AXBSZuiHCoENS4++duEjhDjMtRSiidwSCrjuaz5Y9yxKTocRmzA==}
+  '@vercel/gatsby-plugin-vercel-builder@2.0.81':
+    resolution: {integrity: sha512-nWzkA+bUzfysEUW3LdazbhydrnA17+Nhv/Ki6rlA+H5dDa4pBP6LeAh8kyKAsnH4beAlohCDbtmZ4OtK0HOGSg==}
 
   '@vercel/go@3.2.1':
     resolution: {integrity: sha512-ezjmuUvLigH9V4egEaX0SZ+phILx8lb+Zkp1iTqKI+yl/ibPAtVo5o+dLSRAXU9U01LBmaLu3O8Oxd/JpWYCOw==}
@@ -2306,16 +2306,16 @@ packages:
   '@vercel/hydrogen@1.2.0':
     resolution: {integrity: sha512-kdZp8cTVLoNmnu24wtoQPu9ZO+uB00zvDMTOXlQmNdq/V3k0mQa/Q5k2B8nliBQ3BMiBasoXxMKv59+F8rYvDw==}
 
-  '@vercel/next@4.7.8':
-    resolution: {integrity: sha512-JdKMQkgH9ifBAtG85pzi7MZlnpRCaZH7qPLbw4lSkwy8bLy/6t7Jk5Zw7qcvjLD8ZL/fO3YbMhm43dDxABX8NA==}
+  '@vercel/next@4.7.9':
+    resolution: {integrity: sha512-zwm4IKrtWaBlPKU6isGwRg/+i/Do+QVdnXTRKaDeYnMAI703cysqOr1VE1rWBSJCzmUUOJkeJdXidBaMpGgRaw==}
 
   '@vercel/nft@0.27.10':
     resolution: {integrity: sha512-zbaF9Wp/NsZtKLE4uVmL3FyfFwlpDyuymQM1kPbeT0mVOHKDQQNjnnfslB3REg3oZprmNFJuh3pkHBk2qAaizg==}
     engines: {node: '>=16'}
     hasBin: true
 
-  '@vercel/node@5.1.14':
-    resolution: {integrity: sha512-kLXAR4ZtNSXJw5ffIzKPDAVHD4/Dwxw/287ZCnQlqtOQzY3IH1E5QM3nxn0LGfTkYxXpQFFOOcXL7fZW7MjC6A==}
+  '@vercel/node@5.1.15':
+    resolution: {integrity: sha512-r/DIdg2J/Ez59eK6sw5ez36rDI3GkcyzYjxLY41gItqKZb9lndAwwEgCCVMAP+l1YkeHiUcL9ie1BMZpsCoD2w==}
 
   '@vercel/python@4.7.2':
     resolution: {integrity: sha512-i2QBNMvNxUZQ2e5vLIL7mUkLg5Qkl9nqxUNXCYezdyvk2Ql6xYKjg7tMhpK/uiy094KfZSOECpDbDxkIN0jUSw==}
@@ -2329,8 +2329,8 @@ packages:
   '@vercel/ruby@2.2.0':
     resolution: {integrity: sha512-FJF9gKVNHAljGOgV6zS5ou2N7ZgjOqMMtcPA5lsJEUI5/AZzVDWCmtcowTP80wEtHuupkd7d7M399FA082kXYQ==}
 
-  '@vercel/static-build@2.7.6':
-    resolution: {integrity: sha512-ezyZScIZgZIfzhNBBZroHIkcI6kP7WvBWKeLP1a8Vh2vipI+uuH6F52fDcjSH+uDpUxhfeml7HTMx2LVNTIXWw==}
+  '@vercel/static-build@2.7.7':
+    resolution: {integrity: sha512-/WM1P/6suLgwiLlrUfjg47xSfgzNruHri/ECJ+xe73h35gwqi0ZQlb0Fl74VoRm7P6+8/rNz/3FLBTqJDziHcA==}
 
   '@vercel/static-config@3.0.0':
     resolution: {integrity: sha512-2qtvcBJ1bGY0dYGYh3iM7yGKkk971FujLEDXzuW5wcZsPr1GSEjO/w2iSr3qve6nDDtBImsGoDEnus5FI4+fIw==}
@@ -2676,8 +2676,8 @@ packages:
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
 
-  bun-types@1.2.10:
-    resolution: {integrity: sha512-b5ITZMnVdf3m1gMvJHG+gIfeJHiQPJak0f7925Hxu6ZN5VKA8AGy4GZ4lM+Xkn6jtWxg5S3ldWvfmXdvnkp3GQ==}
+  bun-types@1.2.12:
+    resolution: {integrity: sha512-tvWMx5vPqbRXgE8WUZI94iS1xAYs8bkqESR9cxBB1Wi+urvfTrF1uzuDgBHFAdO0+d2lmsbG3HmeKMvUyj6pWA==}
 
   bundle-require@5.1.0:
     resolution: {integrity: sha512-3WrrOuZiyaaZPWiEt4G3+IffISVC9HYlWueJEBWED4ZH4aIAC2PnkdnuRrR94M+w6yGWn4AglWtJtBI8YqvgoA==}
@@ -3322,8 +3322,8 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  h3@1.15.2:
-    resolution: {integrity: sha512-28QobU1/digpHI/kA9ttYnYtIS3QOtuvx3EY4IpFR+8Bh2C2ugY/ovSg/1LeqATXlznvZnwewWyP2S9lZPiMVA==}
+  h3@1.15.3:
+    resolution: {integrity: sha512-z6GknHqyX0h9aQaTx22VZDf6QyZn+0Nh+Ym8O/u0SGSkyF5cuTJYKlc8MkzW3Nzf9LE1ivcpmYC3FUGpywhuUQ==}
 
   handlebars@4.7.8:
     resolution: {integrity: sha512-vafaFqs8MZkRrSX7sFVUdo3ap/eNiLnb4IakshzvP56X5Nr1iGKAIqdX6tMlm6HcNRIkr6AxO5jFEoJzzpT8aQ==}
@@ -3786,8 +3786,8 @@ packages:
     resolution: {integrity: sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==}
     engines: {node: '>=4'}
 
-  miniflare@4.20250424.1:
-    resolution: {integrity: sha512-CqBzp8DPO76DLRBSx5/1GM200B5SbfpkNA9n/IxFGY7n6YNc1ypPYy/J0tQqj7vOA62jyD/3kPVbUXxbPKe5SQ==}
+  miniflare@4.20250428.1:
+    resolution: {integrity: sha512-M3qcJXjeAEimHrEeWXEhrJiC3YHB5M3QSqqK67pOTI+lHn0QyVG/2iFUjVJ/nv+i10uxeAEva8GRGeu+tKRCmQ==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -3955,9 +3955,9 @@ packages:
     resolution: {integrity: sha512-TZKxPvItzai9kN9H/TkmCtx/ZN/hvr3vUycjlfmH0ootY9yFBzNOpiXAdIn1Iteqsvk4lQn6B5PTrt+n6h8k/w==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
-  npm-run-all2@7.0.2:
-    resolution: {integrity: sha512-7tXR+r9hzRNOPNTvXegM+QzCuMjzUIIq66VDunL6j60O4RrExx32XUhlrS7UK4VcdGw5/Wxzb3kfNcFix9JKDA==}
-    engines: {node: ^18.17.0 || >=20.5.0, npm: '>= 9'}
+  npm-run-all2@8.0.1:
+    resolution: {integrity: sha512-jkhE0AsELQeCtScrcJ/7mSIdk+ZsnWjvKk3KwE96HZ6+OFVB74XhxQtHT1W6kdUfn92fRnBb29Mz82j9bV2XEQ==}
+    engines: {node: ^20.5.0 || >=22.0.0, npm: '>= 10'}
     hasBin: true
 
   nth-check@2.1.1:
@@ -4007,8 +4007,8 @@ packages:
   oxc-resolver@5.0.0:
     resolution: {integrity: sha512-66fopyAqCN8Mx4tzNiBXWbk8asCSuxUWN62gwTc3yfRs7JfWhX/eVJCf+fUrfbNOdQVOWn+o8pAKllp76ysMXA==}
 
-  oxc-transform@0.67.0:
-    resolution: {integrity: sha512-QXwmpLfNrXZoHgIjEtDEf6lhwmvHouNtstNgg/UveczVIjo8VSzd5h25Ea96PoX9KzReJUY/qYa4QSNkJpZGfA==}
+  oxc-transform@0.68.1:
+    resolution: {integrity: sha512-a3P3cdSp8rUAMmL22QcM1+Hcs12c/0/Gj9brUQfhXARCbxZXDKocVGlXi5BAsqjsQjM5rFMC6ef2HuuQHHN+gA==}
     engines: {node: '>=14.0.0'}
 
   p-limit@2.3.0:
@@ -4751,8 +4751,8 @@ packages:
       typescript:
         optional: true
 
-  tsx@4.19.3:
-    resolution: {integrity: sha512-4H8vUNGNjQ4V2EOoGw005+c+dGuPSnhpPBPHBtsZdGZBk/iJb4kguGlPWaZTZ3q5nMtFOEsY0nRDlh9PJyd6SQ==}
+  tsx@4.19.4:
+    resolution: {integrity: sha512-gK5GVzDkJK1SI1zwHf32Mqxf2tSJkNx+eYcNly5+nHvWqXUJYUkWBQtKauoESz3ymezAI++ZwT855x5p5eop+Q==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -4943,8 +4943,8 @@ packages:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
 
-  vercel@41.6.2:
-    resolution: {integrity: sha512-NcC6+1HF/gc/uVpfRM4aFoOcyN/622pDdaXYSDvc5egavPXLoLzdFd3DUSDKAvy2jNcD1quStUKwmoU8xdKIcA==}
+  vercel@41.7.0:
+    resolution: {integrity: sha512-71yoAOnzGzIBNTmsX3rfPKD03dSLA1cIu09rwulJDqARctfmJj8t+AmOC5jtpczOj7Z5HGgZMaLIrXrv220lcQ==}
     engines: {node: '>= 18'}
     hasBin: true
 
@@ -4990,8 +4990,8 @@ packages:
       terser:
         optional: true
 
-  vite@6.3.3:
-    resolution: {integrity: sha512-5nXH+QsELbFKhsEfWLkHrvgRpTdGJzqOZ+utSdmPTvwHmvU6ITTm3xx+mRusihkcI8GeC7lCDyn3kDtiki9scw==}
+  vite@6.3.4:
+    resolution: {integrity: sha512-BiReIiMS2fyFqbqNT/Qqt4CVITDU9M9vE+DKcVAsB+ZV0wvTKd+3hMbkpxz1b+NmEDMegpVbisKiAZOnvO92Sw==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
     peerDependencies:
@@ -5119,17 +5119,17 @@ packages:
   wordwrap@1.0.0:
     resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}
 
-  workerd@1.20250424.0:
-    resolution: {integrity: sha512-3Nb69De9pfC21vLMW8Xpp5JXEPYd7e8MGcaEfo/6z1jOX9CFJVaqrAXr8RwYxDgN528ZahHqM51YQEcVlOu1Cw==}
+  workerd@1.20250428.0:
+    resolution: {integrity: sha512-JJNWkHkwPQKQdvtM9UORijgYdcdJsihA4SfYjwh02IUQsdMyZ9jizV1sX9yWi9B9ptlohTW8UNHJEATuphGgdg==}
     engines: {node: '>=16'}
     hasBin: true
 
-  wrangler@4.13.2:
-    resolution: {integrity: sha512-CryA3MRzjNceFVef78ymqhxXrIYQoYKQIPITvvd/Yn3SX4UAADZOOrztatNcgRAyXssjdGH4JRw7fKoSnOaOog==}
+  wrangler@4.14.1:
+    resolution: {integrity: sha512-EU7IThP7i68TBftJJSveogvWZ5k/WRijcJh3UclDWiWWhDZTPbL6LOJEFhHKqFzHOaC4Y2Aewt48rfTz0e7oCw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
-      '@cloudflare/workers-types': ^4.20250424.0
+      '@cloudflare/workers-types': ^4.20250428.0
     peerDependenciesMeta:
       '@cloudflare/workers-types':
         optional: true
@@ -5424,28 +5424,28 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
-  '@cloudflare/unenv-preset@2.3.1(unenv@2.0.0-rc.15)(workerd@1.20250424.0)':
+  '@cloudflare/unenv-preset@2.3.1(unenv@2.0.0-rc.15)(workerd@1.20250428.0)':
     dependencies:
       unenv: 2.0.0-rc.15
     optionalDependencies:
-      workerd: 1.20250424.0
+      workerd: 1.20250428.0
 
-  '@cloudflare/workerd-darwin-64@1.20250424.0':
+  '@cloudflare/workerd-darwin-64@1.20250428.0':
     optional: true
 
-  '@cloudflare/workerd-darwin-arm64@1.20250424.0':
+  '@cloudflare/workerd-darwin-arm64@1.20250428.0':
     optional: true
 
-  '@cloudflare/workerd-linux-64@1.20250424.0':
+  '@cloudflare/workerd-linux-64@1.20250428.0':
     optional: true
 
-  '@cloudflare/workerd-linux-arm64@1.20250424.0':
+  '@cloudflare/workerd-linux-arm64@1.20250428.0':
     optional: true
 
-  '@cloudflare/workerd-windows-64@1.20250424.0':
+  '@cloudflare/workerd-windows-64@1.20250428.0':
     optional: true
 
-  '@cloudflare/workers-types@4.20250428.0': {}
+  '@cloudflare/workers-types@4.20250505.0': {}
 
   '@conventional-commits/parser@0.4.1':
     dependencies:
@@ -5638,12 +5638,12 @@ snapshots:
   '@hattip/adapter-bun@0.0.49':
     dependencies:
       '@hattip/core': 0.0.49
-      bun-types: 1.2.10
+      bun-types: 1.2.12
 
   '@hattip/adapter-cloudflare-workers@0.0.49':
     dependencies:
       '@cloudflare/kv-asset-handler': 0.3.4
-      '@cloudflare/workers-types': 4.20250428.0
+      '@cloudflare/workers-types': 4.20250505.0
       '@hattip/core': 0.0.49
 
   '@hattip/adapter-deno@0.0.49':
@@ -5694,14 +5694,14 @@ snapshots:
     dependencies:
       hono: 4.7.8
 
-  '@hono/vite-dev-server@0.19.0(hono@4.7.8)(miniflare@4.20250424.1)(wrangler@4.13.2(@cloudflare/workers-types@4.20250428.0))':
+  '@hono/vite-dev-server@0.19.0(hono@4.7.8)(miniflare@4.20250428.1)(wrangler@4.14.1(@cloudflare/workers-types@4.20250505.0))':
     dependencies:
       '@hono/node-server': 1.14.1(hono@4.7.8)
       hono: 4.7.8
       minimatch: 9.0.5
     optionalDependencies:
-      miniflare: 4.20250424.1
-      wrangler: 4.13.2(@cloudflare/workers-types@4.20250428.0)
+      miniflare: 4.20250428.1
+      wrangler: 4.14.1(@cloudflare/workers-types@4.20250505.0)
 
   '@iarna/toml@3.0.0': {}
 
@@ -5961,36 +5961,36 @@ snapshots:
   '@oxc-resolver/binding-win32-x64-msvc@5.0.0':
     optional: true
 
-  '@oxc-transform/binding-darwin-arm64@0.67.0':
+  '@oxc-transform/binding-darwin-arm64@0.68.1':
     optional: true
 
-  '@oxc-transform/binding-darwin-x64@0.67.0':
+  '@oxc-transform/binding-darwin-x64@0.68.1':
     optional: true
 
-  '@oxc-transform/binding-linux-arm-gnueabihf@0.67.0':
+  '@oxc-transform/binding-linux-arm-gnueabihf@0.68.1':
     optional: true
 
-  '@oxc-transform/binding-linux-arm64-gnu@0.67.0':
+  '@oxc-transform/binding-linux-arm64-gnu@0.68.1':
     optional: true
 
-  '@oxc-transform/binding-linux-arm64-musl@0.67.0':
+  '@oxc-transform/binding-linux-arm64-musl@0.68.1':
     optional: true
 
-  '@oxc-transform/binding-linux-x64-gnu@0.67.0':
+  '@oxc-transform/binding-linux-x64-gnu@0.68.1':
     optional: true
 
-  '@oxc-transform/binding-linux-x64-musl@0.67.0':
+  '@oxc-transform/binding-linux-x64-musl@0.68.1':
     optional: true
 
-  '@oxc-transform/binding-wasm32-wasi@0.67.0':
+  '@oxc-transform/binding-wasm32-wasi@0.68.1':
     dependencies:
       '@napi-rs/wasm-runtime': 0.2.9
     optional: true
 
-  '@oxc-transform/binding-win32-arm64-msvc@0.67.0':
+  '@oxc-transform/binding-win32-arm64-msvc@0.68.1':
     optional: true
 
-  '@oxc-transform/binding-win32-x64-msvc@0.67.0':
+  '@oxc-transform/binding-win32-x64-msvc@0.68.1':
     optional: true
 
   '@pkgjs/parseargs@0.11.0':
@@ -6209,16 +6209,16 @@ snapshots:
 
   '@sinclair/typebox@0.34.28': {}
 
-  '@swc-node/core@1.13.3(@swc/core@1.11.22)(@swc/types@0.1.21)':
+  '@swc-node/core@1.13.3(@swc/core@1.11.24)(@swc/types@0.1.21)':
     dependencies:
-      '@swc/core': 1.11.22
+      '@swc/core': 1.11.24
       '@swc/types': 0.1.21
 
-  '@swc-node/register@1.10.10(@swc/core@1.11.22)(@swc/types@0.1.21)(typescript@5.8.3)':
+  '@swc-node/register@1.10.10(@swc/core@1.11.24)(@swc/types@0.1.21)(typescript@5.8.3)':
     dependencies:
-      '@swc-node/core': 1.13.3(@swc/core@1.11.22)(@swc/types@0.1.21)
+      '@swc-node/core': 1.13.3(@swc/core@1.11.24)(@swc/types@0.1.21)
       '@swc-node/sourcemap-support': 0.5.1
-      '@swc/core': 1.11.22
+      '@swc/core': 1.11.24
       colorette: 2.0.20
       debug: 4.4.0
       oxc-resolver: 5.0.0
@@ -6234,51 +6234,51 @@ snapshots:
       source-map-support: 0.5.21
       tslib: 2.8.1
 
-  '@swc/core-darwin-arm64@1.11.22':
+  '@swc/core-darwin-arm64@1.11.24':
     optional: true
 
-  '@swc/core-darwin-x64@1.11.22':
+  '@swc/core-darwin-x64@1.11.24':
     optional: true
 
-  '@swc/core-linux-arm-gnueabihf@1.11.22':
+  '@swc/core-linux-arm-gnueabihf@1.11.24':
     optional: true
 
-  '@swc/core-linux-arm64-gnu@1.11.22':
+  '@swc/core-linux-arm64-gnu@1.11.24':
     optional: true
 
-  '@swc/core-linux-arm64-musl@1.11.22':
+  '@swc/core-linux-arm64-musl@1.11.24':
     optional: true
 
-  '@swc/core-linux-x64-gnu@1.11.22':
+  '@swc/core-linux-x64-gnu@1.11.24':
     optional: true
 
-  '@swc/core-linux-x64-musl@1.11.22':
+  '@swc/core-linux-x64-musl@1.11.24':
     optional: true
 
-  '@swc/core-win32-arm64-msvc@1.11.22':
+  '@swc/core-win32-arm64-msvc@1.11.24':
     optional: true
 
-  '@swc/core-win32-ia32-msvc@1.11.22':
+  '@swc/core-win32-ia32-msvc@1.11.24':
     optional: true
 
-  '@swc/core-win32-x64-msvc@1.11.22':
+  '@swc/core-win32-x64-msvc@1.11.24':
     optional: true
 
-  '@swc/core@1.11.22':
+  '@swc/core@1.11.24':
     dependencies:
       '@swc/counter': 0.1.3
       '@swc/types': 0.1.21
     optionalDependencies:
-      '@swc/core-darwin-arm64': 1.11.22
-      '@swc/core-darwin-x64': 1.11.22
-      '@swc/core-linux-arm-gnueabihf': 1.11.22
-      '@swc/core-linux-arm64-gnu': 1.11.22
-      '@swc/core-linux-arm64-musl': 1.11.22
-      '@swc/core-linux-x64-gnu': 1.11.22
-      '@swc/core-linux-x64-musl': 1.11.22
-      '@swc/core-win32-arm64-msvc': 1.11.22
-      '@swc/core-win32-ia32-msvc': 1.11.22
-      '@swc/core-win32-x64-msvc': 1.11.22
+      '@swc/core-darwin-arm64': 1.11.24
+      '@swc/core-darwin-x64': 1.11.24
+      '@swc/core-linux-arm-gnueabihf': 1.11.24
+      '@swc/core-linux-arm64-gnu': 1.11.24
+      '@swc/core-linux-arm64-musl': 1.11.24
+      '@swc/core-linux-x64-gnu': 1.11.24
+      '@swc/core-linux-x64-musl': 1.11.24
+      '@swc/core-win32-arm64-msvc': 1.11.24
+      '@swc/core-win32-ia32-msvc': 1.11.24
+      '@swc/core-win32-x64-msvc': 1.11.24
 
   '@swc/counter@0.1.3': {}
 
@@ -6313,9 +6313,9 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/node': 22.13.10
 
-  '@types/bun@1.2.10':
+  '@types/bun@1.2.12':
     dependencies:
-      bun-types: 1.2.10
+      bun-types: 1.2.12
 
   '@types/connect@3.4.38':
     dependencies:
@@ -6387,7 +6387,7 @@ snapshots:
 
   '@types/node@16.18.11': {}
 
-  '@types/node@20.17.30':
+  '@types/node@20.17.32':
     dependencies:
       undici-types: 6.19.8
 
@@ -6470,7 +6470,7 @@ snapshots:
     dependencies:
       web-vitals: 0.2.4
 
-  '@vercel/gatsby-plugin-vercel-builder@2.0.80':
+  '@vercel/gatsby-plugin-vercel-builder@2.0.81':
     dependencies:
       '@sinclair/typebox': 0.25.24
       '@vercel/build-utils': 10.5.1
@@ -6485,7 +6485,7 @@ snapshots:
       '@vercel/static-config': 3.0.0
       ts-morph: 12.0.0
 
-  '@vercel/next@4.7.8(rollup@4.40.1)':
+  '@vercel/next@4.7.9(rollup@4.40.1)':
     dependencies:
       '@vercel/nft': 0.27.10(rollup@4.40.1)
     transitivePeerDependencies:
@@ -6512,7 +6512,7 @@ snapshots:
       - rollup
       - supports-color
 
-  '@vercel/node@5.1.14(@swc/core@1.11.22)(rollup@4.40.1)':
+  '@vercel/node@5.1.15(@swc/core@1.11.24)(rollup@4.40.1)':
     dependencies:
       '@edge-runtime/node-utils': 2.3.0
       '@edge-runtime/primitives': 4.1.0
@@ -6532,7 +6532,7 @@ snapshots:
       path-to-regexp: 6.1.0
       path-to-regexp-updated: path-to-regexp@6.3.0
       ts-morph: 12.0.0
-      ts-node: 10.9.2(@swc/core@1.11.22)(@types/node@16.18.11)(typescript@5.8.3)
+      ts-node: 10.9.2(@swc/core@1.11.24)(@types/node@16.18.11)(typescript@5.8.3)
       typescript: 5.8.3
       undici: 5.28.4
     transitivePeerDependencies:
@@ -6570,10 +6570,10 @@ snapshots:
 
   '@vercel/ruby@2.2.0': {}
 
-  '@vercel/static-build@2.7.6':
+  '@vercel/static-build@2.7.7':
     dependencies:
       '@vercel/gatsby-plugin-vercel-analytics': 1.0.11
-      '@vercel/gatsby-plugin-vercel-builder': 2.0.80
+      '@vercel/gatsby-plugin-vercel-builder': 2.0.81
       '@vercel/static-config': 3.0.0
       ts-morph: 12.0.0
 
@@ -6595,21 +6595,21 @@ snapshots:
       chai: 5.2.0
       tinyrainbow: 2.0.0
 
-  '@vitest/mocker@3.1.2(vite@6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0))':
+  '@vitest/mocker@3.1.2(vite@6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0))':
     dependencies:
       '@vitest/spy': 3.1.2
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+      vite: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
 
-  '@vitest/mocker@3.1.2(vite@6.3.3(@types/node@22.13.10)(tsx@4.19.3)(yaml@2.7.0))':
+  '@vitest/mocker@3.1.2(vite@6.3.4(@types/node@22.13.10)(tsx@4.19.4)(yaml@2.7.0))':
     dependencies:
       '@vitest/spy': 3.1.2
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: 6.3.3(@types/node@22.13.10)(tsx@4.19.3)(yaml@2.7.0)
+      vite: 6.3.4(@types/node@22.13.10)(tsx@4.19.4)(yaml@2.7.0)
 
   '@vitest/pretty-format@3.1.2':
     dependencies:
@@ -6984,7 +6984,7 @@ snapshots:
 
   buffer-from@1.1.2: {}
 
-  bun-types@1.2.10:
+  bun-types@1.2.12:
     dependencies:
       '@types/node': 22.13.10
 
@@ -7698,7 +7698,7 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  h3@1.15.2:
+  h3@1.15.3:
     dependencies:
       cookie-es: 1.2.2
       crossws: 0.3.4
@@ -8282,7 +8282,7 @@ snapshots:
 
   min-indent@1.0.1: {}
 
-  miniflare@4.20250424.1:
+  miniflare@4.20250428.1:
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       acorn: 8.14.0
@@ -8291,7 +8291,7 @@ snapshots:
       glob-to-regexp: 0.4.1
       stoppable: 1.1.0
       undici: 5.28.5
-      workerd: 1.20250424.0
+      workerd: 1.20250428.0
       ws: 8.18.0
       youch: 3.3.4
       zod: 3.22.3
@@ -8424,12 +8424,12 @@ snapshots:
 
   npm-normalize-package-bin@4.0.0: {}
 
-  npm-run-all2@7.0.2:
+  npm-run-all2@8.0.1:
     dependencies:
       ansi-styles: 6.2.1
       cross-spawn: 7.0.6
       memorystream: 0.3.1
-      minimatch: 9.0.5
+      minimatch: 10.0.1
       pidtree: 0.6.0
       read-package-json-fast: 4.0.0
       shell-quote: 1.8.2
@@ -8491,18 +8491,18 @@ snapshots:
       '@oxc-resolver/binding-win32-arm64-msvc': 5.0.0
       '@oxc-resolver/binding-win32-x64-msvc': 5.0.0
 
-  oxc-transform@0.67.0:
+  oxc-transform@0.68.1:
     optionalDependencies:
-      '@oxc-transform/binding-darwin-arm64': 0.67.0
-      '@oxc-transform/binding-darwin-x64': 0.67.0
-      '@oxc-transform/binding-linux-arm-gnueabihf': 0.67.0
-      '@oxc-transform/binding-linux-arm64-gnu': 0.67.0
-      '@oxc-transform/binding-linux-arm64-musl': 0.67.0
-      '@oxc-transform/binding-linux-x64-gnu': 0.67.0
-      '@oxc-transform/binding-linux-x64-musl': 0.67.0
-      '@oxc-transform/binding-wasm32-wasi': 0.67.0
-      '@oxc-transform/binding-win32-arm64-msvc': 0.67.0
-      '@oxc-transform/binding-win32-x64-msvc': 0.67.0
+      '@oxc-transform/binding-darwin-arm64': 0.68.1
+      '@oxc-transform/binding-darwin-x64': 0.68.1
+      '@oxc-transform/binding-linux-arm-gnueabihf': 0.68.1
+      '@oxc-transform/binding-linux-arm64-gnu': 0.68.1
+      '@oxc-transform/binding-linux-arm64-musl': 0.68.1
+      '@oxc-transform/binding-linux-x64-gnu': 0.68.1
+      '@oxc-transform/binding-linux-x64-musl': 0.68.1
+      '@oxc-transform/binding-wasm32-wasi': 0.68.1
+      '@oxc-transform/binding-win32-arm64-msvc': 0.68.1
+      '@oxc-transform/binding-win32-x64-msvc': 0.68.1
 
   p-limit@2.3.0:
     dependencies:
@@ -8634,12 +8634,12 @@ snapshots:
 
   pngjs@6.0.0: {}
 
-  postcss-load-config@6.0.1(postcss@8.5.3)(tsx@4.19.3)(yaml@2.7.0):
+  postcss-load-config@6.0.1(postcss@8.5.3)(tsx@4.19.4)(yaml@2.7.0):
     dependencies:
       lilconfig: 3.1.3
     optionalDependencies:
       postcss: 8.5.3
-      tsx: 4.19.3
+      tsx: 4.19.4
       yaml: 2.7.0
 
   postcss@8.5.3:
@@ -9264,7 +9264,7 @@ snapshots:
       '@ts-morph/common': 0.11.1
       code-block-writer: 10.1.1
 
-  ts-node@10.9.2(@swc/core@1.11.22)(@types/node@16.18.11)(typescript@5.8.3):
+  ts-node@10.9.2(@swc/core@1.11.24)(@types/node@16.18.11)(typescript@5.8.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
@@ -9282,13 +9282,13 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
-      '@swc/core': 1.11.22
+      '@swc/core': 1.11.24
 
   ts-toolbelt@6.15.5: {}
 
   tslib@2.8.1: {}
 
-  tsup@8.4.0(@swc/core@1.11.22)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.0):
+  tsup@8.4.0(@swc/core@1.11.24)(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.0):
     dependencies:
       bundle-require: 5.1.0(esbuild@0.25.3)
       cac: 6.7.14
@@ -9298,7 +9298,7 @@ snapshots:
       esbuild: 0.25.3
       joycon: 3.1.1
       picocolors: 1.1.1
-      postcss-load-config: 6.0.1(postcss@8.5.3)(tsx@4.19.3)(yaml@2.7.0)
+      postcss-load-config: 6.0.1(postcss@8.5.3)(tsx@4.19.4)(yaml@2.7.0)
       resolve-from: 5.0.0
       rollup: 4.40.1
       source-map: 0.8.0-beta.0
@@ -9307,7 +9307,7 @@ snapshots:
       tinyglobby: 0.2.13
       tree-kill: 1.2.2
     optionalDependencies:
-      '@swc/core': 1.11.22
+      '@swc/core': 1.11.24
       postcss: 8.5.3
       typescript: 5.8.3
     transitivePeerDependencies:
@@ -9316,7 +9316,7 @@ snapshots:
       - tsx
       - yaml
 
-  tsx@4.19.3:
+  tsx@4.19.4:
     dependencies:
       esbuild: 0.25.3
       get-tsconfig: 4.10.0
@@ -9496,19 +9496,19 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vercel@41.6.2(@swc/core@1.11.22)(rollup@4.40.1):
+  vercel@41.7.0(@swc/core@1.11.24)(rollup@4.40.1):
     dependencies:
       '@vercel/build-utils': 10.5.1
       '@vercel/fun': 1.1.5
       '@vercel/go': 3.2.1
       '@vercel/hydrogen': 1.2.0
-      '@vercel/next': 4.7.8(rollup@4.40.1)
-      '@vercel/node': 5.1.14(@swc/core@1.11.22)(rollup@4.40.1)
+      '@vercel/next': 4.7.9(rollup@4.40.1)
+      '@vercel/node': 5.1.15(@swc/core@1.11.24)(rollup@4.40.1)
       '@vercel/python': 4.7.2
       '@vercel/redwood': 2.3.0(rollup@4.40.1)
       '@vercel/remix-builder': 5.4.3(rollup@4.40.1)
       '@vercel/ruby': 2.2.0
-      '@vercel/static-build': 2.7.6
+      '@vercel/static-build': 2.7.7
       chokidar: 4.0.0
       jose: 5.9.6
     transitivePeerDependencies:
@@ -9528,13 +9528,13 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  vite-node@3.1.2(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0):
+  vite-node@3.1.2(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0):
     dependencies:
       cac: 6.7.14
       debug: 4.4.0
       es-module-lexer: 1.6.0
       pathe: 2.0.3
-      vite: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+      vite: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -9549,13 +9549,13 @@ snapshots:
       - tsx
       - yaml
 
-  vite-node@3.1.2(@types/node@22.13.10)(tsx@4.19.3)(yaml@2.7.0):
+  vite-node@3.1.2(@types/node@22.13.10)(tsx@4.19.4)(yaml@2.7.0):
     dependencies:
       cac: 6.7.14
       debug: 4.4.0
       es-module-lexer: 1.6.0
       pathe: 2.0.3
-      vite: 6.3.3(@types/node@22.13.10)(tsx@4.19.3)(yaml@2.7.0)
+      vite: 6.3.4(@types/node@22.13.10)(tsx@4.19.4)(yaml@2.7.0)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -9579,7 +9579,7 @@ snapshots:
       '@types/node': 22.13.10
       fsevents: 2.3.3
 
-  vite@6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0):
+  vite@6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0):
     dependencies:
       esbuild: 0.25.3
       fdir: 6.4.4(picomatch@4.0.2)
@@ -9588,12 +9588,12 @@ snapshots:
       rollup: 4.40.1
       tinyglobby: 0.2.13
     optionalDependencies:
-      '@types/node': 20.17.30
+      '@types/node': 20.17.32
       fsevents: 2.3.3
-      tsx: 4.19.3
+      tsx: 4.19.4
       yaml: 2.7.0
 
-  vite@6.3.3(@types/node@22.13.10)(tsx@4.19.3)(yaml@2.7.0):
+  vite@6.3.4(@types/node@22.13.10)(tsx@4.19.4)(yaml@2.7.0):
     dependencies:
       esbuild: 0.25.3
       fdir: 6.4.4(picomatch@4.0.2)
@@ -9604,7 +9604,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.13.10
       fsevents: 2.3.3
-      tsx: 4.19.3
+      tsx: 4.19.4
       yaml: 2.7.0
 
   vitepress@1.6.3(@algolia/client-search@5.20.4)(@types/node@22.13.10)(postcss@8.5.3)(typescript@5.8.3):
@@ -9656,10 +9656,10 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vitest@3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0):
+  vitest@3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0):
     dependencies:
       '@vitest/expect': 3.1.2
-      '@vitest/mocker': 3.1.2(vite@6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0))
+      '@vitest/mocker': 3.1.2(vite@6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0))
       '@vitest/pretty-format': 3.1.2
       '@vitest/runner': 3.1.2
       '@vitest/snapshot': 3.1.2
@@ -9676,13 +9676,13 @@ snapshots:
       tinyglobby: 0.2.13
       tinypool: 1.0.2
       tinyrainbow: 2.0.0
-      vite: 6.3.3(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
-      vite-node: 3.1.2(@types/node@20.17.30)(tsx@4.19.3)(yaml@2.7.0)
+      vite: 6.3.4(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
+      vite-node: 3.1.2(@types/node@20.17.32)(tsx@4.19.4)(yaml@2.7.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@edge-runtime/vm': 3.2.0
       '@types/debug': 4.1.12
-      '@types/node': 20.17.30
+      '@types/node': 20.17.32
     transitivePeerDependencies:
       - jiti
       - less
@@ -9697,10 +9697,10 @@ snapshots:
       - tsx
       - yaml
 
-  vitest@3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@22.13.10)(tsx@4.19.3)(yaml@2.7.0):
+  vitest@3.1.2(@edge-runtime/vm@3.2.0)(@types/debug@4.1.12)(@types/node@22.13.10)(tsx@4.19.4)(yaml@2.7.0):
     dependencies:
       '@vitest/expect': 3.1.2
-      '@vitest/mocker': 3.1.2(vite@6.3.3(@types/node@22.13.10)(tsx@4.19.3)(yaml@2.7.0))
+      '@vitest/mocker': 3.1.2(vite@6.3.4(@types/node@22.13.10)(tsx@4.19.4)(yaml@2.7.0))
       '@vitest/pretty-format': 3.1.2
       '@vitest/runner': 3.1.2
       '@vitest/snapshot': 3.1.2
@@ -9717,8 +9717,8 @@ snapshots:
       tinyglobby: 0.2.13
       tinypool: 1.0.2
       tinyrainbow: 2.0.0
-      vite: 6.3.3(@types/node@22.13.10)(tsx@4.19.3)(yaml@2.7.0)
-      vite-node: 3.1.2(@types/node@22.13.10)(tsx@4.19.3)(yaml@2.7.0)
+      vite: 6.3.4(@types/node@22.13.10)(tsx@4.19.4)(yaml@2.7.0)
+      vite-node: 3.1.2(@types/node@22.13.10)(tsx@4.19.4)(yaml@2.7.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@edge-runtime/vm': 3.2.0
@@ -9786,26 +9786,26 @@ snapshots:
 
   wordwrap@1.0.0: {}
 
-  workerd@1.20250424.0:
+  workerd@1.20250428.0:
     optionalDependencies:
-      '@cloudflare/workerd-darwin-64': 1.20250424.0
-      '@cloudflare/workerd-darwin-arm64': 1.20250424.0
-      '@cloudflare/workerd-linux-64': 1.20250424.0
-      '@cloudflare/workerd-linux-arm64': 1.20250424.0
-      '@cloudflare/workerd-windows-64': 1.20250424.0
+      '@cloudflare/workerd-darwin-64': 1.20250428.0
+      '@cloudflare/workerd-darwin-arm64': 1.20250428.0
+      '@cloudflare/workerd-linux-64': 1.20250428.0
+      '@cloudflare/workerd-linux-arm64': 1.20250428.0
+      '@cloudflare/workerd-windows-64': 1.20250428.0
 
-  wrangler@4.13.2(@cloudflare/workers-types@4.20250428.0):
+  wrangler@4.14.1(@cloudflare/workers-types@4.20250505.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
-      '@cloudflare/unenv-preset': 2.3.1(unenv@2.0.0-rc.15)(workerd@1.20250424.0)
+      '@cloudflare/unenv-preset': 2.3.1(unenv@2.0.0-rc.15)(workerd@1.20250428.0)
       blake3-wasm: 2.1.5
       esbuild: 0.25.3
-      miniflare: 4.20250424.1
+      miniflare: 4.20250428.1
       path-to-regexp: 6.3.0
       unenv: 2.0.0-rc.15
-      workerd: 1.20250424.0
+      workerd: 1.20250428.0
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20250428.0
+      '@cloudflare/workers-types': 4.20250505.0
       fsevents: 2.3.3
       sharp: 0.33.5
     transitivePeerDependencies:
