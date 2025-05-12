@@ -126,7 +126,7 @@ export function createMiddleware<
           return currentResponse;
         })
         // biome-ignore lint/suspicious/noExplicitAny: avoid recursive type error
-        .as("plugin") as any,
+        .as("scoped") as any,
     );
   };
 }
@@ -152,7 +152,7 @@ function initPlugin<Context extends Universal.Context = Universal.Context>() {
         },
       };
     })
-    .as("plugin");
+    .as("scoped");
 }
 
 export function getRuntime(elysiaContext: ElysiaContext): RuntimeAdapter {
