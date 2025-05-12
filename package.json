@@ -16,6 +16,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "catalog:",
+    "file-type": "^20.5.0",
     "playwright": "^1.52.0",
     "release-please": "^17.0.0",
     "turbo": "^2.5.3",
