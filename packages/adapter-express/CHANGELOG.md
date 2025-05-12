@@ -7,6 +7,20 @@
   * dependencies
     * @universal-middleware/core bumped to 0.3.3
 
+## [0.4.16](https://github.com/magne4000/universal-middleware/compare/express-v0.4.15...express-v0.4.16) (2025-05-12)
+
+
+### Bug Fixes
+
+* upgrade elysia ([ba9a991](https://github.com/magne4000/universal-middleware/commit/ba9a991fcc74ea930c8c3fee46afa2bfe7831fba))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.8
+
 ## [0.4.15](https://github.com/magne4000/universal-middleware/compare/express-v0.4.14...express-v0.4.15) (2025-04-17)
 
 

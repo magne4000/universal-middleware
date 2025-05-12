@@ -5,6 +5,13 @@
 
 * new type RuntimeAdapterTarget ([8768e6d](https://github.com/magne4000/universal-middleware/commit/8768e6dd6f1e7e7bfcbe88baf13a21bbaae842c6))
 
+## [0.4.8](https://github.com/magne4000/universal-middleware/compare/core-v0.4.7...core-v0.4.8) (2025-05-12)
+
+
+### Bug Fixes
+
+* upgrade elysia ([ba9a991](https://github.com/magne4000/universal-middleware/commit/ba9a991fcc74ea930c8c3fee46afa2bfe7831fba))
+
 ## [0.4.7](https://github.com/magne4000/universal-middleware/compare/core-v0.4.6...core-v0.4.7) (2025-04-06)
 
 

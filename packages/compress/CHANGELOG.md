@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.31](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.30...compress-v0.2.31) (2025-05-12)
+
+
+### Bug Fixes
+
+* upgrade elysia ([ba9a991](https://github.com/magne4000/universal-middleware/commit/ba9a991fcc74ea930c8c3fee46afa2bfe7831fba))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @universal-middleware/core bumped to 0.4.8
+    * universal-middleware bumped to 0.6.21
+
 ## [0.2.30](https://github.com/magne4000/universal-middleware/compare/compress-v0.2.29...compress-v0.2.30) (2025-04-21)
 
 

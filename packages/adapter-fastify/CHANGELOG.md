@@ -8,6 +8,21 @@
     * @universal-middleware/core bumped to 0.3.3
     * @universal-middleware/express bumped to 0.3.3
 
+## [0.5.18](https://github.com/magne4000/universal-middleware/compare/fastify-v0.5.17...fastify-v0.5.18) (2025-05-12)
+
+
+### Bug Fixes
+
+* upgrade elysia ([ba9a991](https://github.com/magne4000/universal-middleware/commit/ba9a991fcc74ea930c8c3fee46afa2bfe7831fba))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @universal-middleware/core bumped to 0.4.8
+    * @universal-middleware/express bumped to 0.4.16
+
 ## [0.5.17](https://github.com/magne4000/universal-middleware/compare/fastify-v0.5.16...fastify-v0.5.17) (2025-04-17)
 
 
