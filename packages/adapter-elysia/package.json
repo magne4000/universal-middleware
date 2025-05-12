@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/elysia",
-  "version": "0.4.8",
+  "version": "0.5.0",
   "type": "module",
   "description": "Elysia adapter for universal middlewares",
   "files": [
