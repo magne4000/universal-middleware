@@ -885,8 +885,8 @@ importers:
   tests-examples/tests-tool:
     devDependencies:
       '@brillout/test-e2e':
-        specifier: ^0.6.8
-        version: 0.6.8
+        specifier: ^0.6.10
+        version: 0.6.10
       '@hattip/adapter-node':
         specifier: ^0.0.49
         version: 0.0.49
@@ -1151,8 +1151,8 @@ packages:
   '@brillout/picocolors@1.0.26':
     resolution: {integrity: sha512-oJF92OEpzunaJyaEWXuS4PWY0k8JsqNO18kMf5hIwvsh+tyhbv+UwAnPPauSlO2eyvMSciui+YFKV9DEzTpmGA==}
 
-  '@brillout/test-e2e@0.6.8':
-    resolution: {integrity: sha512-U22qsQSnPeRPrqlrXk4FgihUpkbziO2neD6kK8mbEq9pG+qivfU1fkLbTGrmjJ7b+L8keqD+xVp+zKuGufHVeA==}
+  '@brillout/test-e2e@0.6.10':
+    resolution: {integrity: sha512-eVXMzIXiw7M5TMMAmWmSry5DGWjioXFOkU8J74sjaTNLQjC8qkNp8Mi3/wI0KUlZLMmfo5QWV3z2ToCRAE5TGA==}
     hasBin: true
 
   '@changesets/apply-release-plan@7.0.12':
@@ -5671,7 +5671,7 @@ snapshots:
 
   '@brillout/picocolors@1.0.26': {}
 
-  '@brillout/test-e2e@0.6.8':
+  '@brillout/test-e2e@0.6.10':
     dependencies:
       '@brillout/part-regex': 0.1.4
       '@brillout/picocolors': 1.0.26
