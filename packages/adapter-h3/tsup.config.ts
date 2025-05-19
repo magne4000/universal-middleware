@@ -9,5 +9,6 @@ export default defineConfig([
     dts: true,
     clean: true,
     external: ["h3"],
+    removeNodeProtocol: false,
   },
 ]);

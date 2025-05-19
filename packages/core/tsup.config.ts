@@ -12,5 +12,6 @@ export default defineConfig([
     target: "node18",
     dts: true,
     clean: true,
+    removeNodeProtocol: false,
   },
 ]);

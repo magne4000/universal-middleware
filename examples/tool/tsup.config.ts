@@ -20,5 +20,6 @@ export default defineConfig([
     },
     bundle: true,
     treeshake: true,
+    removeNodeProtocol: false,
   },
 ]);

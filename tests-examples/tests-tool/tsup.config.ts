@@ -16,5 +16,6 @@ export default defineConfig([
     banner: {
       js: `import {createRequire as __createRequire} from 'module';var require=__createRequire(import.meta.url);`,
     },
+    removeNodeProtocol: false,
   },
 ]);

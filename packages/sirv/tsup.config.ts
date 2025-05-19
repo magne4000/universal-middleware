@@ -21,5 +21,6 @@ export default defineConfig([
     external: [/node:.*/],
     bundle: true,
     treeshake: true,
+    removeNodeProtocol: false,
   },
 ]);

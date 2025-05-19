@@ -21,5 +21,6 @@ export default defineConfig([
     external: ["node:zlib"],
     bundle: true,
     treeshake: true,
+    removeNodeProtocol: false,
   },
 ]);

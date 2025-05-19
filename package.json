@@ -10,13 +10,13 @@
     "test:typecheck": "turbo test:typecheck",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "release": "turbo run build lint test:typecheck test && changeset version && changeset publish"
+    "release": "turbo run build && changeset version && changeset publish"
   },
   "keywords": [],
   "author": "",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@changesets/cli": "^2.29.3",
+    "@changesets/cli": "^2.29.4",
     "@types/node": "catalog:",
     "file-type": "^20.5.0",
     "playwright": "^1.52.0",

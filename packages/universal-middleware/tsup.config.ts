@@ -20,5 +20,6 @@ export default defineConfig([
     dts: true,
     splitting: true,
     bundle: true,
+    removeNodeProtocol: false,
   },
 ]);
