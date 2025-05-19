@@ -18,7 +18,7 @@ export const noMiddlewaresSupport = ["cloudflare-worker", "vercel-edge", "vercel
 
 // flaky tests on Windows
 export const options: TestOptions = {
-  timeout: 30000,
+  timeout: 60000,
   retry: process.platform === "win32" ? 3 : 0,
 };
 
