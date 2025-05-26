@@ -54,7 +54,8 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
       );
 
       if (response) {
-        return response;
+        // bypasses @hono/node-server cache
+        return response.clone();
       }
       // Will default to 404 if no other route matches this request
       await next();
@@ -88,7 +89,8 @@ export function createMiddleware<
         }
       } else if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
-          return response;
+          // bypasses @hono/node-server cache
+          return response.clone();
         }
         // Update context
         setContext(honoContext, response);
