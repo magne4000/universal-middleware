@@ -1,5 +1,12 @@
 ## [0.5.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.4...universal-middleware-v0.5.5) (2024-12-09)
 
+## 0.6.22
+
+### Patch Changes
+
+- Updated dependencies [72e55c1]
+  - @universal-middleware/hono@0.4.11
+
 ## 0.6.21
 
 ### Patch Changes
