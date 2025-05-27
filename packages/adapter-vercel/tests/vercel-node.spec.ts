@@ -33,4 +33,5 @@ runTests(runs, {
   vitest,
   prefix: "/api/node",
   retry: 3,
+  concurrent: !process.env.CI,
 });
