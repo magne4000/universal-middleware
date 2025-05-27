@@ -1,5 +1,18 @@
 ## [0.5.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.4...universal-middleware-v0.5.5) (2024-12-09)
 
+## 0.6.23
+
+### Patch Changes
+
+- Updated dependencies [7ddfafc]
+  - @universal-middleware/express@0.4.16
+  - @universal-middleware/fastify@0.5.18
+  - @universal-middleware/elysia@0.5.1
+  - @universal-middleware/hattip@0.4.9
+  - @universal-middleware/hono@0.4.12
+  - @universal-middleware/h3@0.4.10
+  - @universal-middleware/vercel@0.4.16
+
 ## 0.6.22
 
 ### Patch Changes
