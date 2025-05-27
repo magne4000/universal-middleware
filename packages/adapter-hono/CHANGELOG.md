@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/hono-v0.3.2...hono-v0.3.3) (2024-12-09)
 
+## 0.4.12
+
+### Patch Changes
+
+- 7ddfafc: feat: export App type
+
 ## 0.4.11
 
 ### Patch Changes
