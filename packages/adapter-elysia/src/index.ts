@@ -5,4 +5,4 @@ export {
   type ElysiaHandler,
   type ElysiaMiddleware,
 } from "./common.js";
-export { type UniversalElysiaRouter, apply } from "./router.js";
+export { type UniversalElysiaRouter, type App, apply } from "./router.js";

@@ -11,7 +11,9 @@ import type { Express as Express5 } from "express";
 import { createHandler, createMiddleware } from "./common";
 import { type Express, isExpressV4, isExpressV5 } from "./utils";
 
-export class UniversalExpressRouter<T extends Express> extends UniversalRouter implements UniversalRouterInterface {
+export type App = Express;
+
+export class UniversalExpressRouter<T extends App> extends UniversalRouter implements UniversalRouterInterface {
   #app: T;
 
   constructor(app: T) {

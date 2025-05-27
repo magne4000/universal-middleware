@@ -10,10 +10,12 @@ import {
 import type { FastifyInstance } from "fastify";
 import { createHandler, createMiddleware } from "./common";
 
-export class UniversalFastifyRouter extends UniversalRouter implements UniversalRouterInterface<"async"> {
-  #app: FastifyInstance;
+export type App = FastifyInstance;
 
-  constructor(app: FastifyInstance) {
+export class UniversalFastifyRouter extends UniversalRouter implements UniversalRouterInterface<"async"> {
+  #app: App;
+
+  constructor(app: App) {
     super(false);
     this.#app = app;
   }
@@ -31,7 +33,7 @@ export class UniversalFastifyRouter extends UniversalRouter implements Universal
   }
 }
 
-export function apply(app: FastifyInstance, middlewares: EnhancedMiddleware[]) {
+export function apply(app: App, middlewares: EnhancedMiddleware[]) {
   const router = new UniversalFastifyRouter(app);
   return applyAsyncCore(router, middlewares);
 }

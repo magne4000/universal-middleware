@@ -10,10 +10,12 @@ import {
 import { createHandler, createMiddleware } from "./common";
 import type { Router } from "@hattip/router";
 
-export class UniversalHattipRouter extends UniversalRouter implements UniversalRouterInterface {
-  #app: Router;
+export type App = Router;
 
-  constructor(app: Router) {
+export class UniversalHattipRouter extends UniversalRouter implements UniversalRouterInterface {
+  #app: App;
+
+  constructor(app: App) {
     super(false);
     this.#app = app;
   }
@@ -29,7 +31,7 @@ export class UniversalHattipRouter extends UniversalRouter implements UniversalR
   }
 }
 
-export function apply(app: Router, middlewares: EnhancedMiddleware[]) {
+export function apply(app: App, middlewares: EnhancedMiddleware[]) {
   const router = new UniversalHattipRouter(app);
   applyCore(router, middlewares);
 }
