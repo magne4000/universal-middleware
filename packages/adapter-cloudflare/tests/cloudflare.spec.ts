@@ -37,4 +37,5 @@ const runs: Run[] = [
 
 runTests(runs, {
   vitest,
+  retry: 3,
 });

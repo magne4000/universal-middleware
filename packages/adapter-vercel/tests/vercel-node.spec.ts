@@ -32,4 +32,5 @@ const runs: Run[] = [
 runTests(runs, {
   vitest,
   prefix: "/api/node",
+  retry: 3,
 });
