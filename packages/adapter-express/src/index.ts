@@ -17,4 +17,4 @@ export {
   type ConnectMiddlewareBoolean,
   type WebHandler,
 } from "./utils.js";
-export { type UniversalExpressRouter, apply } from "./router.js";
+export { type UniversalExpressRouter, type App, apply } from "./router.js";

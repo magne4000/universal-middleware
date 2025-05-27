@@ -10,6 +10,8 @@ import {
 import { createHandler, createMiddleware, universalOnBeforeResponse } from "./common";
 import type { App } from "h3";
 
+export type { App };
+
 export class UniversalH3Router extends UniversalRouter implements UniversalRouterInterface {
   #app: App;
 

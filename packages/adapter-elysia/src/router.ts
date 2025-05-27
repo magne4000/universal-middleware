@@ -10,10 +10,12 @@ import {
 import type { AnyElysia } from "elysia";
 import { createHandler, createMiddleware } from "./common";
 
-export class UniversalElysiaRouter extends UniversalRouter implements UniversalRouterInterface {
-  #app: AnyElysia;
+export type App = AnyElysia;
 
-  constructor(app: AnyElysia) {
+export class UniversalElysiaRouter extends UniversalRouter implements UniversalRouterInterface {
+  #app: App;
+
+  constructor(app: App) {
     super(false);
     this.#app = app;
   }
@@ -29,7 +31,7 @@ export class UniversalElysiaRouter extends UniversalRouter implements UniversalR
   }
 }
 
-export function apply(app: AnyElysia, middlewares: EnhancedMiddleware[]) {
+export function apply(app: App, middlewares: EnhancedMiddleware[]) {
   const router = new UniversalElysiaRouter(app);
   applyCore(router, middlewares);
 }
