@@ -70,4 +70,5 @@ runTests(runs, {
     vitest.expect(response.headers.has("content-security-policy")).toBe(true);
     vitest.expect(response.headers.has("x-xss-protection")).toBe(true);
   },
+  concurrent: !process.env.CI,
 });

@@ -1,6 +1,7 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import mri from "mri";
 import { kill, retry } from "zx";
+import type { TestOptions } from "vitest";
 
 export interface Run {
   name: string;
@@ -23,12 +24,11 @@ export interface Run {
   };
 }
 
-export interface Options {
+export interface Options extends TestOptions {
   vitest: typeof import("vitest");
   test?: (response: Response, body: Record<string, unknown>, run: Run) => void | Promise<void>;
   testPost?: boolean;
   prefix?: string;
-  retry?: number;
 }
 
 declare global {
@@ -41,147 +41,138 @@ declare global {
 }
 
 export function runTests(runs: Run[], options: Options) {
-  options.vitest.describe.concurrent.each(runs)(
-    "$name",
-    {
-      retry: options.retry,
-    },
-    (run) => {
-      let server: ChildProcess | undefined = undefined;
-      const { command, port, delay, env, portOption } = run;
-      let host = `http://localhost:${port}`;
+  const { vitest, test, testPost, prefix, ...testOptions } = options;
+  vitest.describe.concurrent.each(runs)("$name", testOptions, (run) => {
+    let server: ChildProcess | undefined = undefined;
+    const { command, port, delay, env, portOption } = run;
+    let host = `http://localhost:${port}`;
 
-      options.vitest.beforeAll(async () => {
-        server = spawn(`${command} ${portOption ?? "--port"} ${port}`, {
-          shell: true,
-          stdio: "inherit",
-          env: {
-            ...process.env,
-            ...env,
-          },
+    vitest.beforeAll(async () => {
+      server = spawn(`${command} ${portOption ?? "--port"} ${port}`, {
+        shell: true,
+        stdio: "inherit",
+        env: {
+          ...process.env,
+          ...env,
+        },
+      });
+
+      // Wait until server is ready
+      await new Promise((resolve, reject) => {
+        server?.on("error", (error) => {
+          server = undefined;
+          reject(error);
         });
 
-        // Wait until server is ready
-        await new Promise((resolve, reject) => {
-          server?.on("error", (error) => {
+        server?.on("exit", (code) => {
+          if (code !== 0) {
             server = undefined;
-            reject(error);
-          });
-
-          server?.on("exit", (code) => {
-            if (code !== 0) {
-              server = undefined;
-              reject(new Error(`Process exited with code ${code}`));
-            }
-          });
-
-          retry(40, process.env.CI ? 500 : 250, async () => {
-            try {
-              await fetch(host);
-            } catch {
-              await fetch(`http://127.0.0.1:${port}`);
-              host = `http://127.0.0.1:${port}`;
-            }
-          })
-            .then(resolve)
-            .catch(reject);
+            reject(new Error(`Process exited with code ${code}`));
+          }
         });
 
-        if (delay) {
-          await new Promise((r) => setTimeout(r, delay));
-        }
-      }, 30_000);
-
-      options.vitest.afterAll(async () => {
-        const pid = server?.pid;
-        if (typeof pid === "number") {
-          await kill(pid, "SIGKILL").finally(() => {
-            server = undefined;
-          });
-        }
-      }, 30_000);
-
-      options.vitest.test("middlewares", { retry: 3, timeout: 30_000 }, async () => {
-        const response = await fetch(`${host}${options.prefix ?? ""}`);
-        const body = JSON.parse(await response.text());
-        options.vitest.expect(response.status).toBe(200);
-        options.vitest.expect(body).toEqual({
-          long: "a".repeat(1024),
-          something: {
-            a: 1,
-          },
-          somethingElse: {
-            b: 2,
-          },
-          waitUntil: run.waitUntilType ?? "undefined",
-        });
-        options.vitest.expect(response.headers.get("x-test-value")).toBe("universal-middleware");
-        options.vitest.expect(response.headers.has("x-should-be-removed")).toBe(false);
-        options.vitest.expect(response.headers.get("content-type")).toBe("application/json; charset=utf-8");
-        await options?.test?.(response, body, run);
+        retry(40, process.env.CI ? 500 : 250, async () => {
+          try {
+            await fetch(host);
+          } catch {
+            await fetch(`http://127.0.0.1:${port}`);
+            host = `http://127.0.0.1:${port}`;
+          }
+        })
+          .then(resolve)
+          .catch(reject);
       });
 
-      options.vitest.test("guarded route", { retry: 3, timeout: 30_000 }, async () => {
-        const response = await fetch(`${host}${options.prefix ?? ""}/guarded`);
-        const body = await response.text();
-        options.vitest.expect(response.status).toBe(401);
-        options.vitest.expect(body).toBe("Unauthorized");
-      });
+      if (delay) {
+        await new Promise((r) => setTimeout(r, delay));
+      }
+    }, 30_000);
 
-      options.vitest.test("throw early route", { retry: 3, timeout: 30_000 }, async () => {
-        const response = await fetch(`${host}${options.prefix ?? ""}/throw-early`);
-        const body = await response.text();
-        options.vitest.expect(response.status).toBe(500);
-        options.vitest
-          .expect(body)
-          .toContain(run?.tests?.throwEarly?.expectedBody ?? "universal-middleware throw early test");
-      });
-
-      options.vitest.test("throw late route", { retry: 3, timeout: 30_000 }, async () => {
-        const response = await fetch(`${host}${options.prefix ?? ""}/throw-late`);
-        const body = await response.text();
-        options.vitest.expect(response.status).toBe(500);
-        options.vitest
-          .expect(body)
-          .toContain(run?.tests?.throwLate?.expectedBody ?? "universal-middleware throw late test");
-      });
-
-      options.vitest.test("throw early and late route", { retry: 3, timeout: 30_000 }, async () => {
-        const response = await fetch(`${host}${options.prefix ?? ""}/throw-early-and-late`);
-        const body = await response.text();
-        options.vitest.expect(response.status).toBe(500);
-        options.vitest
-          .expect(body)
-          .toContain(run?.tests?.throwEarlyAndLate?.expectedBody ?? "universal-middleware throw early test");
-      });
-
-      options.vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {
-        const response = await fetch(`${host}${options.prefix ?? ""}/user/magne4000`);
-        const body = await response.text();
-        options.vitest.expect(response.status).toBe(200);
-        options.vitest.expect(body).toBe("User name is: magne4000");
-      });
-
-      options.vitest.test("404", { retry: 3, timeout: 30_000 }, async () => {
-        const response = await fetch(`${host}${options.prefix ?? ""}/404`);
-        options.vitest.expect(response.status).toBe(404);
-      });
-
-      if (options?.testPost) {
-        options.vitest.test("post", { retry: 3, timeout: 30_000 }, async () => {
-          const response = await fetch(`${host}${options.prefix ?? ""}/post`, {
-            method: "POST",
-            body: JSON.stringify({ something: true }),
-          });
-          const body = JSON.parse(await response.text());
-          options.vitest.expect(response.status).toBe(200);
-          options.vitest.expect(body).toEqual({
-            ok: true,
-          });
+    vitest.afterAll(async () => {
+      const pid = server?.pid;
+      if (typeof pid === "number") {
+        await kill(pid, "SIGKILL").finally(() => {
+          server = undefined;
         });
       }
-    },
-  );
+    }, 30_000);
+
+    vitest.test("middlewares", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${prefix ?? ""}`);
+      const body = JSON.parse(await response.text());
+      vitest.expect(response.status).toBe(200);
+      vitest.expect(body).toEqual({
+        long: "a".repeat(1024),
+        something: {
+          a: 1,
+        },
+        somethingElse: {
+          b: 2,
+        },
+        waitUntil: run.waitUntilType ?? "undefined",
+      });
+      vitest.expect(response.headers.get("x-test-value")).toBe("universal-middleware");
+      vitest.expect(response.headers.has("x-should-be-removed")).toBe(false);
+      vitest.expect(response.headers.get("content-type")).toBe("application/json; charset=utf-8");
+      await test?.(response, body, run);
+    });
+
+    vitest.test("guarded route", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${prefix ?? ""}/guarded`);
+      const body = await response.text();
+      vitest.expect(response.status).toBe(401);
+      vitest.expect(body).toBe("Unauthorized");
+    });
+
+    vitest.test("throw early route", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${prefix ?? ""}/throw-early`);
+      const body = await response.text();
+      vitest.expect(response.status).toBe(500);
+      vitest.expect(body).toContain(run?.tests?.throwEarly?.expectedBody ?? "universal-middleware throw early test");
+    });
+
+    vitest.test("throw late route", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${prefix ?? ""}/throw-late`);
+      const body = await response.text();
+      vitest.expect(response.status).toBe(500);
+      vitest.expect(body).toContain(run?.tests?.throwLate?.expectedBody ?? "universal-middleware throw late test");
+    });
+
+    vitest.test("throw early and late route", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${prefix ?? ""}/throw-early-and-late`);
+      const body = await response.text();
+      vitest.expect(response.status).toBe(500);
+      vitest
+        .expect(body)
+        .toContain(run?.tests?.throwEarlyAndLate?.expectedBody ?? "universal-middleware throw early test");
+    });
+
+    vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${prefix ?? ""}/user/magne4000`);
+      const body = await response.text();
+      vitest.expect(response.status).toBe(200);
+      vitest.expect(body).toBe("User name is: magne4000");
+    });
+
+    vitest.test("404", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetch(`${host}${prefix ?? ""}/404`);
+      vitest.expect(response.status).toBe(404);
+    });
+
+    if (testPost) {
+      vitest.test("post", { retry: 3, timeout: 30_000 }, async () => {
+        const response = await fetch(`${host}${prefix ?? ""}/post`, {
+          method: "POST",
+          body: JSON.stringify({ something: true }),
+        });
+        const body = JSON.parse(await response.text());
+        vitest.expect(response.status).toBe(200);
+        vitest.expect(body).toEqual({
+          ok: true,
+        });
+      });
+    }
+  });
 }
 
 export const args = mri<{ port: string }>(

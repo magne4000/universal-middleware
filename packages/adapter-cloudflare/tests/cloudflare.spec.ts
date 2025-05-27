@@ -38,4 +38,5 @@ const runs: Run[] = [
 runTests(runs, {
   vitest,
   retry: 3,
+  concurrent: !process.env.CI,
 });
