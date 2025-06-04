@@ -21,7 +21,7 @@
     "file-type": "^21.0.0",
     "playwright": "^1.52.0",
     "release-please": "^17.0.0",
-    "turbo": "^2.5.3",
+    "turbo": "^2.5.4",
     "typescript": "catalog:"
   },
   "pnpm": {
@@ -39,7 +39,7 @@
       "@vercel/node>ts-node": "^10.9.2",
       "@vercel/node>typescript": "catalog:",
       "@webroute/middleware": "^0.10.0",
-      "esbuild": "^0.25.4",
+      "esbuild": "^0.25.5",
       "universal-middleware": "link:./packages/universal-middleware"
     }
   },
