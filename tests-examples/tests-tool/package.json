@@ -28,7 +28,7 @@
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@brillout/test-e2e": "^0.6.12",
+    "@brillout/test-e2e": "^0.6.13",
     "@hattip/adapter-node": "^0.0.49",
     "@hattip/router": "catalog:",
     "@hono/vite-dev-server": "^0.19.1",
@@ -60,7 +60,7 @@
     "rimraf": "catalog:",
     "tsup": "^8.5.0",
     "typescript": "catalog:",
-    "vercel": "^42.1.1",
+    "vercel": "^42.3.0",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
