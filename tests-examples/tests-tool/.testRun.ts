@@ -10,6 +10,7 @@ type RunOptions = Parameters<typeof run>[1] & {
   prefix?: string;
   noMiddleware?: boolean;
   noCompression?: boolean;
+  fixExit?: boolean;
 };
 
 export function testRun(
@@ -46,6 +47,13 @@ export function testRun(
 
     expect(content).toBe("User name is: magne4000");
   });
+
+  if (options?.fixExit) {
+    process.on("exit", (code) => {
+      process.exit(0);
+      console.log({ code });
+    });
+  }
 
   if (!options?.noMiddleware && !options?.noCompression) {
     test("/big-file", async () => {
