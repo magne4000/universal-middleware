@@ -24,6 +24,9 @@
     "turbo": "^2.5.4",
     "typescript": "catalog:"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "pnpm": {
     "overrides": {
       "@universal-middleware/cloudflare": "link:./packages/adapter-cloudflare",
