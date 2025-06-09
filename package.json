@@ -20,7 +20,7 @@
     "@types/node": "catalog:",
     "file-type": "^21.0.0",
     "playwright": "^1.52.0",
-    "release-please": "^17.0.0",
+    "release-please": "^17.1.0",
     "turbo": "^2.5.4",
     "typescript": "catalog:"
   },
