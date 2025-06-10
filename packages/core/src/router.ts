@@ -73,10 +73,6 @@ export class UniversalRouter implements UniversalRouterInterface {
       const router = findRoute(this.router, request.method, pathname);
       const contextMiddleware = findRoute(this.#routesContext, request.method, pathname);
 
-      if (contextMiddleware) {
-        console.log(request.method, pathname, contextMiddleware);
-      }
-
       if (router) {
         let handler =
           this.#pipeMiddlewaresInUniversalRoute && this.#middlewares.length > 0
