@@ -32,10 +32,7 @@ export class UniversalRouter implements UniversalRouterInterface {
 
     if (context) {
       contextMiddleware = (_request, ctx) => {
-        return {
-          ...ctx,
-          ...context,
-        };
+        Object.assign(ctx, context);
       };
     }
 
@@ -47,9 +44,9 @@ export class UniversalRouter implements UniversalRouterInterface {
         }
       }
     } else {
-      addRoute(this.router, method, path);
+      addRoute(this.router, method, path, umHandler);
       if (contextMiddleware) {
-        addRoute(this.router, method, path, contextMiddleware);
+        addRoute(this.#routesContext, method, path, contextMiddleware);
       }
     }
 
@@ -75,6 +72,10 @@ export class UniversalRouter implements UniversalRouterInterface {
       const pathname = url(request).pathname;
       const router = findRoute(this.router, request.method, pathname);
       const contextMiddleware = findRoute(this.#routesContext, request.method, pathname);
+
+      if (contextMiddleware) {
+        console.log(request.method, pathname, contextMiddleware);
+      }
 
       if (router) {
         let handler =

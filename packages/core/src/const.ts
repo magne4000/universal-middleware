@@ -15,6 +15,7 @@ export const optionsToSymbols = {
   method: methodSymbol,
   path: pathSymbol,
   order: orderSymbol,
+  context: contextSymbol,
 } as const;
 
 /**

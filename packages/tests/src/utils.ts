@@ -121,13 +121,16 @@ export const routeParamHandler = ((options?) =>
       }
 
       // ...
-      return new Response(`User name is: ${myParams.name}`);
+      return new Response(`${context.prefix ? context.prefix : "User name is"}: ${myParams.name}`);
     },
     {
       path: "/user/:name",
       method: "GET",
+      context: {
+        prefix: "User NAME is",
+      },
     },
-  )) satisfies (options?: RouteParamOption) => UniversalHandler;
+  )) satisfies (options?: RouteParamOption) => UniversalHandler<Universal.Context & { prefix?: string }>;
 
 export const guarded: Get<[], UniversalHandler> = () =>
   enhance(

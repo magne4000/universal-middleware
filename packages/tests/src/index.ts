@@ -151,7 +151,11 @@ export function runTests(runs: Run[], options: Options) {
       const response = await fetch(`${host}${prefix ?? ""}/user/magne4000`);
       const body = await response.text();
       vitest.expect(response.status).toBe(200);
-      vitest.expect(body).toBe("User name is: magne4000");
+      const expected =
+        run.env?.TEST_CASE === "router" || run.env?.TEST_CASE === "router_enhanced"
+          ? "User NAME is: magne4000"
+          : "User name is: magne4000";
+      vitest.expect(body).toBe(expected);
     });
 
     vitest.test("404", { retry: 3, timeout: 30_000 }, async () => {
