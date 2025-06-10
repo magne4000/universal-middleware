@@ -131,12 +131,15 @@ export function pipe<F extends AnyMiddleware[]>(
       } else if (response !== null && typeof response === "object") {
         // Do not override response if it already exists.
         // The only to actually update the response is through a Response Function.
-        if (!_response && response instanceof Response) {
-          _response = response;
+        if (response instanceof Response) {
+          if (!_response) {
+            _response = response;
+          }
+        } else {
+          // Update context
+          // biome-ignore lint/style/noParameterAssign: <explanation>
+          context = response;
         }
-        // Update context
-        // biome-ignore lint/style/noParameterAssign: <explanation>
-        context = response as any;
       }
     }
 
