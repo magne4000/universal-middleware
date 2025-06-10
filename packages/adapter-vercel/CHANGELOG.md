@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.17
+
+### Patch Changes
+
+- Updated dependencies [bd67eba]
+  - @universal-middleware/core@0.4.8
+  - @universal-middleware/express@0.4.17
+
 ## 0.4.16
 
 ### Patch Changes

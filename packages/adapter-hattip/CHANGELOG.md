@@ -1,5 +1,12 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/hattip-v0.3.2...hattip-v0.3.3) (2024-12-09)
 
+## 0.4.10
+
+### Patch Changes
+
+- Updated dependencies [bd67eba]
+  - @universal-middleware/core@0.4.8
+
 ## 0.4.9
 
 ### Patch Changes
