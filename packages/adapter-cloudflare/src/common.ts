@@ -5,16 +5,17 @@ import type {
   PagesFunction,
   Response as CloudflareResponse,
 } from "@cloudflare/workers-types";
-import type {
-  Get,
-  RuntimeAdapter,
-  UniversalFn,
-  UniversalHandler,
-  UniversalMiddleware,
+import {
+  bindUniversal,
+  contextSymbol,
+  type Get,
+  getAdapterRuntime,
+  type RuntimeAdapter,
+  type UniversalFn,
+  type UniversalHandler,
+  type UniversalMiddleware,
+  universalSymbol,
 } from "@universal-middleware/core";
-import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
-
-export const contextSymbol = Symbol.for("unContext");
 
 export type CloudflareHandler<In extends Universal.Context> = {
   fetch: UniversalFn<

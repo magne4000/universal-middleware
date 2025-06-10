@@ -5,10 +5,8 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import type { Context as HonoContext, Env, ExecutionContext, Handler, MiddlewareHandler } from "hono";
-
-export const contextSymbol = Symbol.for("unContext");
 
 interface UniversalEnv {
   Bindings: Env["Bindings"] & {

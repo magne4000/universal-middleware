@@ -9,6 +9,7 @@ import type {
 import {
   attachUniversal,
   bindUniversal,
+  contextSymbol,
   getAdapterRuntime,
   isBodyInit,
   mergeHeadersInto,
@@ -18,7 +19,6 @@ import { createRequestAdapter, type DecoratedRequest } from "@universal-middlewa
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import fp from "fastify-plugin";
 
-export const contextSymbol = Symbol.for("unContext");
 export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
 export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
 

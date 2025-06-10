@@ -1,15 +1,16 @@
 import type { RequestHandler } from "@hattip/compose";
 import type { AdapterRequestContext, HattipHandler as _HattipHandler } from "@hattip/core";
-import type {
-  Get,
-  RuntimeAdapter,
-  UniversalFn,
-  UniversalHandler,
-  UniversalMiddleware,
+import {
+  bindUniversal,
+  contextSymbol,
+  type Get,
+  getAdapterRuntime,
+  type RuntimeAdapter,
+  type UniversalFn,
+  type UniversalHandler,
+  type UniversalMiddleware,
+  universalSymbol,
 } from "@universal-middleware/core";
-import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
-
-export const contextSymbol = Symbol.for("unContext");
 
 declare module "@hattip/core" {
   interface AdapterRequestContext {

@@ -8,11 +8,10 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import { createRequestAdapter, type NodeRequestAdapterOptions } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
 
-export const contextSymbol = Symbol.for("unContext");
 export const requestSymbol = Symbol.for("unRequest");
 export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
 export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");

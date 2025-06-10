@@ -22,5 +22,13 @@ export {
 export { pipe } from "./pipe.js";
 export { params } from "./route.js";
 export { env } from "./env.js";
-export { universalSymbol, methodSymbol, nameSymbol, orderSymbol, pathSymbol, MiddlewareOrder } from "./const.js";
+export {
+  universalSymbol,
+  methodSymbol,
+  nameSymbol,
+  orderSymbol,
+  pathSymbol,
+  contextSymbol,
+  MiddlewareOrder,
+} from "./const.js";
 export { UniversalRouter, apply, applyAsync, pipeRoute } from "./router.js";

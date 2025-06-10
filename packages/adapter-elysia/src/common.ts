@@ -10,13 +10,13 @@ import {
   attachUniversal,
   bindUniversal,
   cloneRequest,
+  contextSymbol,
   getAdapterRuntime,
   isBodyInit,
   universalSymbol,
 } from "@universal-middleware/core";
 import { type Context as ElysiaContext, Elysia, type Handler, NotFoundError } from "elysia";
 
-export const contextSymbol = Symbol.for("unContext");
 export const pendingSymbol = Symbol.for("unPending");
 export const pendingHandledSymbol = Symbol.for("unPendingHandled");
 

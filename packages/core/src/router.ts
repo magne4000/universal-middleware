@@ -1,17 +1,19 @@
 import { addRoute, createRouter, findRoute, type RouterContext } from "rou3";
-import { methodSymbol, nameSymbol, pathSymbol, universalSymbol } from "./const";
+import { contextSymbol, methodSymbol, nameSymbol, pathSymbol, universalSymbol } from "./const";
 import { pipe } from "./pipe";
 import type { EnhancedMiddleware, UniversalHandler, UniversalMiddleware, UniversalRouterInterface } from "./types";
 import { getUniversal, getUniversalProp, isHandler, ordered, url } from "./utils";
 
 export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<UniversalHandler>;
+  #routesContext: RouterContext<UniversalMiddleware>;
   #middlewares: EnhancedMiddleware[];
   #pipeMiddlewaresInUniversalRoute: boolean;
   #handle404: boolean;
 
   constructor(pipeMiddlewaresInUniversalRoute = true, handle404 = false) {
     this.router = createRouter<UniversalHandler>();
+    this.#routesContext = createRouter<UniversalMiddleware>();
     this.#middlewares = [];
     this.#pipeMiddlewaresInUniversalRoute = pipeMiddlewaresInUniversalRoute;
     this.#handle404 = handle404;
@@ -25,13 +27,30 @@ export class UniversalRouter implements UniversalRouterInterface {
   route(handler: EnhancedMiddleware) {
     const { path, method } = assertRoute(handler);
     const umHandler = getUniversal(handler);
+    let contextMiddleware: UniversalMiddleware | undefined = undefined;
+    const context = getUniversalProp(handler, contextSymbol);
+
+    if (context) {
+      contextMiddleware = (_request, ctx) => {
+        return {
+          ...ctx,
+          ...context,
+        };
+      };
+    }
 
     if (Array.isArray(method)) {
       for (const m of method) {
         addRoute(this.router, m, path, umHandler);
+        if (contextMiddleware) {
+          addRoute(this.#routesContext, m, path, contextMiddleware);
+        }
       }
     } else {
-      addRoute(this.router, method, path, umHandler);
+      addRoute(this.router, method, path);
+      if (contextMiddleware) {
+        addRoute(this.router, method, path, contextMiddleware);
+      }
     }
 
     return this;
@@ -53,14 +72,19 @@ export class UniversalRouter implements UniversalRouterInterface {
   get [universalSymbol](): UniversalMiddleware {
     const noCastPipe = pipe.bind({ noCast: true });
     return (request, ctx, runtime) => {
-      const router = findRoute(this.router, request.method, url(request).pathname);
+      const pathname = url(request).pathname;
+      const router = findRoute(this.router, request.method, pathname);
+      const contextMiddleware = findRoute(this.#routesContext, request.method, pathname);
 
       if (router) {
-        const handler =
+        let handler =
           this.#pipeMiddlewaresInUniversalRoute && this.#middlewares.length > 0
             ? // biome-ignore lint/suspicious/noExplicitAny: <explanation>
               (noCastPipe(...(this.#middlewares as any[]), router.data) as UniversalHandler)
             : router.data;
+        if (contextMiddleware) {
+          handler = noCastPipe(contextMiddleware.data, handler);
+        }
         if (router.params) {
           runtime.params ??= {};
           Object.assign(runtime.params, router.params);
