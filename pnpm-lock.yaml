@@ -543,6 +543,12 @@ importers:
         specifier: link:../adapter-express
         version: link:../adapter-express
     devDependencies:
+      '@hattip/core':
+        specifier: 'catalog:'
+        version: 0.0.49
+      '@hattip/router':
+        specifier: 'catalog:'
+        version: 0.0.49
       '@swc/core':
         specifier: 'catalog:'
         version: 1.11.31
@@ -552,6 +558,9 @@ importers:
       '@universal-middleware/h3':
         specifier: link:../adapter-h3
         version: link:../adapter-h3
+      '@universal-middleware/hattip':
+        specifier: link:../adapter-hattip
+        version: link:../adapter-hattip
       '@universal-middleware/hono':
         specifier: link:../adapter-hono
         version: link:../adapter-hono
@@ -559,10 +568,10 @@ importers:
         specifier: workspace:*
         version: link:../tests
       h3:
-        specifier: ^1.15.3
+        specifier: 'catalog:'
         version: 1.15.3
       hono:
-        specifier: ^4.7.11
+        specifier: 'catalog:'
         version: 4.7.11
       rimraf:
         specifier: 'catalog:'

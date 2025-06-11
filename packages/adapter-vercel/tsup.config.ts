@@ -6,6 +6,7 @@ export default defineConfig([
       index: "./src/index.ts",
       hono: "./src/hono.ts",
       h3: "./src/h3.ts",
+      hattip: "./src/hattip.ts",
     },
     format: ["esm"],
     platform: "neutral",
