@@ -8,7 +8,7 @@ import { toNodeListener, toWebHandler } from "h3";
 export function createEdgeHandler(app: App): VercelEdgeHandlerRaw {
   const handler = toWebHandler(app);
 
-  return function honoHandlerVercelEdge(request) {
+  return function h3HandlerVercelEdge(request) {
     return handler(request);
   };
 }
@@ -19,7 +19,7 @@ export function createEdgeHandler(app: App): VercelEdgeHandlerRaw {
 export function createNodeHandler(app: App): VercelNodeHandlerRaw {
   const handler = toNodeListener(app);
 
-  return async function honoHandlerVercelNode(message, response) {
+  return async function h3HandlerVercelNode(message, response) {
     return handler(message, response);
   };
 }

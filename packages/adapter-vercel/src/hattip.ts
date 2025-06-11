@@ -25,7 +25,7 @@ function createContext(request: Request): AdapterRequestContext {
 export function createEdgeHandler(app: App): VercelEdgeHandlerRaw {
   const handler = app.buildHandler();
 
-  return function honoHandlerVercelEdge(request) {
+  return function hattipHandlerVercelEdge(request) {
     return handler(createContext(request));
   };
 }
@@ -37,7 +37,7 @@ export function createNodeHandler(app: App): VercelNodeHandlerRaw {
   const handler = app.buildHandler();
   const requestAdapter = createRequestAdapter();
 
-  return async function honoHandlerVercelNode(message, response) {
+  return async function hattipHandlerVercelNode(message, response) {
     const request = requestAdapter(message);
     const res = await handler(createContext(request));
     return sendResponse(res, response);

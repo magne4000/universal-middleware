@@ -9,7 +9,11 @@
   "exports": {
     ".": "./dist/index.js",
     "./hono": "./dist/hono.js",
-    "./h3": "./dist/h3.js"
+    "./h3": "./dist/h3.js",
+    "./elysia": "./dist/elysia.js",
+    "./hattip": "./dist/hattip.js",
+    "./express": "./dist/express.js",
+    "./fastify": "./dist/fastify.js"
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
   "repository": "https://github.com/magne4000/universal-middleware",
@@ -31,6 +35,7 @@
     "@types/express": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/elysia": "workspace:^",
+    "@universal-middleware/fastify": "workspace:^",
     "@universal-middleware/h3": "workspace:^",
     "@universal-middleware/hattip": "workspace:^",
     "@universal-middleware/hono": "workspace:^",
@@ -38,6 +43,7 @@
     "@hattip/core": "catalog:",
     "@hattip/router": "catalog:",
     "express": "catalog:",
+    "fastify": "catalog:",
     "h3": "catalog:",
     "hono": "catalog:",
     "rimraf": "catalog:",

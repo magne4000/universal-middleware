@@ -561,6 +561,9 @@ importers:
       '@universal-middleware/elysia':
         specifier: link:../adapter-elysia
         version: link:../adapter-elysia
+      '@universal-middleware/fastify':
+        specifier: link:../adapter-fastify
+        version: link:../adapter-fastify
       '@universal-middleware/h3':
         specifier: link:../adapter-h3
         version: link:../adapter-h3
@@ -576,6 +579,9 @@ importers:
       express:
         specifier: 'catalog:'
         version: 5.1.0
+      fastify:
+        specifier: 'catalog:'
+        version: 5.3.3
       h3:
         specifier: 'catalog:'
         version: 1.15.3

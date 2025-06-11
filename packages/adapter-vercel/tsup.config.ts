@@ -9,6 +9,7 @@ export default defineConfig([
       hattip: "./src/hattip.ts",
       elysia: "./src/elysia.ts",
       express: "./src/express.ts",
+      fastify: "./src/fastify.ts",
     },
     format: ["esm"],
     platform: "neutral",
