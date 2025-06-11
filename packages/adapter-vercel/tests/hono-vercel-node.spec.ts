@@ -31,7 +31,7 @@ const runs: Run[] = [
 
 runTests(runs, {
   vitest,
-  prefix: "/api/node-hono",
+  prefix: "/api/hono-node",
   retry: 3,
   concurrent: !process.env.CI,
 });

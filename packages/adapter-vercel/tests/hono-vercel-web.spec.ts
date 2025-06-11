@@ -6,13 +6,13 @@ const port = 3860;
 const expectInternalServerError = {
   tests: {
     throwLate: {
-      expectedBody: "A server error has occurred",
+      expectedBody: "Internal Server Error",
     },
     throwEarlyAndLate: {
-      expectedBody: "A server error has occurred",
+      expectedBody: "Internal Server Error",
     },
     throwEarly: {
-      expectedBody: "A server error has occurred",
+      expectedBody: "Internal Server Error",
     },
   },
 } satisfies Pick<Run, "tests">;
@@ -31,7 +31,7 @@ const runs: Run[] = [
 
 runTests(runs, {
   vitest,
-  prefix: "/api/web-hono",
+  prefix: "/api/hono-web",
   retry: 3,
   concurrent: !process.env.CI,
 });
