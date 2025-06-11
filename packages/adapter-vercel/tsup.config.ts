@@ -7,6 +7,7 @@ export default defineConfig([
       hono: "./src/hono.ts",
       h3: "./src/h3.ts",
       hattip: "./src/hattip.ts",
+      elysia: "./src/elysia.ts",
     },
     format: ["esm"],
     platform: "neutral",

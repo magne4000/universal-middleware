@@ -29,6 +29,7 @@
   "devDependencies": {
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
+    "@universal-middleware/elysia": "workspace:^",
     "@universal-middleware/h3": "workspace:^",
     "@universal-middleware/hattip": "workspace:^",
     "@universal-middleware/hono": "workspace:^",
