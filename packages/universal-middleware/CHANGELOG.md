@@ -1,5 +1,13 @@
 ## [0.5.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.4...universal-middleware-v0.5.5) (2024-12-09)
 
+## 0.6.25
+
+### Patch Changes
+
+- Updated dependencies [7982e46]
+  - @universal-middleware/vercel@0.4.18
+  - @universal-middleware/hono@0.4.14
+
 ## 0.6.24
 
 ### Patch Changes

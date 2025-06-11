@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.18
+
+### Patch Changes
+
+- 7982e46: feat: new vercel adapters for servers
+
 ## 0.4.17
 
 ### Patch Changes

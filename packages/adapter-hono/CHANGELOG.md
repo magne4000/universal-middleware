@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/hono-v0.3.2...hono-v0.3.3) (2024-12-09)
 
+## 0.4.14
+
+### Patch Changes
+
+- 7982e46: feat: new vercel adapters for servers
+
 ## 0.4.13
 
 ### Patch Changes
