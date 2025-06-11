@@ -8,7 +8,8 @@
   ],
   "exports": {
     ".": "./dist/index.js",
-    "./hono": "./dist/hono.js"
+    "./hono": "./dist/hono.js",
+    "./h3": "./dist/h3.js"
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
   "repository": "https://github.com/magne4000/universal-middleware",

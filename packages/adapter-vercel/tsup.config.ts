@@ -5,6 +5,7 @@ export default defineConfig([
     entry: {
       index: "./src/index.ts",
       hono: "./src/hono.ts",
+      h3: "./src/h3.ts",
     },
     format: ["esm"],
     platform: "neutral",
