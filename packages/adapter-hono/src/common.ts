@@ -118,7 +118,9 @@ function setContext<Context extends Universal.Context = Universal.Context>(
   value: Context,
 ): void {
   honoContext.set(contextSymbol, value);
-  honoContext.env[contextSymbol] = value;
+  if (honoContext.env) {
+    honoContext.env[contextSymbol] = value;
+  }
   if (honoContext.env?.eventContext?.env) {
     honoContext.env.eventContext.env[contextSymbol] = value;
   }
@@ -128,7 +130,7 @@ export function getContext<Context extends Universal.Context = Universal.Context
   honoContext: HonoContext<UniversalEnv>,
 ): Context {
   return (honoContext.get(contextSymbol) ??
-    honoContext.env[contextSymbol] ??
+    honoContext.env?.[contextSymbol] ??
     honoContext.env?.eventContext?.env[contextSymbol]) as Context;
 }
 
