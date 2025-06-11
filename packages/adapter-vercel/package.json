@@ -7,7 +7,8 @@
     "dist"
   ],
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./hono": "./dist/hono.js"
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",
   "repository": "https://github.com/magne4000/universal-middleware",
@@ -27,7 +28,9 @@
   "devDependencies": {
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
+    "@universal-middleware/hono": "workspace:^",
     "@universal-middleware/tests": "workspace:*",
+    "hono": "^4.7.11",
     "rimraf": "catalog:",
     "tsup": "catalog:",
     "tsx": "catalog:",
@@ -35,6 +38,14 @@
     "vercel": "^42.3.0",
     "vite": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@universal-middleware/hono": "workspace:^"
+  },
+  "peerDependenciesMeta": {
+    "@universal-middleware/hono": {
+      "optional": true
+    }
   },
   "sideEffects": false,
   "keywords": [

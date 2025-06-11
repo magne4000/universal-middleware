@@ -3,14 +3,11 @@ import type { Get, RuntimeAdapter, UniversalFn, UniversalHandler } from "@univer
 import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import { createRequestAdapter, sendResponse } from "@universal-middleware/express";
 
-export type VercelEdgeHandler<In extends Universal.Context> = UniversalFn<
-  UniversalHandler<In>,
-  (request: Request) => Response | Promise<Response>
->;
-export type VercelNodeHandler<In extends Universal.Context> = UniversalFn<
-  UniversalHandler<In>,
-  (request: IncomingMessage, response: ServerResponse) => void | Promise<void>
->;
+export type VercelEdgeHandlerRaw = (request: Request) => Response | Promise<Response>;
+export type VercelNodeHandlerRaw = (request: IncomingMessage, response: ServerResponse) => void | Promise<void>;
+
+export type VercelEdgeHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, VercelEdgeHandlerRaw>;
+export type VercelNodeHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, VercelNodeHandlerRaw>;
 
 /**
  * Creates an Edge request handler
@@ -18,8 +15,6 @@ export type VercelNodeHandler<In extends Universal.Context> = UniversalFn<
 export function createEdgeHandler<T extends unknown[], InContext extends Universal.Context>(
   handlerFactory: Get<T, UniversalHandler<InContext>>,
 ): Get<T, VercelEdgeHandler<InContext>> {
-  const requestAdapter = createRequestAdapter();
-
   return (...args) => {
     const handler = handlerFactory(...args);
 
