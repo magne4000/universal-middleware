@@ -3,7 +3,7 @@ import { createRequestAdapter, sendResponse } from "@universal-middleware/expres
 import type { VercelEdgeHandlerRaw, VercelNodeHandlerRaw } from "./common";
 import type { AdapterRequestContext } from "@hattip/core";
 
-function createContext(request: Request): AdapterRequestContext {
+function createContext(request: Request, platformName: string): AdapterRequestContext {
   return {
     request,
     // TODO: Support the newer `Forwarded` standard header
@@ -11,7 +11,7 @@ function createContext(request: Request): AdapterRequestContext {
     waitUntil() {},
     passThrough() {},
     platform: {
-      name: "vercel-node",
+      name: platformName,
     },
     env(variable) {
       return process.env[variable];
@@ -26,7 +26,7 @@ export function createEdgeHandler(app: App): VercelEdgeHandlerRaw {
   const handler = app.buildHandler();
 
   return function hattipHandlerVercelEdge(request) {
-    return handler(createContext(request));
+    return handler(createContext(request, "vercel-edge"));
   };
 }
 
@@ -39,7 +39,7 @@ export function createNodeHandler(app: App): VercelNodeHandlerRaw {
 
   return async function hattipHandlerVercelNode(message, response) {
     const request = requestAdapter(message);
-    const res = await handler(createContext(request));
+    const res = await handler(createContext(request, "vercel-node"));
     return sendResponse(res, response);
   };
 }
