@@ -552,6 +552,9 @@ importers:
       '@swc/core':
         specifier: 'catalog:'
         version: 1.11.31
+      '@types/express':
+        specifier: 'catalog:'
+        version: 5.0.3
       '@types/node':
         specifier: 'catalog:'
         version: 20.19.0
@@ -570,6 +573,9 @@ importers:
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
+      express:
+        specifier: 'catalog:'
+        version: 5.1.0
       h3:
         specifier: 'catalog:'
         version: 1.15.3

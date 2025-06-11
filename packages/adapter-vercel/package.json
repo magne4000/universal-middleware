@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@swc/core": "catalog:",
+    "@types/express": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/elysia": "workspace:^",
     "@universal-middleware/h3": "workspace:^",
@@ -36,6 +37,7 @@
     "@universal-middleware/tests": "workspace:*",
     "@hattip/core": "catalog:",
     "@hattip/router": "catalog:",
+    "express": "catalog:",
     "h3": "catalog:",
     "hono": "catalog:",
     "rimraf": "catalog:",

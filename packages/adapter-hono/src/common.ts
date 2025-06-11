@@ -14,7 +14,7 @@ interface UniversalEnv {
   Bindings: Env["Bindings"] & {
     [contextSymbol]?: Universal.Context;
     // biome-ignore lint/suspicious/noExplicitAny: avoid hono/cloudflare-pages typing conflict
-    eventContext?: any;
+    eventContext: any;
   };
   Variables: Env["Variables"] & {
     [contextSymbol]?: Universal.Context;

@@ -8,6 +8,7 @@ export default defineConfig([
       h3: "./src/h3.ts",
       hattip: "./src/hattip.ts",
       elysia: "./src/elysia.ts",
+      express: "./src/express.ts",
     },
     format: ["esm"],
     platform: "neutral",
