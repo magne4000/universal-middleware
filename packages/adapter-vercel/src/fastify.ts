@@ -13,8 +13,10 @@ export function createEdgeHandler(app: App): never {
  * Fastify app to Vercel Node request handler
  */
 export function createNodeHandler(app: App): VercelNodeHandlerRaw {
+  const ready = app.ready();
+
   return async function fastifyHandlerVercelNode(message, response) {
-    await app.ready();
+    await ready;
     app.server.emit("request", message, response);
   };
 }
