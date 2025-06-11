@@ -28,8 +28,10 @@
   "devDependencies": {
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
+    "@universal-middleware/h3": "workspace:^",
     "@universal-middleware/hono": "workspace:^",
     "@universal-middleware/tests": "workspace:*",
+    "h3": "^1.15.3",
     "hono": "^4.7.11",
     "rimraf": "catalog:",
     "tsup": "catalog:",
@@ -40,9 +42,13 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@universal-middleware/h3": "workspace:^",
     "@universal-middleware/hono": "workspace:^"
   },
   "peerDependenciesMeta": {
+    "@universal-middleware/h3": {
+      "optional": true
+    },
     "@universal-middleware/hono": {
       "optional": true
     }

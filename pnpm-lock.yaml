@@ -549,12 +549,18 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 20.19.0
+      '@universal-middleware/h3':
+        specifier: link:../adapter-h3
+        version: link:../adapter-h3
       '@universal-middleware/hono':
         specifier: link:../adapter-hono
         version: link:../adapter-hono
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
+      h3:
+        specifier: ^1.15.3
+        version: 1.15.3
       hono:
         specifier: ^4.7.11
         version: 4.7.11
