@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@swc/core": "catalog:",
-    "@types/bun": "^1.2.15",
+    "@types/bun": "^1.2.16",
     "@types/node": "catalog:",
     "@universal-middleware/core": "workspace:^",
     "@universal-middleware/express": "workspace:^",
