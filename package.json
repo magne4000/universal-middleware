@@ -16,10 +16,10 @@
   "author": "",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@changesets/cli": "^2.29.4",
+    "@changesets/cli": "^2.29.5",
     "@types/node": "catalog:",
     "file-type": "^21.0.0",
-    "playwright": "^1.53.0",
+    "playwright": "^1.53.1",
     "release-please": "^17.1.0",
     "turbo": "^2.5.4",
     "typescript": "catalog:"
