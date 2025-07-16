@@ -19,9 +19,9 @@
     "@changesets/cli": "^2.29.5",
     "@types/node": "catalog:",
     "file-type": "^21.0.0",
-    "playwright": "^1.53.2",
+    "playwright": "^1.54.1",
     "release-please": "^17.1.1",
-    "turbo": "^2.5.4",
+    "turbo": "^2.5.5",
     "typescript": "catalog:"
   },
   "engines": {
@@ -42,7 +42,7 @@
       "@vercel/node>ts-node": "^10.9.2",
       "@vercel/node>typescript": "catalog:",
       "@webroute/middleware": "^0.10.0",
-      "esbuild": "^0.25.5",
+      "esbuild": "^0.25.6",
       "universal-middleware": "link:./packages/universal-middleware"
     }
   },

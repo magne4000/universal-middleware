@@ -56,11 +56,11 @@
     "hono": "catalog:",
     "mri": "^1.2.0",
     "npm-run-all2": "^8.0.4",
-    "playwright": "^1.53.2",
+    "playwright": "^1.54.1",
     "rimraf": "catalog:",
     "tsup": "^8.5.0",
     "typescript": "catalog:",
-    "vercel": "^44.2.12",
+    "vercel": "^44.4.3",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
