@@ -164,7 +164,7 @@ function filterInput(input: string, importer?: string | undefined) {
 }
 
 function normalizeInput(
-  input: undefined | string | string[] | Record<string, string> | { in: string; out: string }[],
+  input: undefined | string | Record<string, string> | (string | { in: string; out: string })[],
   options?: Options,
 ) {
   const keys = new Set<string>();
