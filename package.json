@@ -42,7 +42,7 @@
       "@vercel/node>ts-node": "^10.9.2",
       "@vercel/node>typescript": "catalog:",
       "@webroute/middleware": "^0.10.0",
-      "esbuild": "^0.25.6",
+      "esbuild": "^0.25.8",
       "universal-middleware": "link:./packages/universal-middleware"
     }
   },
