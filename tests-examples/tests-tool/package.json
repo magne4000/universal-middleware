@@ -60,7 +60,7 @@
     "rimraf": "catalog:",
     "tsup": "^8.5.0",
     "typescript": "catalog:",
-    "vercel": "^44.4.3",
+    "vercel": "^44.5.0",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
