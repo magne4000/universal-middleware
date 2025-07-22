@@ -39,7 +39,6 @@
       "@universal-middleware/hono": "link:./packages/adapter-hono",
       "@universal-middleware/vercel": "link:./packages/adapter-vercel",
       "@universal-middleware/webroute": "link:./packages/adapter-webroute",
-      "@vercel/node>ts-node": "^10.9.2",
       "@vercel/node>typescript": "catalog:",
       "@webroute/middleware": "^0.10.0",
       "esbuild": "^0.25.8",

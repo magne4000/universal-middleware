@@ -1,5 +1,6 @@
 export const universalSymbol = Symbol.for("universal");
 export const unboundSymbol = Symbol.for("unbound");
+export const contextSymbol = Symbol.for("unContext");
 export const pathSymbol = Symbol.for("unPath");
 export const methodSymbol = Symbol.for("unMethod");
 export const orderSymbol = Symbol.for("unOrder");
@@ -14,6 +15,7 @@ export const optionsToSymbols = {
   method: methodSymbol,
   path: pathSymbol,
   order: orderSymbol,
+  context: contextSymbol,
 } as const;
 
 /**

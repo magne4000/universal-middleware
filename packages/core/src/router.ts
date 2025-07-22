@@ -1,11 +1,17 @@
 import { addRoute, createRouter, findRoute, type RouterContext } from "rou3";
-import { methodSymbol, nameSymbol, pathSymbol, universalSymbol } from "./const";
+import { contextSymbol, methodSymbol, nameSymbol, pathSymbol, universalSymbol } from "./const";
 import { pipe } from "./pipe";
-import type { EnhancedMiddleware, UniversalHandler, UniversalMiddleware, UniversalRouterInterface } from "./types";
+import type {
+  Enhance,
+  EnhancedMiddleware,
+  UniversalHandler,
+  UniversalMiddleware,
+  UniversalRouterInterface,
+} from "./types";
 import { getUniversal, getUniversalProp, isHandler, ordered, url } from "./utils";
 
 export class UniversalRouter implements UniversalRouterInterface {
-  public router: RouterContext<UniversalHandler>;
+  public router: RouterContext<Enhance<UniversalHandler>>;
   #middlewares: EnhancedMiddleware[];
   #pipeMiddlewaresInUniversalRoute: boolean;
   #handle404: boolean;
@@ -56,6 +62,10 @@ export class UniversalRouter implements UniversalRouterInterface {
       const router = findRoute(this.router, request.method, url(request).pathname);
 
       if (router) {
+        const routerCtx = getUniversalProp(router.data, contextSymbol);
+        if (routerCtx) {
+          Object.assign(ctx, routerCtx);
+        }
         const handler =
           this.#pipeMiddlewaresInUniversalRoute && this.#middlewares.length > 0
             ? // biome-ignore lint/suspicious/noExplicitAny: <explanation>

@@ -75,7 +75,6 @@ overrides:
   '@universal-middleware/hono': link:./packages/adapter-hono
   '@universal-middleware/vercel': link:./packages/adapter-vercel
   '@universal-middleware/webroute': link:./packages/adapter-webroute
-  '@vercel/node>ts-node': ^10.9.2
   '@vercel/node>typescript': ^5.8.3
   '@webroute/middleware': ^0.10.0
   esbuild: ^0.25.8
@@ -5090,8 +5089,8 @@ packages:
   ts-morph@12.0.0:
     resolution: {integrity: sha512-VHC8XgU2fFW7yO1f/b3mxKDje1vmyzFXHWzOYmKEkCEwcLjDtbdLgBQviqj4ZwP4MJkQtRo6Ha2I29lq/B+VxA==}
 
-  ts-node@10.9.2:
-    resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
+  ts-node@10.9.1:
+    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
       '@swc/core': '>=1.2.50'
@@ -7154,7 +7153,7 @@ snapshots:
       path-to-regexp: 6.1.0
       path-to-regexp-updated: path-to-regexp@6.3.0
       ts-morph: 12.0.0
-      ts-node: 10.9.2(@swc/core@1.13.1)(@types/node@16.18.11)(typescript@5.8.3)
+      ts-node: 10.9.1(@swc/core@1.13.1)(@types/node@16.18.11)(typescript@5.8.3)
       typescript: 5.8.3
       undici: 5.28.4
     transitivePeerDependencies:
@@ -10059,7 +10058,7 @@ snapshots:
       '@ts-morph/common': 0.11.1
       code-block-writer: 10.1.1
 
-  ts-node@10.9.2(@swc/core@1.13.1)(@types/node@16.18.11)(typescript@5.8.3):
+  ts-node@10.9.1(@swc/core@1.13.1)(@types/node@16.18.11)(typescript@5.8.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
