@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.19
+
+### Patch Changes
+
+- f0ea4c3: feat: declare static context through enhance
+- Updated dependencies [f0ea4c3]
+  - @universal-middleware/core@0.4.9
+  - @universal-middleware/express@0.4.18
+  - @universal-middleware/h3@0.4.12
+
 ## 0.4.18
 
 ### Patch Changes
