@@ -9,7 +9,6 @@
   "updateInternalDependencies": "patch",
   "ignore": [
     "@universal-middleware-tests/tool",
-    "@universal-middleware/tests",
     "@universal-middleware-examples/tool"
   ]
 }
