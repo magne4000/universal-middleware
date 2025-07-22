@@ -19,6 +19,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -46,6 +47,7 @@ jobs:
           path: docs/.vitepress/dist
 
   deploy:
+    if: github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
