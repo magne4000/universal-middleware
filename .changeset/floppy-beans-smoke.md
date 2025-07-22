@@ -1,7 +1,6 @@
 ---
 "@universal-middleware/cloudflare": patch
 "@universal-middleware/webroute": patch
-"@universal-middleware-tests/tool": patch
 "@universal-middleware/vercel": patch
 "@universal-middleware/tests": patch
 "@universal-middleware/core": patch
