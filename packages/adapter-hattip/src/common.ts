@@ -7,9 +7,7 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
-
-export const contextSymbol = Symbol.for("unContext");
+import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 
 declare module "@hattip/core" {
   interface AdapterRequestContext {

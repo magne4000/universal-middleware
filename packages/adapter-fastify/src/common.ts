@@ -1,24 +1,23 @@
 import type { IncomingMessage } from "node:http";
-import type {
-  Get,
-  RuntimeAdapter,
-  UniversalFn,
-  UniversalHandler,
-  UniversalMiddleware,
-} from "@universal-middleware/core";
 import {
   attachUniversal,
   bindUniversal,
+  contextSymbol,
+  type Get,
   getAdapterRuntime,
   isBodyInit,
   mergeHeadersInto,
+  type RuntimeAdapter,
+  type UniversalFn,
+  type UniversalHandler,
+  type UniversalMiddleware,
   universalSymbol,
 } from "@universal-middleware/core";
+
 import { createRequestAdapter, type DecoratedRequest } from "@universal-middleware/express";
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import fp from "fastify-plugin";
 
-export const contextSymbol = Symbol.for("unContext");
 export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
 export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
 
