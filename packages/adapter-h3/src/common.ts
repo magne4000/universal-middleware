@@ -7,6 +7,7 @@ import type {
 } from "@universal-middleware/core";
 import {
   bindUniversal,
+  contextSymbol,
   getAdapterRuntime,
   isBodyInit,
   mergeHeadersInto,
@@ -31,7 +32,6 @@ export type H3Middleware<In extends Universal.Context, Out extends Universal.Con
   EventHandler
 >;
 
-export const contextSymbol = Symbol.for("unContext");
 export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
 export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
 

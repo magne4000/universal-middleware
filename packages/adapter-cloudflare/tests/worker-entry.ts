@@ -11,10 +11,6 @@ import {
 } from "@universal-middleware/tests/utils";
 import { apply, type CloudflareHandler, createHandler } from "../src/index.js";
 
-const routeParamHandlerInstance = routeParamHandler({
-  route: "/user/:name",
-});
-
 let catchAllHandler: CloudflareHandler<Universal.Context>;
 
 // Defined through --define cli option

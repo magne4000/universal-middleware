@@ -7,14 +7,15 @@ import type { Context as ElysiaContext } from "elysia";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { H3Event } from "h3";
 import type { Context as HonoContext } from "hono";
-import type {
-  methodSymbol,
-  MiddlewareOrder,
-  nameSymbol,
-  optionsToSymbols,
-  orderSymbol,
-  pathSymbol,
-  universalSymbol,
+import {
+  contextSymbol,
+  type methodSymbol,
+  type MiddlewareOrder,
+  type nameSymbol,
+  type optionsToSymbols,
+  type orderSymbol,
+  type pathSymbol,
+  type universalSymbol,
 } from "./const"; // Helpers
 
 // Helpers
@@ -251,6 +252,7 @@ export interface UniversalSymbols {
   [methodSymbol]: HttpMethod | HttpMethod[];
   [pathSymbol]: string;
   [orderSymbol]: MiddlewareOrder | number;
+  [contextSymbol]?: Universal.Context | undefined;
 }
 
 type OptionsToSymbols = typeof optionsToSymbols;

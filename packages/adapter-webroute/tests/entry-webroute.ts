@@ -23,9 +23,7 @@ const router = createRadixRouter([
   Route.normalise(
     route("/")
       .method("get")
-      // `createMiddleware(m1)()` or `m1()` are roughly equivalent is some cases (if not using the context or runtime).
-      // Usually prefer wrapping in `createMiddleware` for better compatibility
-      .use(middlewares.contextSync)
+      .use(createMiddleware(() => middlewares.contextSync)())
       .use(createMiddleware(() => middlewares.updateHeaders)())
       .use(createMiddleware(() => middlewares.contextAsync)())
       .handle(createHandler(handler)()),
@@ -34,8 +32,8 @@ const router = createRadixRouter([
   Route.normalise(
     route("/guarded")
       .method("get")
-      .use(middlewares.guard)
-      .use(middlewares.contextSync)
+      .use(createMiddleware(() => middlewares.guard)())
+      .use(createMiddleware(() => middlewares.contextSync)())
       .use(createMiddleware(() => middlewares.updateHeaders)())
       .use(createMiddleware(() => middlewares.contextAsync)())
       .handle(createHandler(guarded)()),
@@ -44,8 +42,8 @@ const router = createRadixRouter([
   Route.normalise(
     route("/throw-early")
       .method("get")
-      .use(middlewares.throwEarly)
-      .use(middlewares.contextSync)
+      .use(createMiddleware(() => middlewares.throwEarly)())
+      .use(createMiddleware(() => middlewares.contextSync)())
       .use(createMiddleware(() => middlewares.updateHeaders)())
       .use(createMiddleware(() => middlewares.contextAsync)())
       .handle(createHandler(throwEarlyHandler)()),
@@ -54,8 +52,8 @@ const router = createRadixRouter([
   Route.normalise(
     route("/throw-late")
       .method("get")
-      .use(middlewares.throwLate)
-      .use(middlewares.contextSync)
+      .use(createMiddleware(() => middlewares.throwLate)())
+      .use(createMiddleware(() => middlewares.contextSync)())
       .use(createMiddleware(() => middlewares.updateHeaders)())
       .use(createMiddleware(() => middlewares.contextAsync)())
       .handle(createHandler(throwLateHandler)()),
@@ -64,9 +62,9 @@ const router = createRadixRouter([
   Route.normalise(
     route("/throw-early-and-late")
       .method("get")
-      .use(middlewares.throwEarly)
-      .use(middlewares.throwLate)
-      .use(middlewares.contextSync)
+      .use(createMiddleware(() => middlewares.throwEarly)())
+      .use(createMiddleware(() => middlewares.throwLate)())
+      .use(createMiddleware(() => middlewares.contextSync)())
       .use(createMiddleware(() => middlewares.updateHeaders)())
       .use(createMiddleware(() => middlewares.contextAsync)())
       .handle(createHandler(throwEarlyAndLateHandler)()),
