@@ -41,6 +41,9 @@ declare global {
   }
 }
 
+// Avoid memory leaks https://github.com/nodejs/node/issues/46347#issuecomment-2691817696
+const fetchDefault = { window: null, redirect: "error" } as const;
+
 export function runTests(runs: Run[], options: Options) {
   const { vitest, test, testPost, prefix, ...testOptions } = options;
   if (typeof testOptions.concurrent !== "boolean") {
@@ -81,9 +84,9 @@ export function runTests(runs: Run[], options: Options) {
 
         retry(40, process.env.CI ? 500 : 250, async () => {
           try {
-            await fetch(host);
+            await fetch(host, fetchDefault);
           } catch {
-            await fetch(`http://127.0.0.1:${port}`);
+            await fetch(`http://127.0.0.1:${port}`, fetchDefault);
             host = `http://127.0.0.1:${port}`;
           }
         })
@@ -106,7 +109,7 @@ export function runTests(runs: Run[], options: Options) {
     }, 30_000);
 
     vitest.test("middlewares", { retry: 3, timeout: 30_000 }, async () => {
-      const response = await fetch(`${host}${prefix ?? ""}`);
+      const response = await fetch(`${host}${prefix ?? ""}`, fetchDefault);
       const body = JSON.parse(await response.text());
       vitest.expect(response.status).toBe(200);
       const expectedBody = {
@@ -130,28 +133,28 @@ export function runTests(runs: Run[], options: Options) {
     });
 
     vitest.test("guarded route", { retry: 3, timeout: 30_000 }, async () => {
-      const response = await fetch(`${host}${prefix ?? ""}/guarded`);
+      const response = await fetch(`${host}${prefix ?? ""}/guarded`, fetchDefault);
       const body = await response.text();
       vitest.expect(response.status).toBe(401);
       vitest.expect(body).toBe("Unauthorized");
     });
 
     vitest.test("throw early route", { retry: 3, timeout: 30_000 }, async () => {
-      const response = await fetch(`${host}${prefix ?? ""}/throw-early`);
+      const response = await fetch(`${host}${prefix ?? ""}/throw-early`, fetchDefault);
       const body = await response.text();
       vitest.expect(response.status).toBe(500);
       vitest.expect(body).toContain(run?.tests?.throwEarly?.expectedBody ?? "universal-middleware throw early test");
     });
 
     vitest.test("throw late route", { retry: 3, timeout: 30_000 }, async () => {
-      const response = await fetch(`${host}${prefix ?? ""}/throw-late`);
+      const response = await fetch(`${host}${prefix ?? ""}/throw-late`, fetchDefault);
       const body = await response.text();
       vitest.expect(response.status).toBe(500);
       vitest.expect(body).toContain(run?.tests?.throwLate?.expectedBody ?? "universal-middleware throw late test");
     });
 
     vitest.test("throw early and late route", { retry: 3, timeout: 30_000 }, async () => {
-      const response = await fetch(`${host}${prefix ?? ""}/throw-early-and-late`);
+      const response = await fetch(`${host}${prefix ?? ""}/throw-early-and-late`, fetchDefault);
       const body = await response.text();
       vitest.expect(response.status).toBe(500);
       vitest
@@ -160,14 +163,14 @@ export function runTests(runs: Run[], options: Options) {
     });
 
     vitest.test("route param handler", { retry: 3, timeout: 30_000 }, async () => {
-      const response = await fetch(`${host}${prefix ?? ""}/user/magne4000`);
+      const response = await fetch(`${host}${prefix ?? ""}/user/magne4000`, fetchDefault);
       const body = await response.text();
       vitest.expect(response.status).toBe(200);
       vitest.expect(body).toBe("User name is: magne4000");
     });
 
     vitest.test("404", { retry: 3, timeout: 30_000 }, async () => {
-      const response = await fetch(`${host}${prefix ?? ""}/404`);
+      const response = await fetch(`${host}${prefix ?? ""}/404`, fetchDefault);
       vitest.expect(response.status).toBe(404);
     });
 
@@ -176,6 +179,7 @@ export function runTests(runs: Run[], options: Options) {
         const response = await fetch(`${host}${prefix ?? ""}/post`, {
           method: "POST",
           body: JSON.stringify({ something: true }),
+          ...fetchDefault,
         });
         const body = JSON.parse(await response.text());
         vitest.expect(response.status).toBe(200);

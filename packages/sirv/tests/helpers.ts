@@ -24,6 +24,8 @@ export function http(opts: ServeOptions = {}) {
       const uri = new URL(path, address);
       return fetch(uri, {
         method,
+        window: null,
+        redirect: "error",
         ...opts,
       });
     },

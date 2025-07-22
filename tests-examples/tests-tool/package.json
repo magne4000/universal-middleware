@@ -1,6 +1,5 @@
 {
   "name": "@universal-middleware-tests/tool",
-  "version": "0.0.0",
   "private": true,
   "type": "module",
   "author": "Joël Charles <joel.charles91@gmail.com>",

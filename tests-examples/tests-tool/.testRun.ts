@@ -26,7 +26,7 @@ export function testRun(
   });
 
   test("/", async () => {
-    const response = await fetch(`${getServerUrl()}${options?.prefix ?? ""}/`);
+    const response = await fetch(`${getServerUrl()}${options?.prefix ?? ""}/`, { window: null, redirect: "error" });
 
     const content = await response.text();
 
@@ -41,7 +41,10 @@ export function testRun(
   });
 
   test("/user/:name", async () => {
-    const response = await fetch(`${getServerUrl()}${options?.prefix ?? ""}/user/magne4000`);
+    const response = await fetch(`${getServerUrl()}${options?.prefix ?? ""}/user/magne4000`, {
+      window: null,
+      redirect: "error",
+    });
 
     const content = await response.text();
 
@@ -57,7 +60,10 @@ export function testRun(
 
   if (!options?.noMiddleware && !options?.noCompression) {
     test("/big-file", async () => {
-      const response = await fetch(`${getServerUrl()}${options?.prefix ?? ""}/big-file`);
+      const response = await fetch(`${getServerUrl()}${options?.prefix ?? ""}/big-file`, {
+        window: null,
+        redirect: "error",
+      });
 
       expect(response.headers.get("content-encoding")).toMatch(/gzip|deflate/);
       const content = await response.text();
