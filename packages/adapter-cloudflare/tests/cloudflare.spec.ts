@@ -17,6 +17,7 @@ const runs: Run[] = [
     port: port + 1,
     command: `pnpm run test:run-cloudflare:worker --define TEST_CASE:'"simple"' --inspector-port ${port + 10000 + 1}`,
     waitUntilType: "function",
+    staticContext: true,
     delay,
   },
   {
@@ -24,6 +25,7 @@ const runs: Run[] = [
     port: port + 2,
     command: `pnpm run test:run-cloudflare:worker --define TEST_CASE:'"router"' --inspector-port ${port + 10000 + 2}`,
     waitUntilType: "function",
+    staticContext: true,
     delay,
   },
   {
@@ -31,6 +33,7 @@ const runs: Run[] = [
     port: port + 3,
     command: `pnpm run test:run-cloudflare:worker --define TEST_CASE:'"router_enhanced"' --inspector-port ${port + 10000 + 3}`,
     waitUntilType: "function",
+    staticContext: true,
     delay,
   },
 ];

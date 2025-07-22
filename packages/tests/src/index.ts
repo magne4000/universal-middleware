@@ -11,6 +11,7 @@ export interface Run {
   waitUntilType?: "undefined" | "function";
   delay?: number;
   env?: Record<string, string>;
+  staticContext?: boolean;
   tests?: {
     throwLate?: {
       expectedBody?: string;
@@ -45,6 +46,10 @@ export function runTests(runs: Run[], options: Options) {
   vitest.describe.concurrent.each(runs)("$name", testOptions, (run) => {
     let server: ChildProcess | undefined = undefined;
     const { command, port, delay, env, portOption } = run;
+    const staticContext =
+      typeof run.staticContext === "boolean"
+        ? run.staticContext
+        : env?.TEST_CASE === "router" || env?.TEST_CASE === "router_enhanced";
     let host = `http://localhost:${port}`;
 
     vitest.beforeAll(async () => {
@@ -101,7 +106,7 @@ export function runTests(runs: Run[], options: Options) {
       const response = await fetch(`${host}${prefix ?? ""}`);
       const body = JSON.parse(await response.text());
       vitest.expect(response.status).toBe(200);
-      vitest.expect(body).toEqual({
+      const expectedBody = {
         long: "a".repeat(1024),
         something: {
           a: 1,
@@ -110,7 +115,11 @@ export function runTests(runs: Run[], options: Options) {
           b: 2,
         },
         waitUntil: run.waitUntilType ?? "undefined",
-      });
+      };
+      if (staticContext) {
+        Object.assign(expectedBody, { staticContext: "staticContext" });
+      }
+      vitest.expect(body).toEqual(expectedBody);
       vitest.expect(response.headers.get("x-test-value")).toBe("universal-middleware");
       vitest.expect(response.headers.has("x-should-be-removed")).toBe(false);
       vitest.expect(response.headers.get("content-type")).toBe("application/json; charset=utf-8");

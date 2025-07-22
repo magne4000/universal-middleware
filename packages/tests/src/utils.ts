@@ -10,8 +10,9 @@ import {
 } from "@universal-middleware/core";
 
 export const middlewares = {
-  contextSync() {
+  contextSync(_, context) {
     return {
+      ...context,
       something: {
         a: 1,
         c: 3,
@@ -32,6 +33,7 @@ export const middlewares = {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     return {
+      ...context,
       something: {
         a: (context.something as Record<string, unknown>)?.a,
       },
@@ -99,6 +101,7 @@ export const handler: Get<[], UniversalHandler> = () =>
     {
       path: "/",
       method: "GET",
+      context: { staticContext: "staticContext" },
     },
   );
 
