@@ -43,7 +43,10 @@ declare global {
 
 export function runTests(runs: Run[], options: Options) {
   const { vitest, test, testPost, prefix, ...testOptions } = options;
-  vitest.describe.concurrent.each(runs)("$name", testOptions, (run) => {
+  if (typeof testOptions.concurrent !== "boolean") {
+    testOptions.concurrent = true;
+  }
+  vitest.describe.each(runs)("$name", testOptions, (run) => {
     let server: ChildProcess | undefined = undefined;
     const { command, port, delay, env, portOption } = run;
     const staticContext =
