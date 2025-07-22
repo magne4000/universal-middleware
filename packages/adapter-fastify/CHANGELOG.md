@@ -1,5 +1,14 @@
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.2...fastify-v0.4.3) (2024-12-09)
 
+## 0.5.20
+
+### Patch Changes
+
+- f0ea4c3: feat: declare static context through enhance
+- Updated dependencies [f0ea4c3]
+  - @universal-middleware/core@0.4.9
+  - @universal-middleware/express@0.4.18
+
 ## 0.5.19
 
 ### Patch Changes

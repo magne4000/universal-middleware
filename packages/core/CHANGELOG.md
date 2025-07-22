@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/core-v0.3.2...core-v0.3.3) (2024-12-09)
 
+## 0.4.9
+
+### Patch Changes
+
+- f0ea4c3: feat: declare static context through enhance
+
 ## 0.4.8
 
 ### Patch Changes
