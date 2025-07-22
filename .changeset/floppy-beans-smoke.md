@@ -2,7 +2,6 @@
 "@universal-middleware/cloudflare": patch
 "@universal-middleware/webroute": patch
 "@universal-middleware/vercel": patch
-"@universal-middleware/tests": patch
 "@universal-middleware/core": patch
 "@universal-middleware/elysia": patch
 "@universal-middleware/express": patch
