@@ -8,6 +8,7 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
+    "universal-middleware-docs",
     "@universal-middleware-tests/tool",
     "@universal-middleware-examples/tool"
   ]
