@@ -19,7 +19,7 @@ export function testRun(
   options?: RunOptions,
 ) {
   run(`${cmd} ${options?.portCommand ?? "--port"} ${port}`, {
-    doNotFailOnWarning: true,
+    tolerateError: true,
     serverUrl: `http://localhost:${port}`,
     ...options,
     serverIsReadyMessage: options?.serverIsReadyMessage ?? "Server listening",
