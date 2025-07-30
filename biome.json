@@ -1,12 +1,13 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "ignore": [
-      "dist/",
-      "package.json",
-      ".release-please-manifest.json",
-      ".vercel/",
-      "packages/sirv/tests/public/"
+    "includes": [
+      "**",
+      "!**/dist/",
+      "!**/package.json",
+      "!**/.release-please-manifest.json",
+      "!**/.vercel/",
+      "!**/packages/sirv/tests/public/"
     ]
   },
   "formatter": {
@@ -25,10 +26,10 @@
   },
   "overrides": [
     {
-      "include": [
-        "packages/core/src/pipe.ts",
-        "packages/adapter-express/src/response.ts",
-        "packages/core/src/types.ts",
+      "includes": [
+        "**/packages/core/src/pipe.ts",
+        "**/packages/adapter-express/src/response.ts",
+        "**/packages/core/src/types.ts",
         "**/*.test.ts",
         "**/*.test-d.ts"
       ],
