@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.20
+
+### Patch Changes
+
+- 253b2f4: fix: dynamically import node:stream
+- Updated dependencies [253b2f4]
+  - @universal-middleware/express@0.4.19
+
 ## 0.4.19
 
 ### Patch Changes
