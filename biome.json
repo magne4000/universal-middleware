@@ -1,16 +1,13 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "files": {
-    "includes": [
-      "**",
-      "!**/dist/",
-      "!**/package.json",
-      "!**/.release-please-manifest.json",
-      "!**/.vercel/",
-      "!**/packages/sirv/tests/public/"
-    ]
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true
+    }
   },
   "formatter": {
+    "enabled": true,
     "indentWidth": 2,
     "indentStyle": "space"
   },
@@ -22,7 +19,16 @@
   },
   "vcs": {
     "enabled": true,
-    "clientKind": "git"
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "overrides": [
     {
