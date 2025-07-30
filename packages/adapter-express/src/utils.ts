@@ -44,9 +44,13 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: ignored
     return new Promise<Response | undefined>(async (resolve, reject) => {
       onReadable(({ readable, headers, statusCode }) => {
-        const responseBody = statusCodesWithoutBody.includes(statusCode)
+        const responseBody: ReadableStream = statusCodesWithoutBody.includes(statusCode)
           ? null
-          : (Readable.toWeb(readable) as unknown as ReadableStream);
+          : "from" in ReadableStream
+            ? // biome-ignore lint/suspicious/noExplicitAny: definition clash between Web and Node
+              (ReadableStream as any).from(readable)
+            : // biome-ignore lint/suspicious/noExplicitAny: definition clash between Web and Node
+              (Readable.toWeb(readable) as any);
         resolve(
           new Response(responseBody, {
             status: statusCode,

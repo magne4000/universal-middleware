@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { Readable } from "node:stream";
+import type { Readable } from "node:stream";
 import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
 import { nodeHeadersToWeb } from "@universal-middleware/core";
 import { type DecoratedServerResponse, pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./common.js";
@@ -19,6 +19,7 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
   } else if (typeof (fetchBody as any).pipe === "function") {
     body = fetchBody as Readable;
   } else if (typeof (fetchBody as any).pipeTo === "function") {
+    const { Readable } = await import("node:stream");
     if (!deno && Readable.fromWeb) {
       body = Readable.fromWeb(fetchBody as ReadableStreamNode);
     } else {
@@ -42,6 +43,7 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
       });
     }
   } else if (fetchBody) {
+    const { Readable } = await import("node:stream");
     body = Readable.from(fetchBody as any);
   }
 
