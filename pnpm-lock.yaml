@@ -65,20 +65,9 @@ catalogs:
       version: 4.26.0
 
 overrides:
-  '@universal-middleware/cloudflare': link:./packages/adapter-cloudflare
-  '@universal-middleware/core': link:./packages/core
-  '@universal-middleware/elysia': link:./packages/adapter-elysia
-  '@universal-middleware/express': link:./packages/adapter-express
-  '@universal-middleware/fastify': link:./packages/adapter-fastify
-  '@universal-middleware/h3': link:./packages/adapter-h3
-  '@universal-middleware/hattip': link:./packages/adapter-hattip
-  '@universal-middleware/hono': link:./packages/adapter-hono
-  '@universal-middleware/vercel': link:./packages/adapter-vercel
-  '@universal-middleware/webroute': link:./packages/adapter-webroute
   '@vercel/node>typescript': ^5.8.3
   '@webroute/middleware': ^0.10.0
   esbuild: ^0.25.8
-  universal-middleware: link:./packages/universal-middleware
 
 importers:
 
@@ -124,37 +113,37 @@ importers:
         specifier: workspace:*
         version: link:../examples/tool
       '@universal-middleware/cloudflare':
-        specifier: link:../packages/adapter-cloudflare
+        specifier: workspace:*
         version: link:../packages/adapter-cloudflare
       '@universal-middleware/compress':
         specifier: workspace:*
         version: link:../packages/compress
       '@universal-middleware/core':
-        specifier: link:../packages/core
+        specifier: workspace:*
         version: link:../packages/core
       '@universal-middleware/elysia':
-        specifier: link:../packages/adapter-elysia
+        specifier: workspace:*
         version: link:../packages/adapter-elysia
       '@universal-middleware/express':
-        specifier: link:../packages/adapter-express
+        specifier: workspace:*
         version: link:../packages/adapter-express
       '@universal-middleware/fastify':
-        specifier: link:../packages/adapter-fastify
+        specifier: workspace:*
         version: link:../packages/adapter-fastify
       '@universal-middleware/h3':
-        specifier: link:../packages/adapter-h3
+        specifier: workspace:*
         version: link:../packages/adapter-h3
       '@universal-middleware/hattip':
-        specifier: link:../packages/adapter-hattip
+        specifier: workspace:*
         version: link:../packages/adapter-hattip
       '@universal-middleware/hono':
-        specifier: link:../packages/adapter-hono
+        specifier: workspace:*
         version: link:../packages/adapter-hono
       '@universal-middleware/sirv':
         specifier: workspace:*
         version: link:../packages/sirv
       '@universal-middleware/vercel':
-        specifier: link:../packages/adapter-vercel
+        specifier: workspace:*
         version: link:../packages/adapter-vercel
       elysia:
         specifier: 'catalog:'
@@ -172,7 +161,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
       universal-middleware:
-        specifier: link:../packages/universal-middleware
+        specifier: workspace:*
         version: link:../packages/universal-middleware
       vitepress:
         specifier: ^1.6.3
@@ -190,7 +179,7 @@ importers:
         specifier: 'catalog:'
         version: 20.19.9
       '@universal-middleware/core':
-        specifier: link:../../packages/core
+        specifier: workspace:*
         version: link:../../packages/core
       elysia:
         specifier: 'catalog:'
@@ -208,13 +197,13 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
       universal-middleware:
-        specifier: link:../../packages/universal-middleware
+        specifier: workspace:^
         version: link:../../packages/universal-middleware
 
   packages/adapter-cloudflare:
     dependencies:
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
     devDependencies:
       '@cloudflare/workers-types':
@@ -254,7 +243,7 @@ importers:
   packages/adapter-elysia:
     dependencies:
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
     devDependencies:
       '@cloudflare/workers-types':
@@ -297,7 +286,7 @@ importers:
   packages/adapter-express:
     dependencies:
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
     devDependencies:
       '@swc/core':
@@ -346,10 +335,10 @@ importers:
   packages/adapter-fastify:
     dependencies:
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
       '@universal-middleware/express':
-        specifier: link:../adapter-express
+        specifier: workspace:^
         version: link:../adapter-express
       fastify-raw-body:
         specifier: ^5.0.0
@@ -395,7 +384,7 @@ importers:
   packages/adapter-h3:
     dependencies:
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
     devDependencies:
       '@swc/core':
@@ -432,7 +421,7 @@ importers:
   packages/adapter-hattip:
     dependencies:
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
     devDependencies:
       '@hattip/adapter-bun':
@@ -493,7 +482,7 @@ importers:
   packages/adapter-hono:
     dependencies:
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
     devDependencies:
       '@hono/node-server':
@@ -536,10 +525,10 @@ importers:
   packages/adapter-vercel:
     dependencies:
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
       '@universal-middleware/express':
-        specifier: link:../adapter-express
+        specifier: workspace:^
         version: link:../adapter-express
     devDependencies:
       '@hattip/core':
@@ -558,19 +547,19 @@ importers:
         specifier: 'catalog:'
         version: 20.19.9
       '@universal-middleware/elysia':
-        specifier: link:../adapter-elysia
+        specifier: workspace:^
         version: link:../adapter-elysia
       '@universal-middleware/fastify':
-        specifier: link:../adapter-fastify
+        specifier: workspace:^
         version: link:../adapter-fastify
       '@universal-middleware/h3':
-        specifier: link:../adapter-h3
+        specifier: workspace:^
         version: link:../adapter-h3
       '@universal-middleware/hattip':
-        specifier: link:../adapter-hattip
+        specifier: workspace:^
         version: link:../adapter-hattip
       '@universal-middleware/hono':
-        specifier: link:../adapter-hono
+        specifier: workspace:^
         version: link:../adapter-hono
       '@universal-middleware/tests':
         specifier: workspace:*
@@ -612,7 +601,7 @@ importers:
   packages/adapter-webroute:
     dependencies:
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
     devDependencies:
       '@hono/node-server':
@@ -670,7 +659,7 @@ importers:
         specifier: 'catalog:'
         version: 20.19.9
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
       elysia:
         specifier: 'catalog:'
@@ -691,7 +680,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
       universal-middleware:
-        specifier: link:../universal-middleware
+        specifier: workspace:^
         version: link:../universal-middleware
       vite:
         specifier: 'catalog:'
@@ -777,10 +766,10 @@ importers:
         specifier: 'catalog:'
         version: 20.19.9
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
       '@universal-middleware/express':
-        specifier: link:../adapter-express
+        specifier: workspace:^
         version: link:../adapter-express
       elysia:
         specifier: 'catalog:'
@@ -798,7 +787,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
       universal-middleware:
-        specifier: link:../universal-middleware
+        specifier: workspace:^
         version: link:../universal-middleware
       vite:
         specifier: 'catalog:'
@@ -823,7 +812,7 @@ importers:
         specifier: 'catalog:'
         version: 20.19.9
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:*
         version: link:../core
       rimraf:
         specifier: 'catalog:'
@@ -844,34 +833,34 @@ importers:
   packages/universal-middleware:
     dependencies:
       '@universal-middleware/cloudflare':
-        specifier: link:../adapter-cloudflare
+        specifier: workspace:^
         version: link:../adapter-cloudflare
       '@universal-middleware/core':
-        specifier: link:../core
+        specifier: workspace:^
         version: link:../core
       '@universal-middleware/elysia':
-        specifier: link:../adapter-elysia
+        specifier: workspace:^
         version: link:../adapter-elysia
       '@universal-middleware/express':
-        specifier: link:../adapter-express
+        specifier: workspace:^
         version: link:../adapter-express
       '@universal-middleware/fastify':
-        specifier: link:../adapter-fastify
+        specifier: workspace:^
         version: link:../adapter-fastify
       '@universal-middleware/h3':
-        specifier: link:../adapter-h3
+        specifier: workspace:^
         version: link:../adapter-h3
       '@universal-middleware/hattip':
-        specifier: link:../adapter-hattip
+        specifier: workspace:^
         version: link:../adapter-hattip
       '@universal-middleware/hono':
-        specifier: link:../adapter-hono
+        specifier: workspace:^
         version: link:../adapter-hono
       '@universal-middleware/vercel':
-        specifier: link:../adapter-vercel
+        specifier: workspace:^
         version: link:../adapter-vercel
       '@universal-middleware/webroute':
-        specifier: link:../adapter-webroute
+        specifier: workspace:^
         version: link:../adapter-webroute
       oxc-transform:
         specifier: ^0.78.0
@@ -944,40 +933,40 @@ importers:
         specifier: workspace:*
         version: link:../../examples/tool
       '@universal-middleware/cloudflare':
-        specifier: link:../../packages/adapter-cloudflare
+        specifier: workspace:*
         version: link:../../packages/adapter-cloudflare
       '@universal-middleware/compress':
         specifier: workspace:*
         version: link:../../packages/compress
       '@universal-middleware/core':
-        specifier: link:../../packages/core
+        specifier: workspace:*
         version: link:../../packages/core
       '@universal-middleware/elysia':
-        specifier: link:../../packages/adapter-elysia
+        specifier: workspace:*
         version: link:../../packages/adapter-elysia
       '@universal-middleware/express':
-        specifier: link:../../packages/adapter-express
+        specifier: workspace:*
         version: link:../../packages/adapter-express
       '@universal-middleware/fastify':
-        specifier: link:../../packages/adapter-fastify
+        specifier: workspace:*
         version: link:../../packages/adapter-fastify
       '@universal-middleware/h3':
-        specifier: link:../../packages/adapter-h3
+        specifier: workspace:*
         version: link:../../packages/adapter-h3
       '@universal-middleware/hattip':
-        specifier: link:../../packages/adapter-hattip
+        specifier: workspace:*
         version: link:../../packages/adapter-hattip
       '@universal-middleware/hono':
-        specifier: link:../../packages/adapter-hono
+        specifier: workspace:*
         version: link:../../packages/adapter-hono
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../../packages/tests
       '@universal-middleware/vercel':
-        specifier: link:../../packages/adapter-vercel
+        specifier: workspace:*
         version: link:../../packages/adapter-vercel
       '@universal-middleware/webroute':
-        specifier: link:../../packages/adapter-webroute
+        specifier: workspace:*
         version: link:../../packages/adapter-webroute
       elysia:
         specifier: 'catalog:'
