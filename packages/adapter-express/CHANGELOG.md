@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.4.19
+
+### Patch Changes
+
+- 253b2f4: fix: dynamically import node:stream
+
 ## 0.4.18
 
 ### Patch Changes
