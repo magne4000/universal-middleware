@@ -1,7 +1,7 @@
-import { expect, fetch, getServerUrl, run, test } from "@brillout/test-e2e";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { expect, getServerUrl, run, test } from "@brillout/test-e2e";
 
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 
