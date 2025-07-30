@@ -234,7 +234,7 @@ export type UniversalMiddleware<
   request: Request,
   context: InContext,
   runtime: RuntimeAdapterTarget<Target>,
-  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+  // biome-ignore lint/suspicious/noConfusingVoidType: ignored
 ) => Awaitable<Response | OutContext | ((response: Response) => Awaitable<Response | undefined>) | void | undefined>;
 
 export type UniversalHandler<InContext extends Universal.Context = Universal.Context, Target = unknown> = (

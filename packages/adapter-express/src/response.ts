@@ -198,7 +198,7 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse, next?: (err?
     }
     const middlewares = nodeResponse[pendingMiddlewaresSymbol];
     delete nodeResponse[pendingMiddlewaresSymbol];
-    let response: Response | undefined = undefined;
+    let response: Response | undefined;
     try {
       response = responseAdapter(nodeResponse, reader1);
       for (const middleware of middlewares) {
@@ -268,7 +268,6 @@ function setHeaders(fetchResponse: Response, nodeResponse: ServerResponse, mirro
 
   if (mirror) {
     // delete remaining node headers
-    // biome-ignore lint/complexity/noForEach: <explanation>
     nodeResponseHeaders.forEach((key) => nodeResponse.removeHeader(key));
   }
 }

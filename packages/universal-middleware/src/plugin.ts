@@ -549,7 +549,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
         let mapping = genBundleInfo(normalizedInput, (cleanV) => {
           const found = outputs.find(([, value]) => {
             if (value.type === "chunk" && value.isEntry) {
-              // biome-ignore lint/style/noNonNullAssertion: <explanation>
+              // biome-ignore lint/style/noNonNullAssertion: ignored
               const cleanEntry = value.facadeModuleId!;
               return (
                 posix.relative(cleanEntry, cleanV) === "" || posix.relative(cleanEntry, `${namespace}:${cleanV}`) === ""

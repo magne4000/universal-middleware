@@ -81,7 +81,7 @@ function getHeaders(reply: FastifyReply): Headers {
         ret.set(key, value[0]);
       } else if (value.length > 1) {
         console.warn(`Header "${key}" should not be an array. Only last value will be sent`);
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+        // biome-ignore lint/style/noNonNullAssertion: ignored
         ret.set(key, value.at(-1)!);
       }
     }
@@ -204,7 +204,6 @@ export function createMiddleware<
           if (payload instanceof Response) {
             mergeHeadersInto(payload.headers, getHeaders(reply));
           } else if (isBodyInit(payload)) {
-            // biome-ignore lint/style/noParameterAssign: <explanation>
             payload = new Response(payload, {
               headers: new Headers(getHeaders(reply)),
               status: reply.statusCode,

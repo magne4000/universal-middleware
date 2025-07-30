@@ -108,7 +108,7 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
  * @returns A new middleware function that applies the input middleware functions in sequence.
  */
 export function pipe<F extends AnyMiddleware[]>(
-  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+  // biome-ignore lint/suspicious/noConfusingVoidType: ignored
   this: { noCast?: boolean } | void,
   ...a: Pipe<F> extends F ? F : Pipe<F>
 ): ComposeReturnType<F> {
@@ -116,7 +116,7 @@ export function pipe<F extends AnyMiddleware[]>(
   const fn: UniversalMiddleware<any, any> = async function pipeInternal(request, context, runtime) {
     const pending: ((response: Response) => Awaitable<Response | undefined>)[] = [];
 
-    let _response: Response | undefined = undefined;
+    let _response: Response | undefined;
     for (const m of ordererArgs) {
       // only execute a handler if we still have no response
       if (isHandler(m) && _response) {
@@ -137,7 +137,6 @@ export function pipe<F extends AnyMiddleware[]>(
           }
         } else {
           // Update context
-          // biome-ignore lint/style/noParameterAssign: <explanation>
           context = response;
         }
       }

@@ -10,7 +10,7 @@ import {
 import type { Hono } from "hono";
 import { createHandler, createMiddleware } from "./common";
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: ignored
 export type App = Hono<any, any, any>;
 
 export class UniversalHonoRouter extends UniversalRouter implements UniversalRouterInterface {

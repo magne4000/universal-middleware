@@ -150,7 +150,7 @@ export function createMiddleware<
             );
           }
           // Deno fix
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          // biome-ignore lint/suspicious/noExplicitAny: ignored
           if (req.complete === undefined) req.complete = (req as any)._readableState?.ended ?? true;
           wrapResponse(res, next);
           res[pendingMiddlewaresSymbol] ??= [];

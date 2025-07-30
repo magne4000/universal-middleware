@@ -1,7 +1,7 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import mri from "mri";
-import { kill, retry } from "zx";
 import type { TestOptions } from "vitest";
+import { kill, retry } from "zx";
 
 export interface Run {
   name: string;
@@ -50,7 +50,7 @@ export function runTests(runs: Run[], options: Options) {
     testOptions.concurrent = true;
   }
   vitest.describe.each(runs)("$name", testOptions, (run) => {
-    let server: ChildProcess | undefined = undefined;
+    let server: ChildProcess | undefined;
     const { command, port, delay, env, portOption } = run;
     const staticContext =
       typeof run.staticContext === "boolean"
@@ -192,7 +192,7 @@ export function runTests(runs: Run[], options: Options) {
 }
 
 export const args = mri<{ port: string }>(
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: ignored
   (globalThis as any).Deno?.args ?? globalThis.process.argv.slice(2),
 );
 

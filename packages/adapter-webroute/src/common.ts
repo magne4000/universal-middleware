@@ -11,7 +11,7 @@ import type { RequestCtx } from "@webroute/route";
 
 export type WebrouteHandler<
   InContext extends object,
-  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+  // biome-ignore lint/suspicious/noConfusingVoidType: ignored
   TResult extends DataResult | void = void,
   TParams = unknown,
   TQuery = unknown,
@@ -27,7 +27,7 @@ export type WebrouteHandler<
 export type WebrouteMiddleware<
   InContext extends object,
   OutContext extends object,
-  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+  // biome-ignore lint/suspicious/noConfusingVoidType: ignored
   TResult extends DataResult | void = void,
   TParams = unknown,
   TQuery = unknown,
@@ -40,15 +40,15 @@ export type WebrouteMiddleware<
   MiddlewareFn<TResult, [ctx: RequestCtx<TParams, TQuery, TBody, THeaders, TState, TProviders>]>
 >;
 
-// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+// biome-ignore lint/suspicious/noConfusingVoidType: ignored
 type ExtractVoid<T, U> = T extends U ? T : void;
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: ignored
 type MiddlewareFactoryReturnType<T extends (...args: any) => any> =
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: ignored
   ReturnType<T> extends UniversalMiddleware<any, any> ? Awaited<ReturnType<ReturnType<T>>> : never;
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: ignored
 export type MiddlewareFactoryDataResult<T extends (...args: any) => any> = ExtractVoid<
   MiddlewareFactoryReturnType<T>,
   DataResult

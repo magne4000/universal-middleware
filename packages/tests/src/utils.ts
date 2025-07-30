@@ -111,7 +111,7 @@ interface RouteParamOption {
 
 export const routeParamHandler = ((options?) =>
   enhance(
-    (request, context, runtime) => {
+    (request, _context, runtime) => {
       const myParams = params(request, runtime, options?.route);
 
       if (myParams === null || !myParams.name) {

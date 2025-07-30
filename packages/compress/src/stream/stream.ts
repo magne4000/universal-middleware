@@ -27,7 +27,7 @@ export function compressStream(
 
   const transformStream = new TransformStream({
     start(controller) {
-      compressor.ondata = (chunk, final) => {
+      compressor.ondata = (chunk, _final) => {
         try {
           if (!cancelled) {
             controller.enqueue(chunk);

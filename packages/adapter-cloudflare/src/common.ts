@@ -97,7 +97,7 @@ export function createPagesFunction<
           return response as unknown as CloudflareResponse;
         }
         // Update context
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        // biome-ignore lint/suspicious/noExplicitAny: ignored
         setContext(context.env, response as any);
         return await context.next();
       }

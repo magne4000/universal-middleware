@@ -9,7 +9,7 @@ const knownUserAgents: Partial<Record<Runtime["runtime"], string>> = {
 };
 
 const _getRuntimeKey = (): Runtime["runtime"] => {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: ignored
   const global = globalThis as any;
 
   // check if the current runtime supports navigator.userAgent
@@ -44,7 +44,7 @@ const _getRuntimeKey = (): Runtime["runtime"] => {
 };
 
 // Cache runtimekey computation
-let runtimeKey: Runtime["runtime"] | undefined = undefined;
+let runtimeKey: Runtime["runtime"] | undefined;
 export const getRuntimeKey = (): Runtime["runtime"] => {
   if (runtimeKey === undefined) {
     runtimeKey = _getRuntimeKey();

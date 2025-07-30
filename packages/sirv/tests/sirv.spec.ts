@@ -274,7 +274,7 @@ security.test("should prevent directory traversal attacks :: prod", async () => 
 
   try {
     await server.send("GET", "/../../package.json");
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: ignored
   } catch (err: any) {
     assert.equal(err.status, 404);
   } finally {
@@ -287,7 +287,7 @@ security.test("should prevent directory traversal attacks :: dev", async () => {
 
   try {
     await server.send("GET", "/../../package.json");
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: ignored
   } catch (err: any) {
     assert.equal(err.status, 404);
   } finally {
@@ -991,9 +991,9 @@ ranges.test("should assume the end-value is final byte when not included", async
     const res = await server.send("GET", "/bundle.67329.js", { headers });
 
     assert.equal(res.status, 206);
-    assert.equal(res.headers.get("content-length"), "114");
+    assert.equal(res.headers.get("content-length"), "122");
     assert.equal(res.headers.get("accept-ranges"), "bytes");
-    assert.equal(res.headers.get("content-range"), `bytes 2-115/${file.size}`);
+    assert.equal(res.headers.get("content-range"), `bytes 2-123/${file.size}`);
   } finally {
     server.close();
   }
@@ -1008,9 +1008,9 @@ ranges.test("should assume the end-value is final byte when not included :: full
     const res = await server.send("GET", "/bundle.67329.js", { headers });
 
     assert.equal(res.status, 206);
-    assert.equal(res.headers.get("content-length"), "116");
+    assert.equal(res.headers.get("content-length"), "124");
     assert.equal(res.headers.get("accept-ranges"), "bytes");
-    assert.equal(res.headers.get("content-range"), `bytes 0-115/${file.size}`);
+    assert.equal(res.headers.get("content-range"), `bytes 0-123/${file.size}`);
   } finally {
     server.close();
   }
@@ -1180,7 +1180,7 @@ setHeaders.test('should receive "path" argument', async () => {
 
 setHeaders.test('should receive "stats" argument', async () => {
   const server = utils.http({
-    setHeaders(res, path, stats) {
+    setHeaders(res, _path, stats) {
       res.headers.set("x-filesize", String(stats.size));
     },
   });

@@ -4,7 +4,7 @@
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 // This middleware will add a `X-Universal-Hello` header to all responses
-const headersMiddleware = (() => (request, ctx, runtime) => {
+const headersMiddleware = (() => (_request, ctx, _runtime) => {
   return (response) => {
     // `ctx.hello` exists if it has been set by another middleware
     response.headers.set("X-Universal-Hello", ctx.hello ?? "world");

@@ -68,7 +68,7 @@ export class UniversalRouter implements UniversalRouterInterface {
         }
         const handler =
           this.#pipeMiddlewaresInUniversalRoute && this.#middlewares.length > 0
-            ? // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            ? // biome-ignore lint/suspicious/noExplicitAny: ignored
               (noCastPipe(...(this.#middlewares as any[]), router.data) as UniversalHandler)
             : router.data;
         if (router.params) {
@@ -78,7 +78,7 @@ export class UniversalRouter implements UniversalRouterInterface {
         return handler(request, ctx, runtime);
       }
       if (this.#pipeMiddlewaresInUniversalRoute && this.#middlewares.length > 0) {
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        // biome-ignore lint/suspicious/noExplicitAny: ignored
         const middlewares = noCastPipe(...(this.#middlewares as any[])) as UniversalMiddleware;
         return middlewares(request, ctx, runtime);
       }

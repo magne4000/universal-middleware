@@ -127,7 +127,7 @@ export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
   options: O,
 ): F & WithUniversalSymbols<O> {
   const { immutable, ...rest } = options;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: ignored
   const m: any = immutable === false ? middleware : cloneFunction(middleware);
   for (const [key, value] of Object.entries(rest)) {
     if (key in optionsToSymbols) {
@@ -164,7 +164,7 @@ export function cloneFunction<F extends AnyFn>(originalFn: F): F {
  * @internal
  */
 export function bindUniversal<
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: ignored
   U extends UniversalHandler<any> | UniversalMiddleware<any, any>,
   F extends UniversalFn<U, AnyFn>,
 >(universal: U, fn: SetThis<F, { [universalSymbol]: U }>, wrapper?: AnyFn): F {
@@ -179,7 +179,7 @@ export function bindUniversal<
  * @internal
  */
 export function attachUniversal<
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: ignored
   U extends UniversalHandler<any> | UniversalMiddleware<any, any>,
   T extends {},
 >(universal: U, subject: T): T & { [universalSymbol]: U } {

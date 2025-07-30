@@ -16,7 +16,6 @@ describe("guessEncoding", () => {
     });
 
     if (typeof body === "string" || body instanceof Uint8Array) {
-      // biome-ignore lint/style/noParameterAssign: <explanation>
       options ??= {};
       options.headers ??= [];
       (options.headers as [string, string][]).push(["Content-Length", String(body.length)]);

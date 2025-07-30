@@ -51,7 +51,7 @@ test("pipe", () => {
           a: "1",
         };
       },
-      (a: Request, c: { a: string }) => new Response(c.a),
+      (_a: Request, c: { a: string }) => new Response(c.a),
     ),
   ).toEqualTypeOf<UniversalHandler>();
 

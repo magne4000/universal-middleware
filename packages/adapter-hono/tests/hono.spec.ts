@@ -65,7 +65,7 @@ const runs: Run[] = [
 
 runTests(runs, {
   vitest,
-  test(response, body, run) {
+  test(response, _body, run) {
     if (run.name !== "adapter-hono: wrangler") {
       // added by hono/secure-headers
       vitest.expect(response.headers.has("cross-origin-opener-policy")).toBe(true);

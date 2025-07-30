@@ -1,11 +1,11 @@
 import type { Stats } from "node:fs";
 import * as fs from "node:fs";
 import { join, normalize, resolve } from "node:path";
-import { totalist } from "totalist/sync";
-import { lookup } from "mrmime";
 import { Readable } from "node:stream";
 import type { UniversalMiddleware } from "@universal-middleware/core";
 import { url as getUrl } from "@universal-middleware/core";
+import { lookup } from "mrmime";
+import { totalist } from "totalist/sync";
 
 type SetHeadersFunction = (res: Response, pathname: string, stats: fs.Stats) => void;
 type OnNoMatch = (req: Request) => Response | undefined | Promise<Response | undefined>;
@@ -67,7 +67,7 @@ function viaCache(cache: Record<string, FileData>, uri: string, extns: string[])
   let data: FileData | undefined;
   const arr = toAssume(uri, extns);
   for (; i < arr.length; i++) {
-    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+    // biome-ignore lint/suspicious/noAssignInExpressions: ignored
     if ((data = cache[arr[i]])) return data;
   }
   return undefined;
@@ -81,7 +81,7 @@ function viaLocal(dir: string, isEtag: boolean, uri: string, extns: string[]): F
   let name: string;
   let headers: Record<string, string>;
   for (; i < arr.length; i++) {
-    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+    // biome-ignore lint/suspicious/noAssignInExpressions: ignored
     abs = normalize(join(dir, (name = arr[i])));
     if (abs.startsWith(dir) && fs.existsSync(abs)) {
       stats = fs.statSync(abs);
@@ -104,9 +104,9 @@ function send(req: Request, file: string, stats: fs.Stats, headers: Record<strin
   if (rangeHeader) {
     code = 206;
     const [x, y] = rangeHeader.replace("bytes=", "").split("-");
-    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+    // biome-ignore lint/suspicious/noAssignInExpressions: ignored
     let end = (opts.end = Number.parseInt(y, 10) || stats.size - 1);
-    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+    // biome-ignore lint/suspicious/noAssignInExpressions: ignored
     const start = (opts.start = Number.parseInt(x, 10) || 0);
 
     if (end >= stats.size) {
@@ -153,7 +153,7 @@ function toHeaders(name: string, stats: fs.Stats, isEtag: boolean): Record<strin
   };
 
   if (enc) headers["Content-Encoding"] = enc;
-  // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+  // biome-ignore lint/complexity/useLiteralKeys: ignored
   if (isEtag) headers["ETag"] = `W/"${stats.size}-${stats.mtime.getTime()}"`;
 
   return headers;
@@ -185,7 +185,7 @@ function createUniversalMiddleware(
     if (pathname.indexOf("%") !== -1) {
       try {
         pathname = decodeURI(pathname);
-      } catch (err) {
+      } catch (_err) {
         /* malform uri */
       }
     }
@@ -193,13 +193,13 @@ function createUniversalMiddleware(
     const data = lookup(pathname, extns) || (isSPA && !isMatch(pathname, ignores) && lookup(fallback, extns));
     if (!data) return isNotFound ? isNotFound(request) : undefined;
 
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+    // biome-ignore lint/complexity/useLiteralKeys: ignored
     if (isEtag && request.headers.get("if-none-match") === data.headers["ETag"]) {
       return new Response(null, { status: 304 });
     }
 
     if (gzips || brots) {
-      // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+      // biome-ignore lint/complexity/useLiteralKeys: ignored
       data.headers["Vary"] = "Accept-Encoding";
     }
 
@@ -210,7 +210,6 @@ function createUniversalMiddleware(
 }
 
 export default function serveStatic(dir?: string, opts: ServeOptions = {}): UniversalMiddleware {
-  // biome-ignore lint/style/noParameterAssign: <explanation>
   dir = resolve(dir || ".");
 
   const isNotFound: OnNoMatch | undefined = opts.onNoMatch;
@@ -247,9 +246,9 @@ export default function serveStatic(dir?: string, opts: ServeOptions = {}): Univ
 
   if (!opts.dev) {
     totalist(dir, (name: string, abs: string, stats: fs.Stats) => {
-      if (/\.well-known[\\+\/]/.test(name)) {
+      if (/\.well-known[\\+/]/.test(name)) {
       } // keep
-      else if (!opts.dotfiles && /(^\.|[\\+|\/+]\.)/.test(name)) return;
+      else if (!opts.dotfiles && /(^\.|[\\+|/+]\.)/.test(name)) return;
 
       const headers = toHeaders(name, stats, isEtag);
       if (cc) headers["Cache-Control"] = cc;

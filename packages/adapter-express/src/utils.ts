@@ -1,6 +1,6 @@
-import type { RuntimeAdapterTarget } from "@universal-middleware/core";
 import { type IncomingMessage, type OutgoingHttpHeader, type OutgoingHttpHeaders, ServerResponse } from "node:http";
 import { PassThrough, Readable } from "node:stream";
+import type { RuntimeAdapterTarget } from "@universal-middleware/core";
 import type { Express as Express5 } from "express";
 import type { Express as Express4 } from "express4";
 
@@ -41,7 +41,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
     const req = runtime && "req" in runtime && runtime.req ? runtime.req : createIncomingMessage(request);
     const { res, onReadable } = createServerResponse(req);
 
-    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: <explanation>
+    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: ignored
     return new Promise<Response | undefined>(async (resolve, reject) => {
       onReadable(({ readable, headers, statusCode }) => {
         const responseBody = statusCodesWithoutBody.includes(statusCode)
@@ -84,7 +84,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
 export function createIncomingMessage(request: Request): IncomingMessage {
   const parsedUrl = new URL(request.url, "http://localhost");
   const pathnameAndQuery = (parsedUrl.pathname || "") + (parsedUrl.search || "");
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: ignored
   const body = request.body ? Readable.fromWeb(request.body as any) : Readable.from([]);
 
   return Object.assign(body, {
@@ -134,7 +134,7 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
   });
 
   res.write = passThrough.write.bind(passThrough);
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: ignored
   res.end = passThrough.end.bind(passThrough) as any;
 
   res.writeHead = function writeHead(
@@ -144,9 +144,7 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
   ): ServerResponse {
     res.statusCode = statusCode;
     if (typeof statusMessage === "object") {
-      // biome-ignore lint/style/noParameterAssign: <explanation>
       headers = statusMessage;
-      // biome-ignore lint/style/noParameterAssign: <explanation>
       statusMessage = undefined;
     }
     if (headers) {

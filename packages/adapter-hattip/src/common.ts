@@ -93,13 +93,13 @@ export function getRuntime(context: AdapterRequestContext): RuntimeAdapter {
       hattip: context,
     },
     {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: ignored
       env: (context.platform as any)?.env,
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: ignored
       ctx: (context.platform as any)?.context,
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: ignored
       req: (context.platform as any)?.request,
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: ignored
       res: (context.platform as any)?.response,
     },
   );

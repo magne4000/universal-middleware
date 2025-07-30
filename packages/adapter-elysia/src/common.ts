@@ -15,7 +15,7 @@ import {
   isBodyInit,
   universalSymbol,
 } from "@universal-middleware/core";
-import { type Context as ElysiaContext, Elysia, type Handler, NotFoundError } from "elysia";
+import { Elysia, type Context as ElysiaContext, type Handler, NotFoundError } from "elysia";
 
 export const pendingSymbol = Symbol.for("unPending");
 export const pendingHandledSymbol = Symbol.for("unPendingHandled");
@@ -27,7 +27,7 @@ export type ElysiaMiddleware<In extends Universal.Context, Out extends Universal
 >;
 
 function cloneRequestWithBody(request: Request, body: unknown) {
-  let bodyInit: BodyInit | undefined = undefined;
+  let bodyInit: BodyInit | undefined;
   if (isBodyInit(body)) {
     bodyInit = body;
   } else if (typeof body === "object" && body !== null) {
@@ -46,14 +46,14 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
     const handler = handlerFactory(...args);
 
     return bindUniversal(handler, async function universalHandlerElysia(elysiaContext) {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: ignored
       let context = (elysiaContext as any)[contextSymbol];
 
       if (!context) {
         Object.defineProperty(elysiaContext, contextSymbol, {
           value: {},
         });
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        // biome-ignore lint/suspicious/noExplicitAny: ignored
         context = (elysiaContext as any)[contextSymbol];
       }
 
@@ -157,7 +157,7 @@ function initPlugin<Context extends Universal.Context = Universal.Context>() {
 
 export function getRuntime(elysiaContext: ElysiaContext): RuntimeAdapter {
   let params: Record<string, string> | undefined = elysiaContext.params;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: ignored
   const elysiaContextAny = elysiaContext as any;
 
   const cloudflareContext =
