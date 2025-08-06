@@ -36,7 +36,8 @@ export interface DecoratedRequest<C extends Universal.Context = Universal.Contex
   ip?: string;
   protocol?: string;
   socket?: PossiblyEncryptedSocket;
-  rawBody?: Buffer | null;
+  // biome-ignore lint/suspicious/noExplicitAny: we only care about the field being present
+  rawBody?: any;
   originalUrl?: string;
   params?: Record<string, string>;
   [contextSymbol]?: C;
