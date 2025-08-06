@@ -49,7 +49,7 @@ describe("WHATWG CompressionStream vs fflate", () => {
     const inputStream = createDelayedChunkStream(chunks, 50);
 
     // Use WHATWG CompressionStream
-    const compressedStream = inputStream.pipeThrough(new CompressionStream("gzip"));
+    const compressedStream = inputStream.pipeThrough(new CompressionStream("gzip") as ReadableWritablePair);
 
     // Collect compressed chunks
     const { chunks: compressedChunks } = await collectChunksWithTimestamps(compressedStream);
@@ -123,7 +123,7 @@ describe("WHATWG CompressionStream vs fflate", () => {
     if (!compressedStream) {
       throw new Error("Expected compressStream to return a non-null stream");
     }
-    const decompressedStream = compressedStream.pipeThrough(new DecompressionStream("gzip"));
+    const decompressedStream = compressedStream.pipeThrough(new DecompressionStream("gzip") as ReadableWritablePair);
 
     // Read the decompressed data
     const reader = decompressedStream.getReader();

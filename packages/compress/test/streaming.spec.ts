@@ -1,7 +1,7 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { handleCompression } from "../src/response";
-import { decompressResponse } from "./utils";
 import * as runtime from "../src/runtime";
+import { decompressResponse } from "./utils";
 
 // Helper to create a controlled stream for testing
 function createControlledStream() {
@@ -35,7 +35,8 @@ function createChunks(strings: string[]): Uint8Array[] {
 }
 
 // Helper to collect chunks from a ReadableStream
-async function collectChunks(stream: ReadableStream<Uint8Array>): Promise<Uint8Array[]> {
+// biome-ignore lint/suspicious/noExplicitAny: test
+async function collectChunks(stream: ReadableStream<Uint8Array>): Promise<Uint8Array<any>[]> {
   const reader = stream.getReader();
   const chunks: Uint8Array[] = [];
 
