@@ -1,12 +1,12 @@
 import { args, bun, deno } from "@universal-middleware/tests";
 import hattipHandler from "./hattip";
 
-const port = args.port ? Number.parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port, 10) : 3000;
 
 let bunHandler: unknown;
 if (deno) {
   const { createServeHandler } = await import("@hattip/adapter-deno");
-  // @ts-ignore
+  // @ts-expect-error Deno
   Deno.serve(
     {
       port,

@@ -12,7 +12,7 @@ import { createHandler } from "@universal-middleware/elysia";
 
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 
-const port = args.port ? Number.parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port, 10) : 3000;
 
 new Elysia()
   .use(contextMiddleware("World!!!"))

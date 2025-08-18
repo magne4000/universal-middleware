@@ -89,7 +89,7 @@ export function cloneRequest(request: Request, fields?: RequestInit & { url?: st
     keepalive: fields?.keepalive ?? request.keepalive,
     referrerPolicy: fields?.referrerPolicy ?? request.referrerPolicy,
     signal: fields?.signal ?? request.signal,
-    // @ts-ignore RequestInit: duplex option is required when sending a body
+    // @ts-expect-error RequestInit: duplex option is required when sending a body
     duplex: "half",
   });
 }

@@ -34,7 +34,7 @@ app.get("/big-file", createHandler(sendBigFile)());
 
 app.get("/", handler());
 
-const port = args.port ? Number.parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port, 10) : 3000;
 
 app.listen(
   {

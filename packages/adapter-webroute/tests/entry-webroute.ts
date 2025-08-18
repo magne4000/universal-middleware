@@ -19,7 +19,7 @@ const app = new Hono();
 
 const router = createRadixRouter([
   Route.normalise(route("/user/:name").method("get").handle(createHandler(routeParamHandler)())),
-  // @ts-ignore
+  // @ts-expect-error webroute
   Route.normalise(
     route("/")
       .method("get")
@@ -28,7 +28,7 @@ const router = createRadixRouter([
       .use(createMiddleware(() => middlewares.contextAsync)())
       .handle(createHandler(handler)()),
   ),
-  // @ts-ignore
+  // @ts-expect-error webroute
   Route.normalise(
     route("/guarded")
       .method("get")
@@ -38,7 +38,7 @@ const router = createRadixRouter([
       .use(createMiddleware(() => middlewares.contextAsync)())
       .handle(createHandler(guarded)()),
   ),
-  // @ts-ignore
+  // @ts-expect-error webroute
   Route.normalise(
     route("/throw-early")
       .method("get")
@@ -48,7 +48,7 @@ const router = createRadixRouter([
       .use(createMiddleware(() => middlewares.contextAsync)())
       .handle(createHandler(throwEarlyHandler)()),
   ),
-  // @ts-ignore
+  // @ts-expect-error webroute
   Route.normalise(
     route("/throw-late")
       .method("get")
@@ -58,7 +58,7 @@ const router = createRadixRouter([
       .use(createMiddleware(() => middlewares.contextAsync)())
       .handle(createHandler(throwLateHandler)()),
   ),
-  // @ts-ignore
+  // @ts-expect-error webroute
   Route.normalise(
     route("/throw-early-and-late")
       .method("get")
@@ -105,10 +105,10 @@ app.use(
   }),
 );
 
-const port = args.port ? Number.parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port, 10) : 3000;
 
 if (deno) {
-  // @ts-ignore
+  // @ts-expect-error
   Deno.serve(
     {
       port,
