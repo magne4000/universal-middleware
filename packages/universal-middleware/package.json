@@ -118,18 +118,18 @@
     "@universal-middleware/hono": "workspace:^",
     "@universal-middleware/vercel": "workspace:^",
     "@universal-middleware/webroute": "workspace:^",
-    "oxc-transform": "^0.80.0",
+    "oxc-transform": "^0.82.2",
     "package-up": "^5.0.0",
-    "unplugin": "^2.3.5"
+    "unplugin": "^2.3.6"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.4",
     "@swc/core": "catalog:",
-    "esbuild": "^0.25.8",
+    "esbuild": "^0.25.9",
     "rimraf": "catalog:",
-    "rollup": "^4.46.2",
+    "rollup": "^4.46.3",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

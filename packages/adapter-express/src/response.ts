@@ -4,7 +4,7 @@ import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
 import { nodeHeadersToWeb } from "@universal-middleware/core";
 import { type DecoratedServerResponse, pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./common.js";
 
-// @ts-ignore
+// @ts-expect-error
 const deno = typeof Deno !== "undefined";
 
 /**
@@ -270,6 +270,8 @@ function setHeaders(fetchResponse: Response, nodeResponse: ServerResponse, mirro
 
   if (mirror) {
     // delete remaining node headers
-    nodeResponseHeaders.forEach((key) => nodeResponse.removeHeader(key));
+    nodeResponseHeaders.forEach((key) => {
+      nodeResponse.removeHeader(key);
+    });
   }
 }

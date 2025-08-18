@@ -74,10 +74,10 @@ switch (TEST_CASE) {
   }
 }
 
-const port = args.port ? Number.parseInt(args.port) : 3000;
+const port = args.port ? Number.parseInt(args.port, 10) : 3000;
 
 if (deno) {
-  // @ts-ignore
+  // @ts-expect-error Deno
   Deno.serve(
     {
       port,

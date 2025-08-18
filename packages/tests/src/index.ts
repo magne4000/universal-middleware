@@ -196,7 +196,8 @@ export const args = mri<{ port: string }>(
   (globalThis as any).Deno?.args ?? globalThis.process.argv.slice(2),
 );
 
-// @ts-ignore
+// @ts-expect-error Deno
 export const deno = typeof Deno !== "undefined";
-// @ts-ignore
+// biome-ignore lint/suspicious/noTsIgnore: tsup compat
+// @ts-ignore Bun
 export const bun = typeof Bun !== "undefined";

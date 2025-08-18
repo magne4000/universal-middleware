@@ -7,7 +7,7 @@ export function env<T extends Record<string, unknown>>(runtime: RuntimeAdapter):
     case "edge-light":
       return globalThis?.process?.env as T;
     case "deno":
-      // @ts-ignore
+      // @ts-expect-error Deno
       return Deno.env.toObject() as T;
     case "workerd":
       return (runtime.env ?? {}) as T;

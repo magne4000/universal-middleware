@@ -1,8 +1,7 @@
 import { type DecoratedRequest, env, requestSymbol } from "./common.js";
 
-// @ts-ignore
+// @ts-expect-error Deno
 const deno = typeof Deno !== "undefined";
-// @ts-ignore
 const bun = typeof Bun !== "undefined";
 
 /** Adapter options */
@@ -81,7 +80,7 @@ export function createRequestAdapter(options: NodeRequestAdapterOptions = {}): (
       method: req.method,
       headers,
       body: convertBody(req),
-      // @ts-ignore
+      // @ts-expect-error
       duplex: "half",
     });
 

@@ -80,7 +80,7 @@ export function createMiddleware<
 >(
   middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
 ): Get<T, WebrouteMiddleware<InContext, OutContext, MiddlewareFactoryDataResult<typeof middlewareFactory>>> {
-  // @ts-ignore
+  // @ts-expect-error Cast types
   return (...args) => {
     const middleware = middlewareFactory(...args);
 
