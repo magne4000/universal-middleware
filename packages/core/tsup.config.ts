@@ -9,7 +9,7 @@ export default defineConfig([
     format: ["esm"],
     noExternal: ["rou3"],
     platform: "node",
-    target: "node18",
+    target: "node20",
     dts: true,
     clean: true,
     removeNodeProtocol: false,
