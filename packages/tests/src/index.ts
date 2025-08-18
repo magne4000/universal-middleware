@@ -198,4 +198,6 @@ export const args = mri<{ port: string }>(
 
 // @ts-expect-error Deno
 export const deno = typeof Deno !== "undefined";
+// biome-ignore lint/suspicious/noTsIgnore: tsup compat
+// @ts-ignore Bun
 export const bun = typeof Bun !== "undefined";
