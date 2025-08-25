@@ -118,9 +118,9 @@
     "@universal-middleware/hono": "workspace:^",
     "@universal-middleware/vercel": "workspace:^",
     "@universal-middleware/webroute": "workspace:^",
-    "oxc-transform": "^0.82.2",
+    "oxc-transform": "^0.82.3",
     "package-up": "^5.0.0",
-    "unplugin": "^2.3.6"
+    "unplugin": "^2.3.8"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.6",
@@ -129,7 +129,7 @@
     "@swc/core": "catalog:",
     "esbuild": "^0.25.9",
     "rimraf": "catalog:",
-    "rollup": "^4.46.3",
+    "rollup": "^4.48.1",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
