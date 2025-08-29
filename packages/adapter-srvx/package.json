@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/srvx",
-  "version": "0.4.16",
+  "version": "0.0.0",
   "type": "module",
   "description": "srvx adapter for universal middlewares",
   "files": [
