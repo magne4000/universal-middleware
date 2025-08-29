@@ -56,6 +56,7 @@ const maybeExternals = [
   "@universal-middleware/h3",
   "@universal-middleware/cloudflare",
   "@universal-middleware/elysia",
+  "@universal-middleware/srvx",
   "@universal-middleware/vercel",
 ];
 const typesByServer: Record<

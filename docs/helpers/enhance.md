@@ -222,4 +222,5 @@ We're actively working on expanding support to all adapters.
 | h3                | :heavy_check_mark: |
 | elysia            | :heavy_check_mark: |
 | hattip            | :heavy_check_mark: |
+| srvx              | :heavy_check_mark: |
 | webroute          |        :x:         |
