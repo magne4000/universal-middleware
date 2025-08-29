@@ -12,6 +12,7 @@ export const adapters = [
   "vercel-edge",
   "vercel-node",
   "elysia",
+  "srvx",
 ] as const;
 
 export const noMiddlewaresSupport = ["cloudflare-worker", "vercel-edge", "vercel-node"];

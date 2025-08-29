@@ -10,6 +10,7 @@ export default defineConfig([
       elysia: "./src/elysia.ts",
       express: "./src/express.ts",
       fastify: "./src/fastify.ts",
+      srvx: "./src/srvx.ts",
     },
     format: ["esm"],
     platform: "neutral",

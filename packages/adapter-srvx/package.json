@@ -1,8 +1,8 @@
 {
-  "name": "@universal-middleware/hattip",
-  "version": "0.4.12",
+  "name": "@universal-middleware/srvx",
+  "version": "0.0.0",
   "type": "module",
-  "description": "Hattip adapter for universal middlewares",
+  "description": "srvx adapter for universal middlewares",
   "files": [
     "dist"
   ],
@@ -17,27 +17,19 @@
     "dev": "tsup --watch",
     "prepack": "pnpm build",
     "test": "vitest run",
-    "test:run-hattip:node": "tsx tests/entry-hattip.ts",
-    "test:run-hattip:bun": "bun tests/entry-hattip.ts",
-    "test:run-hattip:worker": "wrangler dev tests/entry-hattip-cloudflare.ts",
-    "test:run-hattip:deno": "deno run --unstable-byonm --unstable-sloppy-imports -A tests/entry-hattip.ts",
+    "test:run-srvx:node": "tsx tests/entry-srvx.ts",
+    "test:run-srvx:bun": "bun tests/entry-srvx.ts",
+    "test:run-srvx:deno": "deno run --unstable-byonm --unstable-sloppy-imports -A tests/entry-srvx.ts",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@universal-middleware/core": "workspace:^"
   },
   "devDependencies": {
-    "@hattip/adapter-bun": "^0.0.49",
-    "@hattip/adapter-cloudflare-workers": "^0.0.49",
-    "@hattip/adapter-deno": "^0.0.49",
-    "@hattip/adapter-node": "^0.0.49",
-    "@hattip/compose": "^0.0.49",
-    "@hattip/core": "catalog:",
-    "@hattip/cors": "^0.0.49",
-    "@hattip/router": "catalog:",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
+    "srvx": "catalog:",
     "rimraf": "catalog:",
     "tsup": "catalog:",
     "tsx": "catalog:",
@@ -48,12 +40,12 @@
   },
   "sideEffects": false,
   "keywords": [
-    "hattip",
+    "srvx",
     "universal-middleware",
     "middleware",
     "handlers",
     "server-adapters",
-    "hattip-middleware",
+    "srvx-middleware",
     "universal-server",
     "context-middleware",
     "request-handling"

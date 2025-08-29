@@ -74,6 +74,11 @@
       "import": "./dist/universal-h3-middleware-middleware.js",
       "default": "./dist/universal-h3-middleware-middleware.js"
     },
+    "./srvx": {
+      "types": "./dist/universal-srvx-middleware-middleware.d.ts",
+      "import": "./dist/universal-srvx-middleware-middleware.js",
+      "default": "./dist/universal-srvx-middleware-middleware.js"
+    },
     "./webroute": {
       "types": "./dist/universal-webroute-middleware-middleware.d.ts",
       "import": "./dist/universal-webroute-middleware-middleware.js",
