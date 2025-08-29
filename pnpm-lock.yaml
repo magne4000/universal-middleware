@@ -902,6 +902,9 @@ importers:
       '@universal-middleware/hono':
         specifier: workspace:^
         version: link:../adapter-hono
+      '@universal-middleware/srvx':
+        specifier: workspace:^
+        version: link:../adapter-srvx
       '@universal-middleware/vercel':
         specifier: workspace:^
         version: link:../adapter-vercel
@@ -1005,6 +1008,9 @@ importers:
       '@universal-middleware/hono':
         specifier: workspace:*
         version: link:../../packages/adapter-hono
+      '@universal-middleware/srvx':
+        specifier: workspace:*
+        version: link:../../packages/adapter-srvx
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../../packages/tests
@@ -1044,6 +1050,9 @@ importers:
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
+      srvx:
+        specifier: 'catalog:'
+        version: 0.8.7
       tsup:
         specifier: ^8.5.0
         version: 8.5.0(@swc/core@1.13.5)(postcss@8.5.6)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.0)

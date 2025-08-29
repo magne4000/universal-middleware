@@ -14,7 +14,7 @@ type RunOptions = Parameters<typeof run>[1] & {
 };
 
 export function testRun(
-  cmd: `pnpm run ${"dev" | "prod"}:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia" | "vercel"}${string}`,
+  cmd: `pnpm run ${"dev" | "prod"}:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia" | "vercel" | "srvx"}${string}`,
   port: number,
   options?: RunOptions,
 ) {

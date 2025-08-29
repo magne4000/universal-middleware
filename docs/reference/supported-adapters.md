@@ -8,5 +8,6 @@ Supports the following server adapters:
 - [Vercel](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-vercel)
 - [h3](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-h3)
 - [Elysia](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-elysia)
+- [srvx](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-srvx)
 - [Hattip](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-hattip)
 - [Webroute](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-webroute)

@@ -45,6 +45,7 @@ const defaultWrappers = [
   "vercel-edge",
   "vercel-node",
   "elysia",
+  "srvx",
 ] as const;
 const maybeExternals = [
   "@universal-middleware/hono",
@@ -95,6 +96,10 @@ const typesByServer: Record<
     handler: "WebrouteHandler",
     selfImports: ["type MiddlewareFactoryDataResult"],
     outContext: (type) => `MiddlewareFactoryDataResult<typeof ${type}>`,
+  },
+  srvx: {
+    middleware: "SrvxMiddleware",
+    handler: "SrvxHandler",
   },
   "cloudflare-worker": {
     handler: "CloudflareHandler",

@@ -9,6 +9,7 @@ export default defineWorkspace([
   "./packages/adapter-h3/vitest.config.ts",
   "./packages/adapter-express/vitest.config.ts",
   "./packages/adapter-elysia/vitest.config.ts",
+  "./packages/adapter-srvx/vitest.config.ts",
   "./packages/compress/vitest.config.ts",
   "./packages/adapter-cloudflare/vitest.config.ts",
   "./packages/core/vitest.config.ts",

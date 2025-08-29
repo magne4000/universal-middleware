@@ -21,6 +21,7 @@
     "express-middleware",
     "hono-middleware",
     "hattip-middleware",
+    "srvx-middleware",
     "webroute-middleware",
     "cloudflare-middleware",
     "fastify-middleware",
@@ -85,6 +86,11 @@
       "import": "./dist/adapters/hono.js",
       "default": "./dist/adapters/hono.js"
     },
+    "./adapters/srvx": {
+      "types": "./dist/adapters/srvx.d.ts",
+      "import": "./dist/adapters/srvx.js",
+      "default": "./dist/adapters/srvx.js"
+    },
     "./adapters/vercel": {
       "types": "./dist/adapters/vercel.d.ts",
       "import": "./dist/adapters/vercel.js",
@@ -116,6 +122,7 @@
     "@universal-middleware/h3": "workspace:^",
     "@universal-middleware/hattip": "workspace:^",
     "@universal-middleware/hono": "workspace:^",
+    "@universal-middleware/srvx": "workspace:^",
     "@universal-middleware/vercel": "workspace:^",
     "@universal-middleware/webroute": "workspace:^",
     "oxc-transform": "^0.82.3",

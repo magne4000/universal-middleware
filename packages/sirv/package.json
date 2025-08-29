@@ -87,6 +87,11 @@
       "types": "./dist/universal-elysia-middleware-middleware.d.ts",
       "import": "./dist/universal-elysia-middleware-middleware.js",
       "default": "./dist/universal-elysia-middleware-middleware.js"
+    },
+    "./srvx": {
+      "types": "./dist/universal-srvx-middleware-middleware.d.ts",
+      "import": "./dist/universal-srvx-middleware-middleware.js",
+      "default": "./dist/universal-srvx-middleware-middleware.js"
     }
   }
 }
