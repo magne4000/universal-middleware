@@ -207,14 +207,6 @@ Add entry point: `{server-name}: "./src/{server-name}.ts"`
 #### `packages/adapter-vercel/src/{server-name}.ts`
 Create export file: `export * from "@universal-middleware/{server-name}";`
 
-### Release Configuration
-
-#### `.release-please-manifest.json`
-Add entry: `"packages/adapter-{server-name}": "0.0.0"`
-
-#### `pnpm-workspace.yaml`
-Ensure the server framework is in the catalog with appropriate version.
-
 ## 9. Checklist
 
 When creating a new server adapter, ensure you've updated:
