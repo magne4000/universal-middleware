@@ -1,5 +1,13 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/hattip-v0.3.2...hattip-v0.3.3) (2024-12-09)
 
+## 0.4.13
+
+### Patch Changes
+
+- 540b8d8: feat: add srvx support
+- Updated dependencies [540b8d8]
+  - @universal-middleware/core@0.4.10
+
 ## 0.4.12
 
 ### Patch Changes
