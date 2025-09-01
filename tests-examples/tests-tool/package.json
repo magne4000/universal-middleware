@@ -56,6 +56,7 @@
     "fastify-raw-body": "^5.0.0",
     "h3": "catalog:",
     "hono": "catalog:",
+    "ky": "^1.9.1",
     "mri": "^1.2.0",
     "npm-run-all2": "^8.0.4",
     "playwright": "^1.55.0",
