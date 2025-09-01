@@ -69,6 +69,26 @@ app.get("/", (req, reply) => {
 export default app;
 ```
 
+```ts twoslash [srvx.ts]
+import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-srvx";
+import { serve } from "srvx";
+import { apply, getContext } from "@universal-middleware/srvx";
+
+const server = serve({
+  port: 3000,
+  fetch: apply([
+    contextMiddleware("world"),
+    // Handler that uses the context
+    () => (request, ctx, runtime) => {
+      const universalCtx = getContext<{ hello: string }>(runtime);
+      return new Response(`Hello ${universalCtx.hello}`);
+    }
+  ])
+});
+
+export default server;
+```
+
 ```ts twoslash [cloudflare-worker.ts]
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
 import { createHandler } from "@universal-middleware/cloudflare";

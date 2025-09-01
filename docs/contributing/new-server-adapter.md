@@ -145,10 +145,113 @@ Add the new adapter to the list:
 Add the server name to the feature description list.
 
 ### `docs/helpers/enhance.md`
-Add the server to the adapter support table with appropriate support status.
+1. Add the server to the adapter support table:
+   ```markdown
+   | {server-name}     | :heavy_check_mark: |
+   ```
+2. Add code example in the enhance examples section:
+   ```typescript
+   ```ts twoslash [{server-name}.ts]
+   // @include: handler
+   // ---cut---
+   import { serve } from "{server-framework}";
+   // ---cut-start---
+   import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware";
+   // ---cut-end---
+   import { apply } from "@universal-middleware/{server-name}";
+
+   const server = serve({
+     port: 3000,
+     fetch: apply([
+       // Register middleware and handlers in the application
+       guardMiddleware(),
+       // Each handler requires method and path metadata
+       enhancedHandler(),
+       // Handlers can be enhanced with different metadata for route variations
+       enhance(enhancedHandler(), {
+         method: ["GET", "POST"],
+         path: "/home"
+       })
+     ])
+   });
+   ```
+   ```
 
 ### `docs/guide/packaging.md`
-Update the server list in the `universalMiddleware` configuration example.
+Update the server list in the `universalMiddleware` configuration example:
+```typescript
+servers?: ('hono' | 'express' | 'hattip' | 'fastify' | 'h3' | 'webroute' | 'cloudflare-pages' | 'cloudflare-worker' | 'elysia' | 'srvx' | '{server-name}')[];
+```
+
+### `docs/reference/runtime-adapter.md`
+Add a new runtime adapter example section:
+```typescript
+```ts twoslash [{server-name}]
+// @noErrors
+import type { Runtime, {ServerName}Adapter } from "@universal-middleware/core";
+
+export type Explain<A extends any> =
+  A extends Function
+    ? A
+    : {[K in keyof A]: A[K]} & unknown
+
+type RuntimeAdapter = Explain<{ServerName}Adapter>;
+
+// ---cut---
+import type { RuntimeAdapter } from "somelib/{server-name}";
+
+const runtime: RuntimeAdapter;
+
+// original {server-name} context
+runtime.{server-name};
+//      ^^^^^^^^^^^^
+```
+```
+
+### `docs/recipes/params-handler.md`
+Add usage example in the code group:
+```typescript
+```ts twoslash [{server-name}.ts]
+import paramHandler from "@universal-middleware-examples/tool/params-handler-{server-name}";
+import { serve } from "{server-framework}";
+import { apply } from "@universal-middleware/{server-name}";
+
+const server = serve({
+  port: 3000,
+  fetch: apply([
+    paramHandler()
+  ], {
+    "/user/:name": { method: "GET" }
+  })
+});
+
+export default server;
+```
+```
+
+### `docs/recipes/context-middleware.md`
+Add usage example in the code group:
+```typescript
+```ts twoslash [{server-name}.ts]
+import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-{server-name}";
+import { serve } from "{server-framework}";
+import { apply, getContext } from "@universal-middleware/{server-name}";
+
+const server = serve({
+  port: 3000,
+  fetch: apply([
+    contextMiddleware("world"),
+    // Handler that uses the context
+    () => (request, ctx, runtime) => {
+      const universalCtx = getContext<{ hello: string }>(runtime);
+      return new Response(`Hello ${universalCtx.hello}`);
+    }
+  ])
+});
+
+export default server;
+```
+```
 
 ## 6. Add Test Examples
 
@@ -232,8 +335,11 @@ When creating a new server adapter, ensure you've updated:
 ### Documentation
 - [ ] Updated `docs/reference/supported-adapters.md`
 - [ ] Updated `docs/index.md` feature description
-- [ ] Updated `docs/helpers/enhance.md` adapter support table
+- [ ] Updated `docs/helpers/enhance.md` adapter support table and code examples
 - [ ] Updated `docs/guide/packaging.md` server list example
+- [ ] Updated `docs/reference/runtime-adapter.md` with runtime adapter example
+- [ ] Updated `docs/recipes/params-handler.md` with usage example
+- [ ] Updated `docs/recipes/context-middleware.md` with usage example
 
 ### Test Examples
 - [ ] Created test entry file in `tests-examples/tests-tool/src/`

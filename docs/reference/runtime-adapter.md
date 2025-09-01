@@ -211,6 +211,27 @@ runtime.hattip;
 //      ^^^^^^
 ```
 
+```ts twoslash [srvx]
+// @noErrors
+import type { Runtime, SrvxAdapter } from "@universal-middleware/core";
+
+export type Explain<A extends any> =
+  A extends Function
+    ? A
+    : {[K in keyof A]: A[K]} & unknown
+
+type RuntimeAdapter = Explain<SrvxAdapter>;
+
+// ---cut---
+import type { RuntimeAdapter } from "somelib/srvx";
+
+const runtime: RuntimeAdapter;
+
+// original srvx ServerRequest. See https://srvx.h3.dev/guide/handler#extended-request-serverrequest
+runtime.srvx;
+//      ^^^^
+```
+
 :::
 
 ### Common properties
