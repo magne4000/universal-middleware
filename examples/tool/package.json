@@ -326,6 +326,31 @@
       "types": "./dist/middlewares/universal-vercel-node-middleware-guard.middleware.d.ts",
       "import": "./dist/middlewares/universal-vercel-node-middleware-guard.middleware.js",
       "default": "./dist/middlewares/universal-vercel-node-middleware-guard.middleware.js"
+    },
+    "./dummy-handler-srvx": {
+      "types": "./dist/handlers/universal-srvx-handler-handler.d.ts",
+      "import": "./dist/handlers/universal-srvx-handler-handler.js",
+      "default": "./dist/handlers/universal-srvx-handler-handler.js"
+    },
+    "./params-handler-srvx": {
+      "types": "./dist/handlers/universal-srvx-handler-params.handler.d.ts",
+      "import": "./dist/handlers/universal-srvx-handler-params.handler.js",
+      "default": "./dist/handlers/universal-srvx-handler-params.handler.js"
+    },
+    "./middlewares/context-middleware-srvx": {
+      "types": "./dist/middlewares/universal-srvx-middleware-context.middleware.d.ts",
+      "import": "./dist/middlewares/universal-srvx-middleware-context.middleware.js",
+      "default": "./dist/middlewares/universal-srvx-middleware-context.middleware.js"
+    },
+    "./middlewares/headers-middleware-srvx": {
+      "types": "./dist/middlewares/universal-srvx-middleware-headers.middleware.d.ts",
+      "import": "./dist/middlewares/universal-srvx-middleware-headers.middleware.js",
+      "default": "./dist/middlewares/universal-srvx-middleware-headers.middleware.js"
+    },
+    "./middlewares/guard-middleware-srvx": {
+      "types": "./dist/middlewares/universal-srvx-middleware-guard.middleware.d.ts",
+      "import": "./dist/middlewares/universal-srvx-middleware-guard.middleware.js",
+      "default": "./dist/middlewares/universal-srvx-middleware-guard.middleware.js"
     }
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",

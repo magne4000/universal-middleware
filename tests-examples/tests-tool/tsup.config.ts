@@ -8,6 +8,7 @@ export default defineConfig([
       elysia: "src/elysia-entry.ts",
       h3: "src/h3-entry.ts",
       hattip: "src/hattip-entry.ts",
+      srvx: "src/srvx-entry.ts",
     },
     format: "esm",
     bundle: true,

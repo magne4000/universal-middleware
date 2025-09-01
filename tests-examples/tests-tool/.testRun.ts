@@ -2,6 +2,9 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, getServerUrl, run, test } from "@brillout/test-e2e";
+// Prefer ky over fetch because node implementation can consume a lot of memory
+// See https://github.com/nodejs/undici/issues/4058#issuecomment-2661366213
+import ki from "ky";
 
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 
@@ -14,7 +17,7 @@ type RunOptions = Parameters<typeof run>[1] & {
 };
 
 export function testRun(
-  cmd: `pnpm run ${"dev" | "prod"}:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia" | "vercel"}${string}`,
+  cmd: `pnpm run ${"dev" | "prod"}:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia" | "vercel" | "srvx"}${string}`,
   port: number,
   options?: RunOptions,
 ) {
@@ -26,7 +29,7 @@ export function testRun(
   });
 
   test("/", async () => {
-    const response = await fetch(`${getServerUrl()}${options?.prefix ?? ""}/`, { window: null, redirect: "error" });
+    const response = await ki(`${getServerUrl()}${options?.prefix ?? ""}/`, { window: null, redirect: "error" });
 
     const content = await response.text();
 
@@ -41,7 +44,7 @@ export function testRun(
   });
 
   test("/user/:name", async () => {
-    const response = await fetch(`${getServerUrl()}${options?.prefix ?? ""}/user/magne4000`, {
+    const response = await ki(`${getServerUrl()}${options?.prefix ?? ""}/user/magne4000`, {
       window: null,
       redirect: "error",
     });
@@ -60,7 +63,7 @@ export function testRun(
 
   if (!options?.noMiddleware && !options?.noCompression) {
     test("/big-file", async () => {
-      const response = await fetch(`${getServerUrl()}${options?.prefix ?? ""}/big-file`, {
+      const response = await ki(`${getServerUrl()}${options?.prefix ?? ""}/big-file`, {
         window: null,
         redirect: "error",
       });

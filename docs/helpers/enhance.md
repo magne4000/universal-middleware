@@ -202,6 +202,31 @@ apply(app, [
 export default app.buildHandler();
 ```
 
+```ts twoslash [srvx.ts]
+// @include: handler
+// ---cut---
+import { serve } from "srvx";
+// ---cut-start---
+import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware";
+// ---cut-end---
+import { apply } from "@universal-middleware/srvx";
+
+const server = serve({
+  port: 3000,
+  fetch: apply([
+    // Register middleware and handlers in the application
+    guardMiddleware(),
+    // Each handler requires method and path metadata
+    enhancedHandler(),
+    // Handlers can be enhanced with different metadata for route variations
+    enhance(enhancedHandler(), {
+      method: ["GET", "POST"],
+      path: "/home"
+    })
+  ])
+});
+```
+
 :::
 
 ## Support status
@@ -222,4 +247,5 @@ We're actively working on expanding support to all adapters.
 | h3                | :heavy_check_mark: |
 | elysia            | :heavy_check_mark: |
 | hattip            | :heavy_check_mark: |
+| srvx              | :heavy_check_mark: |
 | webroute          |        :x:         |

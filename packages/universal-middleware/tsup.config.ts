@@ -13,6 +13,7 @@ export default defineConfig([
       "adapters/h3": "src/adapters/h3.ts",
       "adapters/hattip": "src/adapters/hattip.ts",
       "adapters/hono": "src/adapters/hono.ts",
+      "adapters/srvx": "src/adapters/srvx.ts",
       "adapters/vercel": "src/adapters/vercel.ts",
       "adapters/webroute": "src/adapters/webroute.ts",
     },

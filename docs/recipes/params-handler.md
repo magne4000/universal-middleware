@@ -50,6 +50,23 @@ app.get("/user/:name", paramHandler());
 export default app;
 ```
 
+```ts twoslash [srvx.ts]
+import paramHandler from "@universal-middleware-examples/tool/params-handler-srvx";
+import { serve } from "srvx";
+import { apply } from "@universal-middleware/srvx";
+
+const server = serve({
+  port: 3000,
+  fetch: apply([
+    paramHandler({
+      route: "/user/:name",
+    })
+  ])
+});
+
+export default server;
+```
+
 ```ts [cloudflare-worker.ts]
 import paramsHandler from "@universal-middleware-examples/tool/params-handler";
 import { createHandler } from "@universal-middleware/cloudflare";

@@ -7,6 +7,7 @@ import type { Context as ElysiaContext } from "elysia";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { H3Event } from "h3";
 import type { Context as HonoContext } from "hono";
+import type { ServerRequest } from "srvx";
 import {
   contextSymbol,
   type methodSymbol,
@@ -160,6 +161,16 @@ export interface H3Adapter {
   h3: H3Event;
 }
 
+export interface SrvxAdapter {
+  adapter: "srvx";
+  params: Record<string, string> | undefined;
+
+  req?: IncomingMessage;
+  res?: ServerResponse;
+
+  srvx: ServerRequest;
+}
+
 export interface CloudflarePagesAdapter {
   adapter: "cloudflare-pages";
   params: Record<string, string> | undefined;
@@ -214,6 +225,7 @@ export type Adapter =
   | HonoAdapter
   | HattipAdapter
   | H3Adapter
+  | SrvxAdapter
   | CloudflarePagesAdapter
   | CloudflareWorkerAdapter
   | VercelEdgeAdapter
