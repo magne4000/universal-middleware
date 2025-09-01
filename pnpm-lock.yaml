@@ -145,6 +145,9 @@ importers:
       '@universal-middleware/sirv':
         specifier: workspace:*
         version: link:../packages/sirv
+      '@universal-middleware/srvx':
+        specifier: workspace:*
+        version: link:../packages/adapter-srvx
       '@universal-middleware/vercel':
         specifier: workspace:*
         version: link:../packages/adapter-vercel
@@ -160,6 +163,9 @@ importers:
       hono:
         specifier: 'catalog:'
         version: 4.9.5
+      srvx:
+        specifier: 'catalog:'
+        version: 0.8.7
       typescript:
         specifier: 'catalog:'
         version: 5.9.2

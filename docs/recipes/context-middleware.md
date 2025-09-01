@@ -72,16 +72,15 @@ export default app;
 ```ts twoslash [srvx.ts]
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-srvx";
 import { serve } from "srvx";
-import { apply, getContext } from "@universal-middleware/srvx";
+import { apply } from "@universal-middleware/srvx";
 
 const server = serve({
   port: 3000,
   fetch: apply([
     contextMiddleware("world"),
     // Handler that uses the context
-    () => (request, ctx, runtime) => {
-      const universalCtx = getContext<{ hello: string }>(runtime);
-      return new Response(`Hello ${universalCtx.hello}`);
+    (request: Request, context: Universal.Context) => {
+      return new Response(`Hello ${context.hello}`);
     }
   ])
 });

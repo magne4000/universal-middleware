@@ -28,11 +28,13 @@
     "@universal-middleware/hattip": "workspace:*",
     "@universal-middleware/hono": "workspace:*",
     "@universal-middleware/sirv": "workspace:*",
+    "@universal-middleware/srvx": "workspace:*",
     "@universal-middleware/vercel": "workspace:*",
     "elysia": "catalog:",
     "fastify": "catalog:",
     "h3": "catalog:",
     "hono": "catalog:",
+    "srvx": "catalog:",
     "typescript": "catalog:",
     "universal-middleware": "workspace:*",
     "vitepress": "^1.6.4"

@@ -32,7 +32,15 @@
       "@vercel/node>typescript": "catalog:",
       "@webroute/middleware": "^0.10.0",
       "esbuild": "^0.25.9"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "esbuild",
+      "oxc-resolver",
+      "playwright-chromium",
+      "sharp",
+      "workerd"
+    ]
   },
   "packageManager": "pnpm@10.11.0"
 }

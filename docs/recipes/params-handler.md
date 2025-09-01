@@ -58,7 +58,9 @@ import { apply } from "@universal-middleware/srvx";
 const server = serve({
   port: 3000,
   fetch: apply([
-    paramHandler
+    paramHandler({
+      route: "/user/:name",
+    })
   ])
 });
 
