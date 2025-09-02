@@ -10,7 +10,7 @@
     "test:typecheck": "turbo test:typecheck",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "release": "turbo run build && changeset version && pnpm i && pnpm publish -r"
+    "release": "turbo run build && changeset version && pnpm i && pnpm run format && pnpm publish -r"
   },
   "keywords": [],
   "author": "",
