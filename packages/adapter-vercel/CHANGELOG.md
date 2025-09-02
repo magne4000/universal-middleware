@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.21
+
+### Patch Changes
+
+- 540b8d8: feat: add srvx support
+- Updated dependencies [540b8d8]
+  - @universal-middleware/core@0.4.10
+
 ## 0.4.20
 
 ### Patch Changes

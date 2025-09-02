@@ -1,5 +1,16 @@
 ## [0.5.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.4...universal-middleware-v0.5.5) (2024-12-09)
 
+## 0.6.26
+
+### Patch Changes
+
+- 540b8d8: feat: add srvx support
+- Updated dependencies [540b8d8]
+  - @universal-middleware/srvx@0.1.0
+  - @universal-middleware/hattip@0.4.13
+  - @universal-middleware/vercel@0.4.21
+  - @universal-middleware/core@0.4.10
+
 ## 0.6.25
 
 ### Patch Changes
