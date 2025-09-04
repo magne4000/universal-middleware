@@ -87,23 +87,22 @@ export const enhancedMiddlewares = {
   }),
 };
 
+export const handlerRaw: UniversalHandler = (_request, context) => {
+  context.long = "a".repeat(1024);
+  return new Response(JSON.stringify(context, null, 2), {
+    headers: {
+      "x-should-be-removed": "universal-middleware",
+      "content-type": "application/json; charset=utf-8",
+    },
+  });
+};
+
 export const handler: Get<[], UniversalHandler> = () =>
-  enhance(
-    (_request, context) => {
-      context.long = "a".repeat(1024);
-      return new Response(JSON.stringify(context, null, 2), {
-        headers: {
-          "x-should-be-removed": "universal-middleware",
-          "content-type": "application/json; charset=utf-8",
-        },
-      });
-    },
-    {
-      path: "/",
-      method: "GET",
-      context: { staticContext: "staticContext" },
-    },
-  );
+  enhance(handlerRaw, {
+    path: "/",
+    method: "GET",
+    context: { staticContext: "staticContext" },
+  });
 
 interface RouteParamOption {
   route?: string;
@@ -127,7 +126,7 @@ export const routeParamHandler = ((options?) =>
       return new Response(`User name is: ${myParams.name}`);
     },
     {
-      path: "/user/:name",
+      path: options?.route ?? "/user/:name",
       method: "GET",
     },
   )) satisfies (options?: RouteParamOption) => UniversalHandler;
