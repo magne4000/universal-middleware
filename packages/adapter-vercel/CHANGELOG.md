@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.22
+
+### Patch Changes
+
+- 55fd228: feat: add srvx support
+
 ## 0.4.21
 
 ### Patch Changes
