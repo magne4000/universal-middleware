@@ -1,5 +1,11 @@
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.2...fastify-v0.4.3) (2024-12-09)
 
+## 0.5.21
+
+### Patch Changes
+
+- 519ea43: fix: Response callback could receive an empty Response
+
 ## 0.5.20
 
 ### Patch Changes

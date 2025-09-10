@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/h3-v0.3.2...h3-v0.3.3) (2024-12-09)
 
+## 0.4.13
+
+### Patch Changes
+
+- 519ea43: fix: Response callback could receive an empty Response
+
 ## 0.4.12
 
 ### Patch Changes
