@@ -2,7 +2,7 @@ import { type Run, runTests } from "@universal-middleware/tests";
 import * as vitest from "vitest";
 
 const port = 3600;
-const delay = process.env.CI ? 3000 : 1000;
+const delay = process.env.CI ? 5000 : 1000;
 
 const runs: Run[] = [
   {
