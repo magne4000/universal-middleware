@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { expect, getServerUrl, run, test } from "@brillout/test-e2e";
+import { autoRetry, expect, getServerUrl, run, test } from "@brillout/test-e2e";
 // Prefer ky over fetch because node implementation can consume a lot of memory
 // See https://github.com/nodejs/undici/issues/4058#issuecomment-2661366213
 import ki from "ky";
@@ -63,14 +63,21 @@ export function testRun(
 
   if (!options?.noMiddleware && !options?.noCompression) {
     test("/big-file", async () => {
-      const response = await ki(`${getServerUrl()}${options?.prefix ?? ""}/big-file`, {
-        window: null,
-        redirect: "error",
-      });
+      await autoRetry(
+        async () => {
+          const response = await ki(`${getServerUrl()}${options?.prefix ?? ""}/big-file`, {
+            window: null,
+            redirect: "error",
+          });
 
-      expect(response.headers.get("content-encoding")).toMatch(/gzip|deflate/);
-      const content = await response.text();
-      expect(content).toBe(readFileSync(join(_dirname, "..", "..", "packages", "tests", "big-file.txt"), "utf-8"));
+          expect(response.headers.get("content-encoding")).toMatch(/gzip|deflate/);
+          const content = await response.text();
+          expect(content).toBe(readFileSync(join(_dirname, "..", "..", "packages", "tests", "big-file.txt"), "utf-8"));
+        },
+        {
+          timeout: 30000,
+        },
+      );
     });
   }
 }

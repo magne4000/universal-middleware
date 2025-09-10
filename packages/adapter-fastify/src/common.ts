@@ -214,6 +214,11 @@ export function createMiddleware<
 
           const middlewares = request[pendingMiddlewaresSymbol];
           delete request[pendingMiddlewaresSymbol];
+
+          if (!payload) {
+            reply.callNotFound();
+          }
+
           const newResponse = await middlewares?.reduce(
             async (prev, curr) => {
               const p = await prev;

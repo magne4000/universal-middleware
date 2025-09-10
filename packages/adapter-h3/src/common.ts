@@ -104,17 +104,20 @@ export const universalOnBeforeResponse = defineResponseMiddleware(
 
     const middlewares = event.context[pendingMiddlewaresSymbol];
     delete event.context[pendingMiddlewaresSymbol];
-    const newResponse = await middlewares?.reduce(
-      async (prev, curr) => {
-        const p = await prev;
-        const newR = await curr(p);
-        return newR ?? p;
-      },
-      Promise.resolve(response.body as Response),
-    );
 
-    if (newResponse) {
-      await sendWebResponse(event, newResponse);
+    if (response.body) {
+      const newResponse = await middlewares?.reduce(
+        async (prev, curr) => {
+          const p = await prev;
+          const newR = await curr(p);
+          return newR ?? p;
+        },
+        Promise.resolve(response.body as Response),
+      );
+
+      if (newResponse) {
+        await sendWebResponse(event, newResponse);
+      }
     }
   },
 );
