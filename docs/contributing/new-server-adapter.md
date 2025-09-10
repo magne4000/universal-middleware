@@ -327,11 +327,6 @@ When creating a new server adapter, ensure you've updated:
 - [ ] Created `packages/universal-middleware/src/adapters/{server-name}.ts`
 - [ ] Updated `packages/universal-middleware/test/common.ts` adapters array
 
-### Vercel Adapter
-- [ ] Add server to `packages/adapter-vercel/src`
-- [ ] Add tests to `packages/adapter-vercel/tests`
-- [ ] Add tests endpoints to `packages/adapter-vercel/api`
-
 ### Build & Test Configuration
 - [ ] Updated `vitest.workspace.ts`
 - [ ] Updated `packages/sirv/tsup.config.ts` servers list
@@ -362,7 +357,6 @@ When creating a new server adapter, ensure you've updated:
 
 ### Optional Integrations
 - [ ] Added Vercel adapter integration (if applicable)
-- [ ] Updated `.release-please-manifest.json`
 - [ ] Ensured server framework is in `pnpm-workspace.yaml` catalog
 
 ## Example Implementation
