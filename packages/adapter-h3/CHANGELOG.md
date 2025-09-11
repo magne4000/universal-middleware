@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/h3-v0.3.2...h3-v0.3.3) (2024-12-09)
 
+## 0.4.14
+
+### Patch Changes
+
+- 2a49083: fix: forward cloudflare context
+
 ## 0.4.13
 
 ### Patch Changes
