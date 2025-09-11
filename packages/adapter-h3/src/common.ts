@@ -179,6 +179,7 @@ export function getRuntime(event: H3Event): RuntimeAdapter {
       h3: event,
     },
     {
+      ...event.context.cloudflare,
       req: event.node.req,
       res: event.node.res,
     },
