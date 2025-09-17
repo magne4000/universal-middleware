@@ -15,8 +15,8 @@
   "keywords": [],
   "author": "",
   "devDependencies": {
-    "@biomejs/biome": "^2.2.3",
-    "@changesets/cli": "^2.29.6",
+    "@biomejs/biome": "^2.2.4",
+    "@changesets/cli": "^2.29.7",
     "@types/node": "catalog:",
     "file-type": "^21.0.0",
     "playwright": "^1.55.0",

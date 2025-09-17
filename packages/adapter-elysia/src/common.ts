@@ -20,7 +20,8 @@ import { Elysia, type Context as ElysiaContext, type Handler, NotFoundError } fr
 export const pendingSymbol = Symbol.for("unPending");
 export const pendingHandledSymbol = Symbol.for("unPendingHandled");
 
-export type ElysiaHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, Handler>;
+// biome-ignore lint/suspicious/noExplicitAny: avoid complex elysia types mismatch
+export type ElysiaHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, Handler<any, any>>;
 export type ElysiaMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
   UniversalMiddleware<In, Out>,
   typeof initPlugin
@@ -60,7 +61,8 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
       const response: Response | undefined = await this[universalSymbol](
         cloneRequestWithBody(elysiaContext.request, elysiaContext.body),
         context,
-        getRuntime(elysiaContext),
+        // biome-ignore lint/suspicious/noExplicitAny: ignored
+        getRuntime(elysiaContext as any),
       );
 
       if (response) {

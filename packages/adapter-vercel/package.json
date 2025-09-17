@@ -32,6 +32,8 @@
     "@universal-middleware/express": "workspace:^"
   },
   "devDependencies": {
+    "@hattip/core": "catalog:",
+    "@hattip/router": "catalog:",
     "@swc/core": "catalog:",
     "@types/express": "catalog:",
     "@types/node": "catalog:",
@@ -42,8 +44,6 @@
     "@universal-middleware/hono": "workspace:^",
     "@universal-middleware/srvx": "workspace:^",
     "@universal-middleware/tests": "workspace:*",
-    "@hattip/core": "catalog:",
-    "@hattip/router": "catalog:",
     "express": "catalog:",
     "fastify": "catalog:",
     "h3": "catalog:",
@@ -52,7 +52,7 @@
     "tsup": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "vercel": "^44.7.3",
+    "vercel": "^48.0.2",
     "vite": "catalog:",
     "vitest": "catalog:"
   },
