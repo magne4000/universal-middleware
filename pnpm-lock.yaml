@@ -34,8 +34,8 @@ catalogs:
       specifier: ^5.1.0
       version: 5.1.0
     fastify:
-      specifier: ^5.6.0
-      version: 5.6.0
+      specifier: ^5.6.1
+      version: 5.6.1
     h3:
       specifier: ^1.15.4
       version: 1.15.4
@@ -153,7 +153,7 @@ importers:
         version: 1.4.5(file-type@21.0.0)(typescript@5.9.2)
       fastify:
         specifier: 'catalog:'
-        version: 5.6.0
+        version: 5.6.1
       h3:
         specifier: 'catalog:'
         version: 1.15.4
@@ -351,8 +351,8 @@ importers:
         version: 5.0.0
     devDependencies:
       '@fastify/helmet':
-        specifier: ^13.0.1
-        version: 13.0.1
+        specifier: ^13.0.2
+        version: 13.0.2
       '@swc/core':
         specifier: 'catalog:'
         version: 1.13.5
@@ -364,10 +364,10 @@ importers:
         version: link:../tests
       fastify:
         specifier: 'catalog:'
-        version: 5.6.0
+        version: 5.6.1
       fastify-plugin:
-        specifier: ^5.0.1
-        version: 5.0.1
+        specifier: ^5.1.0
+        version: 5.1.0
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -618,7 +618,7 @@ importers:
         version: 5.1.0
       fastify:
         specifier: 'catalog:'
-        version: 5.6.0
+        version: 5.6.1
       h3:
         specifier: 'catalog:'
         version: 1.15.4
@@ -770,7 +770,7 @@ importers:
         version: 1.4.5(file-type@21.0.0)(typescript@5.9.2)
       fastify:
         specifier: 'catalog:'
-        version: 5.6.0
+        version: 5.6.1
       h3:
         specifier: 'catalog:'
         version: 1.15.4
@@ -1034,7 +1034,7 @@ importers:
         version: 5.1.0
       fastify:
         specifier: 'catalog:'
-        version: 5.6.0
+        version: 5.6.1
       fastify-raw-body:
         specifier: ^5.0.0
         version: 5.0.0
@@ -1579,8 +1579,8 @@ packages:
   '@fastify/forwarded@3.0.0':
     resolution: {integrity: sha512-kJExsp4JCms7ipzg7SJ3y8DwmePaELHxKYtg+tZow+k0znUTf3cb+npgyqm8+ATZOdmfgfydIebPDWM172wfyA==}
 
-  '@fastify/helmet@13.0.1':
-    resolution: {integrity: sha512-i+ifqazG3d0HwHL3zuZdg6B/WPc9Ee6kVfGpwGho4nxm0UaK1htss0zq+1rVhOoAorZlCgTZ3/i4S58hUGkkoA==}
+  '@fastify/helmet@13.0.2':
+    resolution: {integrity: sha512-tO1QMkOfNeCt9l4sG/FiWErH4QMm+RjHzbMTrgew1DYOQ2vb/6M1G2iNABBrD7Xq6dUk+HLzWW8u+rmmhQHifA==}
 
   '@fastify/merge-json-schemas@0.2.1':
     resolution: {integrity: sha512-OA3KGBCy6KtIvLf8DINC5880o5iBlDX4SxzLQS8HorJAbqluzLRn80UXU0bxZn7UOFhFgpRJDasfwn9nG4FG4A==}
@@ -2188,6 +2188,9 @@ packages:
   '@shikijs/core@3.12.2':
     resolution: {integrity: sha512-L1Safnhra3tX/oJK5kYHaWmLEBJi1irASwewzY3taX5ibyXyMkkSDZlq01qigjryOBwrXSdFgTiZ3ryzSNeu7Q==}
 
+  '@shikijs/core@3.13.0':
+    resolution: {integrity: sha512-3P8rGsg2Eh2qIHekwuQjzWhKI4jV97PhvYjYUzGqjvJfqdQPz+nMlfWahU24GZAyW1FxFI1sYjyhfh5CoLmIUA==}
+
   '@shikijs/engine-javascript@2.5.0':
     resolution: {integrity: sha512-VjnOpnQf8WuCEZtNUdjjwGUbtAVKuZkVQ/5cHy/tojVVRIRtlWMYVjyWhxOmIq05AlSOv72z7hRNRGVBgQOl0w==}
 
@@ -2215,8 +2218,8 @@ packages:
   '@shikijs/transformers@2.5.0':
     resolution: {integrity: sha512-SI494W5X60CaUwgi8u4q4m4s3YAFSxln3tzNjOSYqq54wlVgz0/NbbXEb3mdLbqMBztcmS7bVTaEd2w0qMmfeg==}
 
-  '@shikijs/twoslash@3.12.2':
-    resolution: {integrity: sha512-JthKvEvyE/gbu3u693mhNhEO6GYP1vetrwgEfqTAsT/G9AJ6nf7g7JVqdTSs+axdfilGWzZKeYdjfyanu/v5AA==}
+  '@shikijs/twoslash@3.13.0':
+    resolution: {integrity: sha512-OmNKNoZ8Hevt4VKQHfJL+hrsrqLSnW/Nz7RMutuBqXBCIYZWk80HnF9pcXEwRmy9MN0MGRmZCW2rDDP8K7Bxkw==}
     peerDependencies:
       typescript: '>=5.5.0'
 
@@ -2225,6 +2228,9 @@ packages:
 
   '@shikijs/types@3.12.2':
     resolution: {integrity: sha512-K5UIBzxCyv0YoxN3LMrKB9zuhp1bV+LgewxuVwHdl4Gz5oePoUFrr9EfgJlGlDeXCU1b/yhdnXeuRvAnz8HN8Q==}
+
+  '@shikijs/types@3.13.0':
+    resolution: {integrity: sha512-oM9P+NCFri/mmQ8LoFGVfVyemm5Hi27330zuOBp0annwJdKH1kOLndw3zCtAVDehPLg9fKqoEx3Ht/wNZxolfw==}
 
   '@shikijs/vitepress-twoslash@3.12.2':
     resolution: {integrity: sha512-aOuy+69iuTI8MMAy2htMdB6MSwmC5/gfeWDs0TbEkEc2yBaA6dfM5XZi0LpsJeJFSgvIROaxH5pvgdrENTWfpg==}
@@ -3316,15 +3322,15 @@ packages:
   fast-uri@3.1.0:
     resolution: {integrity: sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==}
 
-  fastify-plugin@5.0.1:
-    resolution: {integrity: sha512-HCxs+YnRaWzCl+cWRYFnHmeRFyR5GVnJTAaCJQiYzQSDwK9MgJdyAsuL3nh0EWRCYMgQ5MeziymvmAhUHYHDUQ==}
+  fastify-plugin@5.1.0:
+    resolution: {integrity: sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==}
 
   fastify-raw-body@5.0.0:
     resolution: {integrity: sha512-2qfoaQ3BQDhZ1gtbkKZd6n0kKxJISJGM6u/skD9ljdWItAscjXrtZ1lnjr7PavmXX9j4EyCPmBDiIsLn07d5vA==}
     engines: {node: '>= 10'}
 
-  fastify@5.6.0:
-    resolution: {integrity: sha512-9j2r9TnwNsfGiCKGYT0Voqy244qwcoYM9qvNi/i+F8sNNWDnqUEVuGYNc9GyjldhXmMlJmVPS6gI1LdvjYGRJw==}
+  fastify@5.6.1:
+    resolution: {integrity: sha512-WjjlOciBF0K8pDUPZoGPhqhKrQJ02I8DKaDIfO51EL0kbSMwQFl85cRwhOvmSDWoukNOdTo27gLN549pLCcH7Q==}
 
   fastq@1.19.1:
     resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
@@ -4161,6 +4167,7 @@ packages:
 
   path-match@1.2.4:
     resolution: {integrity: sha512-UWlehEdqu36jmh4h5CWJ7tARp1OEVKGHKm6+dg9qMq5RKUTV5WJrGgaZ3dN2m7WFAXDbjlHzvJvL/IUpy84Ktw==}
+    deprecated: This package is archived and no longer maintained. For support, visit https://github.com/expressjs/express/discussions
 
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
@@ -5776,9 +5783,9 @@ snapshots:
 
   '@fastify/forwarded@3.0.0': {}
 
-  '@fastify/helmet@13.0.1':
+  '@fastify/helmet@13.0.2':
     dependencies:
-      fastify-plugin: 5.0.1
+      fastify-plugin: 5.1.0
       helmet: 8.1.0
 
   '@fastify/merge-json-schemas@0.2.1':
@@ -6298,6 +6305,13 @@ snapshots:
       '@types/hast': 3.0.4
       hast-util-to-html: 9.0.5
 
+  '@shikijs/core@3.13.0':
+    dependencies:
+      '@shikijs/types': 3.13.0
+      '@shikijs/vscode-textmate': 10.0.2
+      '@types/hast': 3.0.4
+      hast-util-to-html: 9.0.5
+
   '@shikijs/engine-javascript@2.5.0':
     dependencies:
       '@shikijs/types': 2.5.0
@@ -6341,10 +6355,10 @@ snapshots:
       '@shikijs/core': 2.5.0
       '@shikijs/types': 2.5.0
 
-  '@shikijs/twoslash@3.12.2(typescript@5.9.2)':
+  '@shikijs/twoslash@3.13.0(typescript@5.9.2)':
     dependencies:
-      '@shikijs/core': 3.12.2
-      '@shikijs/types': 3.12.2
+      '@shikijs/core': 3.13.0
+      '@shikijs/types': 3.13.0
       twoslash: 0.3.4(typescript@5.9.2)
       typescript: 5.9.2
     transitivePeerDependencies:
@@ -6360,9 +6374,14 @@ snapshots:
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
 
+  '@shikijs/types@3.13.0':
+    dependencies:
+      '@shikijs/vscode-textmate': 10.0.2
+      '@types/hast': 3.0.4
+
   '@shikijs/vitepress-twoslash@3.12.2(typescript@5.9.2)':
     dependencies:
-      '@shikijs/twoslash': 3.12.2(typescript@5.9.2)
+      '@shikijs/twoslash': 3.13.0(typescript@5.9.2)
       floating-vue: 5.2.2(vue@3.5.21(typescript@5.9.2))
       lz-string: 1.5.0
       magic-string: 0.30.19
@@ -7664,15 +7683,15 @@ snapshots:
 
   fast-uri@3.1.0: {}
 
-  fastify-plugin@5.0.1: {}
+  fastify-plugin@5.1.0: {}
 
   fastify-raw-body@5.0.0:
     dependencies:
-      fastify-plugin: 5.0.1
+      fastify-plugin: 5.1.0
       raw-body: 3.0.1
       secure-json-parse: 2.7.0
 
-  fastify@5.6.0:
+  fastify@5.6.1:
     dependencies:
       '@fastify/ajv-compiler': 4.0.2
       '@fastify/error': 4.2.0
