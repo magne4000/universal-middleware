@@ -75,7 +75,7 @@ export interface NodeRuntime {
 export interface BunRuntime {
   runtime: "bun";
 
-  server: BunServer;
+  server: BunServer<any>;
 }
 
 export interface VercelEdgeRuntime {
