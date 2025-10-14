@@ -8,6 +8,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import type { H3Event } from "h3";
 import type { Context as HonoContext } from "hono";
 import type { ServerRequest } from "srvx";
+import type { Request as ExpressRequest, Response as ExpressResponse } from "express";
 import {
   contextSymbol,
   type methodSymbol,
@@ -113,8 +114,8 @@ export interface ExpressAdapter {
   res: ServerResponse;
 
   express: {
-    req: IncomingMessage;
-    res: ServerResponse;
+    req: ExpressRequest;
+    res: ExpressResponse;
   };
 }
 

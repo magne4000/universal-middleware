@@ -759,6 +759,9 @@ importers:
       '@types/bun':
         specifier: ^1.2.22
         version: 1.2.22
+      '@types/express':
+        specifier: 'catalog:'
+        version: 5.0.3
       '@types/node':
         specifier: 'catalog:'
         version: 20.19.16
