@@ -17,7 +17,7 @@
     "dev": "tsup --watch",
     "prepack": "pnpm build",
     "test": "vitest run",
-    "test:run-elysia:bun": "bun tests/entry-elysia.ts",
+    "test:run-elysia:bun": "bun --bun tests/entry-elysia.ts",
     "test:run-elysia:worker": "wrangler dev tests/entry-elysia-cloudflare.ts",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
+    "@sinclair/typebox": "^0.34.41",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
