@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.23
+
+### Patch Changes
+
+- 4dd534b: fix(deps): update all non-major dependencies
+- Updated dependencies [4dd534b]
+  - @universal-middleware/core@0.4.11
+  - @universal-middleware/express@0.4.19
+  - @universal-middleware/h3@0.4.14
+
 ## 0.4.22
 
 ### Patch Changes

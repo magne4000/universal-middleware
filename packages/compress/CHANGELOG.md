@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.32
+
+### Patch Changes
+
+- 4dd534b: fix(deps): update all non-major dependencies
+
 ## 0.2.31
 
 ### Patch Changes
