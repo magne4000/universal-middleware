@@ -31,7 +31,7 @@
     "h3": "catalog:",
     "hono": "catalog:",
     "rimraf": "catalog:",
-    "rou3": "^0.7.7",
+    "rou3": "^0.7.8",
     "srvx": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",
