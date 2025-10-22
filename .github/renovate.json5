@@ -43,6 +43,14 @@
         "/^fastify-/"
       ],
       "groupName": "fastify"
+    },
+    // Ignored packages versions
+    {
+      // See https://github.com/elysiajs/elysia/issues/1260#issuecomment-3413721908
+      "matchPackageNames": [
+        "elysia"
+      ],
+      "allowedVersions": "!/1\\.4\\.12$/"
     }
   ]
 }
