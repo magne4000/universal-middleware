@@ -4,6 +4,8 @@ export default defineConfig([
   {
     entry: {
       index: "./src/index.ts",
+      edge: "./src/edge.ts",
+      node: "./src/node.ts",
 
       // edge
       "hono/edge": "./src/edge/hono.ts",
