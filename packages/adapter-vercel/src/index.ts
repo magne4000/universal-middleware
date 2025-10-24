@@ -1,7 +1,8 @@
 export {
-  createNodeHandler,
   createEdgeHandler,
   getRuntime,
-  type VercelNodeHandler,
   type VercelEdgeHandler,
-} from "./common.js";
+  type VercelNodeHandler,
+} from "./utils/common.js";
+
+export { createNodeHandler } from "./utils/node.js";
