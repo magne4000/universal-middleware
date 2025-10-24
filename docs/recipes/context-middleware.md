@@ -124,7 +124,7 @@ export const onRequest = contextMiddleware("world");
 
 ```ts twoslash [vercel-edge.ts]
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
-import { createEdgeHandler } from "@universal-middleware/vercel";
+import { createEdgeHandler } from "@universal-middleware/vercel/edge";
 import { pipe } from "@universal-middleware/core";
 
 // Vercel has no internal way of representing a middleware
@@ -141,7 +141,7 @@ export const GET = createEdgeHandler(() => wrapped)();
 
 ```ts twoslash [vercel-node.ts]
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
-import { createNodeHandler } from "@universal-middleware/vercel";
+import { createNodeHandler } from "@universal-middleware/vercel/node";
 import { pipe } from "@universal-middleware/core";
 
 // Vercel has no internal way of representing a middleware
