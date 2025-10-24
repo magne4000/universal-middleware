@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/core-v0.3.2...core-v0.3.3) (2024-12-09)
 
+## 0.4.12
+
+### Patch Changes
+
+- 1a3a123: fix: srvx peerDependencies
+
 ## 0.4.11
 
 ### Patch Changes
