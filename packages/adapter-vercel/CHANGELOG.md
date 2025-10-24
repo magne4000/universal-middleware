@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.25
+
+### Patch Changes
+
+- bd1ccc5: feat: /node and /edge exports
+
 ## 0.4.24
 
 ### Patch Changes
