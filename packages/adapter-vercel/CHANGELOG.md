@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.24
+
+### Patch Changes
+
+- 0007077: fix: export dedicated /edge and /node modules
+
 ## 0.4.23
 
 ### Patch Changes
