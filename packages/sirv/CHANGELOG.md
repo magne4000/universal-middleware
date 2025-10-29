@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.23
+
+### Patch Changes
+
+- 82213e1: fix(express): better `req` and `res` typing
+
 ## 0.1.22
 
 ### Patch Changes

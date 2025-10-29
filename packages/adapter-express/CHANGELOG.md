@@ -1,5 +1,13 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.4.20
+
+### Patch Changes
+
+- 82213e1: fix(express): better `req` and `res` typing
+- Updated dependencies [82213e1]
+  - @universal-middleware/core@0.4.13
+
 ## 0.4.19
 
 ### Patch Changes
