@@ -191,11 +191,15 @@ export function getContext<InContext extends Universal.Context = Universal.Conte
 export function getRuntime(request: DecoratedRequest, response: DecoratedServerResponse): RuntimeAdapter {
   return getAdapterRuntime("express", {
     params: request.params,
-    req: request as IncomingMessage,
-    res: response,
+    // biome-ignore lint/suspicious/noExplicitAny: cast
+    req: request as any,
+    // biome-ignore lint/suspicious/noExplicitAny: cast
+    res: response as any,
     express: Object.freeze({
-      req: request as IncomingMessage,
-      res: response,
+      // biome-ignore lint/suspicious/noExplicitAny: cast
+      req: request as any,
+      // biome-ignore lint/suspicious/noExplicitAny: cast
+      res: response as any,
     }),
   });
 }

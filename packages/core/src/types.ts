@@ -4,6 +4,7 @@ import type { AdapterRequestContext as HattipContext } from "@hattip/core";
 import type { RequestCtx as WebrouteContext } from "@webroute/route";
 import type { Server as BunServer } from "bun";
 import type { Context as ElysiaContext } from "elysia";
+import type { Request as ExpressRequest, Response as ExpressResponse } from "express";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { H3Event } from "h3";
 import type { Context as HonoContext } from "hono";
@@ -109,12 +110,12 @@ export interface ExpressAdapter {
   adapter: "express";
   params: Record<string, string> | undefined;
 
-  req: IncomingMessage;
-  res: ServerResponse;
+  req: ExpressRequest;
+  res: ExpressResponse;
 
   express: {
-    req: IncomingMessage;
-    res: ServerResponse;
+    req: ExpressRequest;
+    res: ExpressResponse;
   };
 }
 

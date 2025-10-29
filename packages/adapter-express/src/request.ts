@@ -62,7 +62,8 @@ export function createRequestAdapter(options: NodeRequestAdapterOptions = {}): (
       protocolOverride ||
       req.protocol ||
       (trustProxy && parseForwardedHeader("proto")) ||
-      (req.socket?.encrypted && "https") ||
+      // biome-ignore lint/suspicious/noExplicitAny: encrypted can exist in some express versions
+      ((req.socket as any)?.encrypted && "https") ||
       "http";
 
     let host = hostOverride || (trustProxy && parseForwardedHeader("host")) || headers.host;
