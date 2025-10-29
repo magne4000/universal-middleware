@@ -78,5 +78,6 @@ export function testRun(
 
 function getEncoding(res: GotResponse) {
   const i = res.rawHeaders.indexOf("content-encoding");
+  if (i === -1) return undefined;
   return res.rawHeaders[i + 1];
 }
