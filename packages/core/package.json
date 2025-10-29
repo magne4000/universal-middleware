@@ -57,6 +57,9 @@
     "@hattip/core": {
       "optional": true
     },
+    "@types/express": {
+      "optional": true
+    },
     "@webroute/route": {
       "optional": true
     },
