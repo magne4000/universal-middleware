@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { autoRetry, expect, getServerUrl, run, test } from "@brillout/test-e2e";
-// Prefer ky over fetch because node implementation can consume a lot of memory
+// Prefer got over fetch because node implementation can consume a lot of memory
 // See https://github.com/nodejs/undici/issues/4058#issuecomment-2661366213
 import fetch, { type Response as GotResponse } from "got";
 
