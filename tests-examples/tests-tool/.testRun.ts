@@ -2,9 +2,9 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { autoRetry, expect, getServerUrl, run, test } from "@brillout/test-e2e";
-// Prefer ky over fetch because node implementation can consume a lot of memory
+// Prefer got over fetch because node implementation can consume a lot of memory
 // See https://github.com/nodejs/undici/issues/4058#issuecomment-2661366213
-import ki from "ky";
+import fetch, { type Response as GotResponse } from "got";
 
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 
@@ -29,27 +29,22 @@ export function testRun(
   });
 
   test("/", async () => {
-    const response = await ki(`${getServerUrl()}${options?.prefix ?? ""}/`, { window: null, redirect: "error" });
+    const response = await fetch.get(`${getServerUrl()}${options?.prefix ?? ""}/`);
 
-    const content = await response.text();
+    const content = response.body;
 
     if (!options?.noMiddleware) {
       expect(content).toContain('"World!!!"');
-      expect(response.headers.has("x-universal-hello")).toBe(true);
+      expect(response.headers["x-universal-hello"]).toBe("World!!!");
     }
 
     if (!options?.noMiddleware && !options?.noCompression) {
-      expect(response.headers.get("content-encoding")).toMatch(/gzip|deflate/);
+      expect(getEncoding(response)).toMatch(/gzip|deflate/);
     }
   });
 
   test("/user/:name", async () => {
-    const response = await ki(`${getServerUrl()}${options?.prefix ?? ""}/user/magne4000`, {
-      window: null,
-      redirect: "error",
-    });
-
-    const content = await response.text();
+    const content = await fetch.get(`${getServerUrl()}${options?.prefix ?? ""}/user/magne4000`).text();
 
     expect(content).toBe("User name is: magne4000");
   });
@@ -65,13 +60,12 @@ export function testRun(
     test("/big-file", async () => {
       await autoRetry(
         async () => {
-          const response = await ki(`${getServerUrl()}${options?.prefix ?? ""}/big-file`, {
-            window: null,
-            redirect: "error",
+          const response = await fetch.get(`${getServerUrl()}${options?.prefix ?? ""}/big-file`, {
+            followRedirect: false,
           });
 
-          expect(response.headers.get("content-encoding")).toMatch(/gzip|deflate/);
-          const content = await response.text();
+          expect(getEncoding(response)).toMatch(/gzip|deflate/);
+          const content = response.body;
           expect(content).toBe(readFileSync(join(_dirname, "..", "..", "packages", "tests", "big-file.txt"), "utf-8"));
         },
         {
@@ -80,4 +74,10 @@ export function testRun(
       );
     });
   }
+}
+
+function getEncoding(res: GotResponse) {
+  const i = res.rawHeaders.indexOf("content-encoding");
+  if (i === -1) return undefined;
+  return res.rawHeaders[i + 1];
 }

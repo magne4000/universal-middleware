@@ -8,7 +8,21 @@ import { args } from "./utils";
 import { sendBigFile } from "@universal-middleware/tests/utils-node";
 import { createHandler } from "@universal-middleware/express";
 
+declare global {
+  namespace Express {
+    interface Request {
+      pizza: string;
+    }
+  }
+}
+
 const app = express();
+
+app.use((request, _, next) => {
+  // Ensure proper type override
+  request.pizza = "pizza";
+  next();
+});
 
 // Now the universal context contains `{ hello: "World!!!" }`.
 // See /examples/context-middleware

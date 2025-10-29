@@ -9,6 +9,7 @@ export default defineConfig([
       h3: "src/h3-entry.ts",
       hattip: "src/hattip-entry.ts",
       srvx: "src/srvx-entry.ts",
+      hono: "src/hono-entry.ts",
     },
     format: "esm",
     bundle: true,
