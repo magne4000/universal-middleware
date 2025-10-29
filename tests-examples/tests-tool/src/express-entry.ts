@@ -18,9 +18,10 @@ declare global {
 
 const app = express();
 
-app.use((request) => {
+app.use((request, _, next) => {
   // Ensure proper type override
   request.pizza = "pizza";
+  next();
 });
 
 // Now the universal context contains `{ hello: "World!!!" }`.
