@@ -1,15 +1,9 @@
-/// <reference types="vitest" />
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     retry: 3,
     passWithNoTests: true,
-    poolOptions: {
-      forks: {
-        // vercel cli allocates too much memory to have them run in parallel
-        singleFork: true,
-      },
-    },
+    maxWorkers: 1,
   },
 });
