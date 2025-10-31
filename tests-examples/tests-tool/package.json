@@ -33,7 +33,7 @@
     "@brillout/test-e2e": "^0.6.19",
     "@hattip/adapter-node": "^0.0.49",
     "@hattip/router": "catalog:",
-    "@hono/node-server": "^1.19.5",
+    "@hono/node-server": "^1.19.6",
     "@hono/vite-dev-server": "^0.23.0",
     "@swc-node/register": "^1.11.1",
     "@types/express": "catalog:",
@@ -66,7 +66,7 @@
     "srvx": "catalog:",
     "tsup": "^8.5.0",
     "typescript": "catalog:",
-    "vercel": "^48.5.0",
+    "vercel": "^48.7.1",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
