@@ -134,7 +134,7 @@
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-typescript": "^12.3.0",
     "@swc/core": "catalog:",
-    "esbuild": "^0.25.11",
+    "esbuild": "^0.25.12",
     "rimraf": "catalog:",
     "rollup": "^4.52.5",
     "tsup": "catalog:",
