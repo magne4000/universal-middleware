@@ -7,6 +7,9 @@ export default defineConfig([
       edge: "./src/edge.ts",
       node: "./src/node.ts",
 
+      "edge/servers": "./src/edge/index.ts",
+      "node/servers": "./src/node/index.ts",
+
       // edge
       "hono/edge": "./src/edge/hono.ts",
       "h3/edge": "./src/edge/h3.ts",
