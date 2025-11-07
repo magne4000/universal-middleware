@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.26
+
+### Patch Changes
+
+- ace0429: feat: barrel export for all servers
+
 ## 0.4.25
 
 ### Patch Changes
