@@ -10,6 +10,8 @@
     ".": "./dist/index.js",
     "./edge": "./dist/edge.js",
     "./node": "./dist/node.js",
+    "./edge/servers": "./dist/edge/servers.js",
+    "./node/servers": "./dist/node/servers.js",
     "./hono": "./dist/hono.js",
     "./h3": "./dist/h3.js",
     "./elysia": "./dist/elysia.js",
