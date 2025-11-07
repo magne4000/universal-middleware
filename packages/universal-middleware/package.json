@@ -130,7 +130,7 @@
     "unplugin": "^2.3.10"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.9",
+    "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-typescript": "^12.3.0",
     "@swc/core": "catalog:",
