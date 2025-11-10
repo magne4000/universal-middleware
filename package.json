@@ -15,10 +15,10 @@
   "keywords": [],
   "author": "",
   "devDependencies": {
-    "@biomejs/biome": "^2.3.2",
+    "@biomejs/biome": "^2.3.4",
     "@changesets/cli": "^2.29.7",
     "@types/node": "catalog:",
-    "file-type": "^21.0.0",
+    "file-type": "^21.1.0",
     "playwright": "^1.56.1",
     "turbo": "^2.6.0",
     "typescript": "catalog:"
@@ -30,7 +30,7 @@
     "overrides": {
       "@vercel/node>typescript": "catalog:",
       "@webroute/middleware": "^0.10.0",
-      "esbuild": "^0.25.12"
+      "esbuild": "^0.27.0"
     },
     "onlyBuiltDependencies": [
       "@swc/core",
