@@ -60,8 +60,8 @@ export function createRequestAdapter(options: NodeRequestAdapterOptions = {}): (
 
     const protocol =
       protocolOverride ||
-      req.protocol ||
       (trustProxy && parseForwardedHeader("proto")) ||
+      req.protocol ||
       // biome-ignore lint/suspicious/noExplicitAny: encrypted can exist in some express versions
       ((req.socket as any)?.encrypted && "https") ||
       "http";
