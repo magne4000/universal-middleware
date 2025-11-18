@@ -118,11 +118,16 @@ export function createMiddleware<
 
           let currentResponse = elysiaContext.response as Response;
 
-          for (const p of elysiaContext[pendingSymbol]) {
-            const res = await p(currentResponse);
-            if (res) {
-              currentResponse = res;
+          try {
+            for (const p of elysiaContext[pendingSymbol]) {
+              const res = await p(currentResponse);
+              if (res) {
+                currentResponse = res;
+              }
             }
+          } catch (e) {
+            console.error(e);
+            return e;
           }
 
           return currentResponse;
