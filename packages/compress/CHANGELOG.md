@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.34
+
+### Patch Changes
+
+- ec2d5c3: fix(deps): update all non-major dependencies
+
 ## 0.2.33
 
 ### Patch Changes

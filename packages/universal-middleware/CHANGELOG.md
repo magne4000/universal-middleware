@@ -1,5 +1,16 @@
 ## [0.5.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.4...universal-middleware-v0.5.5) (2024-12-09)
 
+## 0.6.28
+
+### Patch Changes
+
+- ec2d5c3: fix(deps): update all non-major dependencies
+- Updated dependencies [ec2d5c3]
+- Updated dependencies [c530bb4]
+  - @universal-middleware/elysia@0.6.1
+  - @universal-middleware/vercel@0.4.27
+  - @universal-middleware/express@0.4.21
+
 ## 0.6.27
 
 ### Patch Changes

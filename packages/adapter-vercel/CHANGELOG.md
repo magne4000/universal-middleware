@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.27
+
+### Patch Changes
+
+- ec2d5c3: fix(deps): update all non-major dependencies
+- Updated dependencies [c530bb4]
+  - @universal-middleware/express@0.4.21
+
 ## 0.4.26
 
 ### Patch Changes
