@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.4.21
+
+### Patch Changes
+
+- c530bb4: fix: respect X-Forwarded-Proto
+
 ## 0.4.20
 
 ### Patch Changes

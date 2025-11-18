@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/elysia-v0.3.2...elysia-v0.3.3) (2024-12-09)
 
+## 0.6.1
+
+### Patch Changes
+
+- ec2d5c3: fix(deps): update all non-major dependencies
+
 ## 0.6.0
 
 ### Minor Changes
