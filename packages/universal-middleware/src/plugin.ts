@@ -408,7 +408,7 @@ function fixBundleExports(
 async function generateDts(content: string, outFile: string) {
   const { isolatedDeclaration } = await import("oxc-transform");
 
-  const code = isolatedDeclaration("file.ts", content, {
+  const code = await isolatedDeclaration("file.ts", content, {
     sourcemap: false,
   });
 
