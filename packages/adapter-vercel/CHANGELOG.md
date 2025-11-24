@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.29
+
+### Patch Changes
+
+- 315da75: fix: dynamically import h3
+
 ## 0.4.28
 
 ### Patch Changes
