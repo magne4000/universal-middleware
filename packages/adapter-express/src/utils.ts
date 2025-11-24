@@ -38,7 +38,11 @@ export type WebHandler<InContext extends Universal.Context = Universal.Context, 
  */
 export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoolean): WebHandler {
   return async (request: Request, _context, runtime): Promise<Response | undefined> => {
-    const req = runtime && "req" in runtime && runtime.req ? runtime.req : createIncomingMessage(request);
+    const req: IncomingMessage =
+      runtime && "req" in runtime && runtime.req
+        ? runtime.req
+        : // biome-ignore lint/suspicious/noExplicitAny: srvx request
+          ((request as any).runtime?.node?.req ?? createIncomingMessage(request));
     const { res, onReadable } = createServerResponse(req);
 
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: ignored
