@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.28
+
+### Patch Changes
+
+- 81f8c8b: feat: srvx compat with fetchable syntax
+
 ## 0.4.27
 
 ### Patch Changes
