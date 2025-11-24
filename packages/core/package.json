@@ -23,7 +23,7 @@
     "@cloudflare/workers-types": "catalog:",
     "@hattip/core": "catalog:",
     "@swc/core": "catalog:",
-    "@types/bun": "^1.3.2",
+    "@types/bun": "^1.3.3",
     "@types/express": "catalog:",
     "@types/node": "catalog:",
     "@webroute/route": "catalog:",
