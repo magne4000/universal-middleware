@@ -20,7 +20,7 @@
     "@types/node": "catalog:",
     "file-type": "^21.1.1",
     "playwright": "^1.57.0",
-    "turbo": "^2.6.1",
+    "turbo": "^2.6.3",
     "typescript": "catalog:"
   },
   "engines": {
@@ -30,7 +30,7 @@
     "overrides": {
       "@vercel/node>typescript": "catalog:",
       "@webroute/middleware": "^0.10.0",
-      "esbuild": "^0.27.0"
+      "esbuild": "^0.27.1"
     },
     "onlyBuiltDependencies": [
       "@swc/core",

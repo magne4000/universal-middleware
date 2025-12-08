@@ -30,7 +30,7 @@
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@brillout/test-e2e": "^0.6.19",
+    "@brillout/test-e2e": "^0.6.20",
     "@hattip/adapter-node": "^0.0.49",
     "@hattip/router": "catalog:",
     "@hono/node-server": "^1.19.6",
@@ -66,7 +66,7 @@
     "srvx": "catalog:",
     "tsup": "^8.5.1",
     "typescript": "catalog:",
-    "vercel": "^48.12.0",
+    "vercel": "^48.12.1",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"

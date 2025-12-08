@@ -125,7 +125,7 @@
     "@universal-middleware/srvx": "workspace:^",
     "@universal-middleware/vercel": "workspace:^",
     "@universal-middleware/webroute": "workspace:^",
-    "oxc-transform": "^0.99.0",
+    "oxc-transform": "^0.101.0",
     "package-up": "^5.0.0",
     "unplugin": "^2.3.11"
   },
@@ -134,7 +134,7 @@
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-typescript": "^12.3.0",
     "@swc/core": "catalog:",
-    "esbuild": "^0.27.0",
+    "esbuild": "^0.27.1",
     "rimraf": "catalog:",
     "rollup": "^4.53.3",
     "tsup": "catalog:",
