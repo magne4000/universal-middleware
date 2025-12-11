@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.24
+
+### Patch Changes
+
+- 1c47f1b: fix: do not serve top-level files that begin with the directory name
+
 ## 0.1.23
 
 ### Patch Changes
