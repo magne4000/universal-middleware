@@ -1,6 +1,6 @@
 import type { Stats } from "node:fs";
 import * as fs from "node:fs";
-import { join, normalize, resolve } from "node:path";
+import { join, normalize, resolve, sep } from "node:path";
 import { Readable } from "node:stream";
 import type { UniversalMiddleware } from "@universal-middleware/core";
 import { url as getUrl } from "@universal-middleware/core";
@@ -258,7 +258,7 @@ export default function serveStatic(dir?: string, opts: ServeOptions = {}): Univ
   }
 
   const lookupFn = opts.dev
-    ? (uri: string, extns: string[]) => viaLocal(dir, isEtag, uri, extns)
+    ? (uri: string, extns: string[]) => viaLocal(dir + sep, isEtag, uri, extns)
     : (uri: string, extns: string[]) => viaCache(FILES, uri, extns);
 
   return createUniversalMiddleware(
