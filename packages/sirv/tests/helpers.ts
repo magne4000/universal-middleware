@@ -1,12 +1,12 @@
 import { readFile, stat, unlink, writeFile } from "node:fs/promises";
 import { createServer, type Server } from "node:http";
+import type { AddressInfo } from "node:net";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { AddressInfo } from "node:net";
 import { createMiddleware } from "@universal-middleware/express";
 import * as mime from "mrmime";
-import sirv, { type ServeOptions } from "../src/middleware";
 import { assert } from "vitest";
+import sirv, { type ServeOptions } from "../src/middleware";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,6 +28,9 @@ export function http(opts: ServeOptions = {}) {
         redirect: "error",
         ...opts,
       });
+    },
+    get address() {
+      return address;
     },
   };
 }
