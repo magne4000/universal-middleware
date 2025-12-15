@@ -40,7 +40,7 @@ jobs:
       - name: Install Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: 2.5.6
+          deno-version: 2.6.0
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
