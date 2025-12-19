@@ -155,5 +155,6 @@ export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
       req: honoContext.env?.incoming,
       res: honoContext.env?.outgoing,
     },
+    honoContext.req.raw,
   );
 }

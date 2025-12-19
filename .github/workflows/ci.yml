@@ -31,6 +31,8 @@ jobs:
         include:
           - os: ubuntu-latest
             node_version: 22
+          - os: ubuntu-latest
+            node_version: 24
       fail-fast: false
     name: "CI tests on node-${{ matrix.node_version }}, ${{ matrix.os }}"
     steps:
@@ -56,9 +58,6 @@ jobs:
           node-version: ${{ matrix.node_version }}
           check-latest: true
           cache: "pnpm"
-
-      - name: Cache for Turbo
-        uses: rharkor/caching-for-turbo@v1.8
 
       - name: Install
         run: pnpm install

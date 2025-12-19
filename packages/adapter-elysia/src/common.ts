@@ -15,7 +15,7 @@ import {
   isBodyInit,
   universalSymbol,
 } from "@universal-middleware/core";
-import { Elysia, type Context as ElysiaContext, type Handler, NotFoundError } from "elysia";
+import { type Context as ElysiaContext, Elysia, type Handler, NotFoundError } from "elysia";
 
 export const pendingSymbol = Symbol.for("unPending");
 export const pendingHandledSymbol = Symbol.for("unPendingHandled");
@@ -186,5 +186,6 @@ export function getRuntime(elysiaContext: ElysiaContext): RuntimeAdapter {
       elysia: elysiaContext,
     },
     cloudflareContext,
+    elysiaContext.request,
   );
 }
