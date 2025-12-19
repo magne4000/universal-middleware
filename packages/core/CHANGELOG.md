@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/core-v0.3.2...core-v0.3.3) (2024-12-09)
 
+## 0.4.14
+
+### Patch Changes
+
+- c035641: fix: extract req/res from srvx
+
 ## 0.4.13
 
 ### Patch Changes

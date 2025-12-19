@@ -1,5 +1,13 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/h3-v0.3.2...h3-v0.3.3) (2024-12-09)
 
+## 0.4.15
+
+### Patch Changes
+
+- c035641: fix: extract req/res from srvx
+- Updated dependencies [c035641]
+  - @universal-middleware/core@0.4.14
+
 ## 0.4.14
 
 ### Patch Changes
