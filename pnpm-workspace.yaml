@@ -4,12 +4,12 @@ packages:
   - tests-examples/*
   - docs
 catalog:
-  '@cloudflare/workers-types': ^4.20251213.0
+  '@cloudflare/workers-types': ^4.20251219.0
   '@hattip/core': ^0.0.49
   '@hattip/router': ^0.0.49
-  '@swc/core': ^1.15.4
+  '@swc/core': ^1.15.7
   '@types/express': ^5.0.6
-  '@types/node': ^20.19.21
+  '@types/node': ^20.19.27
   '@webroute/route': ^0.8.0
   elysia: ^1.4.19
   express: ^5.2.1
@@ -21,6 +21,6 @@ catalog:
   tsup: ^8.5.1
   tsx: ^4.21.0
   typescript: ^5.9.3
-  vite: ^7.2.7
-  vitest: ^4.0.15
-  wrangler: ^4.54.0
+  vite: ^7.3.0
+  vitest: ^4.0.16
+  wrangler: ^4.56.0
