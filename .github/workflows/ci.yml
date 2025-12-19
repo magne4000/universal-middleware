@@ -31,6 +31,8 @@ jobs:
         include:
           - os: ubuntu-latest
             node_version: 22
+          - os: ubuntu-latest
+            node_version: 24
       fail-fast: false
     name: "CI tests on node-${{ matrix.node_version }}, ${{ matrix.os }}"
     steps:
@@ -40,7 +42,7 @@ jobs:
       - name: Install Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: 2.5.6
+          deno-version: 2.6.0
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
