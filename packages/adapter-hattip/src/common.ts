@@ -102,5 +102,6 @@ export function getRuntime(context: AdapterRequestContext): RuntimeAdapter {
       // biome-ignore lint/suspicious/noExplicitAny: ignored
       res: (context.platform as any)?.response,
     },
+    context.request,
   );
 }

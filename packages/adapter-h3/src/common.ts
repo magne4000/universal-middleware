@@ -183,5 +183,6 @@ export function getRuntime(event: H3Event): RuntimeAdapter {
       req: event.node.req,
       res: event.node.res,
     },
+    memToWebRequest(event),
   );
 }
