@@ -4,7 +4,7 @@ packages:
   - tests-examples/*
   - docs
 catalog:
-  '@cloudflare/workers-types': ^4.20251219.0
+  '@cloudflare/workers-types': ^4.20251223.0
   '@hattip/core': ^0.0.49
   '@hattip/router': ^0.0.49
   '@swc/core': ^1.15.7
