@@ -18,9 +18,9 @@
     "@biomejs/biome": "^2.3.10",
     "@changesets/cli": "^2.29.8",
     "@types/node": "catalog:",
-    "file-type": "^21.1.1",
+    "file-type": "^21.2.0",
     "playwright": "^1.57.0",
-    "turbo": "^2.7.1",
+    "turbo": "^2.7.2",
     "typescript": "catalog:"
   },
   "engines": {
