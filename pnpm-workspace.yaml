@@ -4,20 +4,20 @@ packages:
   - tests-examples/*
   - docs
 catalog:
-  '@cloudflare/workers-types': ^4.20251229.0
+  '@cloudflare/workers-types': ^4.20260103.0
   '@hattip/core': ^0.0.49
   '@hattip/router': ^0.0.49
-  '@swc/core': ^1.15.7
+  '@swc/core': ^1.15.8
   '@types/express': ^5.0.6
   '@types/node': ^20.19.27
   '@webroute/route': ^0.8.0
-  elysia: ^1.4.19
+  elysia: ^1.4.21
   express: ^5.2.1
   fastify: ^5.6.2
   h3: ^1.15.4
   hono: ^4.11.3
   rimraf: ^6.1.2
-  srvx: ^0.9.8
+  srvx: ^0.10.0
   tsup: ^8.5.1
   tsx: ^4.21.0
   typescript: ^5.9.3
