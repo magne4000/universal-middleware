@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.35
+
+### Patch Changes
+
+- f34e0ff: feat: upgrade dependencies
+
 ## 0.2.34
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/webroute-v0.3.2...webroute-v0.3.3) (2024-12-09)
 
+## 0.4.11
+
+### Patch Changes
+
+- f34e0ff: feat: upgrade dependencies
+- Updated dependencies [f34e0ff]
+  - @universal-middleware/core@0.4.15
+
 ## 0.4.10
 
 ### Patch Changes
