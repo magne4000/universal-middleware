@@ -1,4 +1,4 @@
-name: Tests
+name: Linting and typings
 
 on:
   workflow_dispatch:
@@ -22,19 +22,8 @@ defaults:
     working-directory: .
 
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        node_version: [20]
-        include:
-          - os: ubuntu-latest
-            node_version: 22
-          - os: ubuntu-latest
-            node_version: 24
-      fail-fast: false
-    name: "CI tests on node-${{ matrix.node_version }}, ${{ matrix.os }}"
+  lint-and-types:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -42,7 +31,7 @@ jobs:
       - name: Install Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: 2.6.3
+          deno-version: 2.6.4
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
@@ -52,36 +41,25 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Set Node version to ${{ matrix.node_version }}
+      - name: Set Node version to 20
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node_version }}
+          node-version: 20
           check-latest: true
           cache: "pnpm"
 
       - name: Install
         run: pnpm install
 
-      - run: pnpm playwright install chromium
-
       - name: Build
         run: pnpm run build
 
       - name: Run lint
-        if: ${{ matrix.os != 'windows-latest' }}
         run: pnpm run lint
 
       - name: Run typecheck
-        if: ${{ matrix.os != 'windows-latest' }}
         run: pnpm run test:typecheck
 
-      - name: Run tests
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: pnpm run test
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-
       - name: Run build-doc
-        if: ${{ matrix.os != 'windows-latest' }}
         run: pnpm run build-doc
         working-directory: docs

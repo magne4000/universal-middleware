@@ -5,5 +5,6 @@ export default defineConfig({
     retry: 3,
     passWithNoTests: true,
     maxWorkers: 1,
+    slowTestThreshold: 5000,
   },
 });

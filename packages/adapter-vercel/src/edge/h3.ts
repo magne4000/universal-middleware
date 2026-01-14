@@ -8,7 +8,7 @@ import type { VercelEdgeHandlerRaw } from "../utils/common.js";
 export function createEdgeHandler(app: App): VercelEdgeHandlerRaw {
   let handler: WebHandler | undefined;
 
-  return async function h3HandlerVercelNode(request) {
+  return async function h3HandlerVercelEdge(request) {
     if (!handler) {
       try {
         const { toWebHandler } = await import("h3");
