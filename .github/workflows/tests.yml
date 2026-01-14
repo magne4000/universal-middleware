@@ -49,6 +49,10 @@ jobs:
             node_version: 20
           - os: windows-latest
             node_version: 22
+          - os: windows-latest
+            cwd: packages/sirv
+          - os: windows-latest
+            cwd: packages/adapter-vercel
       fail-fast: false
     name: "node@${{ matrix.node_version }}, ${{ matrix.os }}, ${{ matrix.cwd }}"
     steps:
@@ -78,10 +82,12 @@ jobs:
       - name: Install
         run: pnpm install
 
-      - run: pnpm playwright install chromium
-
       - name: Build
         run: pnpm run build
+
+      - run: pnpm playwright install chromium
+        if: matrix.cwd == 'tests-examples/tests-tool'
+        working-directory: ${{ matrix.cwd }}
 
       - name: Run tests on ${{ matrix.cwd }}
         run: pnpm run test

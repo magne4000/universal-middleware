@@ -24,7 +24,6 @@ defaults:
 jobs:
   lint-and-types:
     runs-on: ubuntu-latest
-    name: "CI tests on node-${{ matrix.node_version }}, ${{ matrix.os }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -51,8 +50,6 @@ jobs:
 
       - name: Install
         run: pnpm install
-
-      - run: pnpm playwright install chromium
 
       - name: Build
         run: pnpm run build
