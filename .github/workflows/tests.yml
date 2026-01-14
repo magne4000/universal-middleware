@@ -23,11 +23,11 @@ defaults:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}, node@${{ matrix.node_version }}, ${{ matrix.cwd }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node_version: [20]
+        node_version: [20, 22, 24]
         cwd:
           - packages/adapter-cloudflare
           - packages/adapter-elysia
@@ -44,11 +44,11 @@ jobs:
           - packages/sirv
           - packages/universal-middleware
           - tests-examples/tests-tool
-        include:
-          - os: ubuntu-latest
+        exclude:
+          - os: windows-latest
+            node_version: 20
+          - os: windows-latest
             node_version: 22
-          - os: ubuntu-latest
-            node_version: 24
       fail-fast: false
     name: "CI tests on node-${{ matrix.node_version }}, ${{ matrix.os }}"
     steps:
