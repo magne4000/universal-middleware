@@ -1,0 +1,90 @@
+name: Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref || github.run_id }}"
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: .
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node_version: [20]
+        cwd:
+          - packages/adapter-cloudflare
+          - packages/adapter-elysia
+          - packages/adapter-express
+          - packages/adapter-fastify
+          - packages/adapter-h3
+          - packages/adapter-hattip
+          - packages/adapter-hono
+          - packages/adapter-srvx
+          - packages/adapter-vercel
+          - packages/adapter-webroute
+          - packages/compress
+          - packages/core
+          - packages/sirv
+          - packages/universal-middleware
+          - tests-examples/tests-tool
+        include:
+          - os: ubuntu-latest
+            node_version: 22
+          - os: ubuntu-latest
+            node_version: 24
+      fail-fast: false
+    name: "CI tests on node-${{ matrix.node_version }}, ${{ matrix.os }}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: 2.6.4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set Node version to ${{ matrix.node_version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node_version }}
+          check-latest: true
+          cache: "pnpm"
+
+      - name: Install
+        run: pnpm install
+
+      - run: pnpm playwright install chromium
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Run tests on ${{ matrix.cwd }}
+        run: pnpm run test
+        working-directory: ${{ matrix.cwd }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
