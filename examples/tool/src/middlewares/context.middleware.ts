@@ -4,8 +4,8 @@
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 const contextMiddleware = ((value) => (_request, ctx, _runtime) => {
-  // Return the new universal context, thus keeping complete type safety
-  // A less typesafe way to do the same thing would be to `ctx.something = value` and return nothing
+  // Return the new context, keeping complete type safety
+  // type-safe way. Equivalent to `ctx.hello = value`
   return {
     ...ctx,
     hello: value,
@@ -13,5 +13,4 @@ const contextMiddleware = ((value) => (_request, ctx, _runtime) => {
   // Using `satisfies` to not lose return type
 }) satisfies Get<[string], UniversalMiddleware>;
 
-// export default is mandatory
 export default contextMiddleware;
