@@ -13,8 +13,8 @@
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsup",
-    "dev": "tsup --watch",
+    "build": "rimraf dist && tsdown",
+    "dev": "tsdown --watch",
     "prepack": "pnpm build",
     "test": "vitest run",
     "test:run-h3:node": "tsx tests/entry-h3.ts",
@@ -31,11 +31,11 @@
     "@universal-middleware/tests": "workspace:*",
     "h3": "catalog:",
     "rimraf": "catalog:",
-    "tsup": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "tsdown": "catalog:"
   },
   "sideEffects": false,
   "keywords": [

@@ -13,8 +13,8 @@
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsup",
-    "dev": "tsup --watch",
+    "build": "rimraf dist && tsdown",
+    "dev": "tsdown --watch",
     "prepack": "pnpm build",
     "test": "vitest run",
     "test:run-webroute:node": "tsx tests/entry-webroute.ts",
@@ -35,11 +35,11 @@
     "@webroute/router": "^0.4.0",
     "hono": "catalog:",
     "rimraf": "catalog:",
-    "tsup": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "tsdown": "catalog:"
   },
   "sideEffects": false,
   "keywords": [

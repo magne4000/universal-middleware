@@ -6,7 +6,7 @@
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
-    "build": "tsup",
+    "build": "tsdown",
     "dev:hono": "vite --port 3000",
     "dev:express": "node --import @swc-node/register/esm-register src/express-entry.ts",
     "dev:fastify": "node --import @swc-node/register/esm-register src/fastify-entry.ts",
@@ -64,12 +64,12 @@
     "playwright": "^1.57.0",
     "rimraf": "catalog:",
     "srvx": "catalog:",
-    "tsup": "^8.5.1",
     "typescript": "catalog:",
     "vercel": "^50.3.2",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "wrangler": "catalog:"
+    "wrangler": "catalog:",
+    "tsdown": "^0.20.0-beta.3"
   },
   "sideEffects": false
 }

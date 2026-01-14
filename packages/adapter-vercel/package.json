@@ -38,8 +38,8 @@
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsup",
-    "dev": "tsup --watch",
+    "build": "rimraf dist && tsdown",
+    "dev": "tsdown --watch",
     "prepack": "pnpm build",
     "test:run-vercel:node": "vercel dev",
     "test": "vitest run",
@@ -67,12 +67,12 @@
     "h3": "catalog:",
     "hono": "catalog:",
     "rimraf": "catalog:",
-    "tsup": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vercel": "^50.3.2",
     "vite": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "@universal-middleware/h3": "workspace:^",

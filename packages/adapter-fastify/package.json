@@ -13,8 +13,8 @@
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsup",
-    "dev": "tsup --watch",
+    "build": "rimraf dist && tsdown",
+    "dev": "tsdown --watch",
     "prepack": "pnpm build",
     "test": "vitest run",
     "test:run-fastify:node": "tsx tests/entry-fastify.ts",
@@ -34,11 +34,11 @@
     "fastify": "catalog:",
     "fastify-plugin": "^5.1.0",
     "rimraf": "catalog:",
-    "tsup": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "tsdown": "catalog:"
   },
   "sideEffects": false,
   "keywords": [

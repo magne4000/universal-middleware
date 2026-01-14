@@ -1,5 +1,5 @@
-import { defineConfig } from "tsup";
-import universalMiddleware from "universal-middleware/esbuild";
+import { defineConfig } from "tsdown";
+import universalMiddleware from "universal-middleware/rollup";
 
 export default defineConfig([
   {
@@ -14,7 +14,7 @@ export default defineConfig([
     platform: "neutral",
     target: "es2022",
     dts: true,
-    esbuildPlugins: [universalMiddleware()],
+    plugins: [universalMiddleware()],
     esbuildOptions(opts) {
       opts.outbase = "src";
     },

@@ -108,7 +108,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && tsup",
+    "build": "rimraf dist && tsdown",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
@@ -137,10 +137,10 @@
     "esbuild": "^0.27.2",
     "rimraf": "catalog:",
     "rollup": "^4.55.1",
-    "tsup": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "@rollup/plugin-commonjs": "^28.0.2",

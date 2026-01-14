@@ -13,8 +13,8 @@
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsup",
-    "dev": "tsup --watch",
+    "build": "rimraf dist && tsdown",
+    "dev": "tsdown --watch",
     "prepack": "pnpm build",
     "test": "vitest run",
     "test:run-hattip:node": "tsx tests/entry-hattip.ts",
@@ -39,12 +39,12 @@
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "rimraf": "catalog:",
-    "tsup": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "wrangler": "catalog:"
+    "wrangler": "catalog:",
+    "tsdown": "catalog:"
   },
   "sideEffects": false,
   "keywords": [

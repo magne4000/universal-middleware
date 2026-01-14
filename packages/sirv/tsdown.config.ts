@@ -1,5 +1,5 @@
-import { defineConfig } from "tsup";
-import universalMiddleware from "universal-middleware/esbuild";
+import { defineConfig } from "tsdown";
+import universalMiddleware from "universal-middleware/rollup";
 
 export default defineConfig([
   {
@@ -8,17 +8,14 @@ export default defineConfig([
     platform: "neutral",
     target: "es2022",
     dts: true,
-    esbuildPlugins: [
+    plugins: [
       universalMiddleware({
         servers: ["hono", "express", "hattip", "fastify", "h3", "webroute", "elysia", "srvx"],
         entryExportNames: ".",
         serversExportNames: "./[dir]/[server]",
       }),
     ],
-    esbuildOptions(opts) {
-      opts.outbase = "src";
-    },
-    external: ["node:zlib"],
+    external: [/node:.*/],
     bundle: true,
     treeshake: true,
     removeNodeProtocol: false,
