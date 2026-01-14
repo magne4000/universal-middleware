@@ -88,12 +88,11 @@ pnpm run format
 
 ### Root Directory Files
 - `package.json` - Workspace root with scripts for build/test/lint/release
-- `pnpm-workspace.yaml` - Defines workspace packages and shared catalog dependencies
+- `pnpm-workspace.yaml` - Defines workspace packages, shared catalog dependencies, and pnpm settings (`autoInstallPeers: false`, `linkWorkspacePackages: deep`)
 - `turbo.json` - Build orchestration config (defines task dependencies)
 - `biome.json` - Linter and formatter configuration
 - `tsconfig.json` - Base TypeScript configuration (strict mode, ES2022)
 - `vitest.workspace.ts` - Test configuration workspace
-- `.npmrc` - pnpm configuration (link-workspace-packages: deep)
 
 ### Package Structure
 ```
@@ -142,21 +141,37 @@ docs/                     # VitePress documentation site
 - Formatter: 2-space indent, semicolons always, 120 char line width
 - Overrides: `noExplicitAny` disabled for test files and specific files (see biome.json)
 
-## CI/CD Pipeline (.github/workflows/ci.yml)
+## CI/CD Pipeline
 
-The CI runs on every PR and push to main. Key steps:
-1. Install Deno (v2.6.3) - required for some tests
+The CI has been split into two separate workflows that run on every PR and push to main:
+
+### Lint and Types Workflow (.github/workflows/lint-and-types.yml)
+Runs linting, type checking, and documentation build on Ubuntu with Node 20:
+1. Install Deno (v2.6.4) - required for type checking
+2. Install Bun (latest) - required for Elysia adapter types
+3. Install pnpm
+4. Install dependencies: `pnpm install`
+5. Build: `pnpm run build`
+6. Lint: `pnpm run lint`
+7. Typecheck: `pnpm run test:typecheck`
+8. Build docs: `cd docs && pnpm run build-doc`
+
+### Tests Workflow (.github/workflows/tests.yml)
+Runs tests with a matrix approach for comprehensive coverage:
+1. Install Deno (v2.6.4) - required for some tests
 2. Install Bun (latest) - required for Elysia adapter tests
 3. Install pnpm
 4. Install dependencies: `pnpm install`
-5. Install Playwright: `pnpm playwright install chromium`
-6. Build: `pnpm run build`
-7. Lint: `pnpm run lint` (skipped on Windows)
-8. Typecheck: `pnpm run test:typecheck` (skipped on Windows)
-9. Test: `pnpm run test` (skipped on Windows, requires VERCEL_TOKEN secret)
-10. Build docs: `cd docs && pnpm run build-doc` (skipped on Windows)
+5. Build: `pnpm run build`
+6. Install Playwright (only for tests-examples/tests-tool): `pnpm playwright install chromium`
+7. Run tests in specific package: `pnpm run test` (working directory: matrix.cwd)
 
-**Matrix:** Tests run on Ubuntu (Node 20, 22, 24) and Windows (Node 20)
+**Test Matrix:** 
+- **OS:** ubuntu-latest, windows-latest
+- **Node versions:** 20, 22, 24
+- **Packages tested:** All 15 packages (adapters, core, sirv, compress, universal-middleware, tests-tool)
+- **Exclusions:** Windows only tests on Node 24; sirv and adapter-vercel skip Windows; tests-tool only runs on Node 24
+- **Environment:** Requires VERCEL_TOKEN secret for Vercel adapter tests
 
 ## Common Pitfalls and Workarounds
 
