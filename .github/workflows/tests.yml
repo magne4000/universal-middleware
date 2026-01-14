@@ -23,7 +23,7 @@ defaults:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}, node@${{ matrix.node_version }}, ${{ matrix.cwd }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -50,7 +50,7 @@ jobs:
           - os: windows-latest
             node_version: 22
       fail-fast: false
-    name: "CI tests on node-${{ matrix.node_version }}, ${{ matrix.os }}"
+    name: "node@${{ matrix.node_version }}, ${{ matrix.os }}, ${{ matrix.cwd }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v6
