@@ -13,13 +13,10 @@ export default defineConfig([
     format: ["esm"],
     platform: "neutral",
     target: "es2022",
-    dts: true,
-    plugins: [universalMiddleware()],
-    esbuildOptions(opts) {
-      opts.outbase = "src";
-    },
-    bundle: true,
+    dts: false,
+    plugins: [universalMiddleware({ dts: true })],
     treeshake: true,
+    fixedExtension: false,
     removeNodeProtocol: false,
   },
 ]);

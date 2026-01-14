@@ -12,12 +12,12 @@ export default defineConfig([
       hono: "src/hono-entry.ts",
     },
     format: "esm",
-    bundle: true,
     minify: false,
     outDir: "dist",
     banner: {
       js: `import {createRequire as __createRequire} from 'module';var require=__createRequire(import.meta.url);`,
     },
+    fixedExtension: false,
     removeNodeProtocol: false,
   },
 ]);

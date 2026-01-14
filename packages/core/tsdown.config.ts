@@ -10,8 +10,9 @@ export default defineConfig([
     noExternal: ["rou3"],
     platform: "node",
     target: "node20",
-    dts: true,
+    dts: { resolver: 'oxc', sideEffects: true },
     clean: true,
+    fixedExtension: false,
     removeNodeProtocol: false,
   },
 ]);

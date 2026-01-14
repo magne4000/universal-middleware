@@ -40,8 +40,9 @@ export default defineConfig([
     format: ["esm"],
     platform: "neutral",
     target: "es2022",
-    dts: true,
+    dts: { resolver: 'oxc', sideEffects: true },
     clean: true,
+    fixedExtension: false,
     removeNodeProtocol: false,
   },
 ]);

@@ -7,17 +7,18 @@ export default defineConfig([
     format: ["esm"],
     platform: "neutral",
     target: "es2022",
-    dts: true,
+    dts: false,
     plugins: [
       universalMiddleware({
         servers: ["hono", "express", "hattip", "fastify", "h3", "webroute", "elysia", "srvx"],
         entryExportNames: ".",
         serversExportNames: "./[dir]/[server]",
+        dts: true,
       }),
     ],
     external: ["node:zlib"],
-    bundle: true,
     treeshake: true,
+    fixedExtension: false,
     removeNodeProtocol: false,
   },
 ]);

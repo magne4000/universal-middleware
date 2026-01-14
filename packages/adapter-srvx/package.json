@@ -13,7 +13,7 @@
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsdown",
+    "build": "rimraf dist && tsdown && node -e \"const fs = require('fs'); const file = 'dist/index.d.ts'; let content = fs.readFileSync(file, 'utf8'); content = content.replace(/void 0<any>/g, 'any').replace(/void 0;/g, 'any;'); fs.writeFileSync(file, content);\"",
     "dev": "tsdown --watch",
     "prepack": "pnpm build",
     "test": "vitest run",

@@ -8,144 +8,144 @@
   ],
   "exports": {
     "./dummy-handler": {
-      "types": "./dist/dummy.d.ts",
-      "import": "./dist/dummy.js",
-      "default": "./dist/dummy.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/dummy.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/dummy.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/dummy.js"
     },
     "./middlewares/context-middleware": {
-      "types": "./dist/middlewares/context.d.ts",
-      "import": "./dist/middlewares/context.js",
-      "default": "./dist/middlewares/context.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/middlewares/context.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/middlewares/context.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/middlewares/context.js"
     },
     "./middlewares/headers-middleware": {
-      "types": "./dist/middlewares/headers.d.ts",
-      "import": "./dist/middlewares/headers.js",
-      "default": "./dist/middlewares/headers.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/middlewares/headers.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/middlewares/headers.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/middlewares/headers.js"
     },
     "./dummy-handler-hono": {
-      "types": "./dist/handlers/universal-hono-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-hono-handler-handler.js",
-      "default": "./dist/handlers/universal-hono-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hono-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hono-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hono-handler-handler.js"
     },
     "./dummy-handler-express": {
-      "types": "./dist/handlers/universal-express-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-express-handler-handler.js",
-      "default": "./dist/handlers/universal-express-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-express-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-express-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-express-handler-handler.js"
     },
     "./dummy-handler-hattip": {
-      "types": "./dist/handlers/universal-hattip-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-hattip-handler-handler.js",
-      "default": "./dist/handlers/universal-hattip-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hattip-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hattip-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hattip-handler-handler.js"
     },
     "./middlewares/context-middleware-hono": {
-      "types": "./dist/middlewares/universal-hono-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-hono-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-hono-middleware-context.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hono-middleware-context.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hono-middleware-context.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hono-middleware-context.middleware.js"
     },
     "./middlewares/context-middleware-express": {
-      "types": "./dist/middlewares/universal-express-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-express-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-express-middleware-context.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-express-middleware-context.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-express-middleware-context.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-express-middleware-context.middleware.js"
     },
     "./middlewares/context-middleware-hattip": {
-      "types": "./dist/middlewares/universal-hattip-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-hattip-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-hattip-middleware-context.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hattip-middleware-context.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hattip-middleware-context.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hattip-middleware-context.middleware.js"
     },
     "./middlewares/headers-middleware-hono": {
-      "types": "./dist/middlewares/universal-hono-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-hono-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-hono-middleware-headers.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hono-middleware-headers.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hono-middleware-headers.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hono-middleware-headers.middleware.js"
     },
     "./middlewares/headers-middleware-express": {
-      "types": "./dist/middlewares/universal-express-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-express-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-express-middleware-headers.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-express-middleware-headers.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-express-middleware-headers.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-express-middleware-headers.middleware.js"
     },
     "./middlewares/headers-middleware-hattip": {
-      "types": "./dist/middlewares/universal-hattip-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-hattip-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-hattip-middleware-headers.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hattip-middleware-headers.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hattip-middleware-headers.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hattip-middleware-headers.middleware.js"
     },
     "./dummy-handler-webroute": {
-      "types": "./dist/handlers/universal-webroute-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-webroute-handler-handler.js",
-      "default": "./dist/handlers/universal-webroute-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-webroute-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-webroute-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-webroute-handler-handler.js"
     },
     "./middlewares/context-middleware-webroute": {
-      "types": "./dist/middlewares/universal-webroute-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-webroute-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-webroute-middleware-context.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-webroute-middleware-context.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-webroute-middleware-context.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-webroute-middleware-context.middleware.js"
     },
     "./middlewares/headers-middleware-webroute": {
-      "types": "./dist/middlewares/universal-webroute-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-webroute-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-webroute-middleware-headers.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-webroute-middleware-headers.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-webroute-middleware-headers.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-webroute-middleware-headers.middleware.js"
     },
     "./dummy-handler-fastify": {
-      "types": "./dist/handlers/universal-fastify-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-fastify-handler-handler.js",
-      "default": "./dist/handlers/universal-fastify-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-fastify-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-fastify-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-fastify-handler-handler.js"
     },
     "./middlewares/context-middleware-fastify": {
-      "types": "./dist/middlewares/universal-fastify-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-fastify-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-fastify-middleware-context.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-fastify-middleware-context.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-fastify-middleware-context.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-fastify-middleware-context.middleware.js"
     },
     "./middlewares/headers-middleware-fastify": {
-      "types": "./dist/middlewares/universal-fastify-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-fastify-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-fastify-middleware-headers.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-fastify-middleware-headers.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-fastify-middleware-headers.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-fastify-middleware-headers.middleware.js"
     },
     "./dummy-handler-h3": {
-      "types": "./dist/handlers/universal-h3-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-h3-handler-handler.js",
-      "default": "./dist/handlers/universal-h3-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-h3-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-h3-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-h3-handler-handler.js"
     },
     "./middlewares/context-middleware-h3": {
-      "types": "./dist/middlewares/universal-h3-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-h3-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-h3-middleware-context.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-h3-middleware-context.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-h3-middleware-context.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-h3-middleware-context.middleware.js"
     },
     "./middlewares/headers-middleware-h3": {
-      "types": "./dist/middlewares/universal-h3-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-h3-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-h3-middleware-headers.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-h3-middleware-headers.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-h3-middleware-headers.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-h3-middleware-headers.middleware.js"
     },
     "./middlewares/guard-middleware": {
-      "types": "./dist/middlewares/guard.d.ts",
-      "import": "./dist/middlewares/guard.js",
-      "default": "./dist/middlewares/guard.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/middlewares/guard.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/middlewares/guard.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/middlewares/guard.js"
     },
     "./middlewares/guard-middleware-hono": {
-      "types": "./dist/middlewares/universal-hono-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-hono-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-hono-middleware-guard.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hono-middleware-guard.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hono-middleware-guard.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hono-middleware-guard.middleware.js"
     },
     "./middlewares/guard-middleware-express": {
-      "types": "./dist/middlewares/universal-express-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-express-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-express-middleware-guard.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-express-middleware-guard.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-express-middleware-guard.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-express-middleware-guard.middleware.js"
     },
     "./middlewares/guard-middleware-hattip": {
-      "types": "./dist/middlewares/universal-hattip-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-hattip-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-hattip-middleware-guard.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hattip-middleware-guard.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hattip-middleware-guard.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-hattip-middleware-guard.middleware.js"
     },
     "./middlewares/guard-middleware-webroute": {
-      "types": "./dist/middlewares/universal-webroute-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-webroute-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-webroute-middleware-guard.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-webroute-middleware-guard.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-webroute-middleware-guard.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-webroute-middleware-guard.middleware.js"
     },
     "./middlewares/guard-middleware-fastify": {
-      "types": "./dist/middlewares/universal-fastify-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-fastify-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-fastify-middleware-guard.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-fastify-middleware-guard.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-fastify-middleware-guard.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-fastify-middleware-guard.middleware.js"
     },
     "./middlewares/guard-middleware-h3": {
-      "types": "./dist/middlewares/universal-h3-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-h3-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-h3-middleware-guard.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-h3-middleware-guard.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-h3-middleware-guard.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-h3-middleware-guard.middleware.js"
     },
     "./dummy-handler-cloudflare": {
       "types": "./dist/handlers/universal-cloudflare-handler-handler.d.ts",
@@ -168,14 +168,14 @@
       "default": "./dist/middlewares/universal-cloudflare-middleware-guard.middleware.js"
     },
     "./dummy-handler-cloudflare-worker": {
-      "types": "./dist/handlers/universal-cloudflare-worker-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-cloudflare-worker-handler-handler.js",
-      "default": "./dist/handlers/universal-cloudflare-worker-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-worker-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-worker-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-worker-handler-handler.js"
     },
     "./dummy-handler-cloudflare-pages": {
-      "types": "./dist/handlers/universal-cloudflare-pages-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-cloudflare-pages-handler-handler.js",
-      "default": "./dist/handlers/universal-cloudflare-pages-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-pages-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-pages-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-pages-handler-handler.js"
     },
     "./middlewares/context-middleware-cloudflare-worker": {
       "types": "./dist/middlewares/universal-cloudflare-worker-middleware-context.middleware.d.ts",
@@ -183,9 +183,9 @@
       "default": "./dist/middlewares/universal-cloudflare-worker-middleware-context.middleware.js"
     },
     "./middlewares/context-middleware-cloudflare-pages": {
-      "types": "./dist/middlewares/universal-cloudflare-pages-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-cloudflare-pages-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-cloudflare-pages-middleware-context.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-cloudflare-pages-middleware-context.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-cloudflare-pages-middleware-context.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-cloudflare-pages-middleware-context.middleware.js"
     },
     "./middlewares/headers-middleware-cloudflare-worker": {
       "types": "./dist/middlewares/universal-cloudflare-worker-middleware-headers.middleware.d.ts",
@@ -193,9 +193,9 @@
       "default": "./dist/middlewares/universal-cloudflare-worker-middleware-headers.middleware.js"
     },
     "./middlewares/headers-middleware-cloudflare-pages": {
-      "types": "./dist/middlewares/universal-cloudflare-pages-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-cloudflare-pages-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-cloudflare-pages-middleware-headers.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-cloudflare-pages-middleware-headers.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-cloudflare-pages-middleware-headers.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-cloudflare-pages-middleware-headers.middleware.js"
     },
     "./middlewares/guard-middleware-cloudflare-worker": {
       "types": "./dist/middlewares/universal-cloudflare-worker-middleware-guard.middleware.d.ts",
@@ -203,99 +203,99 @@
       "default": "./dist/middlewares/universal-cloudflare-worker-middleware-guard.middleware.js"
     },
     "./middlewares/guard-middleware-cloudflare-pages": {
-      "types": "./dist/middlewares/universal-cloudflare-pages-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-cloudflare-pages-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-cloudflare-pages-middleware-guard.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-cloudflare-pages-middleware-guard.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-cloudflare-pages-middleware-guard.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-cloudflare-pages-middleware-guard.middleware.js"
     },
     "./params-handler": {
-      "types": "./dist/params.d.ts",
-      "import": "./dist/params.js",
-      "default": "./dist/params.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/params.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/params.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/params.js"
     },
     "./params-handler-hono": {
-      "types": "./dist/handlers/universal-hono-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-hono-handler-params.handler.js",
-      "default": "./dist/handlers/universal-hono-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hono-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hono-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hono-handler-params.handler.js"
     },
     "./params-handler-express": {
-      "types": "./dist/handlers/universal-express-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-express-handler-params.handler.js",
-      "default": "./dist/handlers/universal-express-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-express-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-express-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-express-handler-params.handler.js"
     },
     "./params-handler-hattip": {
-      "types": "./dist/handlers/universal-hattip-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-hattip-handler-params.handler.js",
-      "default": "./dist/handlers/universal-hattip-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hattip-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hattip-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-hattip-handler-params.handler.js"
     },
     "./params-handler-webroute": {
-      "types": "./dist/handlers/universal-webroute-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-webroute-handler-params.handler.js",
-      "default": "./dist/handlers/universal-webroute-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-webroute-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-webroute-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-webroute-handler-params.handler.js"
     },
     "./params-handler-fastify": {
-      "types": "./dist/handlers/universal-fastify-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-fastify-handler-params.handler.js",
-      "default": "./dist/handlers/universal-fastify-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-fastify-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-fastify-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-fastify-handler-params.handler.js"
     },
     "./params-handler-h3": {
-      "types": "./dist/handlers/universal-h3-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-h3-handler-params.handler.js",
-      "default": "./dist/handlers/universal-h3-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-h3-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-h3-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-h3-handler-params.handler.js"
     },
     "./params-handler-cloudflare-worker": {
-      "types": "./dist/handlers/universal-cloudflare-worker-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-cloudflare-worker-handler-params.handler.js",
-      "default": "./dist/handlers/universal-cloudflare-worker-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-worker-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-worker-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-worker-handler-params.handler.js"
     },
     "./params-handler-cloudflare-pages": {
-      "types": "./dist/handlers/universal-cloudflare-pages-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-cloudflare-pages-handler-params.handler.js",
-      "default": "./dist/handlers/universal-cloudflare-pages-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-pages-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-pages-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-cloudflare-pages-handler-params.handler.js"
     },
     "./dummy-handler-elysia": {
-      "types": "./dist/handlers/universal-elysia-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-elysia-handler-handler.js",
-      "default": "./dist/handlers/universal-elysia-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-elysia-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-elysia-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-elysia-handler-handler.js"
     },
     "./params-handler-elysia": {
-      "types": "./dist/handlers/universal-elysia-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-elysia-handler-params.handler.js",
-      "default": "./dist/handlers/universal-elysia-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-elysia-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-elysia-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-elysia-handler-params.handler.js"
     },
     "./middlewares/context-middleware-elysia": {
-      "types": "./dist/middlewares/universal-elysia-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-elysia-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-elysia-middleware-context.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-elysia-middleware-context.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-elysia-middleware-context.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-elysia-middleware-context.middleware.js"
     },
     "./middlewares/headers-middleware-elysia": {
-      "types": "./dist/middlewares/universal-elysia-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-elysia-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-elysia-middleware-headers.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-elysia-middleware-headers.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-elysia-middleware-headers.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-elysia-middleware-headers.middleware.js"
     },
     "./middlewares/guard-middleware-elysia": {
-      "types": "./dist/middlewares/universal-elysia-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-elysia-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-elysia-middleware-guard.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-elysia-middleware-guard.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-elysia-middleware-guard.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-elysia-middleware-guard.middleware.js"
     },
     "./dummy-handler-vercel-edge": {
-      "types": "./dist/handlers/universal-vercel-edge-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-vercel-edge-handler-handler.js",
-      "default": "./dist/handlers/universal-vercel-edge-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-edge-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-edge-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-edge-handler-handler.js"
     },
     "./dummy-handler-vercel-node": {
-      "types": "./dist/handlers/universal-vercel-node-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-vercel-node-handler-handler.js",
-      "default": "./dist/handlers/universal-vercel-node-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-node-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-node-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-node-handler-handler.js"
     },
     "./params-handler-vercel-edge": {
-      "types": "./dist/handlers/universal-vercel-edge-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-vercel-edge-handler-params.handler.js",
-      "default": "./dist/handlers/universal-vercel-edge-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-edge-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-edge-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-edge-handler-params.handler.js"
     },
     "./params-handler-vercel-node": {
-      "types": "./dist/handlers/universal-vercel-node-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-vercel-node-handler-params.handler.js",
-      "default": "./dist/handlers/universal-vercel-node-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-node-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-node-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-vercel-node-handler-params.handler.js"
     },
     "./middlewares/context-middleware-vercel-edge": {
       "types": "./dist/middlewares/universal-vercel-edge-middleware-context.middleware.d.ts",
@@ -328,29 +328,29 @@
       "default": "./dist/middlewares/universal-vercel-node-middleware-guard.middleware.js"
     },
     "./dummy-handler-srvx": {
-      "types": "./dist/handlers/universal-srvx-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-srvx-handler-handler.js",
-      "default": "./dist/handlers/universal-srvx-handler-handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-srvx-handler-handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-srvx-handler-handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-srvx-handler-handler.js"
     },
     "./params-handler-srvx": {
-      "types": "./dist/handlers/universal-srvx-handler-params.handler.d.ts",
-      "import": "./dist/handlers/universal-srvx-handler-params.handler.js",
-      "default": "./dist/handlers/universal-srvx-handler-params.handler.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-srvx-handler-params.handler.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-srvx-handler-params.handler.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/handlers/universal-srvx-handler-params.handler.js"
     },
     "./middlewares/context-middleware-srvx": {
-      "types": "./dist/middlewares/universal-srvx-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-srvx-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-srvx-middleware-context.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-srvx-middleware-context.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-srvx-middleware-context.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-srvx-middleware-context.middleware.js"
     },
     "./middlewares/headers-middleware-srvx": {
-      "types": "./dist/middlewares/universal-srvx-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-srvx-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-srvx-middleware-headers.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-srvx-middleware-headers.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-srvx-middleware-headers.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-srvx-middleware-headers.middleware.js"
     },
     "./middlewares/guard-middleware-srvx": {
-      "types": "./dist/middlewares/universal-srvx-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-srvx-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-srvx-middleware-guard.middleware.js"
+      "types": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-srvx-middleware-guard.middleware.d.ts",
+      "import": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-srvx-middleware-guard.middleware.js",
+      "default": ".//home/runner/work/universal-middleware/universal-middleware/examples/tool/dist/src/middlewares/universal-srvx-middleware-guard.middleware.js"
     }
   },
   "author": "Joël Charles <joel.charles91@gmail.com>",

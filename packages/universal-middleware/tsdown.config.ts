@@ -18,9 +18,9 @@ export default defineConfig([
       "adapters/webroute": "src/adapters/webroute.ts",
     },
     format: "esm",
-    dts: true,
+    dts: { resolver: 'oxc', sideEffects: true },
     splitting: true,
-    bundle: true,
+    fixedExtension: false,
     removeNodeProtocol: false,
   },
 ]);

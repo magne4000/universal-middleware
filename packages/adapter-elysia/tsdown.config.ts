@@ -6,9 +6,10 @@ export default defineConfig([
     format: ["esm"],
     platform: "neutral",
     target: "es2022",
-    dts: true,
+    dts: { resolver: 'oxc', sideEffects: true },
     clean: true,
     external: ["elysia"],
+    fixedExtension: false,
     removeNodeProtocol: false,
   },
 ]);
