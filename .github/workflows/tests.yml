@@ -53,6 +53,10 @@ jobs:
             cwd: packages/sirv
           - os: windows-latest
             cwd: packages/adapter-vercel
+          - cwd: tests-examples/tests-tool
+            node_version: 20
+          - cwd: tests-examples/tests-tool
+            node_version: 22
       fail-fast: false
     name: "node@${{ matrix.node_version }}, ${{ matrix.os }}, ${{ matrix.cwd }}"
     steps:
