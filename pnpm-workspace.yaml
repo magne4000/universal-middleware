@@ -1,3 +1,5 @@
+autoInstallPeers: false
+linkWorkspacePackages: deep
 packages:
   - packages/*
   - examples/*
