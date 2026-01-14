@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
-    "@sinclair/typebox": "^0.34.46",
+    "@sinclair/typebox": "^0.34.47",
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",

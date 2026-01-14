@@ -125,7 +125,7 @@
     "@universal-middleware/srvx": "workspace:^",
     "@universal-middleware/vercel": "workspace:^",
     "@universal-middleware/webroute": "workspace:^",
-    "oxc-transform": "^0.106.0",
+    "oxc-transform": "^0.108.0",
     "package-up": "^5.0.0",
     "unplugin": "^2.3.11"
   },

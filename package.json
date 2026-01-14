@@ -20,7 +20,7 @@
     "@types/node": "catalog:",
     "file-type": "^21.3.0",
     "playwright": "^1.57.0",
-    "turbo": "^2.7.2",
+    "turbo": "^2.7.4",
     "typescript": "catalog:"
   },
   "engines": {
