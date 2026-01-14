@@ -10,8 +10,12 @@ export function createNodeHandler(app: App): VercelNodeHandlerRaw {
 
   return async function h3HandlerVercelNode(message, response) {
     if (!handler) {
-      const { toNodeListener } = await import("h3");
-      handler = toNodeListener(app);
+      try {
+        const { toNodeListener } = await import("h3");
+        handler = toNodeListener(app);
+      } catch (e) {
+        throw new Error('Failed to load "h3" package. Please ensure it is installed.', { cause: e });
+      }
     }
     return handler(message, response);
   };
