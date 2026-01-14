@@ -1,5 +1,13 @@
 # @universal-middleware/srvx
 
+## 0.1.2
+
+### Patch Changes
+
+- f34e0ff: feat: upgrade dependencies
+- Updated dependencies [f34e0ff]
+  - @universal-middleware/core@0.4.15
+
 ## 0.1.1
 
 ### Patch Changes

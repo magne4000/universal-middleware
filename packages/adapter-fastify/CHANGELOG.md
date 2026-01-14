@@ -1,5 +1,14 @@
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.2...fastify-v0.4.3) (2024-12-09)
 
+## 0.5.23
+
+### Patch Changes
+
+- f34e0ff: feat: upgrade dependencies
+- Updated dependencies [f34e0ff]
+  - @universal-middleware/express@0.4.23
+  - @universal-middleware/core@0.4.15
+
 ## 0.5.22
 
 ### Patch Changes

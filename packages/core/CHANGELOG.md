@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/core-v0.3.2...core-v0.3.3) (2024-12-09)
 
+## 0.4.15
+
+### Patch Changes
+
+- f34e0ff: feat: upgrade dependencies
+
 ## 0.4.14
 
 ### Patch Changes

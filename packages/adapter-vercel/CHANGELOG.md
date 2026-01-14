@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.30
+
+### Patch Changes
+
+- f34e0ff: feat: upgrade dependencies
+- 18ed30e: fix: dynamically import h3 to avoid bundler warnings
+- Updated dependencies [f34e0ff]
+  - @universal-middleware/express@0.4.23
+  - @universal-middleware/h3@0.4.16
+  - @universal-middleware/core@0.4.15
+
 ## 0.4.29
 
 ### Patch Changes

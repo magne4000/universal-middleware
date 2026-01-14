@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.25
+
+### Patch Changes
+
+- f34e0ff: feat: upgrade dependencies
+
 ## 0.1.24
 
 ### Patch Changes
