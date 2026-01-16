@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/hono-v0.3.2...hono-v0.3.3) (2024-12-09)
 
+## 0.4.20
+
+### Patch Changes
+
+- 7caff6e: fix: fallback if error while cloning response
+
 ## 0.4.19
 
 ### Patch Changes
