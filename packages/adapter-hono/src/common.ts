@@ -6,7 +6,7 @@ import type {
   UniversalMiddleware,
 } from "@universal-middleware/core";
 import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
-import type { Context as HonoContext, Env, ExecutionContext, Handler, MiddlewareHandler } from "hono";
+import type { Env, ExecutionContext, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
 
 interface UniversalEnv {
   Bindings: Env["Bindings"] & {
@@ -52,8 +52,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
       );
 
       if (response) {
-        // bypasses @hono/node-server cache
-        return response.clone();
+        return maybeCloneResponse(response);
       }
       // Will default to 404 if no other route matches this request
       await next();
@@ -87,8 +86,7 @@ export function createMiddleware<
         }
       } else if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
-          // bypasses @hono/node-server cache
-          return response.clone();
+          return maybeCloneResponse(response);
         }
         // Update context
         setContext(honoContext, response);
@@ -98,6 +96,19 @@ export function createMiddleware<
       }
     });
   };
+}
+
+function maybeCloneResponse(response: Response): Response {
+  const ownSymbols = Object.getOwnPropertySymbols(response).map((l) => l.toString());
+  if (ownSymbols.includes("Symbol(cache)")) {
+    try {
+      // bypasses @hono/node-server cache
+      return response.clone();
+    } catch {
+      // fallback to returning the response as-is
+    }
+  }
+  return response;
 }
 
 function initContext<Context extends Universal.Context = Universal.Context>(
