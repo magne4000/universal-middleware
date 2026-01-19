@@ -38,7 +38,7 @@ catalogs:
       version: 5.7.1
     h3:
       specifier: ^1.15.4
-      version: 1.15.4
+      version: 1.15.5
     hono:
       specifier: ^4.11.4
       version: 4.11.4
@@ -156,7 +156,7 @@ importers:
         version: 5.7.1
       h3:
         specifier: 'catalog:'
-        version: 1.15.4
+        version: 1.15.5
       hono:
         specifier: 'catalog:'
         version: 4.11.4
@@ -192,7 +192,7 @@ importers:
         version: 1.4.22(@sinclair/typebox@0.34.47)(@types/bun@1.3.6)(file-type@21.3.0)(typescript@5.9.3)
       h3:
         specifier: 'catalog:'
-        version: 1.15.4
+        version: 1.15.5
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -407,7 +407,7 @@ importers:
         version: link:../tests
       h3:
         specifier: 'catalog:'
-        version: 1.15.4
+        version: 1.15.5
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -624,7 +624,7 @@ importers:
         version: 5.7.1
       h3:
         specifier: 'catalog:'
-        version: 1.15.4
+        version: 1.15.5
       hono:
         specifier: 'catalog:'
         version: 4.11.4
@@ -721,7 +721,7 @@ importers:
         version: 0.8.2
       h3:
         specifier: 'catalog:'
-        version: 1.15.4
+        version: 1.15.5
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -779,7 +779,7 @@ importers:
         version: 5.7.1
       h3:
         specifier: 'catalog:'
-        version: 1.15.4
+        version: 1.15.5
       hono:
         specifier: 'catalog:'
         version: 4.11.4
@@ -834,7 +834,7 @@ importers:
         version: 1.4.22(@sinclair/typebox@0.34.47)(@types/bun@1.3.6)(file-type@21.3.0)(typescript@5.9.3)
       h3:
         specifier: 'catalog:'
-        version: 1.15.4
+        version: 1.15.5
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1052,7 +1052,7 @@ importers:
         version: 14.6.6
       h3:
         specifier: 'catalog:'
-        version: 1.15.4
+        version: 1.15.5
       hono:
         specifier: 'catalog:'
         version: 4.11.4
@@ -3686,8 +3686,8 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  h3@1.15.4:
-    resolution: {integrity: sha512-z5cFQWDffyOe4vQ9xIqNfCZdV4p//vy6fBnr8Q1AWnVZ0teurKMG66rLj++TKwKPUP3u7iMUvrvKaEUiQw2QWQ==}
+  h3@1.15.5:
+    resolution: {integrity: sha512-xEyq3rSl+dhGX2Lm0+eFQIAzlDN6Fs0EcC4f7BNUmzaRX/PTzeuM+Tr2lHB8FoXggsQIeXLj8EDVgs5ywxyxmg==}
 
   has-symbols@1.1.0:
     resolution: {integrity: sha512-1cDNdwJ2Jaohmb3sg4OmKaMBwuC48sYni5HUw2DvsC8LjGTLK9h+eb1X6RyuOHe4hT0ULCW68iomhjUoKUqlPQ==}
@@ -5141,8 +5141,8 @@ packages:
   uc.micro@2.1.0:
     resolution: {integrity: sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A==}
 
-  ufo@1.6.2:
-    resolution: {integrity: sha512-heMioaxBcG9+Znsda5Q8sQbWnLJSl98AFDXTO80wELWEzX3hordXsTdxrIfMQoO9IY1MEnoGoPjpoKpMj+Yx0Q==}
+  ufo@1.6.3:
+    resolution: {integrity: sha512-yDJTmhydvl5lJzBmy/hyOAA0d+aqCBuwl818haVdYCRrWV84o7YyeVm4QlVHStqNrrJSTb6jKuFAVqAFsr+K3Q==}
 
   uid-promise@1.0.0:
     resolution: {integrity: sha512-R8375j0qwXyIu/7R0tjdF06/sElHqbmdmWC9M2qQHpEVbvE4I5+38KJI7LUUmQMp7NVq4tKHiBMkT0NFM453Ig==}
@@ -8280,7 +8280,7 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  h3@1.15.4:
+  h3@1.15.5:
     dependencies:
       cookie-es: 1.2.2
       crossws: 0.3.5
@@ -8289,7 +8289,7 @@ snapshots:
       iron-webcrypto: 1.2.1
       node-mock-http: 1.0.4
       radix3: 1.1.2
-      ufo: 1.6.2
+      ufo: 1.6.3
       uncrypto: 0.1.3
 
   has-symbols@1.1.0: {}
@@ -8885,7 +8885,7 @@ snapshots:
       acorn: 8.15.0
       pathe: 2.0.3
       pkg-types: 1.3.1
-      ufo: 1.6.2
+      ufo: 1.6.3
 
   mri@1.2.0: {}
 
@@ -9880,7 +9880,7 @@ snapshots:
 
   uc.micro@2.1.0: {}
 
-  ufo@1.6.2: {}
+  ufo@1.6.3: {}
 
   uid-promise@1.0.0: {}
 
