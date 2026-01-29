@@ -41,7 +41,7 @@ catalogs:
       version: 1.15.5
     hono:
       specifier: ^4.11.5
-      version: 4.11.5
+      version: 4.11.7
     rimraf:
       specifier: ^6.1.2
       version: 6.1.2
@@ -159,7 +159,7 @@ importers:
         version: 1.15.5
       hono:
         specifier: 'catalog:'
-        version: 4.11.5
+        version: 4.11.7
       srvx:
         specifier: 'catalog:'
         version: 0.10.1
@@ -177,7 +177,7 @@ importers:
     devDependencies:
       '@hono/node-server':
         specifier: ^1.19.9
-        version: 1.19.9(hono@4.11.5)
+        version: 1.19.9(hono@4.11.7)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.10
@@ -496,7 +496,7 @@ importers:
     devDependencies:
       '@hono/node-server':
         specifier: ^1.19.9
-        version: 1.19.9(hono@4.11.5)
+        version: 1.19.9(hono@4.11.7)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.10
@@ -508,7 +508,7 @@ importers:
         version: link:../tests
       hono:
         specifier: 'catalog:'
-        version: 4.11.5
+        version: 4.11.7
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -627,7 +627,7 @@ importers:
         version: 1.15.5
       hono:
         specifier: 'catalog:'
-        version: 4.11.5
+        version: 4.11.7
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -658,7 +658,7 @@ importers:
     devDependencies:
       '@hono/node-server':
         specifier: ^1.19.9
-        version: 1.19.9(hono@4.11.5)
+        version: 1.19.9(hono@4.11.7)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.10
@@ -679,7 +679,7 @@ importers:
         version: 0.4.0
       hono:
         specifier: 'catalog:'
-        version: 4.11.5
+        version: 4.11.7
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -782,7 +782,7 @@ importers:
         version: 1.15.5
       hono:
         specifier: 'catalog:'
-        version: 4.11.5
+        version: 4.11.7
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -980,10 +980,10 @@ importers:
         version: 0.0.49
       '@hono/node-server':
         specifier: ^1.19.9
-        version: 1.19.9(hono@4.11.5)
+        version: 1.19.9(hono@4.11.7)
       '@hono/vite-dev-server':
         specifier: ^0.24.1
-        version: 0.24.1(hono@4.11.5)(miniflare@4.20260120.0)(wrangler@4.60.0(@cloudflare/workers-types@4.20260124.0))
+        version: 0.24.1(hono@4.11.7)(miniflare@4.20260120.0)(wrangler@4.60.0(@cloudflare/workers-types@4.20260124.0))
       '@swc-node/register':
         specifier: ^1.11.1
         version: 1.11.1(@swc/core@1.15.10)(@swc/types@0.1.25)(typescript@5.9.3)
@@ -1055,7 +1055,7 @@ importers:
         version: 1.15.5
       hono:
         specifier: 'catalog:'
-        version: 4.11.5
+        version: 4.11.7
       mri:
         specifier: ^1.2.0
         version: 1.2.0
@@ -3711,8 +3711,8 @@ packages:
     resolution: {integrity: sha512-jOiHyAZsmnr8LqoPGmCjYAaiuWwjAPLgY8ZX2XrmHawt99/u1y6RgrZMTeoPfpUbV96HOalYgz1qzkRbw54Pmg==}
     engines: {node: '>=18.0.0'}
 
-  hono@4.11.5:
-    resolution: {integrity: sha512-WemPi9/WfyMwZs+ZUXdiwcCh9Y+m7L+8vki9MzDw3jJ+W9Lc+12HGsd368Qc1vZi1xwW8BWMMsnK5efYKPdt4g==}
+  hono@4.11.7:
+    resolution: {integrity: sha512-l7qMiNee7t82bH3SeyUCt9UF15EVmaBvsppY2zQtrbIhl/yzBTny+YUxsVjSjQ6gaqaeVtZmGocom8TzBlA4Yw==}
     engines: {node: '>=16.9.0'}
 
   hookable@5.5.3:
@@ -6075,14 +6075,14 @@ snapshots:
       cac: 6.7.14
       mime-types: 2.1.35
 
-  '@hono/node-server@1.19.9(hono@4.11.5)':
+  '@hono/node-server@1.19.9(hono@4.11.7)':
     dependencies:
-      hono: 4.11.5
+      hono: 4.11.7
 
-  '@hono/vite-dev-server@0.24.1(hono@4.11.5)(miniflare@4.20260120.0)(wrangler@4.60.0(@cloudflare/workers-types@4.20260124.0))':
+  '@hono/vite-dev-server@0.24.1(hono@4.11.7)(miniflare@4.20260120.0)(wrangler@4.60.0(@cloudflare/workers-types@4.20260124.0))':
     dependencies:
-      '@hono/node-server': 1.19.9(hono@4.11.5)
-      hono: 4.11.5
+      '@hono/node-server': 1.19.9(hono@4.11.7)
+      hono: 4.11.7
       minimatch: 9.0.5
     optionalDependencies:
       miniflare: 4.20260120.0
@@ -7403,7 +7403,7 @@ snapshots:
     dependencies:
       '@webroute/common': 1.0.0
     optionalDependencies:
-      hono: 4.11.5
+      hono: 4.11.7
 
   '@webroute/route@0.8.0':
     dependencies:
@@ -8332,7 +8332,7 @@ snapshots:
 
   helmet@8.1.0: {}
 
-  hono@4.11.5: {}
+  hono@4.11.7: {}
 
   hookable@5.5.3: {}
 
