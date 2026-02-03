@@ -263,6 +263,7 @@ function load(id: string, resolve?: (handler: string, type: string) => string) {
   const [, , target, type, handler] = id.split(":");
 
   const info = typesByServer[target as (typeof defaultWrappers)[number]];
+  if (!info[type as "middleware" | "handler"]) return;
 
   const fn = type === "handler" ? (info.typeHandler ?? "createHandler") : (info.typeMiddleware ?? "createMiddleware");
   const code = `import { ${fn} } from "universal-middleware/adapters/${info.target ?? target}";
@@ -660,7 +661,8 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
           if (args.path.startsWith(namespace) && !shouldLoad(args.path)) {
             return null;
           }
-          const { code } = load(args.path);
+          // biome-ignore lint/style/noNonNullAssertion: ok
+          const { code } = load(args.path)!;
 
           return {
             contents: code,
@@ -718,11 +720,14 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
       },
     },
 
-    loadInclude(id) {
-      return shouldLoad(id);
+    load: {
+      filter: {
+        id: /^virtual:universal-middleware/,
+      },
+      handler(id) {
+        return load(id);
+      },
     },
-
-    load,
   };
 };
 
