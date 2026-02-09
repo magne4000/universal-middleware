@@ -30,17 +30,14 @@ type ComposeReturnType<T extends AnyMiddleware[]> =
             ? UniversalFn<UniversalMiddleware<In<First<T>>, In<Last<T>>>, ExtractUF<Last<T>>>
             : never;
 
-type Cast<
-  T extends AnyMiddleware,
-  NewIn extends Universal.Context,
-  NewOut extends Universal.Context,
-> = T extends UniversalMiddleware<any, any>
-  ? UniversalMiddleware<NewIn, NewOut>
-  : T extends UniversalFn<UniversalHandler<any>, infer Fn>
-    ? UniversalFn<UniversalHandler<NewIn>, Fn>
-    : T extends UniversalFn<UniversalMiddleware<any, any>, infer Fn>
-      ? UniversalFn<UniversalMiddleware<NewIn, NewOut>, Fn>
-      : never;
+type Cast<T extends AnyMiddleware, NewIn extends Universal.Context, NewOut extends Universal.Context> =
+  T extends UniversalMiddleware<any, any>
+    ? UniversalMiddleware<NewIn, NewOut>
+    : T extends UniversalFn<UniversalHandler<any>, infer Fn>
+      ? UniversalFn<UniversalHandler<NewIn>, Fn>
+      : T extends UniversalFn<UniversalMiddleware<any, any>, infer Fn>
+        ? UniversalFn<UniversalMiddleware<NewIn, NewOut>, Fn>
+        : never;
 
 type Pipe<F extends AnyMiddleware[]> = F extends []
   ? F

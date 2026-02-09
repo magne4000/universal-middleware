@@ -48,7 +48,7 @@
     "fastify": "catalog:",
     "h3": "catalog:",
     "hono": "catalog:",
-    "srvx": "^0.8 || ^0.9"
+    "srvx": ">=0.8"
   },
   "peerDependenciesMeta": {
     "@cloudflare/workers-types": {
