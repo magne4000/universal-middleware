@@ -15,12 +15,12 @@
   "keywords": [],
   "author": "",
   "devDependencies": {
-    "@biomejs/biome": "^2.3.14",
+    "@biomejs/biome": "^2.4.0",
     "@changesets/cli": "^2.29.8",
     "@types/node": "catalog:",
     "file-type": "^21.3.0",
     "playwright": "^1.58.2",
-    "turbo": "^2.8.3",
+    "turbo": "^2.8.9",
     "typescript": "catalog:"
   },
   "engines": {
