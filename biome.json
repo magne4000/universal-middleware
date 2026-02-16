@@ -48,6 +48,15 @@
           }
         }
       }
+    },
+    {
+      "includes": [
+        "**/packages/sirv/tests/public/**",
+        "**/packages/sirv/tests/publicfile.txt"
+      ],
+      "linter": {
+        "enabled": false
+      }
     }
   ]
 }
