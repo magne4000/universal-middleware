@@ -7,9 +7,11 @@ import {
 } from "@universal-middleware/core";
 import { createHandler } from "./common";
 
-export function apply(middlewares: EnhancedMiddleware[]) {
+type EnhancedMiddlewareSrvx = EnhancedMiddleware | EnhancedMiddleware<Universal.Context, Universal.Context, "srvx">;
+
+export function apply(middlewares: EnhancedMiddlewareSrvx[]) {
   const router = new UniversalRouter(true, true);
-  applyCore(router, middlewares);
+  applyCore(router, middlewares as EnhancedMiddleware[]);
 
   return createHandler(() => router[universalSymbol] as UniversalHandler)();
 }

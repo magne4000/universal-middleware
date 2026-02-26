@@ -12,6 +12,8 @@ import { createHandler, createMiddleware } from "./common";
 
 export type App = AnyElysia;
 
+type EnhancedMiddlewareElysia = EnhancedMiddleware | EnhancedMiddleware<Universal.Context, Universal.Context, "elysia">;
+
 export class UniversalElysiaRouter extends UniversalRouter implements UniversalRouterInterface {
   #app: App;
 
@@ -20,8 +22,8 @@ export class UniversalElysiaRouter extends UniversalRouter implements UniversalR
     this.#app = app;
   }
 
-  use(middleware: EnhancedMiddleware) {
-    this.#app.use(createMiddleware(() => getUniversal(middleware))());
+  use(middleware: EnhancedMiddlewareElysia) {
+    this.#app.use(createMiddleware(() => getUniversal(middleware as EnhancedMiddleware))());
     return this;
   }
 
@@ -31,7 +33,7 @@ export class UniversalElysiaRouter extends UniversalRouter implements UniversalR
   }
 }
 
-export function apply(app: App, middlewares: EnhancedMiddleware[]) {
+export function apply(app: App, middlewares: EnhancedMiddlewareElysia[]) {
   const router = new UniversalElysiaRouter(app);
-  applyCore(router, middlewares);
+  applyCore(router, middlewares as EnhancedMiddleware[]);
 }

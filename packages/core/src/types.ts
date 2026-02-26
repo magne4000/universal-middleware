@@ -290,10 +290,14 @@ export type WithUniversalSymbols<T extends UniversalOptionsArg> = Pick<
 export type HttpMethod = "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH";
 export type Enhance<T> = T & Partial<UniversalSymbols>;
 
-export type EnhancedMiddleware =
-  | Enhance<UniversalMiddleware>
-  | { [universalSymbol]: Enhance<UniversalMiddleware> }
-  | (Enhance<AnyFn> & { [universalSymbol]: UniversalMiddleware });
+export type EnhancedMiddleware<
+  InContext extends Universal.Context = Universal.Context,
+  OutContext extends Universal.Context = Universal.Context,
+  Target = unknown,
+> =
+  | Enhance<UniversalMiddleware<InContext, OutContext, Target>>
+  | { [universalSymbol]: Enhance<UniversalMiddleware<InContext, OutContext, Target>> }
+  | (Enhance<AnyFn> & { [universalSymbol]: UniversalMiddleware<InContext, OutContext, Target> });
 
 export interface UniversalRouterInterface<T extends "sync" | "async" = "sync"> {
   use(middleware: EnhancedMiddleware): T extends "async" ? this | Promise<this> : this;
