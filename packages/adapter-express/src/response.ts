@@ -2,7 +2,8 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Readable } from "node:stream";
 import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
 import { nodeHeadersToWeb } from "@universal-middleware/core";
-import { type DecoratedServerResponse, pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./common.js";
+import { pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./const.js";
+import type { DecoratedServerResponse } from "./types.js";
 
 // @ts-expect-error
 const deno = typeof Deno !== "undefined";
