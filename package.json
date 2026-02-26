@@ -19,7 +19,6 @@
     "@changesets/cli": "^2.29.8",
     "@types/node": "catalog:",
     "file-type": "^21.3.0",
-    "playwright": "^1.58.2",
     "turbo": "^2.8.10",
     "typescript": "catalog:"
   },
