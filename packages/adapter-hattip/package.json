@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/hattip",
-  "version": "0.4.15",
+  "version": "0.4.16",
   "type": "module",
   "description": "Hattip adapter for universal middlewares",
   "files": [

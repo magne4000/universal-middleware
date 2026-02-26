@@ -1,5 +1,13 @@
 # @universal-middleware/srvx
 
+## 0.1.3
+
+### Patch Changes
+
+- 636b4bc: fix: apply typings to allow more lenient middleware types
+- Updated dependencies [636b4bc]
+  - @universal-middleware/core@0.4.17
+
 ## 0.1.2
 
 ### Patch Changes

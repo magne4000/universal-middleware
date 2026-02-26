@@ -1,5 +1,14 @@
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.2...fastify-v0.4.3) (2024-12-09)
 
+## 0.5.24
+
+### Patch Changes
+
+- 636b4bc: fix: apply typings to allow more lenient middleware types
+- Updated dependencies [636b4bc]
+  - @universal-middleware/express@0.4.24
+  - @universal-middleware/core@0.4.17
+
 ## 0.5.23
 
 ### Patch Changes

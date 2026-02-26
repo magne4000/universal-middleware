@@ -1,5 +1,13 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/h3-v0.3.2...h3-v0.3.3) (2024-12-09)
 
+## 0.4.17
+
+### Patch Changes
+
+- 636b4bc: fix: apply typings to allow more lenient middleware types
+- Updated dependencies [636b4bc]
+  - @universal-middleware/core@0.4.17
+
 ## 0.4.16
 
 ### Patch Changes
