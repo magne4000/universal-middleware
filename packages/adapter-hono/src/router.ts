@@ -13,6 +13,8 @@ import { createHandler, createMiddleware } from "./common";
 // biome-ignore lint/suspicious/noExplicitAny: ignored
 export type App = Hono<any, any, any>;
 
+type EnhancedMiddlewareHono = EnhancedMiddleware | EnhancedMiddleware<Universal.Context, Universal.Context, "hono">;
+
 export class UniversalHonoRouter extends UniversalRouter implements UniversalRouterInterface {
   #app: App;
 
@@ -21,8 +23,8 @@ export class UniversalHonoRouter extends UniversalRouter implements UniversalRou
     this.#app = app;
   }
 
-  use(middleware: EnhancedMiddleware) {
-    this.#app.use(createMiddleware(() => getUniversal(middleware))());
+  use(middleware: EnhancedMiddlewareHono) {
+    this.#app.use(createMiddleware(() => getUniversal(middleware as EnhancedMiddleware))());
     return this;
   }
 
@@ -32,7 +34,7 @@ export class UniversalHonoRouter extends UniversalRouter implements UniversalRou
   }
 }
 
-export function apply(app: App, middlewares: EnhancedMiddleware[]) {
+export function apply(app: App, middlewares: EnhancedMiddlewareHono[]) {
   const router = new UniversalHonoRouter(app);
-  applyCore(router, middlewares);
+  applyCore(router, middlewares as EnhancedMiddleware[]);
 }

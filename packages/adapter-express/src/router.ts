@@ -13,6 +13,10 @@ import { type Express, isExpressV4, isExpressV5 } from "./utils";
 
 export type App = Express;
 
+type EnhancedMiddlewareExpress =
+  | EnhancedMiddleware
+  | EnhancedMiddleware<Universal.Context, Universal.Context, "express">;
+
 export class UniversalExpressRouter<T extends App> extends UniversalRouter implements UniversalRouterInterface {
   #app: T;
 
@@ -21,8 +25,8 @@ export class UniversalExpressRouter<T extends App> extends UniversalRouter imple
     this.#app = app;
   }
 
-  use(middleware: EnhancedMiddleware) {
-    (this.#app as Express5).use(createMiddleware(() => getUniversal(middleware))());
+  use(middleware: EnhancedMiddlewareExpress) {
+    (this.#app as Express5).use(createMiddleware(() => getUniversal(middleware as EnhancedMiddleware))());
     return this;
   }
 
@@ -37,9 +41,9 @@ export class UniversalExpressRouter<T extends App> extends UniversalRouter imple
   }
 }
 
-export function apply(app: Express, middlewares: EnhancedMiddleware[]) {
+export function apply(app: Express, middlewares: EnhancedMiddlewareExpress[]) {
   const router = new UniversalExpressRouter(app);
-  applyCore(router, middlewares, true);
+  applyCore(router, middlewares as EnhancedMiddleware[], true);
   // defer
   Promise.resolve().then(() => router.applyCatchAll());
 }

@@ -1,3 +1,4 @@
+import type { Router } from "@hattip/router";
 import {
   apply as applyCore,
   type EnhancedMiddleware,
@@ -8,9 +9,10 @@ import {
   universalSymbol,
 } from "@universal-middleware/core";
 import { createHandler, createMiddleware } from "./common";
-import type { Router } from "@hattip/router";
 
 export type App = Router;
+
+type EnhancedMiddlewareHattip = EnhancedMiddleware | EnhancedMiddleware<Universal.Context, Universal.Context, "hattip">;
 
 export class UniversalHattipRouter extends UniversalRouter implements UniversalRouterInterface {
   #app: App;
@@ -20,8 +22,8 @@ export class UniversalHattipRouter extends UniversalRouter implements UniversalR
     this.#app = app;
   }
 
-  use(middleware: EnhancedMiddleware) {
-    this.#app.use(createMiddleware(() => getUniversal(middleware))());
+  use(middleware: EnhancedMiddlewareHattip) {
+    this.#app.use(createMiddleware(() => getUniversal(middleware as EnhancedMiddleware))());
     return this;
   }
 
@@ -31,7 +33,7 @@ export class UniversalHattipRouter extends UniversalRouter implements UniversalR
   }
 }
 
-export function apply(app: App, middlewares: EnhancedMiddleware[]) {
+export function apply(app: App, middlewares: EnhancedMiddlewareHattip[]) {
   const router = new UniversalHattipRouter(app);
-  applyCore(router, middlewares);
+  applyCore(router, middlewares as EnhancedMiddleware[]);
 }

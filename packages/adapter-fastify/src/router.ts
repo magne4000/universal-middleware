@@ -12,6 +12,10 @@ import { createHandler, createMiddleware } from "./common";
 
 export type App = FastifyInstance;
 
+type EnhancedMiddlewareFastify =
+  | EnhancedMiddleware
+  | EnhancedMiddleware<Universal.Context, Universal.Context, "fastify">;
+
 export class UniversalFastifyRouter extends UniversalRouter implements UniversalRouterInterface<"async"> {
   #app: App;
 
@@ -21,8 +25,8 @@ export class UniversalFastifyRouter extends UniversalRouter implements Universal
   }
 
   // @ts-expect-error ReturnType mismatch with UniversalRouter
-  async use(middleware: EnhancedMiddleware) {
-    this.#app.register(createMiddleware(() => getUniversal(middleware))());
+  async use(middleware: EnhancedMiddlewareFastify) {
+    this.#app.register(createMiddleware(() => getUniversal(middleware as EnhancedMiddleware))());
     return this;
   }
 
@@ -33,7 +37,7 @@ export class UniversalFastifyRouter extends UniversalRouter implements Universal
   }
 }
 
-export function apply(app: App, middlewares: EnhancedMiddleware[]) {
+export function apply(app: App, middlewares: EnhancedMiddlewareFastify[]) {
   const router = new UniversalFastifyRouter(app);
-  return applyAsyncCore(router, middlewares);
+  return applyAsyncCore(router, middlewares as EnhancedMiddleware[]);
 }
