@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "turbo build",
-    "test": "turbo test",
+    "test": "turbo test --concurrency 1",
     "test:typecheck": "turbo test:typecheck",
     "format": "biome format --write .",
     "lint": "biome lint .",
