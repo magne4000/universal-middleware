@@ -10,4 +10,4 @@
 "@universal-middleware/core": patch
 ---
 
-fix: apply typing allows more lenient middlewares types
+fix: apply typings to allow more lenient middleware types
