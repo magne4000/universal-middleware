@@ -89,7 +89,7 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - run: pnpm playwright install chromium
+      - run: pnpm exec playwright install chromium
         if: matrix.cwd == 'tests-examples/tests-tool'
         working-directory: ${{ matrix.cwd }}
 
