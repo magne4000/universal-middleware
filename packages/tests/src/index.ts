@@ -12,6 +12,7 @@ export interface Run {
   delay?: number;
   env?: Record<string, string>;
   staticContext?: boolean;
+  skipStreamCancel?: boolean;
   tests?: {
     throwLate?: {
       expectedBody?: string;
@@ -173,6 +174,36 @@ export function runTests(runs: Run[], options: Options) {
       const response = await fetch(`${host}${prefix ?? ""}/404`, fetchDefault);
       vitest.expect(response.status).toBe(404);
     });
+
+    // Skip for stateless environments (e.g. Cloudflare Workers) where module-level state
+    // doesn't persist between requests, making the side-channel status endpoint unreliable.
+    vitest.test.skipIf(run.skipStreamCancel ?? false)(
+      "stream cancellation propagation",
+      { retry: 3, timeout: 30_000 },
+      async () => {
+        const controller = new AbortController();
+        const fetchPromise = fetch(`${host}${prefix ?? ""}/stream-cancel`, {
+          signal: controller.signal,
+          ...fetchDefault,
+        })
+          .then(async (res) => {
+            const reader = res.body!.getReader();
+            await reader.read();
+          })
+          .catch(() => {});
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        controller.abort();
+        await fetchPromise;
+
+        // Wait for cancel to propagate on the server
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        const statusResponse = await fetch(`${host}${prefix ?? ""}/stream-cancel-status`, fetchDefault);
+        const status = (await statusResponse.json()) as { cancelled: boolean };
+        vitest.expect(status.cancelled).toBe(true);
+      },
+    );
 
     if (testPost) {
       vitest.test("post", { retry: 3, timeout: 30_000 }, async () => {

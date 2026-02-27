@@ -29,11 +29,13 @@ const runs: Run[] = [
     name: "adapter-express: bun",
     command: "pnpm run test:run-express:bun",
     port: port++,
+    skipStreamCancel: true,
   },
   {
     name: "adapter-express: deno",
     command: "pnpm run test:run-express:deno",
     port: port++,
+    skipStreamCancel: true,
   },
   {
     name: "adapter-express: node simple express@4",

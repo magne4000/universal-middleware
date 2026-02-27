@@ -47,12 +47,14 @@ const runs: Run[] = [
     command: "pnpm run test:run-hono:bun",
     port: port + 3,
     ...expectInternalServerError,
+    skipStreamCancel: true,
   },
   {
     name: "adapter-hono: deno",
     command: "pnpm run test:run-hono:deno",
     port: port + 4,
     ...expectInternalServerError,
+    skipStreamCancel: true,
   },
   {
     name: "adapter-hono: wrangler",
@@ -60,6 +62,7 @@ const runs: Run[] = [
     port: port + 5,
     waitUntilType: "function",
     delay: 1000,
+    skipStreamCancel: true,
   },
 ];
 
