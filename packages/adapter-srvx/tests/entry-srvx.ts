@@ -6,6 +6,8 @@ import {
   handler,
   middlewares,
   routeParamHandler,
+  streamCancelHandler,
+  streamCancelStatusHandler,
   throwEarlyAndLateHandler,
   throwEarlyHandler,
   throwLateHandler,
@@ -27,6 +29,8 @@ switch (TEST_CASE) {
       middlewares.updateHeaders,
       middlewares.contextAsync,
       routeParamHandler(),
+      streamCancelHandler(),
+      streamCancelStatusHandler(),
       handler(),
       guarded(),
       throwEarlyHandler(),
@@ -43,6 +47,8 @@ switch (TEST_CASE) {
       throwLateHandler(),
       throwEarlyAndLateHandler(),
       guarded(),
+      streamCancelHandler(),
+      streamCancelStatusHandler(),
       handler(),
       enhancedMiddlewares.contextSync,
       enhancedMiddlewares.updateHeaders,
@@ -67,6 +73,8 @@ switch (TEST_CASE) {
           new UniversalRouter(false, true)
             .route(routeParamHandler())
             .route(guarded())
+            .route(streamCancelHandler())
+            .route(streamCancelStatusHandler())
             .route(handler())
             .route(throwEarlyHandler())
             .route(throwLateHandler())

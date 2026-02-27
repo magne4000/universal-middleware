@@ -41,6 +41,9 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
             this.destroy(e as Error);
           }
         },
+        destroy(err, callback) {
+          reader.cancel().finally(() => callback(err));
+        },
       });
     }
   } else if (fetchBody) {
@@ -51,25 +54,8 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
   setHeaders(fetchResponse, nodeResponse);
 
   if (body) {
-    body.pipe(nodeResponse);
-    await new Promise<void>((resolve, reject) => {
-      body.on("error", (err) => {
-        nodeResponse.destroy(err);
-        reject(err);
-      });
-
-      nodeResponse.on("error", (err) => {
-        body.destroy(err);
-        reject(err);
-      });
-
-      nodeResponse.on("finish", resolve);
-
-      // Add drain event handler for backpressure
-      nodeResponse.on("drain", () => {
-        body.resume(); // Resume reading when client can accept more data
-      });
-    });
+    const { pipeline } = await import("node:stream/promises");
+    await pipeline(body, nodeResponse).catch(() => {});
   } else {
     nodeResponse.setHeader("content-length", "0");
     nodeResponse.end();

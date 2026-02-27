@@ -8,7 +8,7 @@ const runs: Run[] = [
     name: "adapter-elysia: bun",
     command: "pnpm run test:run-elysia:bun",
     port: port,
-    skipStreamCancel: true,
+    streamCancel: "fail",
   },
   {
     name: "adapter-elysia: bun router",
@@ -17,7 +17,7 @@ const runs: Run[] = [
     env: {
       TEST_CASE: "router",
     },
-    skipStreamCancel: true,
+    streamCancel: "fail",
   },
   {
     name: "adapter-elysia: bun router enhanced",
@@ -26,7 +26,7 @@ const runs: Run[] = [
     env: {
       TEST_CASE: "router_enhanced",
     },
-    skipStreamCancel: true,
+    streamCancel: "fail",
   },
   {
     name: "adapter-elysia: worker",
@@ -34,7 +34,7 @@ const runs: Run[] = [
     port: port + 3,
     waitUntilType: "function",
     delay: 1000,
-    skipStreamCancel: true,
+    streamCancel: "skip",
   },
 ];
 

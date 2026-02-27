@@ -99,13 +99,15 @@ export function createMiddleware<
 }
 
 function maybeCloneResponse(response: Response): Response {
-  const ownSymbols = Object.getOwnPropertySymbols(response).map((l) => l.toString());
-  if (ownSymbols.includes("Symbol(cache)")) {
-    try {
-      // bypasses @hono/node-server cache
-      return response.clone();
-    } catch {
-      // fallback to returning the response as-is
+  const ownSymbols = Object.getOwnPropertySymbols(response);
+  for (const sym of ownSymbols) {
+    if (sym.toString() === "Symbol(cache)") {
+      // @hono/node-server checks for this symbol and reads [status, body, headers]
+      // from it directly, bypassing response.body. Deleting it forces node-server
+      // to read response.body normally, which is required for stream cancellation
+      // to propagate when the client disconnects.
+      // biome-ignore lint/performance/noDelete: intentional cache bypass
+      delete (response as any)[sym];
     }
   }
   return response;

@@ -47,14 +47,12 @@ const runs: Run[] = [
     command: "pnpm run test:run-hattip:bun",
     port: port + 3,
     ...expectInternalServerError,
-    skipStreamCancel: true,
   },
   {
     name: "adapter-hattip: deno",
     command: "pnpm run test:run-hattip:deno",
     port: port + 4,
     ...expectInternalServerError,
-    skipStreamCancel: true,
   },
   {
     name: "adapter-hattip: cloudflare worker",
@@ -62,7 +60,7 @@ const runs: Run[] = [
     port: port + 5,
     waitUntilType: "function",
     delay: 1000,
-    skipStreamCancel: true,
+    streamCancel: "skip",
     ...expectInternalServerError,
   },
 ];

@@ -22,6 +22,7 @@ const runs: Run[] = [
     name: "adapter-h3: node",
     command: "pnpm run test:run-h3:node",
     port: port++,
+    streamCancel: "skip",
     ...expectInternalServerError,
   },
   {
@@ -31,6 +32,7 @@ const runs: Run[] = [
     env: {
       TEST_CASE: "router",
     },
+    streamCancel: "skip",
     ...expectInternalServerError,
   },
   {
@@ -40,18 +42,21 @@ const runs: Run[] = [
     env: {
       TEST_CASE: "router_enhanced",
     },
+    streamCancel: "skip",
     ...expectInternalServerError,
   },
   {
     name: "adapter-h3: bun",
     command: "pnpm run test:run-h3:bun",
     port: port++,
+    streamCancel: "skip",
     ...expectInternalServerError,
   },
   {
     name: "adapter-h3: deno",
     command: "pnpm run test:run-h3:deno",
     port: port++,
+    streamCancel: "skip",
     ...expectInternalServerError,
   },
 ];

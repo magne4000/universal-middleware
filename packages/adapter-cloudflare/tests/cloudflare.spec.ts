@@ -11,6 +11,7 @@ const runs: Run[] = [
     command: `pnpm run test:run-cloudflare:pages --inspector-port ${port + 10000}`,
     waitUntilType: "function",
     delay,
+    streamCancel: "skip",
   },
   {
     name: "adapter-cloudflare: worker",
@@ -19,6 +20,7 @@ const runs: Run[] = [
     waitUntilType: "function",
     staticContext: true,
     delay,
+    streamCancel: "skip",
   },
   {
     name: "adapter-cloudflare: worker router",
@@ -27,6 +29,7 @@ const runs: Run[] = [
     waitUntilType: "function",
     staticContext: true,
     delay,
+    streamCancel: "skip",
   },
   {
     name: "adapter-cloudflare: worker router enhanced",
@@ -35,6 +38,7 @@ const runs: Run[] = [
     waitUntilType: "function",
     staticContext: true,
     delay,
+    streamCancel: "skip",
   },
 ];
 

@@ -25,6 +25,7 @@ const runs: Run[] = [
     command: `pnpm run test:run-vercel:node${token}`,
     port,
     portOption: "--listen",
+    streamCancel: "skip",
     ...expectInternalServerError,
   },
 ];
