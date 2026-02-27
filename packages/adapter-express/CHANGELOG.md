@@ -1,5 +1,12 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.4.25
+
+### Patch Changes
+
+- 85c54f0: feat: dedicated /request export for better tree-shaking
+- 85c54f0: fix: avoid circular imports
+
 ## 0.4.24
 
 ### Patch Changes
