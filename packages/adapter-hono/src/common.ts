@@ -52,7 +52,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
       );
 
       if (response) {
-        return maybeCloneResponse(response);
+        return stripHonoCache(response);
       }
       // Will default to 404 if no other route matches this request
       await next();
@@ -86,7 +86,7 @@ export function createMiddleware<
         }
       } else if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
-          return maybeCloneResponse(response);
+          return stripHonoCache(response);
         }
         // Update context
         setContext(honoContext, response);
@@ -98,7 +98,7 @@ export function createMiddleware<
   };
 }
 
-function maybeCloneResponse(response: Response): Response {
+function stripHonoCache(response: Response): Response {
   const ownSymbols = Object.getOwnPropertySymbols(response);
   for (const sym of ownSymbols) {
     if (sym.toString() === "Symbol(cache)") {
