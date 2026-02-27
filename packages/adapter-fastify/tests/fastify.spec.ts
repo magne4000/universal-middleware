@@ -30,7 +30,7 @@ const runs: Run[] = [
     command: "pnpm run test:run-fastify:bun",
     port: port++,
     // https://github.com/oven-sh/bun/issues/14697
-    streamCancel: "skip",
+    streamCancel: "fail",
   },
   // Fastify is NOT deno compatible
 ];
