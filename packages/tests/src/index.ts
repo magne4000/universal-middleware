@@ -190,13 +190,13 @@ export function runTests(runs: Run[], options: Options) {
         .then(async (res) => {
           const reader = res.body!.getReader();
           await reader.read();
+          // First chunk received — abort immediately.
+          controller.abort();
         })
         .catch((err) => {
           if (err?.name !== "AbortError") throw err;
         });
 
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      controller.abort();
       await fetchPromise;
 
       // Poll until the server reflects the cancellation, up to 5 s

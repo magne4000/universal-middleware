@@ -24,7 +24,7 @@ export const middlewares = {
       response.headers.set("x-test-value", "universal-middleware");
       response.headers.delete("x-should-be-removed");
 
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       return response;
     };
