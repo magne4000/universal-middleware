@@ -5,9 +5,6 @@ import { nodeHeadersToWeb } from "@universal-middleware/core";
 import { pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./const.js";
 import type { DecoratedServerResponse } from "./types.js";
 
-// @ts-expect-error
-const deno = typeof Deno !== "undefined";
-
 /**
  * Send a fetch API Response into a Node.js HTTP response stream.
  */
@@ -21,7 +18,7 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
     body = fetchBody as Readable;
   } else if (typeof (fetchBody as any).pipeTo === "function") {
     const { Readable } = await import("node:stream");
-    if (!deno && Readable.fromWeb) {
+    if (Readable.fromWeb) {
       body = Readable.fromWeb(fetchBody as ReadableStreamNode);
     } else {
       const reader = (fetchBody as ReadableStream).getReader();

@@ -180,38 +180,30 @@ export function runTests(runs: Run[], options: Options) {
     // Use streamCancel: 'fail' to document known-broken adapters (test passes when it fails).
     const streamCancelMode = run.streamCancel;
     const streamCancelTest =
-      streamCancelMode === "skip"
-        ? vitest.test.skip
-        : streamCancelMode === "fail"
-          ? vitest.test.fails
-          : vitest.test;
-    streamCancelTest(
-      "stream cancellation propagation",
-      { retry: 2, timeout: 15_000 },
-      async () => {
-        const controller = new AbortController();
-        const fetchPromise = fetch(`${host}${prefix ?? ""}/stream-cancel`, {
-          signal: controller.signal,
-          ...fetchDefault,
+      streamCancelMode === "skip" ? vitest.test.skip : streamCancelMode === "fail" ? vitest.test.fails : vitest.test;
+    streamCancelTest("stream cancellation propagation", { retry: 2, timeout: 15_000 }, async () => {
+      const controller = new AbortController();
+      const fetchPromise = fetch(`${host}${prefix ?? ""}/stream-cancel`, {
+        signal: controller.signal,
+        ...fetchDefault,
+      })
+        .then(async (res) => {
+          const reader = res.body!.getReader();
+          await reader.read();
         })
-          .then(async (res) => {
-            const reader = res.body!.getReader();
-            await reader.read();
-          })
-          .catch(() => {});
+        .catch(() => {});
 
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        controller.abort();
-        await fetchPromise;
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      controller.abort();
+      await fetchPromise;
 
-        // Wait for cancel to propagate on the server
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Wait for cancel to propagate on the server
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        const statusResponse = await fetch(`${host}${prefix ?? ""}/stream-cancel-status`, fetchDefault);
-        const status = (await statusResponse.json()) as { cancelled: boolean };
-        vitest.expect(status.cancelled).toBe(true);
-      },
-    );
+      const statusResponse = await fetch(`${host}${prefix ?? ""}/stream-cancel-status`, fetchDefault);
+      const status = (await statusResponse.json()) as { cancelled: boolean };
+      vitest.expect(status.cancelled).toBe(true);
+    });
 
     if (testPost) {
       vitest.test("post", { retry: 3, timeout: 30_000 }, async () => {
