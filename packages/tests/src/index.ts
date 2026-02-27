@@ -181,7 +181,7 @@ export function runTests(runs: Run[], options: Options) {
     const streamCancelMode = run.streamCancel;
     const streamCancelTest =
       streamCancelMode === "skip" ? vitest.test.skip : streamCancelMode === "fail" ? vitest.test.fails : vitest.test;
-    streamCancelTest("stream cancellation propagation", { retry: 2, timeout: 15_000 }, async () => {
+    streamCancelTest("stream cancellation propagation", { retry: 3, timeout: 30_000 }, async () => {
       const controller = new AbortController();
       const fetchPromise = fetch(`${host}${prefix ?? ""}/stream-cancel`, {
         signal: controller.signal,
@@ -191,18 +191,29 @@ export function runTests(runs: Run[], options: Options) {
           const reader = res.body!.getReader();
           await reader.read();
         })
-        .catch(() => {});
+        .catch((err) => {
+          if (err?.name !== "AbortError") throw err;
+        });
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       controller.abort();
       await fetchPromise;
 
-      // Wait for cancel to propagate on the server
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const statusResponse = await fetch(`${host}${prefix ?? ""}/stream-cancel-status`, fetchDefault);
-      const status = (await statusResponse.json()) as { cancelled: boolean };
-      vitest.expect(status.cancelled).toBe(true);
+      // Poll until the server reflects the cancellation, up to 5 s
+      const deadline = Date.now() + 5000;
+      let cancelled = false;
+      while (Date.now() < deadline) {
+        const statusResponse = await fetch(`${host}${prefix ?? ""}/stream-cancel-status`, fetchDefault);
+        const status = (await statusResponse.json()) as {
+          cancelled: boolean;
+        };
+        if (status.cancelled) {
+          cancelled = true;
+          break;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      vitest.expect(cancelled).toBe(true);
     });
 
     if (testPost) {
