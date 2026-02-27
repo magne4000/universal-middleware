@@ -1,67 +1,17 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
-import type { Socket } from "node:net";
-import type {
-  Awaitable,
-  Get,
-  RuntimeAdapter,
-  UniversalFn,
-  UniversalHandler,
-  UniversalMiddleware,
-} from "@universal-middleware/core";
+import type { ServerResponse } from "node:http";
+import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
-import { createRequestAdapter, type NodeRequestAdapterOptions } from "./request.js";
+import { pendingMiddlewaresSymbol } from "./const.js";
+import { createRequestAdapter } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
-
-export const requestSymbol = Symbol.for("unRequest");
-export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
-export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
-
-export const env: Record<string, string | undefined> =
-  typeof globalThis.process?.env !== "undefined"
-    ? globalThis.process.env
-    : typeof (import.meta as unknown as Record<"env", Record<string, string | undefined>>)?.env !== "undefined"
-      ? (import.meta as unknown as Record<"env", Record<string, string | undefined>>).env
-      : {};
-
-export interface PossiblyEncryptedSocket extends Socket {
-  encrypted?: boolean;
-}
-
-/**
- * `IncomingMessage` possibly augmented by Express-specific
- * `ip` and `protocol` properties.
- */
-export interface DecoratedRequest<C extends Universal.Context = Universal.Context>
-  extends Omit<IncomingMessage, "socket"> {
-  ip?: string;
-  protocol?: string;
-  socket?: PossiblyEncryptedSocket;
-  // biome-ignore lint/suspicious/noExplicitAny: we only care about the field being present
-  rawBody?: any;
-  originalUrl?: string;
-  params?: Record<string, string>;
-  [contextSymbol]?: C;
-  [requestSymbol]?: Request;
-}
-
-export interface DecoratedServerResponse extends ServerResponse {
-  [pendingMiddlewaresSymbol]?: ((response: Response) => Awaitable<Response | undefined>)[];
-  [wrappedResponseSymbol]?: boolean;
-}
-
-/** Connect/Express style request listener/middleware */
-export type NodeMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
-  UniversalMiddleware<In, Out>,
-  <R>(req: DecoratedRequest<In>, res: DecoratedServerResponse, next?: (err?: unknown) => void) => R
->;
-export type NodeHandler<In extends Universal.Context> = UniversalFn<
-  UniversalHandler<In>,
-  <R>(req: DecoratedRequest<In>, res: DecoratedServerResponse, next?: (err?: unknown) => void) => R
->;
-
-/** Adapter options */
-export interface NodeAdapterHandlerOptions extends NodeRequestAdapterOptions {}
-export interface NodeAdapterMiddlewareOptions extends NodeRequestAdapterOptions {}
+import type {
+  DecoratedRequest,
+  DecoratedServerResponse,
+  NodeAdapterHandlerOptions,
+  NodeAdapterMiddlewareOptions,
+  NodeHandler,
+  NodeMiddleware,
+} from "./types.js";
 
 function nextOr404(res: ServerResponse, next?: () => unknown) {
   if (next) {

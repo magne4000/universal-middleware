@@ -2,7 +2,10 @@ import { defineConfig } from "tsup";
 
 export default defineConfig([
   {
-    entry: ["./src/index.ts"],
+    entry: {
+      index: "./src/index.ts",
+      request: "./src/request.ts",
+    },
     format: ["esm"],
     platform: "node",
     target: "node20",

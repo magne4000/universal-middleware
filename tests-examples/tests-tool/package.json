@@ -61,7 +61,7 @@
     "hono": "catalog:",
     "mri": "^1.2.0",
     "npm-run-all2": "^8.0.4",
-    "playwright": "^1.58.2",
+    "playwright-chromium": "^1.57.0",
     "rimraf": "catalog:",
     "srvx": "catalog:",
     "tsup": "^8.5.1",

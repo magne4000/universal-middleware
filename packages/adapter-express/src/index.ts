@@ -2,19 +2,16 @@ export {
   createHandler,
   createMiddleware,
   getContext,
-  type DecoratedRequest,
-  type DecoratedServerResponse,
-  type NodeMiddleware,
-  type NodeHandler,
 } from "./common.js";
 export { createRequestAdapter } from "./request.js";
 export { sendResponse } from "./response.js";
+export { type App, apply, type UniversalExpressRouter } from "./router.js";
+export type { DecoratedRequest, DecoratedServerResponse, NodeHandler, NodeMiddleware } from "./types.js";
 export {
+  type ConnectMiddleware,
+  type ConnectMiddlewareBoolean,
   connectToWeb,
   createIncomingMessage,
   createServerResponse,
-  type ConnectMiddleware,
-  type ConnectMiddlewareBoolean,
   type WebHandler,
 } from "./utils.js";
-export { type UniversalExpressRouter, type App, apply } from "./router.js";
