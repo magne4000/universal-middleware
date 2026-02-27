@@ -60,6 +60,7 @@ const runs: Run[] = [
     port: port + 5,
     waitUntilType: "function",
     delay: 1000,
+    streamCancel: "skip",
     ...expectInternalServerError,
   },
 ];

@@ -6,6 +6,8 @@ import {
   handler,
   middlewares,
   routeParamHandler,
+  streamCancelHandler,
+  streamCancelStatusHandler,
   throwEarlyAndLateHandler,
   throwEarlyHandler,
   throwLateHandler,
@@ -29,6 +31,8 @@ switch (TEST_CASE) {
       middlewares.updateHeaders,
       middlewares.contextAsync,
       routeParamHandler(),
+      streamCancelHandler(),
+      streamCancelStatusHandler(),
       handler(),
     ]);
 
@@ -47,6 +51,8 @@ switch (TEST_CASE) {
       throwLateHandler(),
       throwEarlyAndLateHandler(),
       guarded(),
+      streamCancelHandler(),
+      streamCancelStatusHandler(),
       handler(),
       enhancedMiddlewares.contextSync,
       enhancedMiddlewares.updateHeaders,
@@ -70,6 +76,8 @@ switch (TEST_CASE) {
     app.get("/throw-early", createHandler(throwEarlyHandler)());
     app.get("/throw-late", createHandler(throwLateHandler)());
     app.get("/throw-early-and-late", createHandler(throwEarlyAndLateHandler)());
+    app.get("/stream-cancel", createHandler(streamCancelHandler)());
+    app.get("/stream-cancel-status", createHandler(streamCancelStatusHandler)());
     app.get("/", createHandler(handler)());
   }
 }

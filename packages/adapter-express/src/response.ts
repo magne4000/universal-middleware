@@ -5,9 +5,6 @@ import { nodeHeadersToWeb } from "@universal-middleware/core";
 import { pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./const.js";
 import type { DecoratedServerResponse } from "./types.js";
 
-// @ts-expect-error
-const deno = typeof Deno !== "undefined";
-
 /**
  * Send a fetch API Response into a Node.js HTTP response stream.
  */
@@ -21,7 +18,7 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
     body = fetchBody as Readable;
   } else if (typeof (fetchBody as any).pipeTo === "function") {
     const { Readable } = await import("node:stream");
-    if (!deno && Readable.fromWeb) {
+    if (Readable.fromWeb) {
       body = Readable.fromWeb(fetchBody as ReadableStreamNode);
     } else {
       const reader = (fetchBody as ReadableStream).getReader();
@@ -41,6 +38,9 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
             this.destroy(e as Error);
           }
         },
+        destroy(err, callback) {
+          reader.cancel().finally(() => callback(err));
+        },
       });
     }
   } else if (fetchBody) {
@@ -51,25 +51,8 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Decora
   setHeaders(fetchResponse, nodeResponse);
 
   if (body) {
-    body.pipe(nodeResponse);
-    await new Promise<void>((resolve, reject) => {
-      body.on("error", (err) => {
-        nodeResponse.destroy(err);
-        reject(err);
-      });
-
-      nodeResponse.on("error", (err) => {
-        body.destroy(err);
-        reject(err);
-      });
-
-      nodeResponse.on("finish", resolve);
-
-      // Add drain event handler for backpressure
-      nodeResponse.on("drain", () => {
-        body.resume(); // Resume reading when client can accept more data
-      });
-    });
+    const { pipeline } = await import("node:stream/promises");
+    await pipeline(body, nodeResponse).catch(() => {});
   } else {
     nodeResponse.setHeader("content-length", "0");
     nodeResponse.end();
