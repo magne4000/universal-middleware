@@ -19,7 +19,7 @@
     "@changesets/cli": "^2.29.8",
     "@types/node": "catalog:",
     "file-type": "^21.3.0",
-    "turbo": "^2.8.10",
+    "turbo": "^2.8.12",
     "typescript": "catalog:"
   },
   "engines": {
