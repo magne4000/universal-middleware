@@ -11,7 +11,7 @@ catalog:
   '@hattip/router': ^0.0.49
   '@swc/core': ^1.15.18
   '@types/express': ^5.0.6
-  '@types/node': ^20.19.33
+  '@types/node': ^20.19.35
   '@webroute/route': ^0.8.0
   elysia: ^1.4.27
   express: ^5.2.1
