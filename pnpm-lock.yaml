@@ -136,6 +136,9 @@ importers:
       '@universal-middleware/hono':
         specifier: workspace:*
         version: link:../packages/adapter-hono
+      '@universal-middleware/node':
+        specifier: workspace:*
+        version: link:../packages/node
       '@universal-middleware/sirv':
         specifier: workspace:*
         version: link:../packages/sirv

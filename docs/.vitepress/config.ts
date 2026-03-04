@@ -97,6 +97,10 @@ export default defineConfig({
             text: "Enhance",
             link: "/helpers/enhance",
           },
+          {
+            text: "Node.js utilities",
+            link: "/helpers/node",
+          },
         ],
       },
       {
