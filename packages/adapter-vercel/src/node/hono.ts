@@ -1,4 +1,4 @@
-import { createRequestAdapter, sendResponse } from "@universal-middleware/express";
+import { createRequestAdapter, sendResponse } from "@universal-middleware/node";
 import type { App } from "@universal-middleware/hono";
 import type { VercelNodeHandlerRaw } from "../utils/common.js";
 

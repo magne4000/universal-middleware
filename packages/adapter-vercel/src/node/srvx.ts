@@ -9,7 +9,7 @@ export function createNodeHandler(
 ): VercelNodeHandlerRaw {
   const fn = typeof app === "function" ? app : app.fetch;
   return async function srvxHandlerVercelNode(message, response) {
-    const { createRequestAdapter, sendResponse } = await import("@universal-middleware/express");
+    const { createRequestAdapter, sendResponse } = await import("@universal-middleware/node");
     const requestAdapter = createRequestAdapter();
     const request = requestAdapter(message);
     const res = await fn(request);

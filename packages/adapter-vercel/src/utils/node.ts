@@ -1,6 +1,6 @@
 import type { Get, UniversalHandler } from "@universal-middleware/core";
 import { bindUniversal, universalSymbol } from "@universal-middleware/core";
-import { createRequestAdapter, sendResponse } from "@universal-middleware/express";
+import { createRequestAdapter, sendResponse } from "@universal-middleware/node";
 import { getRuntime, type VercelNodeHandler } from "./common.js";
 
 /**
