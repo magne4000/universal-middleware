@@ -294,6 +294,9 @@ importers:
       '@universal-middleware/core':
         specifier: workspace:^
         version: link:../core
+      '@universal-middleware/node':
+        specifier: workspace:^
+        version: link:../node
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -343,9 +346,9 @@ importers:
       '@universal-middleware/core':
         specifier: workspace:^
         version: link:../core
-      '@universal-middleware/express':
+      '@universal-middleware/node':
         specifier: workspace:^
-        version: link:../adapter-express
+        version: link:../node
       fastify-raw-body:
         specifier: ^5
         version: 5.0.0
@@ -576,6 +579,9 @@ importers:
       '@universal-middleware/express':
         specifier: workspace:^
         version: link:../adapter-express
+      '@universal-middleware/node':
+        specifier: workspace:^
+        version: link:../node
     devDependencies:
       '@hattip/core':
         specifier: 'catalog:'
@@ -801,6 +807,28 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@20.19.35)(tsx@4.21.0)
+
+  packages/node:
+    dependencies:
+      '@universal-middleware/core':
+        specifier: workspace:^
+        version: link:../core
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.18
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.19.35
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.3
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.1(@swc/core@1.15.18)(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
   packages/sirv:
     dependencies:

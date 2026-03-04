@@ -35,6 +35,7 @@
       "includes": [
         "**/packages/core/src/pipe.ts",
         "**/packages/adapter-express/src/response.ts",
+        "**/packages/node/src/response.ts",
         "**/packages/core/src/types.ts",
         "**/*.test.ts",
         "**/*.test-d.ts"

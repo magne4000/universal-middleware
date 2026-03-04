@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@universal-middleware/core": "workspace:^",
-    "@universal-middleware/express": "workspace:^",
+    "@universal-middleware/node": "workspace:^",
     "fastify-raw-body": "^5"
   },
   "devDependencies": {

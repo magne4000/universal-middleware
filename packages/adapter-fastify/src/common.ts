@@ -14,7 +14,7 @@ import {
   universalSymbol,
 } from "@universal-middleware/core";
 
-import { createRequestAdapter, type DecoratedRequest } from "@universal-middleware/express";
+import { createRequestAdapter, type DecoratedRequest } from "@universal-middleware/node";
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import fp from "fastify-plugin";
 
