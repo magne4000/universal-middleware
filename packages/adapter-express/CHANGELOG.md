@@ -1,5 +1,13 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.4.26
+
+### Patch Changes
+
+- 2f31e30: feat: move node utilities in a dedicated package
+- Updated dependencies [2f31e30]
+  - @universal-middleware/node@0.1.0
+
 ## 0.4.25
 
 ### Patch Changes

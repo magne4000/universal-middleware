@@ -1,5 +1,13 @@
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.2...fastify-v0.4.3) (2024-12-09)
 
+## 0.5.25
+
+### Patch Changes
+
+- 2f31e30: feat: move node utilities in a dedicated package
+- Updated dependencies [2f31e30]
+  - @universal-middleware/node@0.1.0
+
 ## 0.5.24
 
 ### Patch Changes
