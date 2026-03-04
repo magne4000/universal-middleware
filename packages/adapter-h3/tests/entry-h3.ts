@@ -5,6 +5,8 @@ import {
   handler,
   middlewares,
   routeParamHandler,
+  streamCancelHandler,
+  streamCancelStatusHandler,
   throwEarlyAndLateHandler,
   throwEarlyHandler,
   throwLateHandler,
@@ -34,6 +36,8 @@ switch (TEST_CASE) {
     app.use("/throw-early", createHandler(throwEarlyHandler)());
     app.use("/throw-late", createHandler(throwLateHandler)());
     app.use("/throw-early-and-late", createHandler(throwEarlyAndLateHandler)());
+    app.use("/stream-cancel", createHandler(streamCancelHandler)());
+    app.use("/stream-cancel-status", createHandler(streamCancelStatusHandler)());
 
     break;
   }
@@ -53,6 +57,9 @@ switch (TEST_CASE) {
       enhancedMiddlewares.throwLate,
     ]);
 
+    app.use("/stream-cancel", createHandler(streamCancelHandler)());
+    app.use("/stream-cancel-status", createHandler(streamCancelStatusHandler)());
+
     break;
   }
   default: {
@@ -71,6 +78,8 @@ switch (TEST_CASE) {
     router.get("/throw-early-and-late", createHandler(throwEarlyAndLateHandler)());
     router.get("/", createHandler(handler)());
     app.use(router);
+    app.use("/stream-cancel", createHandler(streamCancelHandler)());
+    app.use("/stream-cancel-status", createHandler(streamCancelStatusHandler)());
   }
 }
 

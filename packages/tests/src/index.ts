@@ -12,6 +12,7 @@ export interface Run {
   delay?: number;
   env?: Record<string, string>;
   staticContext?: boolean;
+  streamCancel?: "skip" | "fail";
   tests?: {
     throwLate?: {
       expectedBody?: string;
@@ -172,6 +173,47 @@ export function runTests(runs: Run[], options: Options) {
     vitest.test("404", { retry: 3, timeout: 30_000 }, async () => {
       const response = await fetch(`${host}${prefix ?? ""}/404`, fetchDefault);
       vitest.expect(response.status).toBe(404);
+    });
+
+    // Skip for stateless environments (e.g. Cloudflare Workers) where module-level state
+    // doesn't persist between requests, making the side-channel status endpoint unreliable.
+    // Use streamCancel: 'fail' to document known-broken adapters (test passes when it fails).
+    const streamCancelMode = run.streamCancel;
+    const streamCancelTest =
+      streamCancelMode === "skip" ? vitest.test.skip : streamCancelMode === "fail" ? vitest.test.fails : vitest.test;
+    streamCancelTest("stream cancellation propagation", { retry: 3, timeout: 30_000 }, async () => {
+      const controller = new AbortController();
+      const fetchPromise = fetch(`${host}${prefix ?? ""}/stream-cancel`, {
+        signal: controller.signal,
+        ...fetchDefault,
+      })
+        .then(async (res) => {
+          const reader = res.body!.getReader();
+          await reader.read();
+          // First chunk received — abort immediately.
+          controller.abort();
+        })
+        .catch((err) => {
+          if (err?.name !== "AbortError") throw err;
+        });
+
+      await fetchPromise;
+
+      // Poll until the server reflects the cancellation, up to 5 s
+      const deadline = Date.now() + 5000;
+      let cancelled = false;
+      while (Date.now() < deadline) {
+        const statusResponse = await fetch(`${host}${prefix ?? ""}/stream-cancel-status`, fetchDefault);
+        const status = (await statusResponse.json()) as {
+          cancelled: boolean;
+        };
+        if (status.cancelled) {
+          cancelled = true;
+          break;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      vitest.expect(cancelled).toBe(true);
     });
 
     if (testPost) {

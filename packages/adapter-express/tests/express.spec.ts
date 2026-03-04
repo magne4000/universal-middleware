@@ -29,6 +29,8 @@ const runs: Run[] = [
     name: "adapter-express: bun",
     command: "pnpm run test:run-express:bun",
     port: port++,
+    // https://github.com/oven-sh/bun/issues/14697
+    streamCancel: "fail",
   },
   {
     name: "adapter-express: deno",

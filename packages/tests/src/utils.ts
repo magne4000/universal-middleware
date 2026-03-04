@@ -174,3 +174,52 @@ export const throwEarlyAndLateHandler: Get<[], UniversalHandler> = () =>
       method: ["GET", "POST"],
     },
   );
+
+let streamCancelled = false;
+
+export const streamCancelHandler: Get<[], UniversalHandler> = () =>
+  enhance(
+    () => {
+      streamCancelled = false;
+      const stream = new ReadableStream({
+        pull(controller) {
+          if (streamCancelled) {
+            controller.close();
+            return;
+          }
+          controller.enqueue(new TextEncoder().encode("data\n"));
+          return new Promise((resolve) => setTimeout(resolve, 100));
+        },
+        cancel() {
+          streamCancelled = true;
+        },
+      });
+
+      return new Response(stream, {
+        headers: {
+          "content-type": "application/octet-stream",
+          "transfer-encoding": "chunked",
+          "cache-control": "no-transform",
+        },
+      });
+    },
+    {
+      path: "/stream-cancel",
+      method: "GET",
+    },
+  );
+
+export const streamCancelStatusHandler: Get<[], UniversalHandler> = () =>
+  enhance(
+    () => {
+      return new Response(JSON.stringify({ cancelled: streamCancelled }), {
+        headers: {
+          "content-type": "application/json",
+        },
+      });
+    },
+    {
+      path: "/stream-cancel-status",
+      method: "GET",
+    },
+  );
