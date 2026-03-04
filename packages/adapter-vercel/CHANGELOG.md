@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.31
+
+### Patch Changes
+
+- 2f31e30: feat: move node utilities in a dedicated package
+- Updated dependencies [2f31e30]
+  - @universal-middleware/node@0.1.0
+  - @universal-middleware/express@0.4.26
+
 ## 0.4.30
 
 ### Patch Changes
