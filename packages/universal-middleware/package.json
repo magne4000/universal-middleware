@@ -125,12 +125,12 @@
     "@universal-middleware/srvx": "workspace:^",
     "@universal-middleware/vercel": "workspace:^",
     "@universal-middleware/webroute": "workspace:^",
-    "oxc-transform": "^0.115.0",
+    "oxc-transform": "^0.116.0",
     "package-up": "^5.0.0",
     "unplugin": "^2.3.11"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-commonjs": "^29.0.2",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-typescript": "^12.3.0",
     "@swc/core": "catalog:",
