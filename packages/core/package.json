@@ -32,7 +32,7 @@
     "h3": "catalog:",
     "hono": "catalog:",
     "rimraf": "catalog:",
-    "rou3": "^0.7.12",
+    "rou3": "^0.8.1",
     "srvx": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",
@@ -82,6 +82,6 @@
   "sideEffects": false,
   "dependencies": {
     "regexparam": "^3.0.0",
-    "tough-cookie": "^6.0.0"
+    "tough-cookie": "^6.0.1"
   }
 }
