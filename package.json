@@ -15,11 +15,11 @@
   "keywords": [],
   "author": "",
   "devDependencies": {
-    "@biomejs/biome": "^2.4.8",
+    "@biomejs/biome": "^2.4.9",
     "@changesets/cli": "^2.30.0",
     "@types/node": "catalog:",
     "file-type": "^21.3.4",
-    "turbo": "^2.8.20",
+    "turbo": "^2.8.21",
     "typescript": "catalog:"
   },
   "engines": {
