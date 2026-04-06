@@ -17,6 +17,11 @@ export default defineConfig({
       }),
     ],
   },
+  vite: {
+    build: {
+      target: "es2021",
+    },
+  },
   title: "universal-middleware",
   description: "Write middleware once, target Hono, Express, Cloudflare, and more",
   themeConfig: {
