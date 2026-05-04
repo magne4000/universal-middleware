@@ -11,7 +11,8 @@
     "noEmit": true,
     "moduleResolution": "Bundler",
     "target": "ES2022",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"]
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "ignoreDeprecations": "6.0"
   },
   "exclude": ["dist"]
 }
