@@ -12,6 +12,7 @@ export default defineConfig({
           compilerOptions: {
             verbatimModuleSyntax: true,
             moduleResolution: 100 satisfies ModuleResolutionKind.Bundler,
+            ignoreDeprecations: "6.0",
           },
         },
       }),
