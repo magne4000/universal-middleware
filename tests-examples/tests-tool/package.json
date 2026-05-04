@@ -34,7 +34,7 @@
     "@hattip/adapter-node": "^0.0.49",
     "@hattip/router": "catalog:",
     "@hono/node-server": "^1.19.14",
-    "@hono/vite-dev-server": "^0.25.1",
+    "@hono/vite-dev-server": "^0.25.3",
     "@swc-node/register": "^1.11.1",
     "@types/express": "catalog:",
     "@types/node": "catalog:",
