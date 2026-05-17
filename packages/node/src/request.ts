@@ -1,4 +1,4 @@
-import type { IncomingMessage } from "node:http";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Socket } from "node:net";
 import type { contextSymbol } from "@universal-middleware/core";
 import { env, requestSymbol } from "./const.js";
@@ -55,7 +55,9 @@ export interface NodeRequestAdapterOptions {
 }
 
 /** Create a function that converts a Node HTTP request into a fetch API `Request` object */
-export function createRequestAdapter(options: NodeRequestAdapterOptions = {}): (req: DecoratedRequest) => Request {
+export function createRequestAdapter(
+  options: NodeRequestAdapterOptions = {},
+): (req: DecoratedRequest, res: ServerResponse) => Request {
   const { origin = env.ORIGIN, trustProxy = env.TRUST_PROXY === "1" } = options;
 
   // eslint-disable-next-line prefer-const
@@ -67,7 +69,7 @@ export function createRequestAdapter(options: NodeRequestAdapterOptions = {}): (
 
   let warned = false;
 
-  return function requestAdapter(req) {
+  return function requestAdapter(req, res) {
     // Reuse already created request
     if (req[requestSymbol]) {
       return req[requestSymbol];
@@ -103,10 +105,16 @@ export function createRequestAdapter(options: NodeRequestAdapterOptions = {}): (
       host = "localhost";
     }
 
+    const abortController = new AbortController();
+    res.once("close", () => {
+      if (!res.writableEnded) abortController.abort();
+    });
+
     const request = new Request(`${protocol}://${host}${req.originalUrl ?? req.url}`, {
       method: req.method,
       headers,
       body: convertBody(req),
+      signal: abortController.signal,
       // @ts-expect-error
       duplex: "half",
     });
@@ -129,15 +137,27 @@ function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
   }
 
   if (!bun && !deno) {
-    // Real Node can handle ReadableStream
+    // Node's `fetch` (undici) accepts a Node `Readable` directly as body;
+    // it converts internally with backpressure preserved.
     return req as unknown as BodyInit;
   }
 
+  // bun/deno: wrap as Web `ReadableStream` with proper backpressure — pause the
+  // source when the controller's queue fills, resume on `pull`, destroy on cancel.
   return new ReadableStream({
     start(controller) {
-      req.on("data", (chunk) => controller.enqueue(chunk));
+      req.on("data", (chunk) => {
+        controller.enqueue(chunk);
+        if ((controller.desiredSize ?? 1) <= 0) req.pause();
+      });
       req.on("end", () => controller.close());
       req.on("error", (err) => controller.error(err));
+    },
+    pull() {
+      req.resume();
+    },
+    cancel(reason) {
+      req.destroy(reason instanceof Error ? reason : undefined);
     },
   });
 }
