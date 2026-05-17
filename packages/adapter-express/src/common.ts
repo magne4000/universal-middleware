@@ -38,7 +38,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
     return bindUniversal(handler, async function universalHandlerExpress(req, res, next) {
       try {
         req[contextSymbol] ??= {} as InContext;
-        const request = requestAdapter(req);
+        const request = requestAdapter(req, res);
         const response: Response | undefined = await this[universalSymbol](
           request,
           req[contextSymbol],
@@ -88,7 +88,7 @@ export function createMiddleware<
     return bindUniversal(middleware, async function universalMiddlewareExpress(req, res, next) {
       try {
         req[contextSymbol] ??= {} as InContext;
-        const request = requestAdapter(req);
+        const request = requestAdapter(req, res);
         const response = await this[universalSymbol](request, getContext(req), getRuntime(req, res));
 
         if (!response) {

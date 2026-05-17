@@ -126,7 +126,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
     return bindUniversal(handler, async function universalHandlerFastify(request, reply) {
       const ctx = initContext<InContext>(request);
       const response: Response | undefined = await this[universalSymbol](
-        requestAdapter(getRawRequest(request)),
+        requestAdapter(getRawRequest(request), reply.raw),
         ctx,
         getRuntime(request, reply),
       );
@@ -166,7 +166,7 @@ export function createMiddleware<
             async function universalMiddlewareFastify(request: FastifyRequest, reply: FastifyReply) {
               const ctx = initContext<InContext>(request);
               const response = await this[universalSymbol](
-                requestAdapter(getRawRequest(request)),
+                requestAdapter(getRawRequest(request), reply.raw),
                 ctx,
                 getRuntime(request, reply),
               );
