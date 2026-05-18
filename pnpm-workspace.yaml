@@ -6,7 +6,7 @@ packages:
   - tests-examples/*
   - docs
 catalog:
-  '@cloudflare/workers-types': ^4.20260511.1
+  '@cloudflare/workers-types': ^4.20260518.1
   '@hattip/core': ^0.0.49
   '@hattip/router': ^0.0.49
   '@swc/core': ^1.15.33
@@ -17,12 +17,12 @@ catalog:
   express: ^5.2.1
   fastify: ^5.8.5
   h3: ^1.15.11
-  hono: ^4.12.16
+  hono: ^4.12.19
   rimraf: ^6.1.3
   srvx: ^0.11.15
   tsup: ^8.5.1
-  tsx: ^4.21.0
+  tsx: ^4.22.1
   typescript: ^6.0.3
-  vite: ^8.0.12
-  vitest: ^4.1.5
-  wrangler: ^4.90.0
+  vite: ^8.0.13
+  vitest: ^4.1.6
+  wrangler: ^4.92.0

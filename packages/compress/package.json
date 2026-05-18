@@ -17,11 +17,11 @@
   },
   "devDependencies": {
     "@swc/core": "catalog:",
-    "@types/bun": "^1.3.13",
+    "@types/bun": "^1.3.14",
     "@types/node": "catalog:",
     "@universal-middleware/core": "workspace:^",
     "elysia": "catalog:",
-    "fflate": "^0.8.2",
+    "fflate": "^0.8.3",
     "h3": "catalog:",
     "rimraf": "catalog:",
     "tsup": "catalog:",
