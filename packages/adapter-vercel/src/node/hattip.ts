@@ -11,7 +11,7 @@ export function createNodeHandler(app: App): VercelNodeHandlerRaw {
   const requestAdapter = createRequestAdapter();
 
   return async function hattipHandlerVercelNode(message, response) {
-    const request = requestAdapter(message);
+    const request = requestAdapter(message, response);
     const res = await handler(createContext(request, "vercel-node"));
     return sendResponse(res, response);
   };

@@ -1,15 +1,6 @@
 import type { ServerResponse } from "node:http";
-import type {
-  Awaitable,
-  UniversalFn,
-  UniversalHandler,
-  UniversalMiddleware,
-} from "@universal-middleware/core";
-import type {
-  DecoratedRequest,
-  NodeRequestAdapterOptions,
-  PossiblyEncryptedSocket,
-} from "@universal-middleware/node";
+import type { Awaitable, UniversalFn, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type { DecoratedRequest, NodeRequestAdapterOptions, PossiblyEncryptedSocket } from "@universal-middleware/node";
 import type { pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./const.js";
 
 export type { DecoratedRequest, NodeRequestAdapterOptions, PossiblyEncryptedSocket };

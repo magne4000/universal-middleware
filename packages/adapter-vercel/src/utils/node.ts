@@ -15,7 +15,7 @@ export function createNodeHandler<T extends unknown[], InContext extends Univers
     const handler = handlerFactory(...args);
 
     return bindUniversal(handler, async function universalHandlerVercelNode(message, response) {
-      const request = requestAdapter(message);
+      const request = requestAdapter(message, response);
       const res = await this[universalSymbol](request, {} as InContext, getRuntime(message, response));
       return sendResponse(res, response);
     });

@@ -11,7 +11,7 @@ export function createNodeHandler(
   return async function srvxHandlerVercelNode(message, response) {
     const { createRequestAdapter, sendResponse } = await import("@universal-middleware/node");
     const requestAdapter = createRequestAdapter();
-    const request = requestAdapter(message);
+    const request = requestAdapter(message, response);
     const res = await fn(request);
     return sendResponse(res, response);
   };

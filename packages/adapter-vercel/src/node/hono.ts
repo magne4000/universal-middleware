@@ -9,7 +9,7 @@ export function createNodeHandler(app: App): VercelNodeHandlerRaw {
   const requestAdapter = createRequestAdapter();
 
   return async function honoHandlerVercelNode(message, response) {
-    const request = requestAdapter(message);
+    const request = requestAdapter(message, response);
     const res = await app.fetch(request);
     return sendResponse(res, response);
   };
