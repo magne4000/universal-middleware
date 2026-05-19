@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.32
+
+### Patch Changes
+
+- cd60e02: fix(node): wire request.signal to client disconnect, backpressure
+- Updated dependencies [cd60e02]
+  - @universal-middleware/node@0.2.0
+  - @universal-middleware/express@0.4.27
+
 ## 0.4.31
 
 ### Patch Changes

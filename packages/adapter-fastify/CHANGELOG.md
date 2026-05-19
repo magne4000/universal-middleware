@@ -1,5 +1,13 @@
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.2...fastify-v0.4.3) (2024-12-09)
 
+## 0.5.26
+
+### Patch Changes
+
+- cd60e02: fix(node): wire request.signal to client disconnect, backpressure
+- Updated dependencies [cd60e02]
+  - @universal-middleware/node@0.2.0
+
 ## 0.5.25
 
 ### Patch Changes
