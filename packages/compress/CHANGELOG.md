@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.36
+
+### Patch Changes
+
+- cd60e02: fix(node): wire request.signal to client disconnect, backpressure
+
 ## 0.2.35
 
 ### Patch Changes

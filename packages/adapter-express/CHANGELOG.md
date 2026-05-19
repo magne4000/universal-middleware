@@ -1,5 +1,13 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.4.27
+
+### Patch Changes
+
+- cd60e02: fix(node): wire request.signal to client disconnect, backpressure
+- Updated dependencies [cd60e02]
+  - @universal-middleware/node@0.2.0
+
 ## 0.4.26
 
 ### Patch Changes
