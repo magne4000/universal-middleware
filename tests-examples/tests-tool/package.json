@@ -60,7 +60,7 @@
     "h3": "catalog:",
     "hono": "catalog:",
     "mri": "^1.2.0",
-    "npm-run-all2": "^8.0.4",
+    "npm-run-all2": "^9.0.1",
     "playwright-chromium": "^1.60.0",
     "rimraf": "catalog:",
     "srvx": "catalog:",
