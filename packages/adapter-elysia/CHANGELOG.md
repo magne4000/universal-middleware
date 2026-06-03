@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/elysia-v0.3.2...elysia-v0.3.3) (2024-12-09)
 
+## 0.6.5
+
+### Patch Changes
+
+- 8a1657d: fix: Elysia body parsing
+
 ## 0.6.4
 
 ### Patch Changes
