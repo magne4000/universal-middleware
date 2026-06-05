@@ -62,7 +62,7 @@ export function nodeHeadersToWeb(nodeHeaders: OutgoingHttpHeaders): Headers {
 }
 
 function normalizeHttpHeader(value: string | number | undefined): string {
-  return (value as string) || "";
+  return value === undefined ? "" : String(value);
 }
 
 export function url(request: { url: string; [urlSymbol]?: URL }): URL {
