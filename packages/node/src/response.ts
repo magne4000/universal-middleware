@@ -87,6 +87,12 @@ export function responseAdapter(nodeResponse: ServerResponse, bodyInit?: BodyIni
   });
 }
 
+/**
+ * Applies Web Response headers to a Node.js response.
+ *
+ * In mirror mode, the Web Response headers replace the Node.js response header snapshot.
+ * Otherwise, Set-Cookie is appended to preserve existing Node.js cookies when sending a fresh response.
+ */
 export function setResponseHeaders(fetchResponse: Response, nodeResponse: ServerResponse, mirror = false) {
   nodeResponse.statusCode = fetchResponse.status;
   if (fetchResponse.statusText) {
@@ -96,8 +102,17 @@ export function setResponseHeaders(fetchResponse: Response, nodeResponse: Server
   const nodeResponseHeaders = new Set(Object.keys(nodeResponse.getHeaders()));
 
   const setCookie = fetchResponse.headers.getSetCookie();
-  for (const cookie of setCookie) {
-    nodeResponse.appendHeader("set-cookie", cookie);
+  if (mirror) {
+    // When omitted in mirror mode, existing Set-Cookie headers remain in nodeResponseHeaders
+    // and are removed by the cleanup below.
+    if (setCookie.length > 0) {
+      nodeResponse.setHeader("set-cookie", setCookie);
+      nodeResponseHeaders.delete("set-cookie");
+    }
+  } else {
+    for (const cookie of setCookie) {
+      nodeResponse.appendHeader("set-cookie", cookie);
+    }
   }
 
   fetchResponse.headers.forEach((value, key) => {

@@ -19,6 +19,16 @@ const { default: express } = await (process.env.EXPRESS_V4 ? import("express4") 
 const app = express() as import("express").Express;
 
 app.use(helmet());
+app.use((req, res, next) => {
+  if (req.path === "/") {
+    res.cookie("express-cookie-example", "res-cookie", {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000,
+      sameSite: "lax",
+    });
+  }
+  next();
+});
 
 const TEST_CASE = process.env.TEST_CASE;
 

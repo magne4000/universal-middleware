@@ -1,4 +1,6 @@
+import { ServerResponse } from "node:http";
 import { type Run, runTests } from "@universal-middleware/tests";
+import { setResponseHeaders } from "@universal-middleware/node";
 import * as vitest from "vitest";
 
 let port = 3100;
@@ -71,5 +73,49 @@ runTests(runs, {
     // added by helmet
     vitest.expect(response.headers.has("content-security-policy")).toBe(true);
     vitest.expect(response.headers.has("x-xss-protection")).toBe(true);
+    vitest
+      .expect(response.headers.getSetCookie().filter((cookie) => cookie.startsWith("express-cookie-example=")))
+      .toHaveLength(1);
   },
+});
+
+vitest.describe("setResponseHeaders mirror mode", () => {
+  vitest.test("appends set-cookie headers when mirror mode is disabled", () => {
+    const nodeResponse = new ServerResponse({} as never);
+    nodeResponse.setHeader("set-cookie", ["express-cookie=old"]);
+    const response = new Response(null, {
+      headers: [["set-cookie", "universal-cookie=new"]],
+    });
+
+    setResponseHeaders(response, nodeResponse);
+
+    vitest.expect(nodeResponse.getHeader("set-cookie")).toEqual(["express-cookie=old", "universal-cookie=new"]);
+  });
+
+  vitest.test("replaces multiple existing set-cookie headers", () => {
+    const nodeResponse = new ServerResponse({} as never);
+    nodeResponse.setHeader("set-cookie", ["express-cookie=old", "other-express-cookie=old"]);
+    const response = new Response(null, {
+      headers: [
+        ["set-cookie", "universal-cookie=new"],
+        ["set-cookie", "other-universal-cookie=new"],
+      ],
+    });
+
+    setResponseHeaders(response, nodeResponse, true);
+
+    vitest
+      .expect(nodeResponse.getHeader("set-cookie"))
+      .toEqual(["universal-cookie=new", "other-universal-cookie=new"]);
+  });
+
+  vitest.test("removes existing set-cookie headers when mirrored response omits them", () => {
+    const nodeResponse = new ServerResponse({} as never);
+    nodeResponse.setHeader("set-cookie", ["express-cookie=old"]);
+    const response = new Response(null);
+
+    setResponseHeaders(response, nodeResponse, true);
+
+    vitest.expect(nodeResponse.hasHeader("set-cookie")).toBe(false);
+  });
 });
