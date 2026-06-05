@@ -150,4 +150,12 @@ describe("nodeHeadersToWeb", () => {
 
     expect(headers.getSetCookie()).toEqual(["foo=bar", "foo2=bar2"]);
   });
+
+  test("keeps custom array headers readable as comma-joined values", () => {
+    const headers = nodeHeadersToWeb({
+      "x-custom-vary": ["Accept-Encoding", "Origin"],
+    });
+
+    expect(headers.get("x-custom-vary")).toBe("Accept-Encoding, Origin");
+  });
 });
