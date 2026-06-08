@@ -4,4 +4,4 @@
 "@universal-middleware/node": patch
 ---
 
-Fix duplicated Set-Cookie headers when Express response transformers mirror cookies already set on the response.
+fix: duplicated Set-Cookie headers when Express response transformers mirror cookies already set on the response.
