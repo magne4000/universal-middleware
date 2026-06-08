@@ -1,5 +1,14 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.4.28
+
+### Patch Changes
+
+- 060a74e: fix: duplicated Set-Cookie headers when Express response transformers mirror cookies already set on the response.
+- Updated dependencies [060a74e]
+  - @universal-middleware/core@0.4.18
+  - @universal-middleware/node@0.2.1
+
 ## 0.4.27
 
 ### Patch Changes
