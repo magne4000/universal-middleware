@@ -47,17 +47,22 @@ export function nodeHeadersToWeb(nodeHeaders: OutgoingHttpHeaders): Headers {
 
   const keys = Object.keys(nodeHeaders);
   for (const key of keys) {
-    headers.push([key, normalizeHttpHeader(nodeHeaders[key])]);
+    const value = nodeHeaders[key];
+
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        headers.push([key, item]);
+      }
+    } else {
+      headers.push([key, normalizeHttpHeader(value)]);
+    }
   }
 
   return new Headers(headers);
 }
 
-function normalizeHttpHeader(value: string | string[] | number | undefined): string {
-  if (Array.isArray(value)) {
-    return value.join(", ");
-  }
-  return (value as string) || "";
+function normalizeHttpHeader(value: string | number | undefined): string {
+  return value === undefined ? "" : String(value);
 }
 
 export function url(request: { url: string; [urlSymbol]?: URL }): URL {

@@ -1,6 +1,7 @@
 import { describe } from "node:test";
 import { expect, test } from "vitest";
 import { deleteCookie, getCookie, getCookies, setCookie } from "../src/cookies/index";
+import { nodeHeadersToWeb } from "../src/utils";
 
 describe("getCookie", () => {
   test("simple cookie", () => {
@@ -138,5 +139,23 @@ describe("deleteCookie", () => {
     expect(response.headers.getSetCookie()).toEqual(["foo=bar", "foo2=bar2"]);
     deleteCookie(response, "foo");
     expect(response.headers.getSetCookie()).toEqual(["foo2=bar2"]);
+  });
+});
+
+describe("nodeHeadersToWeb", () => {
+  test("preserves multiple set-cookie headers", () => {
+    const headers = nodeHeadersToWeb({
+      "set-cookie": ["foo=bar", "foo2=bar2"],
+    });
+
+    expect(headers.getSetCookie()).toEqual(["foo=bar", "foo2=bar2"]);
+  });
+
+  test("keeps custom array headers readable as comma-joined values", () => {
+    const headers = nodeHeadersToWeb({
+      "x-custom-vary": ["Accept-Encoding", "Origin"],
+    });
+
+    expect(headers.get("x-custom-vary")).toBe("Accept-Encoding, Origin");
   });
 });
