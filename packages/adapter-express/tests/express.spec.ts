@@ -104,9 +104,7 @@ vitest.describe("setResponseHeaders mirror mode", () => {
 
     setResponseHeaders(response, nodeResponse, true);
 
-    vitest
-      .expect(nodeResponse.getHeader("set-cookie"))
-      .toEqual(["universal-cookie=new", "other-universal-cookie=new"]);
+    vitest.expect(nodeResponse.getHeader("set-cookie")).toEqual(["universal-cookie=new", "other-universal-cookie=new"]);
   });
 
   vitest.test("removes existing set-cookie headers when mirrored response omits them", () => {
