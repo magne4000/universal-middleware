@@ -30,3 +30,11 @@ overrides:
   "@vercel/node>typescript": "catalog:"
   "@webroute/middleware": "^0.10.0"
   "esbuild": "^0.28.0"
+minimumReleaseAgeExclude:
+  - '@cloudflare/workers-types@4.20260608.1'
+allowBuilds:
+  '@swc/core': true
+  esbuild: true
+  playwright-chromium: true
+  sharp: true
+  workerd: true
