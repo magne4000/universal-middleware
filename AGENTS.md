@@ -6,21 +6,21 @@ This repository provides a framework for writing server middlewares and handlers
 
 **Project Type:** TypeScript monorepo using pnpm workspaces and Turbo for build orchestration  
 **Primary Language:** TypeScript (ES Modules)  
-**Package Manager:** pnpm 10.11.0 (required)  
-**Node Version:** Node.js 20.0.0 or higher (tested on 20, 22, 24)  
+**Package Manager:** pnpm 11.5.2 (required)  
+**Node Version:** Node.js 22.0.0 or higher (tested on 22, 24)  
 **Repository Size:** 15 packages + documentation + examples
 
 ## Critical Setup Requirements
 
 ### Prerequisites
-1. **ALWAYS install pnpm first if not available:** `npm install -g pnpm@10.11.0`
-2. **Node version:** Must be 20.0.0 or higher (check with `node --version`)
+1. **ALWAYS install pnpm first if not available:** `npm install -g pnpm@11.5.2`
+2. **Node version:** Must be 22.0.0 or higher (check with `node --version`)
 3. **ALWAYS run `pnpm install` before any other command** - dependencies must be installed fresh
 
 ### Initial Setup (Run in Order)
 ```bash
 # 1. Install pnpm globally if needed
-npm install -g pnpm@10.11.0
+npm install -g pnpm@11.5.2
 
 # 2. Install all dependencies (REQUIRED - takes ~20-30 seconds, downloads ~174 MB for playwright)
 pnpm install
