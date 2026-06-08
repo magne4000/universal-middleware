@@ -25,20 +25,5 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "pnpm": {
-    "overrides": {
-      "@vercel/node>typescript": "catalog:",
-      "@webroute/middleware": "^0.10.0",
-      "esbuild": "^0.28.0"
-    },
-    "onlyBuiltDependencies": [
-      "@swc/core",
-      "esbuild",
-      "oxc-resolver",
-      "playwright-chromium",
-      "sharp",
-      "workerd"
-    ]
-  },
-  "packageManager": "pnpm@10.28.0"
+  "packageManager": "pnpm@11.5.2"
 }

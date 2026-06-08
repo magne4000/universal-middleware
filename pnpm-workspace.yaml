@@ -26,3 +26,7 @@ catalog:
   vite: ^8.0.16
   vitest: ^4.1.8
   wrangler: ^4.98.0
+overrides:
+  "@vercel/node>typescript": "catalog:"
+  "@webroute/middleware": "^0.10.0"
+  "esbuild": "^0.28.0"
