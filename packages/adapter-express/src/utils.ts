@@ -38,25 +38,27 @@ export type WebHandler<InContext extends Universal.Context = Universal.Context, 
  */
 export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoolean): WebHandler {
   return async (request: Request, _context, runtime): Promise<Response | undefined> => {
-    const req: IncomingMessage =
-      runtime && "req" in runtime && runtime.req
-        ? runtime.req
-        : // biome-ignore lint/suspicious/noExplicitAny: srvx request
-          ((request as any).runtime?.node?.req ?? createIncomingMessage(request));
+    const realReq: IncomingMessage | undefined =
+      // biome-ignore lint/suspicious/noExplicitAny: srvx request
+      (runtime && "req" in runtime && runtime.req) || (request as any).runtime?.node?.req;
+    const req = realReq ?? createIncomingMessage(request);
     const { res, onReadable } = createServerResponse(req);
+
+    // A real server wires client disconnect to the request itself; a synthetic req/res does
+    // not, so bridge the incoming abort to the handler while the response is in flight.
+    const stopForwardingAbort = realReq ? undefined : forwardAbort(request.signal, req, res);
 
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: ignored
     return new Promise<Response | undefined>(async (resolve, reject) => {
       onReadable(({ readable, headers, statusCode }) => {
-        const responseBody: ReadableStream = statusCodesWithoutBody.includes(statusCode)
-          ? null
-          : "from" in ReadableStream
-            ? // biome-ignore lint/suspicious/noExplicitAny: definition clash between Web and Node
-              (ReadableStream as any).from(readable)
-            : // biome-ignore lint/suspicious/noExplicitAny: definition clash between Web and Node
-              (Readable.toWeb(readable) as any);
+        const hasBody = !statusCodesWithoutBody.includes(statusCode);
+        // Keep forwarding aborts until a streaming body has fully flushed, then stop.
+        if (stopForwardingAbort) {
+          if (hasBody) readable.once("close", stopForwardingAbort);
+          else stopForwardingAbort();
+        }
         resolve(
-          new Response(responseBody, {
+          new Response(hasBody ? toWebStream(readable) : null, {
             status: statusCode,
             headers: flattenHeaders(headers),
           }),
@@ -64,6 +66,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
       });
 
       const next = (error?: unknown) => {
+        stopForwardingAbort?.();
         if (error) {
           reject(error instanceof Error ? error : new Error(String(error)));
         } else {
@@ -76,6 +79,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
 
         if (handled === false) {
           res.destroy();
+          stopForwardingAbort?.();
           resolve(undefined);
         }
       } catch (e) {
@@ -90,16 +94,18 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
  * @beta
  */
 export function createIncomingMessage(request: Request): IncomingMessage {
-  const parsedUrl = new URL(request.url, "http://localhost");
-  const pathnameAndQuery = (parsedUrl.pathname || "") + (parsedUrl.search || "");
-  // biome-ignore lint/suspicious/noExplicitAny: ignored
+  const url = new URL(request.url, "http://localhost");
+  // biome-ignore lint/suspicious/noExplicitAny: Web/Node stream type clash
   const body = request.body ? Readable.fromWeb(request.body as any) : Readable.from([]);
 
+  // Express reads connection metadata off `req.socket` (e.g. `req.protocol` -> `socket.encrypted`);
+  // a synthetic request has no socket, so stub the field it reads to avoid a throw.
   return Object.assign(body, {
-    url: pathnameAndQuery,
+    url: url.pathname + url.search,
     method: request.method,
     headers: Object.fromEntries(request.headers),
-  }) as IncomingMessage;
+    socket: { encrypted: url.protocol === "https:" },
+  }) as unknown as IncomingMessage;
 }
 
 /**
@@ -169,6 +175,39 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
     res,
     onReadable,
   };
+}
+
+/**
+ * Bridges a web `AbortSignal` to a synthetic Node `req`/`res` and returns a stop function.
+ *
+ * `createRequestAdapter` derives the handler's `request.signal` from `res`'s "close" event,
+ * which a socketless `ServerResponse` never emits on its own — so emit it explicitly.
+ */
+function forwardAbort(signal: AbortSignal, req: IncomingMessage, res: ServerResponse): () => void {
+  let active = true;
+  const abort = () => {
+    if (!active) return;
+    active = false;
+    res.emit("close");
+    req.destroy();
+  };
+  // An already-aborted signal must wait for the handler to register its "close" listener,
+  // which it does synchronously once invoked.
+  if (signal.aborted) queueMicrotask(abort);
+  else signal.addEventListener("abort", abort, { once: true });
+  return () => {
+    active = false;
+    signal.removeEventListener("abort", abort);
+  };
+}
+
+function toWebStream(readable: Readable): ReadableStream {
+  // `ReadableStream.from` is unavailable on some runtimes/older Node versions.
+  return "from" in ReadableStream
+    ? // biome-ignore lint/suspicious/noExplicitAny: Web/Node stream type clash
+      (ReadableStream as any).from(readable)
+    : // biome-ignore lint/suspicious/noExplicitAny: Web/Node stream type clash
+      (Readable.toWeb(readable) as any);
 }
 
 function flattenHeaders(headers: OutgoingHttpHeaders): [string, string][] {
