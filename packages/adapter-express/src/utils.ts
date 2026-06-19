@@ -38,15 +38,34 @@ export type WebHandler<InContext extends Universal.Context = Universal.Context, 
  */
 export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoolean): WebHandler {
   return async (request: Request, _context, runtime): Promise<Response | undefined> => {
-    const req: IncomingMessage =
-      runtime && "req" in runtime && runtime.req
-        ? runtime.req
-        : // biome-ignore lint/suspicious/noExplicitAny: srvx request
-          ((request as any).runtime?.node?.req ?? createIncomingMessage(request));
+    const realReq: IncomingMessage | undefined =
+      // biome-ignore lint/suspicious/noExplicitAny: srvx request
+      (runtime && "req" in runtime && runtime.req) || (request as any).runtime?.node?.req;
+    const req: IncomingMessage = realReq ?? createIncomingMessage(request);
     const { res, onReadable } = createServerResponse(req);
+
+    // On the synthetic path (no real Node req/res backing the request) nothing wires
+    // client disconnect to the handler. Forward the incoming `AbortSignal` so the
+    // downstream request's signal fires and in-flight work can stop. On the real-Node
+    // path the underlying server already handles aborts, so we leave it untouched.
+    const signal = !realReq ? request.signal : undefined;
+    const onAbort = () => {
+      // `createRequestAdapter` ties the downstream request's AbortController to `res`'s
+      // "close" event; a socketless `ServerResponse` does not emit it on `destroy()`,
+      // so emit it explicitly to make the handler's `request.signal` fire.
+      if (!res.writableEnded) res.emit("close");
+      req.destroy?.();
+    };
 
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: ignored
     return new Promise<Response | undefined>(async (resolve, reject) => {
+      const cleanup = () => signal?.removeEventListener("abort", onAbort);
+
+      if (signal) {
+        if (signal.aborted) onAbort();
+        else signal.addEventListener("abort", onAbort, { once: true });
+      }
+
       onReadable(({ readable, headers, statusCode }) => {
         const responseBody: ReadableStream = statusCodesWithoutBody.includes(statusCode)
           ? null
@@ -55,6 +74,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
               (ReadableStream as any).from(readable)
             : // biome-ignore lint/suspicious/noExplicitAny: definition clash between Web and Node
               (Readable.toWeb(readable) as any);
+        cleanup();
         resolve(
           new Response(responseBody, {
             status: statusCode,
@@ -64,6 +84,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
       });
 
       const next = (error?: unknown) => {
+        cleanup();
         if (error) {
           reject(error instanceof Error ? error : new Error(String(error)));
         } else {
@@ -76,6 +97,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
 
         if (handled === false) {
           res.destroy();
+          cleanup();
           resolve(undefined);
         }
       } catch (e) {
@@ -95,11 +117,29 @@ export function createIncomingMessage(request: Request): IncomingMessage {
   // biome-ignore lint/suspicious/noExplicitAny: ignored
   const body = request.body ? Readable.fromWeb(request.body as any) : Readable.from([]);
 
+  // Frameworks layered on top of `IncomingMessage` (e.g. Express) read connection
+  // metadata off `req.socket` — `req.protocol`/`req.secure` use `socket.encrypted`,
+  // `req.ip`/`req.ips` use `socket.remoteAddress`. A synthetic request has no real
+  // socket, so provide a minimal stub to avoid `Cannot read properties of undefined`.
+  const socket = {
+    encrypted: parsedUrl.protocol === "https:",
+    remoteAddress: undefined,
+    remotePort: undefined,
+    localAddress: undefined,
+    localPort: undefined,
+  };
+
   return Object.assign(body, {
     url: pathnameAndQuery,
     method: request.method,
     headers: Object.fromEntries(request.headers),
-  }) as IncomingMessage;
+    httpVersion: "1.1",
+    httpVersionMajor: 1,
+    httpVersionMinor: 1,
+    socket,
+    // legacy alias still consulted by some middlewares
+    connection: socket,
+  }) as unknown as IncomingMessage;
 }
 
 /**
