@@ -203,6 +203,68 @@ describe("connectToWeb (synthetic path) — abort propagation", () => {
     await pending;
     expect(signalFired).toBe(true);
   });
+
+  it("fires the handler's signal when the incoming request is already aborted", async () => {
+    let signalFired = false;
+    const fh = appFrom(() => async (request) => {
+      await new Promise<void>((resolve) => {
+        if (request.signal.aborted) {
+          signalFired = true;
+          return resolve();
+        }
+        request.signal.addEventListener("abort", () => {
+          signalFired = true;
+          resolve();
+        });
+        setTimeout(resolve, 1000);
+      });
+      return new Response("done");
+    });
+
+    const ctrl = new AbortController();
+    ctrl.abort(); // aborted before connectToWeb is even called
+    const body = new ReadableStream({ pull() {} });
+    await fh(streamingRequest("http://localhost/t", { method: "POST", body, signal: ctrl.signal })).catch(
+      () => undefined,
+    );
+    await new Promise((r) => setTimeout(r, 100));
+    expect(signalFired).toBe(true);
+  });
+
+  it("fires the handler's signal when aborted mid-stream (after the response is readable)", async () => {
+    let signalFired = false;
+    const fh = appFrom(() => async (request) => {
+      request.signal.addEventListener("abort", () => {
+        signalFired = true;
+      });
+      const enc = new TextEncoder();
+      let i = 0;
+      const stream = new ReadableStream<Uint8Array>({
+        async pull(c) {
+          if (i >= 20) return c.close();
+          c.enqueue(enc.encode(`chunk${i++};`));
+          await new Promise((r) => setTimeout(r, 40));
+        },
+      });
+      return new Response(stream, { headers: { "content-type": "text/plain" } });
+    });
+
+    const ctrl = new AbortController();
+    const res = defined(
+      await fh(
+        streamingRequest("http://localhost/t", {
+          method: "POST",
+          body: new ReadableStream({ pull() {} }),
+          signal: ctrl.signal,
+        }),
+      ),
+    );
+    const reader = (res.body as ReadableStream<Uint8Array>).getReader();
+    await reader.read(); // first chunk -> response is now readable (abort listener must stay alive)
+    ctrl.abort();
+    await new Promise((r) => setTimeout(r, 150));
+    expect(signalFired).toBe(true);
+  });
 });
 
 describe("connectToWeb — real-Node path uses the provided req/res", () => {
