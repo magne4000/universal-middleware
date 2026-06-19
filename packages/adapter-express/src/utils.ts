@@ -98,12 +98,19 @@ export function createIncomingMessage(request: Request): IncomingMessage {
   // biome-ignore lint/suspicious/noExplicitAny: Web/Node stream type clash
   const body = request.body ? Readable.fromWeb(request.body as any) : Readable.from([]);
 
+  const headers = Object.fromEntries(request.headers);
+  // A web Request never surfaces content-length, so Node body parsers (e.g. express.json)
+  // that gate on `type-is.hasBody()` would otherwise skip the body. Signal a streamed body.
+  if (request.body && headers["content-length"] === undefined) {
+    headers["transfer-encoding"] = "chunked";
+  }
+
   // Express reads connection metadata off `req.socket` (e.g. `req.protocol` -> `socket.encrypted`);
   // a synthetic request has no socket, so stub the field it reads to avoid a throw.
   return Object.assign(body, {
     url: url.pathname + url.search,
     method: request.method,
-    headers: Object.fromEntries(request.headers),
+    headers,
     socket: { encrypted: url.protocol === "https:" },
   }) as unknown as IncomingMessage;
 }

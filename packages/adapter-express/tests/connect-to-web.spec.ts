@@ -65,6 +65,23 @@ describe("connectToWeb (synthetic path) — body & basics", () => {
     const res = await connectToWeb(app)(new Request("http://localhost/t"));
     expect(res).toBeUndefined();
   });
+
+  it("lets a Node body parser (express.json) read the request body", async () => {
+    const app = express();
+    app.use(express.json());
+    app.post("/t", (req, res) => res.json(req.body));
+    const res = defined(
+      await connectToWeb(app)(
+        new Request("http://localhost/t", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ hello: "world" }),
+        }),
+      ),
+    );
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ hello: "world" });
+  });
 });
 
 describe("connectToWeb (synthetic path) — Express connection metadata (socket stub)", () => {
