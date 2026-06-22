@@ -10,7 +10,8 @@
     "workarounds:all",
 
     "schedule:weekly",
-    "group:allNonMajor"
+    "group:allNonMajor",
+    "security:minimumReleaseAgeNpm"
   ],
   "labels": [
     "dependencies"
