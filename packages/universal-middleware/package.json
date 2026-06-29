@@ -136,7 +136,7 @@
     "@swc/core": "catalog:",
     "esbuild": "^0.28.1",
     "rimraf": "catalog:",
-    "rollup": "^4.62.0",
+    "rollup": "^4.62.2",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
