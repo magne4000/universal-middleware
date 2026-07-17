@@ -6,7 +6,7 @@ packages:
   - tests-examples/*
   - docs
 catalog:
-  '@cloudflare/workers-types': ^4.20260702.1
+  '@cloudflare/workers-types': ^5.20260714.1
   '@hattip/core': ^0.0.49
   '@hattip/router': ^0.0.49
   '@swc/core': ^1.15.43

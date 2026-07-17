@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@cloudflare/workers-types':
-      specifier: ^4.20260702.1
-      version: 4.20260702.1
+      specifier: ^5.20260714.1
+      version: 5.20260716.1
     '@hattip/core':
       specifier: ^0.0.49
       version: 0.0.49
@@ -214,7 +214,7 @@ importers:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 4.20260702.1
+        version: 5.20260716.1
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.43
@@ -244,7 +244,7 @@ importers:
         version: 4.1.10(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.1.5(@types/node@20.19.42)(esbuild@0.28.1)(tsx@4.23.1))
       wrangler:
         specifier: 'catalog:'
-        version: 4.111.0(@cloudflare/workers-types@4.20260702.1)
+        version: 4.111.0(@cloudflare/workers-types@5.20260716.1)
 
   packages/adapter-elysia:
     dependencies:
@@ -254,7 +254,7 @@ importers:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 4.20260702.1
+        version: 5.20260716.1
       '@sinclair/typebox':
         specifier: ^0.34.52
         version: 0.34.52
@@ -290,7 +290,7 @@ importers:
         version: 4.1.10(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.1.5(@types/node@20.19.42)(esbuild@0.28.1)(tsx@4.23.1))
       wrangler:
         specifier: 'catalog:'
-        version: 4.111.0(@cloudflare/workers-types@4.20260702.1)
+        version: 4.111.0(@cloudflare/workers-types@5.20260716.1)
 
   packages/adapter-express:
     dependencies:
@@ -489,7 +489,7 @@ importers:
         version: 4.1.10(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.1.5(@types/node@20.19.42)(esbuild@0.28.1)(tsx@4.23.1))
       wrangler:
         specifier: 'catalog:'
-        version: 4.111.0(@cloudflare/workers-types@4.20260702.1)
+        version: 4.111.0(@cloudflare/workers-types@5.20260716.1)
 
   packages/adapter-hono:
     dependencies:
@@ -532,7 +532,7 @@ importers:
         version: 4.1.10(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.1.5(@types/node@20.19.42)(esbuild@0.28.1)(tsx@4.23.1))
       wrangler:
         specifier: 'catalog:'
-        version: 4.111.0(@cloudflare/workers-types@4.20260702.1)
+        version: 4.111.0(@cloudflare/workers-types@5.20260716.1)
 
   packages/adapter-srvx:
     dependencies:
@@ -572,7 +572,7 @@ importers:
         version: 4.1.10(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.1.5(@types/node@20.19.42)(esbuild@0.28.1)(tsx@4.23.1))
       wrangler:
         specifier: 'catalog:'
-        version: 4.111.0(@cloudflare/workers-types@4.20260702.1)
+        version: 4.111.0(@cloudflare/workers-types@5.20260716.1)
 
   packages/adapter-vercel:
     dependencies:
@@ -758,7 +758,7 @@ importers:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 4.20260702.1
+        version: 5.20260716.1
       '@hattip/core':
         specifier: 'catalog:'
         version: 0.0.49
@@ -1011,7 +1011,7 @@ importers:
         version: 2.0.8(hono@4.12.30)
       '@hono/vite-dev-server':
         specifier: ^0.26.1
-        version: 0.26.1(hono@4.12.30)(miniflare@4.20260710.0)(wrangler@4.111.0)
+        version: 0.26.1(hono@4.12.30)(miniflare@4.20260710.0)(wrangler@4.111.0(@cloudflare/workers-types@5.20260716.1))
       '@swc-node/register':
         specifier: ^1.11.1
         version: 1.11.1(@swc/core@1.15.43)(@swc/types@0.1.27)(typescript@6.0.3)
@@ -1116,7 +1116,7 @@ importers:
         version: 4.1.10(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.1.5(@types/node@20.19.42)(esbuild@0.28.1)(tsx@4.23.1))
       wrangler:
         specifier: 'catalog:'
-        version: 4.111.0(@cloudflare/workers-types@4.20260702.1)
+        version: 4.111.0(@cloudflare/workers-types@5.20260716.1)
 
 packages:
 
@@ -1394,6 +1394,9 @@ packages:
 
   '@cloudflare/workers-types@4.20260702.1':
     resolution: {integrity: sha512-mOhf5TUEB1m2vPrxtqoIGfz0fUC9xyxRDx5gWHy5s+OCo6dcV+g7wI1R7gYCMFohhqF/2y2xeKVwMwCJjfn/WA==}
+
+  '@cloudflare/workers-types@5.20260716.1':
+    resolution: {integrity: sha512-LqQPmGAvdpQxzZGAMlDI6fnCsTlr8nRQibWsREaERqD0PucwFl25aXpUskSob70uSY2n6K1sp6Te9xkmzSFgaw==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -6507,6 +6510,8 @@ snapshots:
 
   '@cloudflare/workers-types@4.20260702.1': {}
 
+  '@cloudflare/workers-types@5.20260716.1': {}
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -6777,14 +6782,14 @@ snapshots:
     dependencies:
       hono: 4.12.30
 
-  '@hono/vite-dev-server@0.26.1(hono@4.12.30)(miniflare@4.20260710.0)(wrangler@4.111.0)':
+  '@hono/vite-dev-server@0.26.1(hono@4.12.30)(miniflare@4.20260710.0)(wrangler@4.111.0(@cloudflare/workers-types@5.20260716.1))':
     dependencies:
       '@hono/node-server': 1.19.14(hono@4.12.30)
       hono: 4.12.30
       minimatch: 9.0.9
     optionalDependencies:
       miniflare: 4.20260710.0
-      wrangler: 4.111.0(@cloudflare/workers-types@4.20260702.1)
+      wrangler: 4.111.0(@cloudflare/workers-types@5.20260716.1)
 
   '@iconify-json/simple-icons@1.2.85':
     dependencies:
@@ -11388,7 +11393,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20260710.1
       '@cloudflare/workerd-windows-64': 1.20260710.1
 
-  wrangler@4.111.0(@cloudflare/workers-types@4.20260702.1):
+  wrangler@4.111.0(@cloudflare/workers-types@5.20260716.1):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.5.0
       '@cloudflare/unenv-preset': 2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260710.1)
@@ -11399,7 +11404,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       workerd: 1.20260710.1
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20260702.1
+      '@cloudflare/workers-types': 5.20260716.1
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil
