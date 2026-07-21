@@ -61,11 +61,23 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Server
 
   if (body) {
     const { pipeline } = await import("node:stream/promises");
-    await pipeline(body, nodeResponse).catch(() => {});
+    await pipeline(body, nodeResponse).catch((error) => {
+      if (!isClientGone(error)) console.error(error);
+    });
   } else {
     nodeResponse.setHeader("content-length", "0");
     nodeResponse.end();
   }
+}
+
+/**
+ * A client disconnecting mid-response is routine and says nothing about the
+ * application; anything else reaching here is a real failure — an invalid
+ * header, a source stream that threw — and would otherwise vanish silently.
+ */
+function isClientGone(error: unknown): boolean {
+  const code = (error as NodeJS.ErrnoException | undefined)?.code;
+  return code === "ECONNRESET" || code === "EPIPE" || code === "ERR_STREAM_PREMATURE_CLOSE";
 }
 
 function getFullUrl(pathnameOrFull: string, req: IncomingMessage): string {
