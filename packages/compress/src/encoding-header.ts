@@ -62,28 +62,28 @@ function parseEncoding(str: string) {
 }
 
 export function chooseBestEncoding(request: Request, availableEncodings: readonly string[]) {
-  let bestEncoding: AcceptEncoding | null = null;
-
   if (availableEncodings.length === 0) return null;
 
   const header = request.headers.get("Accept-Encoding");
   if (!header) return null;
 
   const parsed = parseAcceptEncodingHeader(header);
+  // RFC 9110 §12.5.3: "*" stands for every coding the header does not name.
+  const wildcard = parsed.get("*");
 
-  for (const enc of availableEncodings) {
-    const encodingEntry = parsed.get(enc);
+  let bestEncoding: AcceptEncoding | null = null;
+  for (const encoding of availableEncodings) {
+    const match = parsed.get(encoding) ?? wildcard;
+    // A qvalue of 0 means "not acceptable".
+    if (!match || match.q <= 0) continue;
 
-    // RFC 9110 §12.5.3: a qvalue of 0 means "not acceptable".
-    if (encodingEntry && encodingEntry.q > 0) {
-      // If no best encoding found or current encoding has higher q-value or better index
-      if (
-        !bestEncoding ||
-        encodingEntry.q > bestEncoding.q ||
-        (encodingEntry.q === bestEncoding.q && encodingEntry.index < bestEncoding.index)
-      ) {
-        bestEncoding = encodingEntry;
-      }
+    const candidate = { encoding, q: match.q, index: match.index };
+    if (
+      !bestEncoding ||
+      candidate.q > bestEncoding.q ||
+      (candidate.q === bestEncoding.q && candidate.index < bestEncoding.index)
+    ) {
+      bestEncoding = candidate;
     }
   }
 
