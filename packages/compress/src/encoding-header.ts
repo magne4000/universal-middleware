@@ -74,7 +74,8 @@ export function chooseBestEncoding(request: Request, availableEncodings: readonl
   for (const enc of availableEncodings) {
     const encodingEntry = parsed.get(enc);
 
-    if (encodingEntry) {
+    // RFC 9110 §12.5.3: a qvalue of 0 means "not acceptable".
+    if (encodingEntry && encodingEntry.q > 0) {
       // If no best encoding found or current encoding has higher q-value or better index
       if (
         !bestEncoding ||
