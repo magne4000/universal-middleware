@@ -200,7 +200,6 @@ function toHeaders(name: string, stats: fs.Stats, isEtag: boolean): Record<strin
 
 // Create a universal middleware that accepts standard Request
 function createUniversalMiddleware(
-  isEtag: boolean,
   isSPA: boolean,
   ignores: RegExp[],
   lookup: (uri: string, extns: string[]) => FileData | undefined,
@@ -233,20 +232,44 @@ function createUniversalMiddleware(
     const data = lookup(pathname, extns) || (isSPA && !isMatch(pathname, ignores) && lookup(fallback, extns));
     if (!data) return isNotFound ? isNotFound(request) : undefined;
 
-    // biome-ignore lint/complexity/useLiteralKeys: ignored
-    if (isEtag && request.headers.get("if-none-match") === data.headers["ETag"]) {
-      return new Response(null, { status: 304 });
+    if (gzips || brots) {
+      data.headers.Vary = "Accept-Encoding";
     }
 
-    if (gzips || brots) {
-      // biome-ignore lint/complexity/useLiteralKeys: ignored
-      data.headers["Vary"] = "Accept-Encoding";
+    if (isNotModified(request, data.headers)) {
+      return new Response(null, { status: 304, headers: revalidationHeaders(data.headers) });
     }
 
     const response = send(request, data.abs, data.stats, data.headers);
     setHeaders(response, pathname, data.stats);
     return response;
   };
+}
+
+/** RFC 9110 §13.2.2: `If-None-Match` is conclusive, so `If-Modified-Since` is only consulted in its absence. */
+function isNotModified(request: Request, headers: Record<string, string>): boolean {
+  const ifNoneMatch = request.headers.get("if-none-match");
+  if (ifNoneMatch) {
+    const etag = headers.ETag;
+    if (!etag) return false;
+    // Weak comparison: the `W/` prefix takes no part in the match.
+    const opaqueTag = (tag: string) => tag.trim().replace(/^W\//, "");
+    return ifNoneMatch === "*" || ifNoneMatch.split(",").some((tag) => opaqueTag(tag) === opaqueTag(etag));
+  }
+
+  const ifModifiedSince = request.headers.get("if-modified-since");
+  if (!ifModifiedSince) return false;
+  // An unparseable date yields NaN, which compares false and serves the file.
+  return Date.parse(headers["Last-Modified"]) <= Date.parse(ifModifiedSince);
+}
+
+/** A 304 repeats the validators and caching directives, and none of the representation headers (RFC 9110 §15.4.5). */
+function revalidationHeaders(headers: Record<string, string>): Record<string, string> {
+  const repeated: Record<string, string> = {};
+  for (const name of ["ETag", "Last-Modified", "Cache-Control", "Vary"]) {
+    if (headers[name]) repeated[name] = headers[name];
+  }
+  return repeated;
 }
 
 /** Whether the client accepts one of `codings`. RFC 9110 §12.5.3: a qvalue of 0 means "not acceptable". */
@@ -320,7 +343,6 @@ export default function serveStatic(dir?: string, opts: ServeOptions = {}): Univ
     : (uri: string, extns: string[]) => viaCache(FILES, uri, extns);
 
   return createUniversalMiddleware(
-    isEtag,
     isSPA,
     ignores,
     lookupFn,
