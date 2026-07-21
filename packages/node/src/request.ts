@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Socket } from "node:net";
 import type { contextSymbol } from "@universal-middleware/core";
 import { env, requestSymbol } from "./const.js";
+import { forwardedValue, trustsProxy } from "./forwarded.js";
 
 export { env, requestSymbol };
 
@@ -47,8 +48,9 @@ export interface NodeRequestAdapterOptions {
    * Whether to trust `X-Forwarded-*` headers. `X-Forwarded-Proto`
    * and `X-Forwarded-Host` are used to determine the origin when
    * `origin` and `process.env.ORIGIN` are not set. `X-Forwarded-For`
-   * is used to determine the IP address. The leftmost values are used
-   * if multiple values are set. Defaults to true if `process.env.TRUST_PROXY`
+   * is used to determine the IP address. The rightmost value is used
+   * if multiple values are set, as that is the one contributed by the
+   * nearest proxy. Defaults to true if `process.env.TRUST_PROXY`
    * is set to `1`, otherwise false.
    */
   trustProxy?: boolean;
@@ -58,7 +60,7 @@ export interface NodeRequestAdapterOptions {
 export function createRequestAdapter(
   options: NodeRequestAdapterOptions = {},
 ): (req: DecoratedRequest, res: ServerResponse) => Request {
-  const { origin = env.ORIGIN, trustProxy = env.TRUST_PROXY === "1" } = options;
+  const { origin = env.ORIGIN, trustProxy = trustsProxy() } = options;
 
   // eslint-disable-next-line prefer-const
   let { protocol: protocolOverride, host: hostOverride } = origin ? new URL(origin) : ({} as Record<string, undefined>);
@@ -75,11 +77,6 @@ export function createRequestAdapter(
       return req[requestSymbol];
     }
 
-    // TODO: Support the newer `Forwarded` standard header
-    function parseForwardedHeader(name: string) {
-      return (headers[`x-forwarded-${name}`] || "").split(",", 1)[0].trim();
-    }
-
     let headers = req.headers as Record<string, string>;
     // Filter out pseudo-headers
     if (headers[":method"]) {
@@ -88,13 +85,13 @@ export function createRequestAdapter(
 
     const protocol =
       protocolOverride ||
-      (trustProxy && parseForwardedHeader("proto")) ||
+      (trustProxy && forwardedValue(headers, "proto")) ||
       req.protocol ||
       // biome-ignore lint/suspicious/noExplicitAny: encrypted can exist in some express versions
       ((req.socket as any)?.encrypted && "https") ||
       "http";
 
-    let host = hostOverride || (trustProxy && parseForwardedHeader("host")) || headers.host;
+    let host = hostOverride || (trustProxy && forwardedValue(headers, "host")) || headers.host;
 
     if (!host && !warned) {
       console.warn(
