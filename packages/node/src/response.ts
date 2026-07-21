@@ -2,6 +2,8 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Readable } from "node:stream";
 import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
 import { nodeHeadersToWeb } from "@universal-middleware/core";
+import { forwardedValue, trustsProxy } from "./forwarded.js";
+import type { PossiblyEncryptedSocket } from "./request.js";
 
 /**
  * Send a fetch API Response into a Node.js HTTP response stream.
@@ -61,11 +63,15 @@ function getFullUrl(pathnameOrFull: string, req: IncomingMessage): string {
   try {
     return new URL(pathnameOrFull).href;
   } catch {
-    const protocol = (req.socket as any)?.encrypted || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
-    const host = req.headers["x-forwarded-host"] || req.headers.host || "localhost";
-    const baseUrl = `${protocol}://${host}`;
+    // Without the opt-in, any client could set the header and point the redirect
+    // at a host of its choosing.
+    const trustProxy = trustsProxy();
+    const protocol =
+      (trustProxy && forwardedValue(req.headers, "proto")) ||
+      ((req.socket as PossiblyEncryptedSocket | undefined)?.encrypted ? "https" : "http");
+    const host = (trustProxy && forwardedValue(req.headers, "host")) || req.headers.host || "localhost";
 
-    return new URL(pathnameOrFull, baseUrl).href;
+    return new URL(pathnameOrFull, `${protocol}://${host}`).href;
   }
 }
 
