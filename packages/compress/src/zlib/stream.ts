@@ -39,13 +39,11 @@ export function compressStream<C extends CompressionAlgorithm, O extends Paramet
     ...options,
   });
 
-  let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
+  const reader = input.getReader();
   let cancelled = false;
 
   return new ReadableStream<Uint8Array>({
     async start(controller) {
-      reader = input.getReader();
-
       // Feed the compression stream manually with Uint8Array chunks
       compressionStream.on("data", (chunk: Buffer) => {
         if (!cancelled) {
@@ -83,15 +81,12 @@ export function compressStream<C extends CompressionAlgorithm, O extends Paramet
         }
       }
     },
-    cancel() {
+    cancel(reason) {
       cancelled = true;
-
-      if (reader) {
-        reader.releaseLock();
-        reader = null;
-      }
-
       compressionStream.destroy();
+      // Releasing the lock would leave the source producing into nothing; cancelling
+      // releases whatever backs it instead of waiting for GC.
+      return reader.cancel(reason).catch(() => {});
     },
   });
 }
