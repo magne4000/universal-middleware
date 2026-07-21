@@ -1,5 +1,5 @@
 import { readFile, stat, unlink, writeFile } from "node:fs/promises";
-import { createServer, type Server } from "node:http";
+import { createServer, type IncomingHttpHeaders, request, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -39,6 +39,41 @@ export function listen(server: Server) {
   server.listen(); // boots
   const { port } = server.address() as AddressInfo;
   return `http://localhost:${port}`;
+}
+
+/**
+ * Issues a request with `node:http` and returns the raw response bytes.
+ *
+ * `fetch` validates the response against its own framing rules and rejects when
+ * the body does not match `Content-Length`, which hides the very mismatch some
+ * tests need to observe. This helper reports whatever reached the client.
+ */
+export function sendRaw(
+  address: URL,
+  method: string,
+  path: string,
+  headers: Record<string, string> = {},
+): Promise<{ status: number; headers: IncomingHttpHeaders; body: Buffer; error?: Error }> {
+  return new Promise((resolve, reject) => {
+    const req = request({ hostname: address.hostname, port: Number(address.port), path, method, headers }, (res) => {
+      const chunks: Buffer[] = [];
+      res.on("data", (chunk: Buffer) => chunks.push(chunk));
+      const settle = (error?: Error) =>
+        resolve({
+          status: res.statusCode as number,
+          headers: res.headers,
+          body: Buffer.concat(chunks),
+          error,
+        });
+      res.on("end", () => settle());
+      // A truncated/aborted response still carries the evidence we assert on.
+      res.on("error", settle);
+      res.on("aborted", () => settle(new Error("response aborted")));
+    });
+
+    req.on("error", reject);
+    req.end();
+  });
 }
 
 const CACHE: Record<

@@ -94,45 +94,59 @@ function viaLocal(dir: string, isEtag: boolean, uri: string, extns: string[]): F
   return undefined;
 }
 
-function send(req: Request, file: string, stats: fs.Stats, headers: Record<string, string>): Response | undefined {
-  let code = 200;
-  const opts: { start?: number; end?: number } = {};
+function send(req: Request, file: string, stats: fs.Stats, headers: Record<string, string>): Response {
   const newHeaders = { ...headers };
+  // A range addresses the bytes actually sent, and a partial gzip/brotli stream
+  // is not decodable, so a precompressed variant is always served whole.
+  const supportsRanges = !headers["Content-Encoding"];
+  const rangeHeader = supportsRanges && req.headers.get("range");
+  const range = rangeHeader ? parseRange(rangeHeader, stats.size) : undefined;
 
-  const rangeHeader = req.headers.get("range");
-
-  if (rangeHeader) {
-    code = 206;
-    const [x, y] = rangeHeader.replace("bytes=", "").split("-");
-    // biome-ignore lint/suspicious/noAssignInExpressions: ignored
-    let end = (opts.end = Number.parseInt(y, 10) || stats.size - 1);
-    // biome-ignore lint/suspicious/noAssignInExpressions: ignored
-    const start = (opts.start = Number.parseInt(x, 10) || 0);
-
-    if (end >= stats.size) {
-      end = stats.size - 1;
-    }
-
-    if (start >= stats.size) {
-      return new Response(null, {
-        status: 416,
-        headers: {
-          "Content-Range": `bytes */${stats.size}`,
-        },
-      });
-    }
-
-    newHeaders["Content-Range"] = `bytes ${start}-${end}/${stats.size}`;
-    newHeaders["Content-Length"] = (end - start + 1).toString();
-    newHeaders["Accept-Ranges"] = "bytes";
+  if (range === "unsatisfiable") {
+    return new Response(null, {
+      status: 416,
+      headers: { "Content-Range": `bytes */${stats.size}` },
+    });
   }
 
-  const webStream = Readable.toWeb(fs.createReadStream(file)) as unknown as ReadableStream<Uint8Array>;
+  if (supportsRanges) newHeaders["Accept-Ranges"] = "bytes";
+
+  if (range) {
+    newHeaders["Content-Range"] = `bytes ${range.start}-${range.end}/${stats.size}`;
+    newHeaders["Content-Length"] = (range.end - range.start + 1).toString();
+  }
+
+  const webStream = Readable.toWeb(fs.createReadStream(file, range)) as unknown as ReadableStream<Uint8Array>;
 
   return new Response(webStream, {
-    status: code,
+    status: range ? 206 : 200,
     headers: newHeaders,
   });
+}
+
+// The trailing "-" is optional so that "bytes=2" keeps working as "bytes=2-".
+const RANGE_REGEX = /^bytes=(\d*)-?(\d*)$/;
+
+/** Resolves a `bytes=` range against a size; `undefined` when the header must be ignored (RFC 9110 §14.2). */
+function parseRange(header: string, size: number): { start: number; end: number } | "unsatisfiable" | undefined {
+  const match = RANGE_REGEX.exec(header.trim());
+  if (!match) return undefined;
+
+  const [, rawStart, rawEnd] = match;
+  if (rawStart === "" && rawEnd === "") return undefined;
+
+  let start: number;
+  let end: number;
+  if (rawStart === "") {
+    // "bytes=-500" asks for the last 500 bytes, not for bytes 0 through 500.
+    start = Math.max(size - Number.parseInt(rawEnd, 10), 0);
+    end = size - 1;
+  } else {
+    start = Number.parseInt(rawStart, 10);
+    end = rawEnd === "" ? size - 1 : Math.min(Number.parseInt(rawEnd, 10), size - 1);
+  }
+
+  return start > end ? "unsatisfiable" : { start, end };
 }
 
 const ENCODING: Record<string, string> = {
@@ -203,7 +217,7 @@ function createUniversalMiddleware(
       data.headers["Vary"] = "Accept-Encoding";
     }
 
-    const response = send(request, data.abs, data.stats, data.headers) as Response;
+    const response = send(request, data.abs, data.stats, data.headers);
     setHeaders(response, pathname, data.stats);
     return response;
   };
