@@ -50,6 +50,15 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Server
 
   setResponseHeaders(fetchResponse, nodeResponse);
 
+  // Node discards a HEAD body at the wire, and an endless one (SSE, a proxied
+  // stream) would keep the response from ever finishing. The headers still
+  // describe what a GET would have sent.
+  if (nodeResponse.req.method === "HEAD") {
+    body?.destroy();
+    nodeResponse.end();
+    return;
+  }
+
   if (body) {
     const { pipeline } = await import("node:stream/promises");
     await pipeline(body, nodeResponse).catch(() => {});
