@@ -73,7 +73,14 @@ function viaCache(cache: Record<string, FileData>, uri: string, extns: string[])
   return undefined;
 }
 
-function viaLocal(dir: string, isEtag: boolean, uri: string, extns: string[]): FileData | undefined {
+function viaLocal(
+  dir: string,
+  realDir: string,
+  isEtag: boolean,
+  allowDotfiles: boolean,
+  uri: string,
+  extns: string[],
+): FileData | undefined {
   let i = 0;
   const arr = toAssume(uri, extns);
   let abs: string;
@@ -83,15 +90,33 @@ function viaLocal(dir: string, isEtag: boolean, uri: string, extns: string[]): F
   for (; i < arr.length; i++) {
     // biome-ignore lint/suspicious/noAssignInExpressions: ignored
     abs = normalize(join(dir, (name = arr[i])));
+    if (!allowDotfiles && hasHiddenSegment(name)) continue;
     if (abs.startsWith(dir) && fs.existsSync(abs)) {
       stats = fs.statSync(abs);
       if (stats.isDirectory()) continue;
+      if (!isContained(realDir, abs)) continue;
       headers = toHeaders(name, stats, isEtag);
       headers["Cache-Control"] = isEtag ? "no-cache" : "no-store";
       return { abs, stats, headers };
     }
   }
   return undefined;
+}
+
+/** `.well-known` is exempt — RFC 8615 reserves it for public metadata — but only that segment, not what nests under it. */
+function hasHiddenSegment(name: string): boolean {
+  return name
+    .split(/[\\/]+/)
+    .some((segment) => segment.startsWith(".") && segment !== "." && segment !== ".." && segment !== ".well-known");
+}
+
+/** `stat` follows symlinks, so a lexical prefix check cannot see a link pointing out of the served directory. */
+function isContained(realDir: string, abs: string): boolean {
+  try {
+    return fs.realpathSync(abs).startsWith(join(realDir, sep));
+  } catch {
+    return false;
+  }
 }
 
 function send(req: Request, file: string, stats: fs.Stats, headers: Record<string, string>): Response {
@@ -225,6 +250,8 @@ function createUniversalMiddleware(
 
 export default function serveStatic(dir?: string, opts: ServeOptions = {}): UniversalMiddleware {
   dir = resolve(dir || ".");
+  // Resolved too, so that a symlinked root does not reject every file under it.
+  const realDir = fs.realpathSync(dir);
 
   const isNotFound: OnNoMatch | undefined = opts.onNoMatch;
   const setHeaders: SetHeadersFunction = opts.setHeaders || noop;
@@ -238,6 +265,7 @@ export default function serveStatic(dir?: string, opts: ServeOptions = {}): Univ
   let fallback = "/";
   const isEtag = !!opts.etag;
   const isSPA = !!opts.single;
+  const allowDotfiles = !!opts.dotfiles;
   if (typeof opts.single === "string") {
     const idx = opts.single.lastIndexOf(".");
     fallback += ~idx ? opts.single.substring(0, idx) : opts.single;
@@ -246,7 +274,7 @@ export default function serveStatic(dir?: string, opts: ServeOptions = {}): Univ
   const ignores: RegExp[] = [];
   if (opts.ignores !== false) {
     ignores.push(/[/]([A-Za-z\s\d~$._-]+\.\w+){1,}$/); // any extn
-    if (opts.dotfiles) ignores.push(/\/\.\w/);
+    if (allowDotfiles) ignores.push(/\/\.\w/);
     else ignores.push(/\/\.well-known/);
     const optsIgnores = Array.isArray(opts.ignores) ? opts.ignores : opts.ignores ? [opts.ignores] : [];
     for (const x of optsIgnores) {
@@ -260,9 +288,9 @@ export default function serveStatic(dir?: string, opts: ServeOptions = {}): Univ
 
   if (!opts.dev) {
     totalist(dir, (name: string, abs: string, stats: fs.Stats) => {
-      if (/\.well-known[\\+/]/.test(name)) {
-      } // keep
-      else if (!opts.dotfiles && /(^\.|[\\+|/+]\.)/.test(name)) return;
+      if (!allowDotfiles && hasHiddenSegment(name)) return;
+      // The walk follows symlinks, so an entry can still resolve outside `dir`.
+      if (!isContained(realDir, abs)) return;
 
       const headers = toHeaders(name, stats, isEtag);
       if (cc) headers["Cache-Control"] = cc;
@@ -272,7 +300,7 @@ export default function serveStatic(dir?: string, opts: ServeOptions = {}): Univ
   }
 
   const lookupFn = opts.dev
-    ? (uri: string, extns: string[]) => viaLocal(dir + sep, isEtag, uri, extns)
+    ? (uri: string, extns: string[]) => viaLocal(dir + sep, realDir, isEtag, allowDotfiles, uri, extns)
     : (uri: string, extns: string[]) => viaCache(FILES, uri, extns);
 
   return createUniversalMiddleware(
