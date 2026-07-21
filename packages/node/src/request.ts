@@ -38,20 +38,20 @@ export interface NodeRequestAdapterOptions {
    * It defaults to `process.env.ORIGIN`. If neither is set,
    * the origin is computed from the protocol and hostname.
    * To determine the protocol, `req.protocol` is tried first.
-   * If `trustProxy` is set, `X-Forwarded-Proto` header is used.
+   * If `trustProxy` is set, the forwarding headers are used.
    * Otherwise, `req.socket.encrypted` is used.
-   * To determine the hostname, `X-Forwarded-Host`
-   * (if `trustProxy` is set) or `Host` header is used.
+   * To determine the hostname, the forwarding headers
+   * (if `trustProxy` is set) or the `Host` header is used.
    */
   origin?: string;
   /**
-   * Whether to trust `X-Forwarded-*` headers. `X-Forwarded-Proto`
-   * and `X-Forwarded-Host` are used to determine the origin when
-   * `origin` and `process.env.ORIGIN` are not set. `X-Forwarded-For`
-   * is used to determine the IP address. The rightmost value is used
-   * if multiple values are set, as that is the one contributed by the
-   * nearest proxy. Defaults to true if `process.env.TRUST_PROXY`
-   * is set to `1`, otherwise false.
+   * Whether to trust the forwarding headers. The standard `Forwarded`
+   * header (RFC 7239) is used when present, otherwise `X-Forwarded-*`:
+   * `proto`/`host` determine the origin when `origin` and
+   * `process.env.ORIGIN` are not set, and `for` determines the IP address.
+   * The rightmost entry is used when several are present, as that is the
+   * one contributed by the nearest proxy. Defaults to true if
+   * `process.env.TRUST_PROXY` is set to `1`, otherwise false.
    */
   trustProxy?: boolean;
 }
