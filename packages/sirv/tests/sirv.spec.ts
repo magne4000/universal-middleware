@@ -44,17 +44,11 @@ describe("basics", () => {
     const server = utils.http();
 
     try {
-      await server.send("GET", "/bundle.js").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/bundle.js")).status, 404);
 
-      await server.send("GET", "/bundle.css").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/bundle.css")).status, 404);
 
-      await server.send("GET", "/deeper/bundle.js").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/deeper/bundle.js")).status, 404);
     } finally {
       server.close();
     }
@@ -147,7 +141,7 @@ describe("URI encoding", () => {
       const res1 = await server.send("GET", "/about/index.htm");
       assert.equal(res1.status, 200);
 
-      const res2 = await server.send("GET", "/about%2Findex.htm").catch((r) => r);
+      const res2 = await server.send("GET", "/about%2Findex.htm");
       assert.equal(res2.status, 404);
     } finally {
       server.close();
@@ -161,7 +155,7 @@ describe("URI encoding", () => {
       const res1 = await server.send("GET", "/about/index.htm");
       assert.equal(res1.status, 200);
 
-      const res2 = await server.send("GET", "/about%2Findex.htm").catch((r) => r);
+      const res2 = await server.send("GET", "/about%2Findex.htm");
       assert.equal(res2.status, 404);
     } finally {
       server.close();
@@ -233,9 +227,7 @@ describe("extensions", () => {
     });
 
     try {
-      await server.send("GET", "/about").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/about")).status, 404);
     } finally {
       server.close();
     }
@@ -263,10 +255,9 @@ describe("security", () => {
     const server = utils.http({ dev: false });
 
     try {
-      await server.send("GET", "/../../package.json");
-      // biome-ignore lint/suspicious/noExplicitAny: ignored
-    } catch (err: any) {
-      assert.equal(err.status, 404);
+      // `fetch` resolves `..` away before sending, so the traversal has to go out raw.
+      const res = await utils.sendRaw(server.address, "GET", "/../../package.json");
+      assert.equal(res.status, 404);
     } finally {
       server.close();
     }
@@ -276,10 +267,9 @@ describe("security", () => {
     const server = utils.http({ dev: true });
 
     try {
-      await server.send("GET", "/../../package.json");
-      // biome-ignore lint/suspicious/noExplicitAny: ignored
-    } catch (err: any) {
-      assert.equal(err.status, 404);
+      // `fetch` resolves `..` away before sending, so the traversal has to go out raw.
+      const res = await utils.sendRaw(server.address, "GET", "/../../package.json");
+      assert.equal(res.status, 404);
     } finally {
       server.close();
     }
@@ -387,17 +377,11 @@ describe("single", () => {
     const server = utils.http({ single: true });
 
     try {
-      await server.send("GET", "/404.css").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/404.css")).status, 404);
 
-      await server.send("GET", "/404.js").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/404.js")).status, 404);
 
-      await server.send("GET", "/foo/bar/baz.bat").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foo/bar/baz.bat")).status, 404);
     } finally {
       server.close();
     }
@@ -429,17 +413,11 @@ describe("ignores", () => {
     });
 
     try {
-      await server.send("GET", "/foo/404").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foo/404")).status, 404);
 
-      await server.send("GET", "/foobar/baz").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foobar/baz")).status, 404);
 
-      await server.send("GET", "/foo/bar/baz").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foo/bar/baz")).status, 404);
 
       const res = await server.send("GET", "/hello/world");
       await utils.matches(res, 200, "index.html", "utf8");
@@ -455,17 +433,11 @@ describe("ignores", () => {
     });
 
     try {
-      await server.send("GET", "/foo/404").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foo/404")).status, 404);
 
-      await server.send("GET", "/foobar/baz").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foobar/baz")).status, 404);
 
-      await server.send("GET", "/foo/bar/baz").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foo/bar/baz")).status, 404);
 
       const res = await server.send("GET", "/hello/world");
       await utils.matches(res, 200, "index.html", "utf8");
@@ -481,13 +453,9 @@ describe("ignores", () => {
     });
 
     try {
-      await server.send("GET", "/foo/404").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foo/404")).status, 404);
 
-      await server.send("GET", "/hello/bar/baz").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/hello/bar/baz")).status, 404);
 
       const res = await server.send("GET", "/hello/world");
       await utils.matches(res, 200, "index.html", "utf8");
@@ -503,13 +471,9 @@ describe("ignores", () => {
     });
 
     try {
-      await server.send("GET", "/foo/404").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foo/404")).status, 404);
 
-      await server.send("GET", "/hello/bar/baz").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/hello/bar/baz")).status, 404);
 
       const res = await server.send("GET", "/hello/world");
       await utils.matches(res, 200, "index.html", "utf8");
@@ -524,17 +488,11 @@ describe("dotfiles", () => {
     const server = utils.http();
 
     try {
-      await server.send("GET", "/.hello").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/.hello")).status, 404);
 
-      await server.send("GET", "/foo/.world").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foo/.world")).status, 404);
 
-      await server.send("GET", "/.hello.txt").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/.hello.txt")).status, 404);
     } finally {
       server.close();
     }
@@ -544,17 +502,11 @@ describe("dotfiles", () => {
     const server = utils.http({ dev: true });
 
     try {
-      await server.send("GET", "/.hello").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/.hello")).status, 404);
 
-      await server.send("GET", "/foo/.world").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foo/.world")).status, 404);
 
-      await server.send("GET", "/.hello.txt").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/.hello.txt")).status, 404);
     } finally {
       server.close();
     }
@@ -608,9 +560,7 @@ describe("dev", () => {
     const server = utils.http({ dev: true });
 
     try {
-      await server.send("GET", "/foo.bar.js").catch((err) => {
-        assert.equal(err.status, 404);
-      });
+      assert.equal((await server.send("GET", "/foo.bar.js")).status, 404);
 
       await utils.write("foo.bar.js", "hello there");
 
@@ -725,9 +675,9 @@ describe("brotli", () => {
     const headers = { "Accept-Encoding": "br,gzip" };
 
     try {
-      await server.send("GET", "/data.js").catch((err) => {
-        assert.equal(err.status, 404, "does not find plain file");
-      });
+      // node:http rather than fetch: an unconsumed fetch body on this keep-alive
+      // connection perturbs the follow-up request to the same server.
+      assert.equal((await utils.sendRaw(server.address, "GET", "/data.js")).status, 404, "does not find plain file");
 
       // the `matches` helper assumes wrong mime type
       const res = await server.send("GET", "/data.js", { headers });
@@ -786,9 +736,9 @@ describe("gzip", () => {
     const headers = { "Accept-Encoding": "br,gzip" };
 
     try {
-      await server.send("GET", "/data.js").catch((err) => {
-        assert.equal(err.status, 404, "does not find plain file");
-      });
+      // node:http rather than fetch: an unconsumed fetch body on this keep-alive
+      // connection perturbs the follow-up request to the same server.
+      assert.equal((await utils.sendRaw(server.address, "GET", "/data.js")).status, 404, "does not find plain file");
 
       // the `matches` helper assumes wrong mime type
       const res = await server.send("GET", "/data.js", { headers });
@@ -1026,10 +976,9 @@ describe("ranges", () => {
     try {
       const headers = { Range: "bytes=123456-234567" };
       const file = await utils.lookup("bundle.67329.js", "utf8");
-      await server.send("GET", "/bundle.67329.js", { headers }).catch((err) => {
-        assert.equal(err.headers.get("content-range"), `bytes */${file.size}`);
-        assert.equal(err.status, 416);
-      });
+      const res = await server.send("GET", "/bundle.67329.js", { headers });
+      assert.equal(res.status, 416);
+      assert.equal(res.headers.get("content-range"), `bytes */${file.size}`);
     } finally {
       server.close();
     }
