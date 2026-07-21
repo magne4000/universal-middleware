@@ -71,6 +71,64 @@ describe("createRequestAdapter — X-Forwarded-* resolution", () => {
   });
 });
 
+describe("createRequestAdapter — Forwarded (RFC 7239) resolution", () => {
+  const adapt = (headers: Record<string, string>) =>
+    createRequestAdapter({ trustProxy: true })(fakeReq(headers, "/p"), fakeRes());
+
+  it("reads proto and host from a single element", () => {
+    const request = adapt({ host: "internal", forwarded: "for=192.0.2.60;proto=https;host=public.example" });
+    expect(request.url).toBe("https://public.example/p");
+  });
+
+  it("reads the nearest (rightmost) element when the chain has several", () => {
+    const request = adapt({
+      host: "internal",
+      forwarded: "host=evil.test;proto=http, host=real.example;proto=https",
+    });
+    expect(request.url).toBe("https://real.example/p");
+  });
+
+  it("treats parameter names case-insensitively", () => {
+    const request = adapt({ host: "internal", forwarded: "Proto=https;Host=public.example" });
+    expect(request.url).toBe("https://public.example/p");
+  });
+
+  it("does not split on a comma inside a quoted value", () => {
+    // A quoted IPv6 `for` in the nearest element must not be read as two elements.
+    const request = adapt({ host: "internal", forwarded: 'for="[2001:db8::1]:4711";proto=https;host=public.example' });
+    expect(request.url).toBe("https://public.example/p");
+  });
+
+  it("unquotes a quoted host", () => {
+    const request = adapt({ host: "internal", forwarded: 'proto=https;host="public.example:8443"' });
+    expect(request.url).toBe("https://public.example:8443/p");
+  });
+
+  it("falls back to the connection when the nearest element omits the param", () => {
+    // The nearest proxy set only `for`, so proto/host come from the socket and Host.
+    const request = adapt({ host: "real.example", forwarded: "for=192.0.2.60" });
+    expect(request.url).toBe("http://real.example/p");
+  });
+
+  it("takes precedence over X-Forwarded-* and does not mix the two", () => {
+    const request = adapt({
+      host: "internal",
+      forwarded: "proto=https;host=from-forwarded.example",
+      "x-forwarded-host": "from-legacy.example",
+      "x-forwarded-proto": "http",
+    });
+    expect(request.url).toBe("https://from-forwarded.example/p");
+  });
+
+  it("is ignored entirely when trustProxy is off", () => {
+    const request = createRequestAdapter({ trustProxy: false })(
+      fakeReq({ host: "real.example", forwarded: "host=evil.test;proto=https" }, "/p"),
+      fakeRes(),
+    );
+    expect(request.url).toBe("http://real.example/p");
+  });
+});
+
 describe("responseAdapter — redirect Location must not be attacker-controlled", () => {
   // `getFullUrl` absolutized a relative Location using X-Forwarded-Host with no
   // `trustProxy` gate at all, turning a local redirect into an open redirect.
@@ -104,6 +162,25 @@ describe("responseAdapter — redirect Location must not be attacker-controlled"
     const location = response.headers.get("location") as string;
 
     expect(new URL(location).protocol).toBe("http:");
+  });
+
+  it("builds the redirect origin from Forwarded when trustProxy is on", () => {
+    process.env.TRUST_PROXY = "1";
+    try {
+      const incoming = {
+        headers: { host: "internal", forwarded: "proto=https;host=public.example" },
+        socket: {},
+      } as unknown as IncomingMessage;
+
+      const res = new ServerResponse(incoming);
+      res.statusCode = 302;
+      res.setHeader("location", "/next");
+
+      const location = responseAdapter(res).headers.get("location") as string;
+      expect(location).toBe("https://public.example/next");
+    } finally {
+      delete process.env.TRUST_PROXY;
+    }
   });
 
   it("leaves an absolute Location untouched", () => {
