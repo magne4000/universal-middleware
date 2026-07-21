@@ -1,4 +1,5 @@
-import { symlinkSync, unlinkSync } from "node:fs";
+import { mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { assert, describe, test } from "vitest";
@@ -10,7 +11,6 @@ import * as utils from "./helpers";
 // server does. These assert on the status directly. Ported from srvx#252.
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const www = join(__dirname, "public");
 
 describe("dotfiles :: dev", () => {
   test("should reject a bare dotfile", async () => {
@@ -58,35 +58,47 @@ describe("dotfiles :: dev", () => {
   });
 });
 
-describe("symlinks", () => {
-  test("should not serve a symlink that escapes the served directory :: dev", async () => {
-    const link = join(www, "escape.txt");
-    // Anything outside `public/` will do; package.json is guaranteed present.
-    symlinkSync(join(__dirname, "..", "package.json"), link);
-    const server = utils.http({ dev: true });
+/**
+ * A directory of its own, holding one regular file and one link out of it.
+ *
+ * The fixture cannot live in `public/`: spec files run in parallel, and creating
+ * or removing an entry there races the `totalist` scan that every production-mode
+ * server in the other suites performs over the same directory.
+ */
+function dirWithEscapingLink(): string {
+  const dir = mkdtempSync(join(tmpdir(), "sirv-symlink-"));
+  writeFileSync(join(dir, "inside.txt"), "inside\n");
+  // Anything outside the served directory will do; package.json is always present.
+  symlinkSync(join(__dirname, "..", "package.json"), join(dir, "escape.txt"));
+  return dir;
+}
+
+describe.each([{ dev: true }, { dev: false }])("symlinks :: dev: $dev", (opts) => {
+  test("should not serve a symlink that escapes the served directory", async () => {
+    const dir = dirWithEscapingLink();
+    // The production scan runs inside `sirv()`, so the link must already exist.
+    const server = utils.http(opts, dir);
 
     try {
       const res = await server.send("GET", "/escape.txt");
       assert.equal(res.status, 404);
     } finally {
       server.close();
-      unlinkSync(link);
+      rmSync(dir, { recursive: true, force: true });
     }
   });
 
-  test("should not serve a symlink that escapes the served directory :: prod", async () => {
-    const link = join(www, "escape.txt");
-    symlinkSync(join(__dirname, "..", "package.json"), link);
-    // The startup scan runs in the `sirv()` call inside `utils.http`, so the
-    // link must exist before the server is created.
-    const server = utils.http({ dev: false });
+  test("should still serve a file that stays inside", async () => {
+    const dir = dirWithEscapingLink();
+    const server = utils.http(opts, dir);
 
     try {
-      const res = await server.send("GET", "/escape.txt");
-      assert.equal(res.status, 404);
+      const res = await server.send("GET", "/inside.txt");
+      assert.equal(res.status, 200);
+      assert.equal(await res.text(), "inside\n");
     } finally {
       server.close();
-      unlinkSync(link);
+      rmSync(dir, { recursive: true, force: true });
     }
   });
 });

@@ -13,10 +13,10 @@ const __dirname = dirname(__filename);
 
 const www = join(__dirname, "public");
 
-export const setup = (opts: ServeOptions = {}) => sirv(www, opts);
+export const setup = (opts: ServeOptions = {}, dir: string = www) => sirv(dir, opts);
 
-export function http(opts: ServeOptions = {}) {
-  const server = createServer(createMiddleware(() => setup(opts))());
+export function http(opts: ServeOptions = {}, dir: string = www) {
+  const server = createServer(createMiddleware(() => setup(opts, dir))());
   const address = new URL(listen(server));
   return {
     close: server.close.bind(server),
