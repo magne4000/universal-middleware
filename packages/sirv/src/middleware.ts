@@ -217,8 +217,9 @@ function createUniversalMiddleware(
     let pathname = url.pathname;
     const acceptEncoding = request.headers.get("accept-encoding") || "";
 
-    if (gzips && acceptEncoding.includes("gzip")) extns.unshift(...gzips);
-    if (brots && /(br|brotli)/i.test(acceptEncoding)) extns.unshift(...brots);
+    // Brotli is unshifted last so that it stays preferred when both are offered.
+    if (gzips && acceptsEncoding(acceptEncoding, ["gzip", "x-gzip"])) extns.unshift(...gzips);
+    if (brots && acceptsEncoding(acceptEncoding, ["br", "brotli"])) extns.unshift(...brots);
     extns.push(...extensions);
 
     if (pathname.indexOf("%") !== -1) {
@@ -246,6 +247,21 @@ function createUniversalMiddleware(
     setHeaders(response, pathname, data.stats);
     return response;
   };
+}
+
+/** Whether the client accepts one of `codings`. RFC 9110 §12.5.3: a qvalue of 0 means "not acceptable". */
+function acceptsEncoding(header: string, codings: string[]): boolean {
+  for (const entry of header.toLowerCase().split(",")) {
+    const [coding, ...params] = entry.split(";");
+    if (!codings.includes(coding.trim())) continue;
+
+    for (const param of params) {
+      const [key, value] = param.split("=");
+      if (key.trim() === "q") return Number.parseFloat(value) > 0;
+    }
+    return true;
+  }
+  return false;
 }
 
 export default function serveStatic(dir?: string, opts: ServeOptions = {}): UniversalMiddleware {
