@@ -217,11 +217,31 @@ function toWebStream(readable: Readable): ReadableStream {
       (Readable.toWeb(readable) as any);
 }
 
+/** Connection-specific headers: they describe one transport hop, not the message (RFC 9110 §7.6.1). */
+const HOP_BY_HOP_HEADERS = new Set([
+  "connection",
+  "keep-alive",
+  "proxy-authenticate",
+  "proxy-authorization",
+  "te",
+  "trailer",
+  "transfer-encoding",
+  "upgrade",
+]);
+
 function flattenHeaders(headers: OutgoingHttpHeaders): [string, string][] {
   const flatHeaders: [string, string][] = [];
+  // The captured body is never chunk-framed, so a copied `Transfer-Encoding` would
+  // misframe it when served for real. Names listed in `Connection` are hop-by-hop too.
+  const connectionTokens = String(headers.connection ?? "").split(",");
+  const dropped = new Set([...HOP_BY_HOP_HEADERS, ...connectionTokens.map((name) => name.trim().toLowerCase())]);
 
   for (const [key, value] of Object.entries(headers)) {
     if (value === undefined || value === null) {
+      continue;
+    }
+
+    if (dropped.has(key.toLowerCase())) {
       continue;
     }
 
