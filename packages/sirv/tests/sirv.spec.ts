@@ -1064,7 +1064,9 @@ describe("ranges", () => {
       assert.equal(res2.status, 200);
       assert.equal(res2.headers.get("content-length"), `${file.size}`);
       assert.notOk(res2.headers.get("content-range"));
-      assert.notOk(res2.headers.get("accept-ranges"));
+      // `Accept-Ranges` is now advertised on every identity response, so it is
+      // no longer a marker of leaked per-request headers.
+      assert.equal(res2.headers.get("accept-ranges"), "bytes");
     } finally {
       server.close();
     }
@@ -1085,7 +1087,9 @@ describe("ranges", () => {
       assert.equal(res2.status, 200);
       assert.equal(res2.headers.get("content-length"), `${file.size}`);
       assert.notOk(res2.headers.get("content-range"));
-      assert.notOk(res2.headers.get("accept-ranges"));
+      // `Accept-Ranges` is now advertised on every identity response, so it is
+      // no longer a marker of leaked per-request headers.
+      assert.equal(res2.headers.get("accept-ranges"), "bytes");
     } finally {
       server.close();
     }
