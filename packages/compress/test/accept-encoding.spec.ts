@@ -31,6 +31,24 @@ describe("chooseBestEncoding :: q=0 is a refusal", () => {
   });
 });
 
+describe("chooseBestEncoding :: the wildcard", () => {
+  it("matches a coding the header does not name", () => {
+    expect(chooseBestEncoding(req("*"), ["gzip", "deflate"])).toBe("gzip");
+  });
+
+  it("loses to a coding the header names explicitly", () => {
+    expect(chooseBestEncoding(req("deflate;q=1, *;q=0.5"), ["gzip", "deflate"])).toBe("deflate");
+  });
+
+  it("does not revive a coding that was refused explicitly", () => {
+    expect(chooseBestEncoding(req("gzip;q=0, *"), ["gzip", "deflate"])).toBe("deflate");
+  });
+
+  it("refuses everything unnamed when the wildcard itself is refused", () => {
+    expect(chooseBestEncoding(req("*;q=0"), ["gzip", "deflate"])).toBeUndefined();
+  });
+});
+
 describe("EncodingGuesser :: q=0 is a refusal", () => {
   it("should not compress when the only offered encoding was refused", () => {
     expect(new EncodingGuesser(req("gzip;q=0")).encoding).toBeNull();
@@ -38,5 +56,9 @@ describe("EncodingGuesser :: q=0 is a refusal", () => {
 
   it("should still compress with an encoding that was not refused", () => {
     expect(new EncodingGuesser(req("br;q=0, gzip")).encoding).toBe("gzip");
+  });
+
+  it("should compress when the client accepts any encoding", () => {
+    expect(new EncodingGuesser(req("*")).encoding).not.toBeNull();
   });
 });
