@@ -107,12 +107,29 @@ export function createIncomingMessage(request: Request): IncomingMessage {
 
   // Express reads connection metadata off `req.socket` (e.g. `req.protocol` -> `socket.encrypted`);
   // a synthetic request has no socket, so stub the field it reads to avoid a throw.
-  return Object.assign(body, {
+  const message = Object.assign(body, {
     url: url.pathname + url.search,
     method: request.method,
     headers,
-    socket: { encrypted: url.protocol === "https:" },
+    rawHeaders: Object.entries(headers).flat(),
+    // No wire sits behind this message, but consumers still read a version off
+    // it — morgan's `:http-version` among them. HTTP/1.1 is the semantics the
+    // emulated Node API describes.
+    httpVersion: "1.1",
+    httpVersionMajor: 1,
+    httpVersionMinor: 1,
+    complete: !request.body,
+    // `readable` matters as much as `encrypted`: `on-finished` — which body
+    // parsers consult before reading — treats a message whose socket is not
+    // readable as already finished, and would skip the body entirely.
+    socket: { encrypted: url.protocol === "https:", readable: true },
   }) as unknown as IncomingMessage;
+
+  message.once("end", () => {
+    message.complete = true;
+  });
+
+  return message;
 }
 
 /**

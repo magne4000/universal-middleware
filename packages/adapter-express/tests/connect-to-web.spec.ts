@@ -324,4 +324,34 @@ describe("createIncomingMessage", () => {
     expect(req.socket).toBeDefined();
     expect((req.socket as unknown as { encrypted: boolean }).encrypted).toBe(true);
   });
+
+  it("reports an HTTP version, as loggers like morgan read it", () => {
+    const req = createIncomingMessage(new Request("http://localhost/"));
+    expect(req.httpVersion).toBe("1.1");
+    expect(req.httpVersionMajor).toBe(1);
+    expect(req.httpVersionMinor).toBe(1);
+  });
+
+  it("exposes rawHeaders as name/value pairs", () => {
+    const req = createIncomingMessage(new Request("http://localhost/", { headers: { "x-one": "1", "x-two": "2" } }));
+    expect(req.rawHeaders).toContain("x-one");
+    expect(req.rawHeaders[req.rawHeaders.indexOf("x-one") + 1]).toBe("1");
+    expect(req.rawHeaders[req.rawHeaders.indexOf("x-two") + 1]).toBe("2");
+  });
+
+  it("marks a bodyless request complete straight away", () => {
+    expect(createIncomingMessage(new Request("http://localhost/")).complete).toBe(true);
+  });
+
+  it("marks a request with a body complete only once the body has been read", async () => {
+    const req = createIncomingMessage(new Request("http://localhost/", { method: "POST", body: "hello" }));
+    expect(req.complete).toBe(false);
+
+    await new Promise((resolve) => {
+      req.on("data", () => {});
+      req.on("end", resolve);
+    });
+
+    expect(req.complete).toBe(true);
+  });
 });
