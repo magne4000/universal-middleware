@@ -70,11 +70,8 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Server
   }
 }
 
-/**
- * A client disconnecting mid-response is routine and says nothing about the
- * application; anything else reaching here is a real failure — an invalid
- * header, a source stream that threw — and would otherwise vanish silently.
- */
+// A client vanishing mid-response is routine; every other send failure is a real
+// bug worth surfacing rather than swallowing.
 function isClientGone(error: unknown): boolean {
   const code = (error as NodeJS.ErrnoException | undefined)?.code;
   return code === "ECONNRESET" || code === "EPIPE" || code === "ERR_STREAM_PREMATURE_CLOSE";

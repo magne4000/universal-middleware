@@ -112,16 +112,13 @@ export function createIncomingMessage(request: Request): IncomingMessage {
     method: request.method,
     headers,
     rawHeaders: Object.entries(headers).flat(),
-    // No wire sits behind this message, but consumers still read a version off
-    // it — morgan's `:http-version` among them. HTTP/1.1 is the semantics the
-    // emulated Node API describes.
+    // Consumers still read a version off the message (e.g. morgan's `:http-version`).
     httpVersion: "1.1",
     httpVersionMajor: 1,
     httpVersionMinor: 1,
     complete: !request.body,
-    // `readable` matters as much as `encrypted`: `on-finished` — which body
-    // parsers consult before reading — treats a message whose socket is not
-    // readable as already finished, and would skip the body entirely.
+    // `readable` is load-bearing: `on-finished`, which body parsers consult before
+    // reading, treats a non-readable socket as already finished and skips the body.
     socket: { encrypted: url.protocol === "https:", readable: true },
   }) as unknown as IncomingMessage;
 
