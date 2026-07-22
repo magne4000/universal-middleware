@@ -283,11 +283,13 @@ function acceptsEncoding(header: string, codings: string[]): boolean {
     const name = coding.trim();
     if (name !== "*" && !codings.includes(name)) continue;
 
-    // A malformed or absent qvalue defaults to acceptable rather than refusing.
     let acceptable = true;
     for (const param of params) {
       const [key, value] = param.split("=");
-      if (key.trim() === "q") acceptable = !(Number.parseFloat(value) <= 0);
+      if (key.trim() === "q") {
+        const q = Number.parseFloat(value);
+        acceptable = Number.isNaN(q) || q > 0; // a malformed or absent qvalue defaults to acceptable
+      }
     }
 
     if (name === "*") wildcard = acceptable;
