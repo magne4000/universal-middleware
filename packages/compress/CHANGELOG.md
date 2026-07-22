@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.37
+
+### Patch Changes
+
+- aeecf27: fix(compress): cancel the source stream when the compressed output is cancelled
+- 00ba830: fix(compress): honor `*` in `Accept-Encoding`
+- 2cd7b87: fix(compress): honor `q=0` in `Accept-Encoding` as a refusal
+
 ## 0.2.36
 
 ### Patch Changes
