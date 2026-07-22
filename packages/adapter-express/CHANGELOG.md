@@ -1,5 +1,26 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.4.31
+
+### Patch Changes
+
+- d75c417: fix(express): strip hop-by-hop headers in `connectToWeb`
+- 5421dcd: fix(express): make the synthetic request socket a real EventEmitter
+
+  `connectToWeb`'s synthetic `IncomingMessage` used a bare-object socket stub. On a
+  body parser's drain path (e.g. an oversized body → 413), `on-finished` attaches
+  an `error`/`close` listener to the socket, which threw `ee.on is not a function`
+  and crashed the request instead of returning the error status. The stub is now an
+  `EventEmitter`.
+
+- 81eacd5: fix(express): report HTTP version, raw headers and completion on the synthetic request
+- Updated dependencies [5bf08ce]
+- Updated dependencies [b26ca94]
+- Updated dependencies [3e5f59e]
+- Updated dependencies [20f6325]
+- Updated dependencies [5421dcd]
+  - @universal-middleware/node@0.2.2
+
 ## 0.4.30
 
 ### Patch Changes
