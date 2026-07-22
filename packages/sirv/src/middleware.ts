@@ -274,8 +274,9 @@ function revalidationHeaders(headers: Record<string, string>): Record<string, st
   return repeated;
 }
 
-/** Whether the client accepts one of `codings`. RFC 9110 §12.5.3: `*` matches any, an explicit coding overrides it, and a qvalue of 0 refuses. */
+/** Whether the client accepts one of `codings` (aliases of one encoding). RFC 9110 §12.5.3: `*` matches any, an explicit coding overrides it, a qvalue of 0 refuses. */
 function acceptsEncoding(header: string, codings: string[]): boolean {
+  let explicit: boolean | undefined;
   let wildcard: boolean | undefined;
   for (const entry of header.toLowerCase().split(",")) {
     const [coding, ...params] = entry.split(";");
@@ -289,10 +290,10 @@ function acceptsEncoding(header: string, codings: string[]): boolean {
       if (key.trim() === "q") acceptable = !(Number.parseFloat(value) <= 0);
     }
 
-    if (name !== "*") return acceptable;
-    wildcard = acceptable;
+    if (name === "*") wildcard = acceptable;
+    else explicit ||= acceptable; // codings are aliases, so any acceptable spelling accepts
   }
-  return wildcard ?? false;
+  return explicit ?? wildcard ?? false;
 }
 
 export default function serveStatic(dir?: string, opts: ServeOptions = {}): UniversalMiddleware {
@@ -302,10 +303,11 @@ export default function serveStatic(dir?: string, opts: ServeOptions = {}): Univ
   try {
     realDir = fs.realpathSync(dir);
   } catch (err) {
-    // Dev mode may be wired up before a watch/lazy build has created `dir`; defer
-    // to the per-request lookup, which 404s until it appears. Production still scans
-    // eagerly below, so a missing dir there stays an error.
-    if (!opts.dev) throw err;
+    // Dev mode may be wired up before a watch/lazy build has created `dir`; a
+    // genuinely missing dir defers to the per-request lookup (404s until it
+    // appears). Anything else — permissions, an invalid path — is a real
+    // misconfiguration, and production always resolves eagerly.
+    if (!opts.dev || (err as NodeJS.ErrnoException).code !== "ENOENT") throw err;
     realDir = dir;
   }
 

@@ -27,6 +27,11 @@ describe("types", () => {
   test("should not throw for a missing `dir` in dev mode (build output may appear later)", () => {
     assert.typeOf(sirv("foobar", { dev: true }), "function");
   });
+
+  test("should still throw in dev mode when a path component is not a directory", () => {
+    // A non-ENOENT resolution failure is a real misconfiguration, not a not-yet-built dir.
+    assert.throws(() => sirv("package.json/assets", { dev: true }), /ENOTDIR/);
+  });
 });
 
 describe("basics", () => {

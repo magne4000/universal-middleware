@@ -103,4 +103,18 @@ describe("accept-encoding :: acceptable forms", () => {
       server.close();
     }
   });
+
+  test("should accept an alias even when the primary spelling is refused", async () => {
+    // `x-gzip` is gzip under its legacy name; refusing `gzip` must not hide it.
+    const server = utils.http({ gzip: true });
+
+    try {
+      const res = await server.send("GET", "/", { headers: { "Accept-Encoding": "gzip;q=0, x-gzip" } });
+
+      assert.equal(res.status, 200);
+      assert.equal(res.headers.get("content-encoding"), "gzip");
+    } finally {
+      server.close();
+    }
+  });
 });
