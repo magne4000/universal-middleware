@@ -6,6 +6,6 @@ export default defineTsdown({
     cookie: "./src/cookies/index.ts",
   },
   runtime: "node",
-  // `rou3` is the one dependency tsup bundled; keep bundling it.
+  // Inline `rou3` rather than leaving it an external runtime dependency.
   deps: { neverBundle: true, alwaysBundle: ["rou3"] },
 });

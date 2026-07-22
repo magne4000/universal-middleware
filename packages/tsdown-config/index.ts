@@ -17,8 +17,8 @@ interface Options {
 /**
  * Config for packages built with the `universalMiddleware` plugin. `dts.entry`
  * keeps tsgo off the plugin's virtual modules (it emits their `.d.ts` via oxc),
- * and `entryFileNames` strips the `src/` prefix the plugin keys them under — the
- * rolldown equivalent of tsup's esbuild `outbase: "src"`.
+ * and `entryFileNames` strips the `src/` prefix the plugin keys them under so the
+ * output mirrors the source layout.
  */
 export function defineMiddlewareTsdown(options: Omit<Options, "runtime" | "dts" | "outputOptions">) {
   return defineTsdown({
