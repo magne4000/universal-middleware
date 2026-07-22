@@ -1,8 +1,8 @@
 import { join, parse } from "node:path";
 import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import typescript from "@rollup/plugin-typescript";
-import { type OutputChunk, type RollupLog, type RollupOutput, rollup } from "rollup";
+import swc from "@rollup/plugin-swc";
+import { type OutputChunk, type Plugin, type RollupLog, type RollupOutput, rollup } from "rollup";
 import { describe, expect, it } from "vitest";
 import plugin from "../src/rollup";
 import { adapters, expectNbOutput, noMiddlewaresSupport, options } from "./common";
@@ -11,6 +11,18 @@ function onwarn(warning: RollupLog) {
   if (warning.code === "CIRCULAR_DEPENDENCY") return;
   throw new Error(warning.message);
 }
+
+// The `.ts` fixtures import their siblings with a `.js` specifier (the repo's
+// convention); `@rollup/plugin-swc` does not remap those to the `.ts` source the
+// way `@rollup/plugin-typescript` did, so resolve them here.
+const resolveTsSource: Plugin = {
+  name: "resolve-ts-source",
+  resolveId(source, importer, resolveOptions) {
+    if (importer && source.startsWith(".") && source.endsWith(".js")) {
+      return this.resolve(`${source.slice(0, -3)}.ts`, importer, { ...resolveOptions, skipSelf: true });
+    }
+  },
+};
 
 describe("rollup", () => {
   it("generates all server files (string input)", options, async () => {
@@ -34,9 +46,8 @@ describe("rollup", () => {
         }),
         nodeResolve(),
         commonjs(),
-        typescript({
-          sourceMap: false,
-        }),
+        swc(),
+        resolveTsSource,
       ],
       onwarn,
     });
@@ -79,9 +90,8 @@ describe("rollup", () => {
         }),
         nodeResolve(),
         commonjs(),
-        typescript({
-          sourceMap: false,
-        }),
+        swc(),
+        resolveTsSource,
       ],
       onwarn,
     });
@@ -125,9 +135,8 @@ describe("rollup", () => {
         }),
         nodeResolve(),
         commonjs(),
-        typescript({
-          sourceMap: false,
-        }),
+        swc(),
+        resolveTsSource,
       ],
       onwarn,
     });
@@ -169,9 +178,8 @@ describe("rollup", () => {
         }),
         nodeResolve(),
         commonjs(),
-        typescript({
-          sourceMap: false,
-        }),
+        swc(),
+        resolveTsSource,
       ],
       onwarn,
     });
@@ -212,9 +220,8 @@ describe("rollup", () => {
         }),
         nodeResolve(),
         commonjs(),
-        typescript({
-          sourceMap: false,
-        }),
+        swc(),
+        resolveTsSource,
       ],
       onwarn,
     });
@@ -251,9 +258,8 @@ describe("rollup", () => {
         }),
         nodeResolve(),
         commonjs(),
-        typescript({
-          sourceMap: false,
-        }),
+        swc(),
+        resolveTsSource,
       ],
       onwarn,
     });
@@ -283,9 +289,8 @@ describe("rollup", () => {
         }),
         nodeResolve(),
         commonjs(),
-        typescript({
-          sourceMap: false,
-        }),
+        swc(),
+        resolveTsSource,
       ],
       onwarn,
     });

@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: tests */
 import { type ChildProcess, spawn } from "node:child_process";
 import mri from "mri";
 import type { TestOptions } from "vitest";
@@ -240,6 +241,6 @@ export const args = mri<{ port: string }>(
 
 // @ts-expect-error Deno
 export const deno = typeof Deno !== "undefined";
-// biome-ignore lint/suspicious/noTsIgnore: tsup compat
+// biome-ignore lint/suspicious/noTsIgnore: `Bun` is globally typed here, so `@ts-expect-error` would be flagged unused
 // @ts-ignore Bun
 export const bun = typeof Bun !== "undefined";

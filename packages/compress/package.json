@@ -10,7 +10,7 @@
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsup",
+    "build": "tsdown",
     "test": "vitest --typecheck run",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
@@ -20,11 +20,12 @@
     "@types/bun": "^1.3.14",
     "@types/node": "catalog:",
     "@universal-middleware/core": "workspace:^",
+    "@universal-middleware/tsdown-config": "workspace:*",
     "elysia": "catalog:",
     "fflate": "^0.8.3",
     "h3": "catalog:",
     "rimraf": "catalog:",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:",
     "universal-middleware": "workspace:^",
     "vite": "catalog:",

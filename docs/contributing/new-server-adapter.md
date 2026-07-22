@@ -19,7 +19,7 @@ packages/adapter-{server-name}/
 ├── package.json
 ├── readme.md
 ├── tsconfig.json
-├── tsup.config.ts
+├── tsdown.config.ts
 ├── turbo.json         # Turbo build configuration
 ├── vitest.config.ts
 └── wrangler.toml      # Cloudflare configuration (if applicable)
@@ -52,10 +52,10 @@ packages/adapter-{server-name}/
 #### `tsconfig.json`
 - Extend from the root tsconfig: `{"extends": "../../tsconfig.json"}`
 
-#### `tsup.config.ts`
-- Configure build settings for ESM output
-- Set platform to "neutral" and target to "es2022"
-- Enable DTS generation and clean builds
+#### `tsdown.config.ts`
+- Export `defineTsdown({ ... })` from `@universal-middleware/tsdown-config`
+- Set `runtime` to `"node"` or `"neutral"`, and list any `deps` bundling exceptions
+- The shared config handles DTS, target, and clean builds
 
 #### `turbo.json`
 - Configure build dependencies: `{"extends": ["//"], "tasks": {"build": {"outputs": ["dist/**"], "dependsOn": ["^build", "@universal-middleware/core#build"]}}}`
@@ -104,7 +104,7 @@ packages/adapter-{server-name}/
    ```
 3. Add `@universal-middleware/{server-name}` to `maybeExternals` array
 
-### `packages/universal-middleware/tsup.config.ts`
+### `packages/universal-middleware/tsdown.config.ts`
 Add entry point in the `entry` object:
 ```typescript
 "adapters/{server-name}": "src/adapters/{server-name}.ts",
@@ -124,11 +124,9 @@ Add the new adapter's vitest config:
 "./packages/adapter-{server-name}/vitest.config.ts",
 ```
 
-### `packages/sirv/tsup.config.ts`
-Add server name to the `servers` array in the `universalMiddleware` configuration.
-
-### `packages/compress/tsup.config.ts`
-Add server name to the `servers` array in the `universalMiddleware` configuration.
+### `packages/tsdown-config/index.ts`
+Add the server name to the `middlewareServers` array. The `sirv` and `compress`
+builds both consume it, so a single edit covers both.
 
 ### `packages/universal-middleware/test/common.ts`
 Add server name to the `adapters` array for testing.
@@ -273,7 +271,7 @@ Create a test entry file following the pattern of existing adapters.
    "{server-framework}": "catalog:",
    ```
 
-### `tests-examples/tests-tool/tsup.config.ts`
+### `tests-examples/tests-tool/tsdown.config.ts`
 Add entry point for the server in the `entry` object.
 
 ### `tests-examples/tests-tool/.test-{server-name}-dev.test.ts`
@@ -304,7 +302,7 @@ If the server adapter should be available through Vercel:
 3. Add peer dependency: `"{server-framework}": "catalog:"`
 4. Add peer dependency meta for optional usage
 
-#### `packages/adapter-vercel/tsup.config.ts`
+#### `packages/adapter-vercel/tsdown.config.ts`
 Add entry point: `{server-name}: "./src/{server-name}.ts"`
 
 #### `packages/adapter-vercel/src/{server-name}.ts`
@@ -323,14 +321,13 @@ When creating a new server adapter, ensure you've updated:
 - [ ] Added server to `packages/universal-middleware/src/plugin.ts` defaultWrappers
 - [ ] Updated `packages/universal-middleware/src/plugin.ts` typesByServer
 - [ ] Added server to `packages/universal-middleware/src/plugin.ts` maybeExternals
-- [ ] Updated `packages/universal-middleware/tsup.config.ts` entry points
+- [ ] Updated `packages/universal-middleware/tsdown.config.ts` entry points
 - [ ] Created `packages/universal-middleware/src/adapters/{server-name}.ts`
 - [ ] Updated `packages/universal-middleware/test/common.ts` adapters array
 
 ### Build & Test Configuration
 - [ ] Updated `vitest.workspace.ts`
-- [ ] Updated `packages/sirv/tsup.config.ts` servers list
-- [ ] Updated `packages/compress/tsup.config.ts` servers list
+- [ ] Added server to `packages/tsdown-config/index.ts` `middlewareServers` (covers sirv and compress)
 
 ### Documentation
 - [ ] Updated `docs/reference/supported-adapters.md`
@@ -344,7 +341,7 @@ When creating a new server adapter, ensure you've updated:
 ### Test Examples
 - [ ] Created test entry file in `tests-examples/tests-tool/src/`
 - [ ] Updated `tests-examples/tests-tool/package.json` with dev/prod scripts and dependencies
-- [ ] Updated `tests-examples/tests-tool/tsup.config.ts` entry points
+- [ ] Updated `tests-examples/tests-tool/tsdown.config.ts` entry points
 - [ ] Created `tests-examples/tests-tool/.test-{server-name}-dev.test.ts`
 
 ### Testing

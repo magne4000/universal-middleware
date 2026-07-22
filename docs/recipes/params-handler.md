@@ -29,6 +29,7 @@ export default app;
 ```
 
 ```ts twoslash [hono.ts]
+// @noErrors
 import { Hono } from "hono";
 import paramHandler from "@universal-middleware-examples/tool/params-handler-hono";
 
@@ -137,6 +138,7 @@ export default app;
 ```
 
 ```ts twoslash [elysia.ts]
+// @noErrors
 import paramHandler from "@universal-middleware-examples/tool/params-handler-elysia";
 import Elysia from "elysia";
 

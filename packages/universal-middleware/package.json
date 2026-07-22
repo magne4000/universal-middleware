@@ -108,7 +108,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && tsup",
+    "build": "tsdown",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
@@ -132,12 +132,13 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^29.0.3",
     "@rollup/plugin-node-resolve": "^16.0.3",
-    "@rollup/plugin-typescript": "^12.3.0",
+    "@rollup/plugin-swc": "^0.4.1",
     "@swc/core": "catalog:",
+    "@universal-middleware/tsdown-config": "workspace:*",
     "esbuild": "^0.28.1",
     "rimraf": "catalog:",
     "rollup": "^4.62.2",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
