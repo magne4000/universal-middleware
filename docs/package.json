@@ -36,7 +36,7 @@
     "h3": "catalog:",
     "hono": "catalog:",
     "srvx": "catalog:",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "universal-middleware": "workspace:*",
     "vitepress": "^1.6.4"
   }
