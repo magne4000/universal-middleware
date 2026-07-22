@@ -468,9 +468,8 @@ export async function readAndEditPackageJson(reports: Report[], options?: Option
 
   const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
 
-  // `out`/`dts` may be absolute (rolldown passes an absolute output `dir`) or
-  // relative to the package (rollup/esbuild). Normalize both to a package-root
-  // relative specifier so the generated `exports` are portable.
+  // rolldown gives an absolute output `dir`, rollup/esbuild a relative one;
+  // normalize both to a package-root-relative `exports` specifier.
   const packageJsonDir = dirname(packageJsonPath);
   const toSpecifier = (p: string) => `./${relative(packageJsonDir, resolve(p)).replaceAll("\\", "/")}`;
 
