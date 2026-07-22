@@ -132,6 +132,10 @@ const typesByServer: Record<
 const namespace = "virtual:universal-middleware";
 const versionRange = "^0";
 
+// rolldown emits OS-native paths (backslashes on Windows); normalize to forward
+// slashes before they end up in generated code or `exports` specifiers.
+const toPosix = (p: string) => p.replaceAll("\\", "/");
+
 function getVirtualInputs(
   type: "handler" | "middleware",
   handler: string,
@@ -424,7 +428,9 @@ async function genDts(bundle: Record<string, BundleInfo>, options?: Options) {
   for (const value of Object.values(bundle)) {
     if (!value.in.startsWith(namespace)) continue;
 
-    const res = loadDts(value.in, (handler) => posix.relative(value.dts, bundle[handler].dts).replace(/^\.\./, "."));
+    const res = loadDts(value.in, (handler) =>
+      posix.relative(toPosix(value.dts), toPosix(bundle[handler].dts)).replace(/^\.\./, "."),
+    );
     if (!res) continue;
 
     await generateDts(res.code, value.dts);
@@ -471,7 +477,7 @@ export async function readAndEditPackageJson(reports: Report[], options?: Option
   // rolldown gives an absolute output `dir`, rollup/esbuild a relative one;
   // normalize both to a package-root-relative `exports` specifier.
   const packageJsonDir = dirname(packageJsonPath);
-  const toSpecifier = (p: string) => `./${relative(packageJsonDir, resolve(p)).replaceAll("\\", "/")}`;
+  const toSpecifier = (p: string) => `./${toPosix(relative(packageJsonDir, resolve(p)))}`;
 
   if (options?.externalDependencies === true) {
     packageJson.dependencies ??= {};
