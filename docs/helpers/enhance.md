@@ -60,6 +60,7 @@ apply(app, [
 ```
 
 ```ts twoslash [hono.ts]
+// @noErrors
 // @include: handler
 // ---cut---
 import { Hono } from "hono";
@@ -153,6 +154,7 @@ apply(app, [
 ```
 
 ```ts twoslash [elysia.ts]
+// @noErrors
 // @include: handler
 // ---cut---
 import { Elysia } from "elysia";

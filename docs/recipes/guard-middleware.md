@@ -20,6 +20,7 @@ export default app;
 ```
 
 ```ts twoslash [hono.ts]
+// @noErrors
 import { Hono } from "hono";
 import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware-hono";
 
@@ -117,6 +118,7 @@ export default app;
 ```
 
 ```ts twoslash [elysia.ts]
+// @noErrors
 import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware-elysia";
 import Elysia from "elysia";
 

@@ -30,6 +30,7 @@ export default app;
 ```
 
 ```ts twoslash [hono.ts]
+// @noErrors
 import { Hono } from "hono";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-hono";
 import { getContext } from "@universal-middleware/hono";
@@ -185,6 +186,7 @@ export default app;
 ```
 
 ```ts twoslash [elysia.ts]
+// @noErrors
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-elysia";
 import Elysia from "elysia";
 
