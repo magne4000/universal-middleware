@@ -30,6 +30,7 @@
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
+    "@universal-middleware/tsdown-config": "workspace:*",
     "@webroute/middleware": "^0.10.0",
     "@webroute/route": "catalog:",
     "@webroute/router": "^0.4.0",

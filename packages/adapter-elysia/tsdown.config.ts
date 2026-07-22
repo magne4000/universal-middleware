@@ -1,16 +1,7 @@
-import { defineConfig } from "tsdown";
+import { defineTsdown } from "@universal-middleware/tsdown-config";
 
-export default defineConfig({
+// `elysia` is a runtime import; `neverBundle: true` keeps it external (as tsup did).
+export default defineTsdown({
   entry: ["./src/index.ts"],
-  format: ["esm"],
-  platform: "neutral",
-  target: "es2022",
-  fixedExtension: false,
-  nodeProtocol: false,
-  dts: true,
-  clean: true,
-  // Externalize every bare import without resolving it — the oxc dts resolver
-  // cannot follow the CJS/namespace type shapes some framework packages expose.
-  // `elysia` was already externalized under tsup.
-  deps: { neverBundle: true },
+  runtime: "neutral",
 });

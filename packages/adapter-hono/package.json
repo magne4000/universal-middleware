@@ -31,6 +31,7 @@
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
+    "@universal-middleware/tsdown-config": "workspace:*",
     "hono": "catalog:",
     "rimraf": "catalog:",
     "tsdown": "catalog:",

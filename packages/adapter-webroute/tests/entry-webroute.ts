@@ -22,7 +22,6 @@ const app = new Hono();
 const router = createRadixRouter([
   // @ts-expect-error tsgo
   Route.normalise(route("/user/:name").method("get").handle(createHandler(routeParamHandler)())),
-  // @ts-expect-error tsgo
   Route.normalise(route("/stream-cancel").method("get").handle(createHandler(streamCancelHandler)())),
   // @ts-expect-error webroute
   Route.normalise(route("/stream-cancel-status").method("get").handle(createHandler(streamCancelStatusHandler)())),

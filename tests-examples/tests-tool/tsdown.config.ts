@@ -1,6 +1,6 @@
-import { defineConfig } from "tsdown";
+import { defineTsdown } from "@universal-middleware/tsdown-config";
 
-export default defineConfig({
+export default defineTsdown({
   entry: {
     express: "src/express-entry.ts",
     fastify: "src/fastify-entry.ts",
@@ -10,13 +10,6 @@ export default defineConfig({
     srvx: "src/srvx-entry.ts",
     hono: "src/hono-entry.ts",
   },
-  format: ["esm"],
-  platform: "node",
-  fixedExtension: false,
-  nodeProtocol: false,
+  runtime: "node",
   dts: false,
-  clean: true,
-  banner: {
-    js: `import {createRequire as __createRequire} from 'module';var require=__createRequire(import.meta.url);`,
-  },
 });

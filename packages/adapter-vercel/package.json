@@ -63,6 +63,7 @@
     "@universal-middleware/hono": "workspace:^",
     "@universal-middleware/srvx": "workspace:^",
     "@universal-middleware/tests": "workspace:*",
+    "@universal-middleware/tsdown-config": "workspace:*",
     "express": "catalog:",
     "fastify": "catalog:",
     "h3": "catalog:",

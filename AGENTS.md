@@ -84,6 +84,26 @@ pnpm run format
 # Uses Biome formatter with 2-space indentation
 ```
 
+**`biome format` and `biome lint` must run and pass** before any change is
+considered done (`pnpm run format` and `pnpm run lint`).
+
+### Local builds/tests in a mounted checkout
+
+If `node_modules` was installed on a different OS than the one you are running on
+(e.g. the repo is mounted from macOS but you run on Linux), the native binaries
+(esbuild, rolldown, rollup, swc, workerd, playwright) will not match and builds
+fail with `Cannot find module '@rolldown/binding-...'` / `@rollup/rollup-...`.
+Do **not** reinstall in place — that clobbers the other machine's `node_modules`.
+Instead work in a **git worktree** with its own install:
+
+```bash
+git worktree add -b <branch> ../<repo>-wt HEAD
+cd ../<repo>-wt
+PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 pnpm install --store-dir .pnpm-store
+```
+
+Build/verify there, then bring the finished changes back to the branch.
+
 ## Project Structure
 
 ### Root Directory Files

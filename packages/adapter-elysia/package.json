@@ -30,6 +30,7 @@
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
+    "@universal-middleware/tsdown-config": "workspace:*",
     "elysia": "catalog:",
     "rimraf": "catalog:",
     "tsdown": "catalog:",

@@ -1,6 +1,6 @@
-import { defineConfig } from "tsdown";
+import { defineTsdown } from "@universal-middleware/tsdown-config";
 
-export default defineConfig({
+export default defineTsdown({
   entry: {
     index: "./src/index.ts",
     edge: "./src/edge.ts",
@@ -36,14 +36,5 @@ export default defineConfig({
     fastify: "./src/fastify.ts",
     srvx: "./src/srvx.ts",
   },
-  format: ["esm"],
-  platform: "neutral",
-  target: "es2022",
-  fixedExtension: false,
-  nodeProtocol: false,
-  dts: true,
-  clean: true,
-  // Externalize every bare import without resolving it — the oxc dts resolver
-  // cannot follow the CJS/namespace type shapes some framework packages expose.
-  deps: { neverBundle: true },
+  runtime: "neutral",
 });

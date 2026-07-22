@@ -1,6 +1,6 @@
-import { defineConfig } from "tsdown";
+import { defineTsdown } from "@universal-middleware/tsdown-config";
 
-export default defineConfig({
+export default defineTsdown({
   entry: {
     index: "src/index.ts",
     rollup: "src/rollup.ts",
@@ -16,14 +16,6 @@ export default defineConfig({
     "adapters/vercel": "src/adapters/vercel.ts",
     "adapters/webroute": "src/adapters/webroute.ts",
   },
-  format: ["esm"],
-  platform: "node",
+  runtime: "node",
   target: "es2022",
-  fixedExtension: false,
-  nodeProtocol: false,
-  dts: true,
-  clean: true,
-  // Externalize every bare import without resolving it — the oxc dts resolver
-  // cannot follow the CJS/namespace type shapes some framework packages expose.
-  deps: { neverBundle: true },
 });

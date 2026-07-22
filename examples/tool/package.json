@@ -366,6 +366,7 @@
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/core": "workspace:*",
+    "@universal-middleware/tsdown-config": "workspace:*",
     "elysia": "catalog:",
     "h3": "catalog:",
     "rimraf": "catalog:",

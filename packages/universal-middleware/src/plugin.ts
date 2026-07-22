@@ -472,7 +472,7 @@ export async function readAndEditPackageJson(reports: Report[], options?: Option
   // relative to the package (rollup/esbuild). Normalize both to a package-root
   // relative specifier so the generated `exports` are portable.
   const packageJsonDir = dirname(packageJsonPath);
-  const toSpecifier = (p: string) => `./${posix.normalize(relative(packageJsonDir, resolve(p)).replaceAll("\\", "/"))}`;
+  const toSpecifier = (p: string) => `./${relative(packageJsonDir, resolve(p)).replaceAll("\\", "/")}`;
 
   if (options?.externalDependencies === true) {
     packageJson.dependencies ??= {};
@@ -485,10 +485,11 @@ export async function readAndEditPackageJson(reports: Report[], options?: Option
 
   for (const report of reports) {
     // No CJS support
+    const out = toSpecifier(report.out);
     packageJson.exports[report.exports] = {
       types: report.dts ? toSpecifier(report.dts) : undefined,
-      import: toSpecifier(report.out),
-      default: toSpecifier(report.out),
+      import: out,
+      default: out,
     };
   }
 

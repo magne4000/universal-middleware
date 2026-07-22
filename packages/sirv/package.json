@@ -27,6 +27,7 @@
     "@types/bun": "^1.3.14",
     "@types/node": "catalog:",
     "@universal-middleware/express": "workspace:^",
+    "@universal-middleware/tsdown-config": "workspace:*",
     "elysia": "catalog:",
     "h3": "catalog:",
     "rimraf": "catalog:",

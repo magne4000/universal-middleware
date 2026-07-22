@@ -31,6 +31,7 @@
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
+    "@universal-middleware/tsdown-config": "workspace:*",
     "fastify": "catalog:",
     "fastify-plugin": "^6.0.0",
     "rimraf": "catalog:",

@@ -38,6 +38,7 @@
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
+    "@universal-middleware/tsdown-config": "workspace:*",
     "rimraf": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
