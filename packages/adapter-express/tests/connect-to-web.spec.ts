@@ -82,6 +82,28 @@ describe("connectToWeb (synthetic path) — body & basics", () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ hello: "world" });
   });
+
+  it("answers 413 instead of crashing when a body parser drains an oversized body", async () => {
+    // body-parser dumps the unread body via on-finished, which attaches an
+    // error/close listener to req.socket — the stub must be a real EventEmitter.
+    const app = express();
+    app.use(express.json({ limit: 1 }));
+    app.post("/t", (req, res) => res.json(req.body));
+    app.use((_err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+      res.status(413).end("too large");
+    });
+
+    const res = defined(
+      await connectToWeb(app)(
+        new Request("http://localhost/t", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ hello: "world, this exceeds one byte" }),
+        }),
+      ),
+    );
+    expect(res.status).toBe(413);
+  });
 });
 
 describe("connectToWeb (synthetic path) — Express connection metadata (socket stub)", () => {

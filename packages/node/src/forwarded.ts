@@ -7,35 +7,30 @@ export function trustsProxy(): boolean {
 }
 
 /**
- * The `proto`/`host` contributed by the nearest proxy.
+ * The client-facing `proto`/`host`, matching Express's `trust proxy`: the first
+ * value, which is the original the client reached. `trustProxy` asserts the proxy
+ * sets these headers, overwriting any client-supplied one.
  *
- * RFC 7239's `Forwarded` is preferred over the older `X-Forwarded-*` when
- * present. Either way the nearest proxy is the rightmost entry, since proxies
- * append and the leftmost is whatever the client sent.
+ * `X-Forwarded-*` wins; RFC 7239's `Forwarded` fills a param the legacy header
+ * omits, so a client `Forwarded` passed through by a legacy proxy cannot override
+ * what that proxy set.
  */
 export function forwardedValue(headers: IncomingHttpHeaders, param: "proto" | "host"): string | undefined {
-  const forwarded = headers.forwarded;
-  // A trusted proxy that speaks `Forwarded` is authoritative: its element does
-  // not fall through to `X-Forwarded-*`, so one cannot be used to spoof the
-  // other. An absent param resolves from the connection instead.
-  if (forwarded) return nearestForwardedElement(String(forwarded))[param];
-
-  return rightmostListValue(headers[`x-forwarded-${param}`]);
+  return firstListValue(headers[`x-forwarded-${param}`]) ?? firstForwardedElement(headers.forwarded)[param];
 }
 
-function rightmostListValue(value: string | string[] | undefined): string | undefined {
+function firstListValue(value: string | string[] | undefined): string | undefined {
   if (!value) return undefined;
-  const hops = String(value).split(",");
-  return hops[hops.length - 1].trim() || undefined;
+  return String(value).split(",", 1)[0].trim() || undefined;
 }
 
-/** Parses the params (RFC 7239 §4) of the nearest — rightmost — element of a `Forwarded` header. */
-function nearestForwardedElement(header: string): { proto?: string; host?: string } {
-  const elements = splitOutsideQuotes(header, ",");
-  const nearest = elements[elements.length - 1];
-
+/** Parses the params (RFC 7239 §4) of the first element of a `Forwarded` header. */
+function firstForwardedElement(header: string | string[] | undefined): { proto?: string; host?: string } {
   const params: { proto?: string; host?: string } = {};
-  for (const pair of splitOutsideQuotes(nearest, ";")) {
+  if (!header) return params;
+
+  const [first] = splitOutsideQuotes(String(header), ",");
+  for (const pair of splitOutsideQuotes(first, ";")) {
     const eq = pair.indexOf("=");
     if (eq === -1) continue;
     const name = pair.slice(0, eq).trim().toLowerCase();

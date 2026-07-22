@@ -63,3 +63,58 @@ describe("accept-encoding :: q=0 is a refusal", () => {
     }
   });
 });
+
+describe("accept-encoding :: acceptable forms", () => {
+  test("should serve a variant for the `*` wildcard", async () => {
+    const server = utils.http({ gzip: true });
+
+    try {
+      const res = await server.send("GET", "/", { headers: { "Accept-Encoding": "*" } });
+
+      assert.equal(res.status, 200);
+      assert.equal(res.headers.get("content-encoding"), "gzip");
+    } finally {
+      server.close();
+    }
+  });
+
+  test("should let an explicit `q=0` override a `*` wildcard", async () => {
+    const server = utils.http({ gzip: true });
+
+    try {
+      const res = await server.send("GET", "/", { headers: { "Accept-Encoding": "*, gzip;q=0" } });
+
+      assert.equal(res.status, 200);
+      assert.notOk(res.headers.get("content-encoding"));
+    } finally {
+      server.close();
+    }
+  });
+
+  test("should treat a valueless `q` as acceptable", async () => {
+    const server = utils.http({ gzip: true });
+
+    try {
+      const res = await server.send("GET", "/", { headers: { "Accept-Encoding": "gzip;q" } });
+
+      assert.equal(res.status, 200);
+      assert.equal(res.headers.get("content-encoding"), "gzip");
+    } finally {
+      server.close();
+    }
+  });
+
+  test("should accept an alias even when the primary spelling is refused", async () => {
+    // `x-gzip` is gzip under its legacy name; refusing `gzip` must not hide it.
+    const server = utils.http({ gzip: true });
+
+    try {
+      const res = await server.send("GET", "/", { headers: { "Accept-Encoding": "gzip;q=0, x-gzip" } });
+
+      assert.equal(res.status, 200);
+      assert.equal(res.headers.get("content-encoding"), "gzip");
+    } finally {
+      server.close();
+    }
+  });
+});
