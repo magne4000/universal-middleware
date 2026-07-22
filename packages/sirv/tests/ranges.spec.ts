@@ -151,6 +151,23 @@ describe("ranges :: parsing", () => {
       server.close();
     }
   });
+
+  test("should ignore a backwards range and serve the full file", async () => {
+    const server = utils.http();
+
+    try {
+      const file = await utils.lookup("bundle.67329.js", "utf8");
+      // `bytes=5-2` is well-formed but last < first: RFC 9110 §14.2 ignores it,
+      // as opposed to `bytes=1000-` past EOF which is genuinely unsatisfiable (416).
+      const res = await utils.sendRaw(server.address, "GET", FILE, { Range: "bytes=5-2" });
+
+      assert.equal(res.status, 200);
+      assert.equal(res.headers["content-length"], String(file.size));
+      assert.equal(res.headers["content-range"], undefined);
+    } finally {
+      server.close();
+    }
+  });
 });
 
 describe("ranges :: advertising", () => {

@@ -171,7 +171,9 @@ function parseRange(header: string, size: number): { start: number; end: number 
     end = rawEnd === "" ? size - 1 : Math.min(Number.parseInt(rawEnd, 10), size - 1);
   }
 
-  return start > end ? "unsatisfiable" : { start, end };
+  if (start >= size) return "unsatisfiable"; // nothing to send past EOF → 416
+  if (start > end) return undefined; // backwards range (e.g. bytes=5-2) → ignore, serve 200 (RFC 9110 §14.2)
+  return { start, end };
 }
 
 const ENCODING: Record<string, string> = {
@@ -272,25 +274,40 @@ function revalidationHeaders(headers: Record<string, string>): Record<string, st
   return repeated;
 }
 
-/** Whether the client accepts one of `codings`. RFC 9110 §12.5.3: a qvalue of 0 means "not acceptable". */
+/** Whether the client accepts one of `codings`. RFC 9110 §12.5.3: `*` matches any, an explicit coding overrides it, and a qvalue of 0 refuses. */
 function acceptsEncoding(header: string, codings: string[]): boolean {
+  let wildcard: boolean | undefined;
   for (const entry of header.toLowerCase().split(",")) {
     const [coding, ...params] = entry.split(";");
-    if (!codings.includes(coding.trim())) continue;
+    const name = coding.trim();
+    if (name !== "*" && !codings.includes(name)) continue;
 
+    // A malformed or absent qvalue defaults to acceptable rather than refusing.
+    let acceptable = true;
     for (const param of params) {
       const [key, value] = param.split("=");
-      if (key.trim() === "q") return Number.parseFloat(value) > 0;
+      if (key.trim() === "q") acceptable = !(Number.parseFloat(value) <= 0);
     }
-    return true;
+
+    if (name !== "*") return acceptable;
+    wildcard = acceptable;
   }
-  return false;
+  return wildcard ?? false;
 }
 
 export default function serveStatic(dir?: string, opts: ServeOptions = {}): UniversalMiddleware {
   dir = resolve(dir || ".");
   // Resolved too, so that a symlinked root does not reject every file under it.
-  const realDir = fs.realpathSync(dir);
+  let realDir: string;
+  try {
+    realDir = fs.realpathSync(dir);
+  } catch (err) {
+    // Dev mode may be wired up before a watch/lazy build has created `dir`; defer
+    // to the per-request lookup, which 404s until it appears. Production still scans
+    // eagerly below, so a missing dir there stays an error.
+    if (!opts.dev) throw err;
+    realDir = dir;
+  }
 
   const isNotFound: OnNoMatch | undefined = opts.onNoMatch;
   const setHeaders: SetHeadersFunction = opts.setHeaders || noop;

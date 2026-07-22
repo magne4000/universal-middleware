@@ -53,7 +53,7 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Server
   // Node discards a HEAD body at the wire, and an endless one (SSE, a proxied
   // stream) would keep the response from ever finishing. The headers still
   // describe what a GET would have sent.
-  if (nodeResponse.req.method === "HEAD") {
+  if (nodeResponse.req?.method === "HEAD") {
     body?.destroy();
     nodeResponse.end();
     return;
@@ -72,9 +72,15 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Server
 
 // A client vanishing mid-response is routine; every other send failure is a real
 // bug worth surfacing rather than swallowing.
+const CLIENT_GONE_CODES = new Set([
+  "ECONNRESET",
+  "EPIPE",
+  "ERR_STREAM_PREMATURE_CLOSE",
+  "ERR_STREAM_DESTROYED",
+  "ABORT_ERR",
+]);
 function isClientGone(error: unknown): boolean {
-  const code = (error as NodeJS.ErrnoException | undefined)?.code;
-  return code === "ECONNRESET" || code === "EPIPE" || code === "ERR_STREAM_PREMATURE_CLOSE";
+  return CLIENT_GONE_CODES.has((error as NodeJS.ErrnoException | undefined)?.code ?? "");
 }
 
 function getFullUrl(pathnameOrFull: string, req: IncomingMessage): string {
@@ -82,7 +88,9 @@ function getFullUrl(pathnameOrFull: string, req: IncomingMessage): string {
     return new URL(pathnameOrFull).href;
   } catch {
     // Without the opt-in, any client could set the header and point the redirect
-    // at a host of its choosing.
+    // at a host of its choosing. `responseAdapter` cannot see `createRequestAdapter`'s
+    // `trustProxy` option, so redirects honor only the `TRUST_PROXY` env var — set it
+    // to keep request.url and redirect origins consistent behind a proxy.
     const trustProxy = trustsProxy();
     const protocol =
       (trustProxy && forwardedValue(req.headers, "proto")) ||

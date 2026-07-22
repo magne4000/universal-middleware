@@ -23,6 +23,10 @@ describe("types", () => {
   test("should throw error if `dir` is not found", () => {
     assert.throws(() => sirv("foobar"), /ENOENT/);
   });
+
+  test("should not throw for a missing `dir` in dev mode (build output may appear later)", () => {
+    assert.typeOf(sirv("foobar", { dev: true }), "function");
+  });
 });
 
 describe("basics", () => {

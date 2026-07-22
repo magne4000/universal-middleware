@@ -22,38 +22,27 @@ function fakeRes(): Any {
 }
 
 describe("createRequestAdapter — X-Forwarded-* resolution", () => {
-  // Proxies *append* to the forwarded headers, so the leftmost value is the one
-  // the client sent and the rightmost is the one the trusted proxy contributed.
-  // Reading left-to-right lets a client dictate the origin of `request.url`.
-  it("resolves X-Forwarded-Host from the trusted hop, not the client-supplied value", () => {
+  // For host/proto, `trustProxy` follows Express's `trust proxy`: the first value
+  // is the client-facing original, and the operator's proxy is trusted to set it
+  // (overwriting any client-supplied value). Later entries are inner hops.
+  it("reads the first X-Forwarded-Host — the public host, not an inner hop", () => {
     const adapter = createRequestAdapter({ trustProxy: true });
     const request = adapter(
-      fakeReq({
-        host: "real.example",
-        // "evil.test" was spoofed by the client; "real.example" was appended by
-        // the proxy we actually trust.
-        "x-forwarded-host": "evil.test, real.example",
-      }),
+      fakeReq({ host: "internal", "x-forwarded-host": "public.example, internal-lb:8080" }),
       fakeRes(),
     );
 
-    expect(new URL(request.url).host).toBe("real.example");
+    expect(new URL(request.url).host).toBe("public.example");
   });
 
-  it("resolves X-Forwarded-Proto from the trusted hop, not the client-supplied value", () => {
+  it("reads the first X-Forwarded-Proto — the client-facing scheme", () => {
     const adapter = createRequestAdapter({ trustProxy: true });
-    const request = adapter(
-      fakeReq({
-        host: "real.example",
-        "x-forwarded-proto": "https, http",
-      }),
-      fakeRes(),
-    );
+    const request = adapter(fakeReq({ host: "real.example", "x-forwarded-proto": "https, http" }), fakeRes());
 
-    expect(new URL(request.url).protocol).toBe("http:");
+    expect(new URL(request.url).protocol).toBe("https:");
   });
 
-  it("still honors a single forwarded value from the proxy", () => {
+  it("honors a single forwarded value from the proxy", () => {
     const adapter = createRequestAdapter({ trustProxy: true });
     const request = adapter(
       fakeReq({ host: "internal:8080", "x-forwarded-host": "public.example", "x-forwarded-proto": "https" }),
@@ -80,12 +69,12 @@ describe("createRequestAdapter — Forwarded (RFC 7239) resolution", () => {
     expect(request.url).toBe("https://public.example/p");
   });
 
-  it("reads the nearest (rightmost) element when the chain has several", () => {
+  it("reads the first element — the public host — when the chain has several", () => {
     const request = adapt({
       host: "internal",
-      forwarded: "host=evil.test;proto=http, host=real.example;proto=https",
+      forwarded: "host=public.example;proto=https, host=internal-lb:8080;proto=http",
     });
-    expect(request.url).toBe("https://real.example/p");
+    expect(request.url).toBe("https://public.example/p");
   });
 
   it("treats parameter names case-insensitively", () => {
@@ -94,7 +83,7 @@ describe("createRequestAdapter — Forwarded (RFC 7239) resolution", () => {
   });
 
   it("does not split on a comma inside a quoted value", () => {
-    // A quoted IPv6 `for` in the nearest element must not be read as two elements.
+    // A quoted IPv6 `for` in the first element must not be read as two elements.
     const request = adapt({ host: "internal", forwarded: 'for="[2001:db8::1]:4711";proto=https;host=public.example' });
     expect(request.url).toBe("https://public.example/p");
   });
@@ -104,20 +93,32 @@ describe("createRequestAdapter — Forwarded (RFC 7239) resolution", () => {
     expect(request.url).toBe("https://public.example:8443/p");
   });
 
-  it("falls back to the connection when the nearest element omits the param", () => {
-    // The nearest proxy set only `for`, so proto/host come from the socket and Host.
+  it("falls back to the connection when the first element omits the param", () => {
+    // Only `for` was set, so proto/host come from the socket and Host.
     const request = adapt({ host: "real.example", forwarded: "for=192.0.2.60" });
     expect(request.url).toBe("http://real.example/p");
   });
 
-  it("takes precedence over X-Forwarded-* and does not mix the two", () => {
+  it("only fills params that X-Forwarded-* leaves out, so a passed-through Forwarded cannot override the proxy", () => {
+    // The proxy set X-Forwarded-Host/Proto; a client `Forwarded` slipped through
+    // but must not win — X-Forwarded-* is authoritative per param.
     const request = adapt({
       host: "internal",
-      forwarded: "proto=https;host=from-forwarded.example",
-      "x-forwarded-host": "from-legacy.example",
-      "x-forwarded-proto": "http",
+      forwarded: "proto=https;host=evil.example",
+      "x-forwarded-host": "public.example",
+      "x-forwarded-proto": "https",
     });
-    expect(request.url).toBe("https://from-forwarded.example/p");
+    expect(request.url).toBe("https://public.example/p");
+  });
+
+  it("fills a param X-Forwarded-* omits", () => {
+    // X-Forwarded-Proto present, X-Forwarded-Host absent: host comes from Forwarded.
+    const request = adapt({
+      host: "internal",
+      forwarded: "host=public.example",
+      "x-forwarded-proto": "https",
+    });
+    expect(request.url).toBe("https://public.example/p");
   });
 
   it("is ignored entirely when trustProxy is off", () => {

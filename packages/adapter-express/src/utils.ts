@@ -1,3 +1,4 @@
+import { EventEmitter } from "node:events";
 import { type IncomingMessage, type OutgoingHttpHeader, type OutgoingHttpHeaders, ServerResponse } from "node:http";
 import { PassThrough, Readable } from "node:stream";
 import type { RuntimeAdapterTarget } from "@universal-middleware/core";
@@ -117,9 +118,11 @@ export function createIncomingMessage(request: Request): IncomingMessage {
     httpVersionMajor: 1,
     httpVersionMinor: 1,
     complete: !request.body,
-    // `readable` is load-bearing: `on-finished`, which body parsers consult before
-    // reading, treats a non-readable socket as already finished and skips the body.
-    socket: { encrypted: url.protocol === "https:", readable: true },
+    // A real EventEmitter, not a bare object: `on-finished` (which body parsers
+    // consult) attaches an `error`/`close` listener to the socket on the drain
+    // path, so a plain stub throws there. `readable` is load-bearing too — a
+    // non-readable socket reads as already finished and the body is skipped.
+    socket: Object.assign(new EventEmitter(), { encrypted: url.protocol === "https:", readable: true }),
   }) as unknown as IncomingMessage;
 
   message.once("end", () => {
