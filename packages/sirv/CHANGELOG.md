@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.1.27
+
+### Patch Changes
+
+- 5421dcd: fix(sirv): correct range, encoding, and dev-mode edge cases
+
+  A backwards range (`bytes=5-2`) is ignored and the full file served (RFC 9110
+  §14.2) instead of answering 416, which is now reserved for ranges past EOF.
+  `Accept-Encoding` negotiation honors the `*` wildcard (an explicit coding still
+  overrides it) and treats a valueless `q` as acceptable. And a missing directory
+  in `dev` mode no longer throws at construction, so a watch/lazy build that
+  produces the directory later can start.
+
+- 0b3434e: fix(sirv): honor `q=0` in `Accept-Encoding` as a refusal
+- 4335388: fix(sirv): apply the dotfile policy in `dev` mode and contain symlinks
+- 1a1efa6: fix(sirv): send the requested byte range instead of the whole file
+- ba7c8a6: fix(sirv): honor `If-Modified-Since` and answer 304 with its validators
+
 ## 0.1.26
 
 ### Patch Changes
