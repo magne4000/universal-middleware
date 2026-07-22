@@ -15,8 +15,8 @@
   "repository": "https://github.com/magne4000/universal-middleware",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsup",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -27,7 +27,7 @@
     "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "rimraf": "catalog:",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "sideEffects": false,

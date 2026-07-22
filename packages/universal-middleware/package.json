@@ -108,7 +108,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && tsup",
+    "build": "tsdown",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
@@ -137,7 +137,7 @@
     "esbuild": "^0.28.1",
     "rimraf": "catalog:",
     "rollup": "^4.62.2",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

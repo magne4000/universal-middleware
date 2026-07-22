@@ -101,7 +101,7 @@ packages/
 ├── adapter-*/              # Framework adapters (express, hono, fastify, h3, etc.)
 │   ├── src/               # TypeScript source
 │   ├── test/              # Vitest tests
-│   ├── tsup.config.ts     # Build configuration
+│   ├── tsdown.config.ts   # Build configuration
 │   └── vitest.config.ts   # Test configuration
 ├── compress/              # Compression middleware
 ├── sirv/                  # Static file serving middleware
@@ -125,7 +125,7 @@ docs/                     # VitePress documentation site
 ### Key Configuration Files
 
 **Build Configuration:**
-- Each package uses `tsup` for building (config in `tsup.config.ts`)
+- Each package uses `tsdown` (Rolldown-based) for building (config in `tsdown.config.ts`)
 - Target: ES2022 for adapters, Node 20 for core/express/fastify
 - Output: ESM format to `dist/` directory
 - Type definitions generated automatically
@@ -133,7 +133,7 @@ docs/                     # VitePress documentation site
 **TypeScript:**
 - Base config: `tsconfig.json` (strict mode, ESNext modules, bundler resolution)
 - Each package extends base config with `{ "extends": "../../tsconfig.json" }`
-- No emit from tsconfig - build handled by tsup
+- No emit from tsconfig - build handled by tsdown
 
 **Linting (Biome):**
 - Config: `biome.json`
@@ -250,7 +250,7 @@ Each adapter package (`adapter-*`) converts the universal middleware format to f
 
 ### Creating New Packages
 - Follow existing adapter structure (see `packages/adapter-hono/` as example)
-- Include: `package.json`, `tsconfig.json`, `tsup.config.ts`, `vitest.config.ts`
+- Include: `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
 - Add to `vitest.workspace.ts` if includes tests
 - Add to `pnpm-workspace.yaml` packages list
 

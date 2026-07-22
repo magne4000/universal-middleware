@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, join, parse, posix, resolve } from "node:path";
+import { dirname, join, parse, posix, relative, resolve } from "node:path";
 import { packageUp } from "package-up";
 import type { UnpluginFactory } from "unplugin";
 
@@ -468,6 +468,12 @@ export async function readAndEditPackageJson(reports: Report[], options?: Option
 
   const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
 
+  // `out`/`dts` may be absolute (rolldown passes an absolute output `dir`) or
+  // relative to the package (rollup/esbuild). Normalize both to a package-root
+  // relative specifier so the generated `exports` are portable.
+  const packageJsonDir = dirname(packageJsonPath);
+  const toSpecifier = (p: string) => `./${posix.normalize(relative(packageJsonDir, resolve(p)).replaceAll("\\", "/"))}`;
+
   if (options?.externalDependencies === true) {
     packageJson.dependencies ??= {};
     for (const external of maybeExternals) {
@@ -480,9 +486,9 @@ export async function readAndEditPackageJson(reports: Report[], options?: Option
   for (const report of reports) {
     // No CJS support
     packageJson.exports[report.exports] = {
-      types: report.dts ? `./${report.dts}` : undefined,
-      import: `./${report.out}`,
-      default: `./${report.out}`,
+      types: report.dts ? toSpecifier(report.dts) : undefined,
+      import: toSpecifier(report.out),
+      default: toSpecifier(report.out),
     };
   }
 
