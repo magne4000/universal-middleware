@@ -106,7 +106,7 @@ function stripHonoCache(response: Response): Response {
       // from it directly, bypassing response.body. Deleting it forces node-server
       // to read response.body normally, which is required for stream cancellation
       // to propagate when the client disconnects.
-      // biome-ignore lint/performance/noDelete: intentional cache bypass
+      // biome-ignore lint/suspicious/noExplicitAny: intentional cache bypass
       delete (response as any)[sym];
     }
   }

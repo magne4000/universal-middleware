@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: tests */
 import { type ChildProcess, spawn } from "node:child_process";
 import mri from "mri";
 import type { TestOptions } from "vitest";
