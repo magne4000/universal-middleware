@@ -20,7 +20,8 @@
     "@types/node": "catalog:",
     "file-type": "^22.0.1",
     "turbo": "^2.10.8",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "unrun": "^0.3.1"
   },
   "engines": {
     "node": ">=22.0.0"
