@@ -151,10 +151,14 @@ export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
   try {
     params = honoContext.req.param();
   } catch {
-    // Retrieve Cloudflare Pages potential params
-    if (ctx) {
-      params = (ctx as { params?: Record<string, string> }).params ?? undefined;
-    }
+    params = undefined;
+  }
+  // Retrieve Cloudflare Pages potential params
+  if (!params || Object.keys(params).length === 0) {
+    params =
+      (ctx as { params?: Record<string, string> } | undefined)?.params ??
+      honoContext.env?.eventContext?.params ??
+      undefined;
   }
   return getAdapterRuntime(
     "hono",
