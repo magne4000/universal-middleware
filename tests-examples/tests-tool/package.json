@@ -55,7 +55,7 @@
     "elysia": "catalog:",
     "express": "catalog:",
     "fastify": "catalog:",
-    "fastify-raw-body": "^5.0.0",
+    "fastify-raw-body": "^6.0.1",
     "got": "^15.1.0",
     "h3": "catalog:",
     "hono": "catalog:",

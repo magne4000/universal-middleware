@@ -24,7 +24,7 @@
   "dependencies": {
     "@universal-middleware/core": "workspace:^",
     "@universal-middleware/node": "workspace:^",
-    "fastify-raw-body": "^5"
+    "fastify-raw-body": "^6.0.1"
   },
   "devDependencies": {
     "@fastify/helmet": "^13.1.1",
