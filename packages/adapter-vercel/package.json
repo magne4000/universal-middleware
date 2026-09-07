@@ -72,7 +72,7 @@
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "vercel": "^59.10.0",
+    "vercel": "^59.11.2",
     "vite": "catalog:",
     "vitest": "catalog:"
   },
