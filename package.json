@@ -16,7 +16,7 @@
   "author": "",
   "devDependencies": {
     "@biomejs/biome": "^2.5.12",
-    "@changesets/cli": "^2.31.1",
+    "@changesets/cli": "^3.0.2",
     "@types/node": "catalog:",
     "file-type": "^22.0.2",
     "turbo": "^2.10.12",
