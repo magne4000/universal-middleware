@@ -15,10 +15,10 @@
   "keywords": [],
   "author": "",
   "devDependencies": {
-    "@biomejs/biome": "^2.5.12",
+    "@biomejs/biome": "^2.5.13",
     "@changesets/cli": "^2.31.1",
     "@types/node": "catalog:",
-    "file-type": "^22.0.2",
+    "file-type": "^22.1.0",
     "turbo": "^2.10.12",
     "typescript": "catalog:",
     "unrun": "^0.3.1"
