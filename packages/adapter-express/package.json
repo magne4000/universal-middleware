@@ -35,7 +35,7 @@
     "@universal-middleware/tests": "workspace:*",
     "@universal-middleware/tsdown-config": "workspace:*",
     "express": "catalog:",
-    "express4": "npm:express@^4.22.2",
+    "express4": "npm:express@^4.22.3",
     "helmet": "^8.3.0",
     "rimraf": "catalog:",
     "tsdown": "catalog:",
