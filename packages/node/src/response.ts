@@ -61,6 +61,14 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Server
 
   if (body) {
     const { pipeline } = await import("node:stream/promises");
+    // The client left before the Response was ready: `pipeline` would throw
+    // without destroying `body`, leaving a Web stream uncancelled.
+    if (nodeResponse.destroyed) {
+      // A failing cleanup would otherwise be an unhandled `error` event.
+      body.on("error", console.error);
+      body.destroy();
+      return;
+    }
     await pipeline(body, nodeResponse).catch((error) => {
       if (!isClientGone(error)) console.error(error);
     });

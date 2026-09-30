@@ -83,4 +83,44 @@ describe("sendResponse — failures while sending", () => {
       stop = true;
     }
   });
+
+  it("cancels the body, quietly, when the client left before the response was ready", async () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    let resolveCancelled!: () => void;
+    const cancelled = new Promise<void>((resolve) => {
+      resolveCancelled = resolve;
+    });
+    let resolveReached!: () => void;
+    const reached = new Promise<void>((resolve) => {
+      resolveReached = resolve;
+    });
+
+    const port = serve(async (request) => {
+      // Produce the Response only once the client is gone.
+      resolveReached();
+      await new Promise((resolve) => request.signal.addEventListener("abort", resolve, { once: true }));
+      return new Response(
+        new ReadableStream<Uint8Array>(
+          {
+            pull(controller) {
+              controller.enqueue(new Uint8Array(16));
+            },
+            cancel: resolveCancelled,
+          },
+          { highWaterMark: 0 },
+        ),
+      );
+    });
+
+    const ctrl = new AbortController();
+    const pending = fetch(`http://localhost:${port}/`, { signal: ctrl.signal }).catch(() => undefined);
+    await reached;
+    ctrl.abort();
+    await pending;
+
+    await expect(
+      Promise.race([cancelled.then(() => "cancelled"), new Promise((r) => setTimeout(() => r("timeout"), 1000))]),
+    ).resolves.toBe("cancelled");
+    expect(consoleError).not.toHaveBeenCalled();
+  });
 });
