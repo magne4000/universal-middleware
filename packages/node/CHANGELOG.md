@@ -1,5 +1,11 @@
 # @universal-middleware/node
 
+## 0.2.3
+
+### Patch Changes
+
+- d763a15: fix(node): cancel the body instead of logging when the client left before the response was sent
+
 ## 0.2.2
 
 ### Patch Changes
