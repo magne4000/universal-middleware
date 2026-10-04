@@ -110,20 +110,20 @@ function getFullUrl(pathnameOrFull: string, req: IncomingMessage): string {
 }
 
 export function responseAdapter(nodeResponse: ServerResponse, bodyInit?: BodyInit | null): Response {
-  // https://developer.mozilla.org/en-US/docs/Web/API/Response/redirect_static#status
+  const headers = nodeHeadersToWeb(nodeResponse.getHeaders());
+  // Not Response.redirect(): its headers are immutable and keep only Location
   if ([301, 302, 303, 307, 308].includes(nodeResponse.statusCode) && nodeResponse.req) {
-    const location = nodeResponse.getHeader("location") as string | undefined;
+    const location = headers.get("location");
     if (location) {
       // Convert pathname to full URL
-      const fullUrl = getFullUrl(location, nodeResponse.req as IncomingMessage);
-      return Response.redirect(fullUrl, nodeResponse.statusCode);
+      headers.set("location", getFullUrl(location, nodeResponse.req));
     }
   }
 
   return new Response([204, 304].includes(nodeResponse.statusCode) ? null : bodyInit, {
     status: nodeResponse.statusCode,
     statusText: nodeResponse.statusMessage,
-    headers: nodeHeadersToWeb(nodeResponse.getHeaders()),
+    headers,
   });
 }
 
