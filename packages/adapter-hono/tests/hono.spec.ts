@@ -1,5 +1,8 @@
+import { enhance } from "@universal-middleware/core";
 import { type Run, runTests } from "@universal-middleware/tests";
+import { Hono } from "hono";
 import * as vitest from "vitest";
+import { apply, createHandler } from "../src/index.js";
 
 const port = 3050;
 
@@ -73,4 +76,28 @@ runTests(runs, {
       vitest.expect(response.headers.has("x-xss-protection")).toBe(true);
     }
   },
+});
+
+vitest.describe("context", () => {
+  vitest.it("does not leak into the next request through a shared env", async () => {
+    const auth = enhance(
+      (request: Request, context: Universal.Context) => {
+        const user = request.headers.get("x-user");
+        if (user) return { ...context, user };
+      },
+      { name: "auth" },
+    );
+    const app = new Hono();
+    apply(app, [auth]);
+    app.get(
+      "/me",
+      createHandler(() => (_request: Request, context: Universal.Context) => new Response(String(context.user)))(),
+    );
+
+    // Workers, Pages and Bun pass the same env object to every request
+    const env = {};
+    await app.fetch(new Request("http://localhost/me", { headers: { "x-user": "alice" } }), env);
+    const response = await app.fetch(new Request("http://localhost/me"), env);
+    vitest.expect(await response.text()).toBe("undefined");
+  });
 });

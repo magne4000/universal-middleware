@@ -110,8 +110,8 @@ export default createHandler(() => wrapped)();
 // functions/index.ts
 import { getContext } from "@universal-middleware/cloudflare";
 
-export const onRequest = (request, env, ctx) => {
-  const universalCtx = getContext<{ hello: string }>(env);
+export const onRequest = (context) => {
+  const universalCtx = getContext<{ hello: string }>(context);
   return new Response(`Hello ${universalCtx.hello}`);
 };
 

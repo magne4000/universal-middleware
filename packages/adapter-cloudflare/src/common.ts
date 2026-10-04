@@ -15,19 +15,12 @@ import type {
 import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 
 export type CloudflareHandler<In extends Universal.Context> = {
-  fetch: UniversalFn<
-    UniversalHandler<In>,
-    ExportedHandlerFetchHandler<{
-      [contextSymbol]: In;
-    }>
-  >;
+  fetch: UniversalFn<UniversalHandler<In>, ExportedHandlerFetchHandler>;
 };
 
 export type CloudflarePagesFunction<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
   UniversalMiddleware<In, Out>,
-  PagesFunction<{
-    [contextSymbol]: In;
-  }>
+  PagesFunction<unknown, string, { [contextSymbol]?: In }>
 >;
 
 /**
@@ -41,7 +34,8 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
 
     return {
       fetch: bindUniversal(handler, async function universalHandlerCloudflare(request, env, ctx) {
-        const universalContext = initContext<InContext>(env);
+        // A new context per request: env is shared across requests
+        const universalContext = {} as InContext;
         const response: Response | undefined = await this[universalSymbol](
           request as unknown as Request,
           universalContext,
@@ -80,7 +74,8 @@ export function createPagesFunction<
     const middleware = middlewareFactory(...args);
 
     return bindUniversal(middleware, async function universalPagesFunctionCloudflare(context) {
-      const universalContext = initContext<InContext>(context.env);
+      // context.data is per request (env is shared across requests), and Pages functions share it
+      const universalContext = initContext<InContext>(context.data);
       const response = await this[universalSymbol](
         context.request as unknown as Request,
         universalContext,
@@ -98,7 +93,7 @@ export function createPagesFunction<
         }
         // Update context
         // biome-ignore lint/suspicious/noExplicitAny: ignored
-        setContext(context.env, response as any);
+        setContext(context.data, response as any);
         return await context.next();
       }
 
@@ -107,24 +102,25 @@ export function createPagesFunction<
   };
 }
 
-function initContext<Context extends Universal.Context = Universal.Context>(env: {
+function initContext<Context extends Universal.Context = Universal.Context>(data: {
   [contextSymbol]?: Context;
 }): Context {
-  env[contextSymbol] ??= {} as Context;
-  return env[contextSymbol];
+  data[contextSymbol] ??= {} as Context;
+  return data[contextSymbol];
 }
 
-export function getContext<Context extends Universal.Context = Universal.Context>(env: {
-  [contextSymbol]: Context;
-}): Context {
-  return env[contextSymbol] as Context;
+/**
+ * The Universal context of a Cloudflare Pages request, as set by the functions before this one
+ */
+export function getContext<Context extends Universal.Context = Universal.Context>(context: { data: object }): Context {
+  return (context.data as { [contextSymbol]?: Context })[contextSymbol] as Context;
 }
 
 function setContext<Context extends Universal.Context = Universal.Context>(
-  env: { [contextSymbol]?: Context },
+  data: { [contextSymbol]?: Context },
   value: Context,
 ): void {
-  env[contextSymbol] = value;
+  data[contextSymbol] = value;
 }
 
 export function getRuntime(env: unknown, ctx: ExecutionContext): RuntimeAdapter;

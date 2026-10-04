@@ -10,7 +10,6 @@ import type { Env, ExecutionContext, Handler, Context as HonoContext, Middleware
 
 interface UniversalEnv {
   Bindings: Env["Bindings"] & {
-    [contextSymbol]?: Universal.Context;
     // biome-ignore lint/suspicious/noExplicitAny: avoid hono/cloudflare-pages typing conflict
     eventContext: any;
   };
@@ -129,20 +128,16 @@ function setContext<Context extends Universal.Context = Universal.Context>(
   value: Context,
 ): void {
   honoContext.set(contextSymbol, value);
-  if (honoContext.env) {
-    honoContext.env[contextSymbol] = value;
-  }
-  if (honoContext.env?.eventContext?.env) {
-    honoContext.env.eventContext.env[contextSymbol] = value;
+  // Not on env: Workers, Pages and Bun share it across requests. Separate Pages functions share eventContext.data, one per request.
+  if (honoContext.env?.eventContext?.data) {
+    honoContext.env.eventContext.data[contextSymbol] = value;
   }
 }
 
 export function getContext<Context extends Universal.Context = Universal.Context>(
   honoContext: HonoContext<UniversalEnv>,
 ): Context {
-  return (honoContext.get(contextSymbol) ??
-    honoContext.env?.[contextSymbol] ??
-    honoContext.env?.eventContext?.env[contextSymbol]) as Context;
+  return (honoContext.get(contextSymbol) ?? honoContext.env?.eventContext?.data?.[contextSymbol]) as Context;
 }
 
 export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
