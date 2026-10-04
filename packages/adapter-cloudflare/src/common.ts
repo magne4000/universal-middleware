@@ -112,10 +112,8 @@ function initContext<Context extends Universal.Context = Universal.Context>(data
 /**
  * The Universal context of a Cloudflare Pages request, as set by the functions before this one
  */
-export function getContext<Context extends Universal.Context = Universal.Context>(context: {
-  data: { [contextSymbol]?: Context };
-}): Context {
-  return context.data[contextSymbol] as Context;
+export function getContext<Context extends Universal.Context = Universal.Context>(context: { data: object }): Context {
+  return (context.data as { [contextSymbol]?: Context })[contextSymbol] as Context;
 }
 
 function setContext<Context extends Universal.Context = Universal.Context>(

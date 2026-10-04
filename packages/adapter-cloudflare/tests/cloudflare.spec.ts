@@ -69,13 +69,8 @@ vitest.describe("context", () => {
 
     // Workers pass the same env object to every request
     const env = {};
-    type Fetch = typeof worker.fetch;
     const fetch = (init?: RequestInit) =>
-      worker.fetch(
-        new Request("http://localhost/me", init) as unknown as Parameters<Fetch>[0],
-        env,
-        ctx as unknown as Parameters<Fetch>[2],
-      );
+      worker.fetch(new Request("http://localhost/me", init) as never, env, ctx as never);
     await fetch({ headers: { "x-user": "alice" } });
     vitest.expect(await (await fetch()).text()).toBe("undefined");
   });
