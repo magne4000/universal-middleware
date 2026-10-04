@@ -1,5 +1,11 @@
 # @universal-middleware/node
 
+## 0.2.4
+
+### Patch Changes
+
+- 31deb77: fix(node): keep a redirect's headers, and keep them mutable
+
 ## 0.2.3
 
 ### Patch Changes
