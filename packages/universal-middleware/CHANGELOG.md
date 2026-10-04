@@ -1,5 +1,14 @@
 ## [0.5.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.4...universal-middleware-v0.5.5) (2024-12-09)
 
+## 0.6.30
+
+### Patch Changes
+
+- Updated dependencies [4b0223c]
+- Updated dependencies [4b0223c]
+  - @universal-middleware/cloudflare@0.5.0
+  - @universal-middleware/hono@0.4.22
+
 ## 0.6.29
 
 ### Patch Changes
