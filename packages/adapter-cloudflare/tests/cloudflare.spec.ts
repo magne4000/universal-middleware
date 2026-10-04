@@ -1,5 +1,7 @@
+import { enhance } from "@universal-middleware/core";
 import { type Run, runTests } from "@universal-middleware/tests";
 import * as vitest from "vitest";
+import { apply } from "../src/index.js";
 
 const port = 3600;
 const delay = process.env.CI ? 5000 : 1000;
@@ -46,4 +48,35 @@ runTests(runs, {
   vitest,
   retry: 3,
   concurrent: !process.env.CI,
+});
+
+vitest.describe("context", () => {
+  vitest.it("does not leak into the next request through a shared env", async () => {
+    const auth = enhance(
+      (request: Request, context: Universal.Context) => {
+        const user = request.headers.get("x-user");
+        if (user) context.user = user;
+      },
+      { name: "auth" },
+    );
+    const me = enhance((_request: Request, context: Universal.Context) => new Response(String(context.user)), {
+      name: "me",
+      path: "/me",
+      method: "GET",
+    });
+    const worker = apply([auth, me]);
+    const ctx = { waitUntil() {}, passThroughOnException() {} };
+
+    // Workers pass the same env object to every request
+    const env = {};
+    type Fetch = typeof worker.fetch;
+    const fetch = (init?: RequestInit) =>
+      worker.fetch(
+        new Request("http://localhost/me", init) as unknown as Parameters<Fetch>[0],
+        env,
+        ctx as unknown as Parameters<Fetch>[2],
+      );
+    await fetch({ headers: { "x-user": "alice" } });
+    vitest.expect(await (await fetch()).text()).toBe("undefined");
+  });
 });
