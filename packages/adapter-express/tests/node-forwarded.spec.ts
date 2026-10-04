@@ -199,3 +199,21 @@ describe("responseAdapter — redirect Location must not be attacker-controlled"
     expect(response.headers.get("location")).toBe("https://elsewhere.example/there");
   });
 });
+
+describe("responseAdapter — redirect keeps its headers", () => {
+  it("keeps every header and leaves them mutable", () => {
+    const incoming = { headers: { host: "real.example" }, socket: {} } as unknown as IncomingMessage;
+
+    const res = new ServerResponse(incoming);
+    res.statusCode = 301;
+    res.setHeader("set-cookie", "a=1");
+    res.setHeader("location", "/b");
+
+    const response = responseAdapter(res);
+    response.headers.set("x-a", "1");
+
+    expect(response.status).toBe(301);
+    expect(response.headers.getSetCookie()).toEqual(["a=1"]);
+    expect(response.headers.get("x-a")).toBe("1");
+  });
+});
