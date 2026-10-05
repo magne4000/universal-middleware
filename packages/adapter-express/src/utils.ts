@@ -44,11 +44,10 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
       (runtime && "req" in runtime && runtime.req) || (request as any).runtime?.node?.req;
     const req = realReq ?? createIncomingMessage(request);
     // The app's routes read the caller's context with getContext(req); srvx keeps a middleware's context on the request.
-    // Set, not defaulted: one Node request can pass through several apps, and each must see its own caller's context.
-    // biome-ignore lint/suspicious/noExplicitAny: srvx request
-    const callerContext = context ?? (request as any).context;
-    // biome-ignore lint/suspicious/noExplicitAny: decorated req
-    if (callerContext) (req as any)[contextSymbol] = callerContext;
+    // Set on every call, even to nothing: one Node request can pass through several apps, and each sees only its own
+    // caller's context
+    // biome-ignore lint/suspicious/noExplicitAny: srvx request, decorated req
+    (req as any)[contextSymbol] = context ?? (request as any).context;
     const { res, onReadable } = createServerResponse(req);
 
     // A real server wires client disconnect to the request itself; a synthetic req/res does

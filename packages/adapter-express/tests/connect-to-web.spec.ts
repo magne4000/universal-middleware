@@ -403,4 +403,14 @@ describe("connectToWeb: the caller's context reaches the app", () => {
     const res = defined(await connectToWeb(app)(new Request("http://localhost/c"), { user: "bob" }, runtime));
     expect(await res.json()).toEqual({ user: "bob" });
   });
+
+  it("an app called without a context doesn't see the previous caller's", async () => {
+    const app = express();
+    app.get("/c", (req, res) => res.json({ context: getContext(req) ?? null }));
+    const req = createIncomingMessage(new Request("http://localhost/c"));
+    const runtime = { req } as unknown as RuntimeAdapterTarget<unknown>;
+    await connectToWeb(app)(new Request("http://localhost/c"), { user: "alice" }, runtime);
+    const res = defined(await connectToWeb(app)(new Request("http://localhost/c"), undefined, runtime));
+    expect(await res.json()).toEqual({ context: null });
+  });
 });
