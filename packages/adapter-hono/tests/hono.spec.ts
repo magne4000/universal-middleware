@@ -100,4 +100,16 @@ vitest.describe("context", () => {
     const response = await app.fetch(new Request("http://localhost/me"), env);
     vitest.expect(await response.text()).toBe("undefined");
   });
+
+  vitest.it("reads the context srvx keeps on the request", async () => {
+    const app = new Hono();
+    app.get(
+      "/me",
+      createHandler(() => (_request: Request, context: Universal.Context) => new Response(String(context.user)))(),
+    );
+
+    // srvx's middleware sets request.context before Hono runs
+    const request = Object.assign(new Request("http://localhost/me"), { context: { user: "alice" } });
+    vitest.expect(await (await app.fetch(request)).text()).toBe("alice");
+  });
 });
