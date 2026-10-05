@@ -139,7 +139,7 @@ export function getContext<Context extends Universal.Context = Universal.Context
 ): Context {
   return (honoContext.get(contextSymbol) ??
     honoContext.env?.eventContext?.data?.[contextSymbol] ??
-    // srvx keeps a request's context on the request itself
+    // the srvx adapter keeps a request's context on the request itself
     (honoContext.req.raw as Request & { context?: unknown }).context) as Context;
 }
 

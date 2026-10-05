@@ -108,7 +108,7 @@ vitest.describe("context", () => {
       createHandler(() => (_request: Request, context: Universal.Context) => new Response(String(context.user)))(),
     );
 
-    // srvx's middleware sets request.context before Hono runs
+    // as the srvx adapter does for the middlewares it runs before Hono
     const request = Object.assign(new Request("http://localhost/me"), { context: { user: "alice" } });
     vitest.expect(await (await app.fetch(request)).text()).toBe("alice");
   });
