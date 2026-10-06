@@ -9,10 +9,8 @@ import type {
 import {
   attachUniversal,
   bindUniversal,
-  cloneRequest,
   contextSymbol,
   getAdapterRuntime,
-  isBodyInit,
   universalSymbol,
 } from "@universal-middleware/core";
 import { type Context as ElysiaContext, Elysia, type Handler, NotFoundError } from "elysia";
@@ -27,14 +25,18 @@ export type ElysiaMiddleware<In extends Universal.Context, Out extends Universal
   typeof initPlugin
 >;
 
-function cloneRequestWithBody(request: Request, body: unknown) {
-  let bodyInit: BodyInit | undefined;
-  if (isBodyInit(body)) {
-    bodyInit = body;
-  } else if (typeof body === "object" && body !== null) {
-    bodyInit = JSON.stringify(body);
-  }
-  return cloneRequest(request, { body: bodyInit });
+// Elysia parses the body of the routes that use it before any hook runs, consuming the request
+// stream. `captureRequestBody` keeps an unread copy so that universal middlewares and handlers
+// still get the exact bytes, whatever Elysia's parsing makes of them.
+const unparsedBodies = new WeakMap<Request, Request>();
+
+/** Elysia `onParse` hook: remembers the request body without parsing it, so Elysia's own parsing goes on. */
+export function captureRequestBody(request: Request): void {
+  if (request.body) unparsedBodies.set(request, request.clone());
+}
+
+function requestOf(request: Request) {
+  return (unparsedBodies.get(request) ?? request).clone();
 }
 
 /**
@@ -59,7 +61,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
       }
 
       const response: Response | undefined = await this[universalSymbol](
-        cloneRequestWithBody(elysiaContext.request, elysiaContext.body),
+        requestOf(elysiaContext.request),
         context,
         // biome-ignore lint/suspicious/noExplicitAny: ignored
         getRuntime(elysiaContext as any),
@@ -93,7 +95,7 @@ export function createMiddleware<
             middleware,
             async function universalMiddlewareElysia(elysiaContext: typeof elysiaContext1) {
               const response = await this[universalSymbol](
-                cloneRequestWithBody(elysiaContext.request, elysiaContext.body),
+                requestOf(elysiaContext.request),
                 elysiaContext.getContext(),
                 getRuntime(elysiaContext),
               );
