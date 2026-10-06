@@ -167,22 +167,45 @@ function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
   });
 }
 
-/** Re-serializes the body a parser left on `req.body`. It is only serialized once the request body is read. */
+/** Rebuilds the body a parser left on `req.body`. It is only serialized once the request body is read. */
 function parsedBody(req: DecoratedRequest): ReadableStream<Uint8Array> {
   return new ReadableStream(
     {
       pull(controller) {
-        const { body } = req;
-        if (typeof body === "string" || body instanceof Uint8Array) {
-          controller.enqueue(typeof body === "string" ? new TextEncoder().encode(body) : body);
-        } else if (String(req.headers["content-type"]).startsWith("application/x-www-form-urlencoded")) {
-          controller.enqueue(new TextEncoder().encode(new URLSearchParams(body).toString()));
-        } else {
-          controller.enqueue(new TextEncoder().encode(JSON.stringify(body)));
-        }
+        const bytes = serializeParsedBody(req);
+        if (bytes) controller.enqueue(bytes);
         controller.close();
       },
     },
     { highWaterMark: 0 },
   );
+}
+
+/** The bytes of the parsed body, or undefined when it can't be rebuilt faithfully (then the request has no body). */
+function serializeParsedBody(req: DecoratedRequest): Uint8Array | undefined {
+  const { body, headers } = req;
+  // A parser such as `express.json()` sets `{}` even when the request had no body
+  if (headers["transfer-encoding"] === undefined && (headers["content-length"] ?? "0") === "0") return;
+  if (body instanceof Uint8Array) return body;
+
+  const contentType = String(headers["content-type"]).split(";")[0]!.trim().toLowerCase();
+  const encoder = new TextEncoder();
+  if (contentType === "application/json" || contentType.endsWith("+json")) {
+    try {
+      return encoder.encode(JSON.stringify(body));
+    } catch {
+      return; // circular
+    }
+  }
+  if (typeof body === "string") return encoder.encode(body);
+  if (contentType === "application/x-www-form-urlencoded" && body && typeof body === "object") {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(body)) {
+      for (const item of Array.isArray(value) ? value : [value]) {
+        if (typeof item !== "string") return;
+        params.append(key, item);
+      }
+    }
+    return encoder.encode(params.toString());
+  }
 }

@@ -62,4 +62,67 @@ describe("body parsed before a universal middleware", () => {
     expect(res.status).toBe(200);
     expect(seen).toBe(expected);
   });
+
+  async function seenBy(parser: express.RequestHandler, body: string, contentType: string) {
+    let seen: string | undefined;
+    const res = await post(
+      parser,
+      async (request) => {
+        seen = await request.text();
+      },
+      body,
+      contentType,
+    );
+    expect(res.status).toBe(200);
+    return seen;
+  }
+
+  it("gives no body for a multipart body consumed by a parser", async () => {
+    const multipart: express.RequestHandler = (req, _res, next) => {
+      req.on("data", () => {});
+      req.on("end", () => {
+        req.body = { a: "1" };
+        next();
+      });
+    };
+    const body = '--b\r\nContent-Disposition: form-data; name="a"\r\n\r\n1\r\n--b--\r\n';
+    expect(await seenBy(multipart, body, "multipart/form-data; boundary=b")).toBe("");
+  });
+
+  it("gives no body for nested urlencoded values", async () => {
+    const parser = express.urlencoded({ extended: true });
+    expect(await seenBy(parser, "a[b]=1&a[c]=2&d=x&d=y", "application/x-www-form-urlencoded")).toBe("");
+  });
+
+  it("keeps repeated flat urlencoded values", async () => {
+    const parser = express.urlencoded({ extended: false });
+    expect(await seenBy(parser, "d=x&d=y", "application/x-www-form-urlencoded")).toBe("d=x&d=y");
+  });
+
+  it("keeps the JSON encoding of a string body", async () => {
+    expect(await seenBy(express.json({ strict: false }), '"x"', "application/json")).toBe('"x"');
+  });
+
+  it("keeps an empty body empty", async () => {
+    let seen: string | undefined;
+    const app = express();
+    app.use(express.json());
+    apply(app, [
+      async (request: Request) => {
+        seen = await request.text();
+      },
+    ]);
+    app.post("/echo", (_req, res) => res.end("ok"));
+    const s = await new Promise<Server>((resolve) => {
+      const listening = app.listen(0, () => resolve(listening));
+    });
+    server = s;
+    const res = await fetch(`http://localhost:${(s.address() as AddressInfo).port}/echo`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      signal: AbortSignal.timeout(3000),
+    });
+    expect(res.status).toBe(200);
+    expect(seen).toBe("");
+  });
 });
