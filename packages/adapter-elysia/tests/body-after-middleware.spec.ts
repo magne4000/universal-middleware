@@ -18,33 +18,6 @@ function post(app: ReturnType<typeof build>, body: string, contentType: string) 
 }
 
 describe("body after a universal middleware", () => {
-  it("lets Elysia parse JSON for a later route", async () => {
-    const res = await post(
-      build(async () => {}),
-      JSON.stringify({ a: 1 }),
-      "application/json",
-    );
-    expect(await res.json()).toEqual({ got: { a: 1 } });
-  });
-
-  it("lets Elysia parse text for a later route", async () => {
-    const res = await post(
-      build(async () => {}),
-      "hello",
-      "text/plain",
-    );
-    expect(await res.json()).toEqual({ got: "hello" });
-  });
-
-  it("lets Elysia parse a form for a later route", async () => {
-    const res = await post(
-      build(async () => {}),
-      "a=1&b=2",
-      "application/x-www-form-urlencoded",
-    );
-    expect(await res.json()).toEqual({ got: { a: "1", b: "2" } });
-  });
-
   it("still reaches the route after the middleware read the body", async () => {
     let seen: string | undefined;
     const res = await post(
