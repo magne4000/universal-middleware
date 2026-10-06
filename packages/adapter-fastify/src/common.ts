@@ -101,15 +101,8 @@ function getRawRequest(req: FastifyRequest): DecoratedRequest {
       enumerable: true,
     });
   } else {
-    Object.defineProperty(req.raw, "rawBody", {
-      get() {
-        throw new Error(
-          "rawBody not Found. Please install fastify-raw-body plugin: https://github.com/Eomm/fastify-raw-body",
-        );
-      },
-      configurable: true,
-      enumerable: true,
-    });
+    // Fastify already consumed the stream; the node adapter reads the parsed body from here
+    Object.defineProperty(req.raw, "body", { value: req.body, configurable: true, enumerable: true });
   }
 
   return req.raw;
