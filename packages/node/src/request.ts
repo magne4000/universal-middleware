@@ -25,6 +25,9 @@ export interface DecoratedRequest<C extends Universal.Context = Universal.Contex
   socket?: PossiblyEncryptedSocket;
   // biome-ignore lint/suspicious/noExplicitAny: we only care about the field being present
   rawBody?: any;
+  /** Set by a body parser (e.g. `express.json()`) that already consumed the stream */
+  // biome-ignore lint/suspicious/noExplicitAny: whatever the parser produced
+  body?: any;
   originalUrl?: string;
   params?: Record<string, string>;
   [contextSymbol]?: C;
@@ -133,6 +136,11 @@ function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
     return req.rawBody;
   }
 
+  // A body parser already consumed the stream: serve what it parsed.
+  if ((req.readableDidRead || req.readableEnded) && req.body !== undefined) {
+    return parsedBody(req);
+  }
+
   if (!bun && !deno) {
     // Node's `fetch` (undici) accepts a Node `Readable` directly as body;
     // it converts internally with backpressure preserved.
@@ -157,4 +165,24 @@ function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
       req.destroy(reason instanceof Error ? reason : undefined);
     },
   });
+}
+
+/** Re-serializes the body a parser left on `req.body`. It is only serialized once the request body is read. */
+function parsedBody(req: DecoratedRequest): ReadableStream<Uint8Array> {
+  return new ReadableStream(
+    {
+      pull(controller) {
+        const { body } = req;
+        if (typeof body === "string" || body instanceof Uint8Array) {
+          controller.enqueue(typeof body === "string" ? new TextEncoder().encode(body) : body);
+        } else if (String(req.headers["content-type"]).startsWith("application/x-www-form-urlencoded")) {
+          controller.enqueue(new TextEncoder().encode(new URLSearchParams(body).toString()));
+        } else {
+          controller.enqueue(new TextEncoder().encode(JSON.stringify(body)));
+        }
+        controller.close();
+      },
+    },
+    { highWaterMark: 0 },
+  );
 }
