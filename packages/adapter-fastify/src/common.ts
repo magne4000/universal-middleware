@@ -91,7 +91,7 @@ function getHeaders(reply: FastifyReply): Headers {
 }
 
 function getRawRequest(req: FastifyRequest): DecoratedRequest {
-  if (!req.body || "rawBody" in req.raw) return req.raw as DecoratedRequest;
+  if (req.body === undefined || "rawBody" in req.raw) return req.raw as DecoratedRequest;
   if ("rawBody" in req) {
     Object.defineProperty(req.raw, "rawBody", {
       get() {
