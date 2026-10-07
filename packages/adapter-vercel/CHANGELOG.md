@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.4.33
+
+### Patch Changes
+
+- Updated dependencies [10e6e5f]
+- Updated dependencies [6ca1d6d]
+- Updated dependencies [daf1869]
+- Updated dependencies [6add5b5]
+- Updated dependencies [6bb65ff]
+- Updated dependencies [6add5b5]
+  - @universal-middleware/core@0.5.0
+  - @universal-middleware/express@0.4.32
+  - @universal-middleware/node@0.2.5
+  - @universal-middleware/h3@0.4.18
+
 ## 0.4.32
 
 ### Patch Changes

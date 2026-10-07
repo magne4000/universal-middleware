@@ -1,5 +1,15 @@
 # @universal-middleware/node
 
+## 0.2.5
+
+### Patch Changes
+
+- 6add5b5: fix(fastify): a universal middleware no longer breaks the body of the routes after it, and `fastify-raw-body` is not required to read it
+- 6add5b5: fix(express): use the body already parsed by `express.json()` and the like instead of failing on the consumed stream
+- Updated dependencies [10e6e5f]
+- Updated dependencies [6bb65ff]
+  - @universal-middleware/core@0.5.0
+
 ## 0.2.4
 
 ### Patch Changes

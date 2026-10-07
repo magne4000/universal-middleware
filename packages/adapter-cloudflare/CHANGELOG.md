@@ -1,5 +1,13 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/cloudflare-v0.3.2...cloudflare-v0.3.3) (2024-12-09)
 
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies [10e6e5f]
+- Updated dependencies [6bb65ff]
+  - @universal-middleware/core@0.5.0
+
 ## 0.5.0
 
 ### Minor Changes
