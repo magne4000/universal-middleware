@@ -8,19 +8,25 @@ describe("pipeRoute matches the decoded pathname", () => {
       path,
       method: "GET",
     });
-  const router = pipeRoute([
-    route("/dash"),
-    route("/café"),
-    route("/a/b"),
-    route("/users/:id"),
-    route("/hello%20world"),
-    route("/menu/caf%C3%A9"),
-    route("/guard/**"),
-  ]);
-  const run = async (path: string) => {
-    const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
-    return (await router(new Request(`http://localhost${path}`), {}, runtime)) as Response | undefined;
+  const routerFor = (paths: string[]) => {
+    const router = pipeRoute(paths.map(route));
+    return async (path: string) => {
+      const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
+      return (await router(new Request(`http://localhost${path}`), {}, runtime)) as Response | undefined;
+    };
   };
+  const run = routerFor([
+    "/dash",
+    "/café",
+    "/a/b",
+    "/users/:id",
+    "/hello%20world",
+    "/menu/caf%C3%A9",
+    "/guard/**",
+    "/a^b",
+    "/wiki/Foo_%28bar%29",
+    "/star%2Aend",
+  ]);
 
   test("an encoded character matches the route it decodes to", async () => {
     expect((await run("/%64ash"))?.status).toBe(200);
@@ -30,6 +36,25 @@ describe("pipeRoute matches the decoded pathname", () => {
   test("percent-encoded UTF-8 matches in upper and lower case", async () => {
     expect((await run("/caf%C3%A9"))?.status).toBe(200);
     expect((await run("/caf%c3%a9"))?.status).toBe(200);
+  });
+
+  test("a character the URL parser keeps raw but a route pattern encodes still matches", async () => {
+    expect((await run("/a^b"))?.status).toBe(200);
+    expect((await run("/a%5Eb"))?.status).toBe(200);
+  });
+
+  test("an encoded character in a route pattern is a literal character, not pattern syntax", async () => {
+    expect((await run("/wiki/Foo_(bar)"))?.status).toBe(200);
+    expect((await run("/wiki/Foo_%28bar%29"))?.status).toBe(200);
+    expect(await run("/wiki/Foo_bar")).toBeUndefined();
+    expect((await run("/star*end"))?.status).toBe(200);
+    expect(await run("/starXend")).toBeUndefined();
+    expect(await run("/star/a/b/end")).toBeUndefined();
+  });
+
+  test("an encoded control character in a route pattern stays encoded", async () => {
+    const runTab = routerFor(["/tab%09x"]);
+    expect((await runTab("/tab%09x"))?.status).toBe(200);
   });
 
   test("an encoded slash stays encoded and does not match a path with a slash", async () => {

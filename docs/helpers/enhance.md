@@ -16,7 +16,7 @@ const handler = (() => {
 // Enhance a handler with HTTP method and path metadata
 const enhancedHandler = (() => enhance(handler, {
   method: "GET", // Accepts a single method or array of methods: ["GET", "POST", "PATCH"]
-  path: "/",     // Respects rou3 syntax. See https://github.com/unjs/rou3
+  path: "/",     // rou3 v0.12 pattern syntax, close to URLPattern. See https://github.com/h3js/rou3
   
   // The order property is specific to Middleware configuration
   // order: 10,  // Positive values execute AFTER handlers in the middleware chain
