@@ -1,5 +1,12 @@
 # @universal-middleware/node
 
+## 0.2.6
+
+### Patch Changes
+
+- Updated dependencies [0dc053f]
+  - @universal-middleware/core@0.6.0
+
 ## 0.2.5
 
 ### Patch Changes
