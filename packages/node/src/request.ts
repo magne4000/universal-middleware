@@ -208,12 +208,8 @@ function serializeParsedBody(req: DecoratedRequest): Uint8Array | undefined {
   const contentType = String(headers["content-type"]).split(";")[0]!.trim().toLowerCase();
   const encoder = new TextEncoder();
   if (contentType === "application/json" || contentType.endsWith("+json")) {
-    try {
-      // A string under a JSON type is taken as a JSON string ("x"), not as raw JSON text from a text parser
-      return encoder.encode(JSON.stringify(body));
-    } catch {
-      return; // circular
-    }
+    // A string under a JSON type is taken as a JSON string ("x"), not as raw JSON text from a text parser
+    return encoder.encode(JSON.stringify(body));
   }
   if (typeof body === "string") return encoder.encode(body);
   if (contentType === "application/x-www-form-urlencoded" && body && typeof body === "object") {

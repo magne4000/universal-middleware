@@ -104,4 +104,48 @@ describe("body parsed before a universal middleware", () => {
     );
     expect(seen).toBe("");
   });
+
+  it.each([
+    ["urlencoded", express.urlencoded({ extended: true }), "a=1&b=2", "application/x-www-form-urlencoded", "a=1&b=2"],
+    ["text", express.text(), "héllo", "text/plain", "héllo"],
+    ["raw", express.raw(), "raw bytes", "application/octet-stream", "raw bytes"],
+    [
+      "a +json type",
+      express.json({ type: "application/vnd.api+json" }),
+      '{"a":1}',
+      "application/vnd.api+json",
+      '{"a":1}',
+    ],
+    ["an empty JSON body", express.json(), "", "application/json", ""],
+  ])("gives the middleware the body of %s", async (_name, parser, body, contentType, expected) => {
+    let seen: string | undefined;
+    await post(
+      parser,
+      async (request) => {
+        seen = await request.text();
+      },
+      body,
+      contentType,
+    );
+    expect(seen).toBe(expected);
+  });
+
+  it("serializes the parsed body only when a middleware reads it", async () => {
+    let serialized = 0;
+    const parser: express.RequestHandler = (req, _res, next) => {
+      req.on("data", () => {});
+      req.on("end", () => {
+        req.body = {
+          toJSON() {
+            serialized++;
+            return { a: 1 };
+          },
+        };
+        next();
+      });
+    };
+    await post(parser, async () => {}, '{"a":1}', "application/json");
+    // Once, by the route's own `res.json()`; the unread request body adds none
+    expect(serialized).toBe(1);
+  });
 });
