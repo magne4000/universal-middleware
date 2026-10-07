@@ -45,6 +45,18 @@ describe("body after a universal middleware", () => {
     expect(await res.json()).toEqual({ got: { parsed: '{"a":1}' } });
   });
 
+  it("still parses a multipart form for the route after the middleware read it", async () => {
+    let seen: string | undefined;
+    const form = new FormData();
+    form.set("a", "1");
+    const app = build(async (request) => {
+      seen = await request.text();
+    });
+    const res = await app.handle(new Request("http://localhost/echo", { method: "POST", body: form }));
+    expect(seen).toContain('name="a"');
+    expect(await res.json()).toEqual({ got: { a: "1" } });
+  });
+
   it("still reaches the route when the middleware is added with app.use() instead of apply()", async () => {
     let seen: string | undefined;
     const middleware = createMiddleware(() => async (request) => {
@@ -99,15 +111,15 @@ describe("streaming route after a universal middleware", () => {
   });
 });
 
-// Bun's native request has its body locked for the route once `request.body` was read before a copy.
+// Bun's native request: an eager `request.clone()` in `onRequest` used to lock the body the route streams.
 describe.runIf(spawnSync("bun", ["--version"]).status === 0)("on Bun", () => {
-  it("streams the body of a route with parse none after a universal middleware", async () => {
+  it("streams the body of a route with parse none after a universal middleware that reads it", async () => {
     const source = fileURLToPath(new URL("../src/index.ts", import.meta.url));
     const script = `
       import { Elysia } from "elysia";
       import { createMiddleware } from ${JSON.stringify(source)};
       const app = new Elysia()
-        .use(createMiddleware(() => async () => {})())
+        .use(createMiddleware(() => async (request) => { await request.text(); })())
         .post("/stream", ${streamedBytes.toString()}, { parse: "none" })
         .listen(0);
       console.log(app.server.port);
