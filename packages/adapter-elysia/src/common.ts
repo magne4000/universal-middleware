@@ -83,7 +83,7 @@ async function requestOf(request: Request) {
           if (chunk && !chunk.done) controller.enqueue(chunk.value);
           else controller.close();
         },
-        cancel: (reason) => copy?.cancel(reason),
+        cancel: (reason) => void copy?.cancel(reason),
       },
       { highWaterMark: 0 },
     ),

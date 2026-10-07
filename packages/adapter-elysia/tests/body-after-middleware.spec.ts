@@ -122,6 +122,44 @@ describe("streaming route after a universal middleware", () => {
   });
 });
 
+// Above the eager limit the middleware's body is built lazily, from the kept bytes or a copy of the stream.
+describe("a body above the eager limit", () => {
+  const big = (text: string, contentType: string) =>
+    new Request("http://localhost/big", {
+      method: "POST",
+      headers: { "content-type": contentType, "content-length": String(new TextEncoder().encode(text).length) },
+      body: text,
+    });
+
+  it("is seen in full by a middleware and by the route that parses it", async () => {
+    let seen = 0;
+    const app = new Elysia();
+    const middleware: UniversalMiddleware = async (request) => {
+      seen = (await request.text()).length;
+    };
+    apply(app, [middleware]);
+    app.post("/big", (c) => ({ got: (c.body as { a: string }).a.length }));
+    const text = JSON.stringify({ a: "x".repeat(70 * 1024) });
+    const res = await app.handle(big(text, "application/json"));
+    expect(seen).toBe(text.length);
+    expect(await res.json()).toEqual({ got: 70 * 1024 });
+  });
+
+  it("does not hang a middleware that awaits cancel() after a partial read, and the route still streams it all", async () => {
+    const size = 300_000;
+    const app = new Elysia();
+    const middleware: UniversalMiddleware = async (request) => {
+      const reader = (request.body as ReadableStream<Uint8Array>).getReader();
+      await reader.read();
+      await reader.cancel("enough");
+    };
+    apply(app, [middleware]);
+    app.post("/big", streamedBytes, { parse: "none" });
+    const res = await app.handle(big("z".repeat(size), "application/octet-stream"));
+    expect(await res.json()).toEqual({ bytes: size });
+  });
+});
+
 // Bun's native request: an eager `request.clone()` in `onRequest` used to lock the body the route streams.
 describe.runIf(spawnSync("bun", ["--version"]).status === 0)("on Bun", () => {
   it("streams the body of a route with parse none after a universal middleware that reads it", async () => {
