@@ -137,7 +137,10 @@ function setContext<Context extends Universal.Context = Universal.Context>(
 export function getContext<Context extends Universal.Context = Universal.Context>(
   honoContext: HonoContext<UniversalEnv>,
 ): Context {
-  return (honoContext.get(contextSymbol) ?? honoContext.env?.eventContext?.data?.[contextSymbol]) as Context;
+  return (honoContext.get(contextSymbol) ??
+    honoContext.env?.eventContext?.data?.[contextSymbol] ??
+    // the srvx adapter keeps a request's context on the request itself
+    (honoContext.req.raw as Request & { context?: unknown }).context) as Context;
 }
 
 export function getRuntime(honoContext: HonoContext): RuntimeAdapter {
