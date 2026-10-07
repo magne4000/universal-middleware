@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/cloudflare-v0.3.2...cloudflare-v0.3.3) (2024-12-09)
 
+## 0.6.0
+
+### Minor Changes
+
+- 627168a: feat!: routes registered with `apply()` follow rou3 v0.12 through `@universal-middleware/core` 0.5, which aligns them with URLPattern: `*` matches the rest of the path, a bare `**` sets `runtime.params["0"]`, a `-` ends a param name, only one trailing slash is ignored, and a route holds at most one catch-all. See the core 0.5.0 changelog.
+
 ## 0.5.1
 
 ### Patch Changes

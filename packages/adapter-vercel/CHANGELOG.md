@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.34
+
+### Patch Changes
+
+- Updated dependencies [627168a]
+  - @universal-middleware/express@0.5.0
+  - @universal-middleware/h3@0.5.0
+
 ## 0.4.33
 
 ### Patch Changes
