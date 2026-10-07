@@ -73,4 +73,33 @@ describe("body parsed before a universal middleware", () => {
     expect(res.status).toBe(200);
     expect(seen).toBe("");
   });
+
+  it("drops the headers that described the original bytes of a rebuilt body", async () => {
+    let seen: Headers | undefined;
+    await post(
+      express.json(),
+      async (request) => {
+        seen = request.headers;
+        await request.text();
+      },
+      '{ "a": 1 }',
+      "application/json",
+    );
+    expect(seen?.get("content-length")).toBeNull();
+    expect(seen?.get("content-encoding")).toBeNull();
+  });
+
+  it("gives no body for a single-element array (a[]=1 would be rebuilt as a=1)", async () => {
+    let seen: string | undefined;
+    const res = await post(
+      express.urlencoded({ extended: true }),
+      async (request) => {
+        seen = await request.text();
+      },
+      "a[]=1",
+      "application/x-www-form-urlencoded",
+    );
+    expect(seen).toBe("");
+    expect(await res.json()).toEqual({ got: { a: ["1"] } });
+  });
 });

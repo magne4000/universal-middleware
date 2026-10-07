@@ -105,6 +105,13 @@ export function createRequestAdapter(
       host = "localhost";
     }
 
+    // The rebuilt body is decoded and re-serialized, so the headers describing the original bytes no longer apply
+    if (hasParsedBody(req)) {
+      headers = { ...headers };
+      delete headers["content-length"];
+      delete headers["content-encoding"];
+    }
+
     const abortController = new AbortController();
     res.once("close", () => {
       if (!res.writableEnded) abortController.abort();
@@ -125,6 +132,10 @@ export function createRequestAdapter(
   };
 }
 
+function hasParsedBody(req: DecoratedRequest) {
+  return req.rawBody === undefined && (req.readableDidRead || req.readableEnded) && req.body !== undefined;
+}
+
 function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
   if (req.method === "GET" || req.method === "HEAD") {
     return;
@@ -137,7 +148,7 @@ function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
   }
 
   // A body parser already consumed the stream: serve what it parsed.
-  if ((req.readableDidRead || req.readableEnded) && req.body !== undefined) {
+  if (hasParsedBody(req)) {
     return parsedBody(req);
   }
 
@@ -184,8 +195,14 @@ function parsedBody(req: DecoratedRequest): ReadableStream<Uint8Array> {
 /** The bytes of the parsed body, or undefined when it can't be rebuilt faithfully (then the request has no body). */
 function serializeParsedBody(req: DecoratedRequest): Uint8Array | undefined {
   const { body, headers } = req;
-  // A parser such as `express.json()` sets `{}` even when the request had no body
-  if (headers["transfer-encoding"] === undefined && (headers["content-length"] ?? "0") === "0") return;
+  // A parser such as `express.json()` sets `{}` even when the request had no body.
+  // HTTP/2 doesn't need `Content-Length`, so only HTTP/1 tells an empty body from the absence of framing headers.
+  if (
+    req.httpVersionMajor < 2 &&
+    headers["transfer-encoding"] === undefined &&
+    (headers["content-length"] ?? "0") === "0"
+  )
+    return;
   if (body instanceof Uint8Array) return body;
 
   const contentType = String(headers["content-type"]).split(";")[0]!.trim().toLowerCase();
@@ -202,6 +219,8 @@ function serializeParsedBody(req: DecoratedRequest): Uint8Array | undefined {
   if (contentType === "application/x-www-form-urlencoded" && body && typeof body === "object") {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(body)) {
+      // `a[]=1` parses to `["1"]` and would be rebuilt as `a=1`, which parses back to a string
+      if (Array.isArray(value) && value.length === 1) return;
       for (const item of Array.isArray(value) ? value : [value]) {
         if (typeof item !== "string") return;
         params.append(key, item);
