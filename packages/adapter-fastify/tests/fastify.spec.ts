@@ -1,7 +1,7 @@
 import { type Run, runTests } from "@universal-middleware/tests";
 import fastify from "fastify";
 import * as vitest from "vitest";
-import { apply } from "../src/index.js";
+import { apply, createMiddleware, getContext } from "../src/index.js";
 
 let port = 3400;
 
@@ -92,5 +92,39 @@ vitest.describe("response middleware", () => {
     const res = await app.inject({ url: "/missing" });
     vitest.expect(res.statusCode).toBe(404);
     vitest.expect(res.headers["x-from-middleware"]).toBe("1");
+  });
+});
+
+vitest.describe("context", () => {
+  async function createApp(delay = 0) {
+    const app = fastify();
+    await app.register(
+      createMiddleware(() => async (request: Request, context: Universal.Context) => {
+        const user = request.headers.get("x-user");
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        if (user) return { ...context, user };
+      })(),
+    );
+    app.get("/me", async (request) => {
+      // Read after every overlapping request has run its middleware
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      return String(getContext<{ user?: string }>(request).user);
+    });
+    return app;
+  }
+
+  vitest.it("does not leak into the next request through the shared route config", async () => {
+    const app = await createApp();
+    await app.inject({ url: "/me", headers: { "x-user": "alice" } });
+    vitest.expect((await app.inject({ url: "/me" })).body).toBe("undefined");
+  });
+
+  vitest.it("keeps overlapping requests apart", async () => {
+    const app = await createApp(50);
+    const [alice, bob] = await Promise.all([
+      app.inject({ url: "/me", headers: { "x-user": "alice" } }),
+      app.inject({ url: "/me", headers: { "x-user": "bob" } }),
+    ]);
+    vitest.expect([alice.body, bob.body]).toEqual(["alice", "bob"]);
   });
 });

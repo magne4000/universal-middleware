@@ -33,10 +33,7 @@ declare module "fastify" {
       response: Response,
     ) => Response | Promise<Response | undefined> | undefined | Promise<undefined>)[];
     [wrappedResponseSymbol]?: boolean;
-  }
-
-  export interface FastifyContextConfig {
-    [contextSymbol]: unknown;
+    [contextSymbol]?: unknown;
   }
 }
 
@@ -235,22 +232,19 @@ export function createMiddleware<
 }
 
 function initContext<InContext extends Universal.Context = Universal.Context>(req: FastifyRequest): InContext {
-  const config = req.routeOptions.config;
-  config[contextSymbol] ??= {};
-  return config[contextSymbol] as InContext;
+  req[contextSymbol] ??= {};
+  return req[contextSymbol] as InContext;
 }
 
 export function getContext<InContext extends Universal.Context = Universal.Context>(req: FastifyRequest): InContext {
-  const config = req.routeOptions.config;
-  return config[contextSymbol] as InContext;
+  return req[contextSymbol] as InContext;
 }
 
 export function setContext<InContext extends Universal.Context = Universal.Context>(
   req: FastifyRequest,
   newContext: InContext,
 ): void {
-  const config = req.routeOptions.config;
-  config[contextSymbol] = newContext;
+  req[contextSymbol] = newContext;
 }
 
 export function getRuntime(request: FastifyRequest, reply: FastifyReply): RuntimeAdapter {

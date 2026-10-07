@@ -191,7 +191,7 @@ Runs tests with a matrix approach for comprehensive coverage:
 - **Node versions:** 20, 22, 24
 - **Packages tested:** All 15 packages (adapters, core, sirv, compress, universal-middleware, tests-tool)
 - **Exclusions:** Windows only tests on Node 24; sirv and adapter-vercel skip Windows; tests-tool only runs on Node 24
-- **Environment:** Requires VERCEL_TOKEN secret for Vercel adapter tests
+- **Environment:** Requires VERCEL_TOKEN secret for Vercel adapter tests; without it (pull requests from forks) the adapter-vercel test step is skipped with a notice
 
 ## Common Pitfalls and Workarounds
 
@@ -206,7 +206,7 @@ Runs tests with a matrix approach for comprehensive coverage:
 ### Test Failures in CI
 - **Bun not available:** Elysia tests will fail with "bun: not found" - this is expected in environments without Bun
 - **Deno not available:** Some runtime tests require Deno
-- **Vercel tests:** Require VERCEL_TOKEN environment variable
+- **Vercel tests:** Require VERCEL_TOKEN, or a `vercel login` session locally; CI skips them when the secret is unavailable
 
 ### Cache Issues
 **Problem:** Turbo cache causes stale builds  

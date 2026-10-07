@@ -88,7 +88,24 @@ jobs:
         if: matrix.cwd == 'tests-examples/tests-tool'
         working-directory: ${{ matrix.cwd }}
 
+      # Pull requests from forks get no secrets, and `vercel dev` cannot start without a token.
+      - name: Check for VERCEL_TOKEN
+        id: vercel
+        if: matrix.cwd == 'packages/adapter-vercel'
+        shell: bash
+        run: |
+          if [ "${{ secrets.VERCEL_TOKEN != '' }}" = "true" ]; then
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            message="VERCEL_TOKEN is not available to this run (pull requests from forks get no secrets), so the Vercel tests did not run. They run on pushes to main."
+            echo "::notice title=Vercel tests skipped::$message"
+            echo "### Vercel tests skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "$message" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Run tests on ${{ matrix.cwd }}
+        if: steps.vercel.outputs.skip != 'true'
         run: pnpm run test
         working-directory: ${{ matrix.cwd }}
         env:
