@@ -32,9 +32,13 @@ export type ElysiaMiddleware<In extends Universal.Context, Out extends Universal
 // bytes, whatever Elysia's parsing makes of them. Requests nobody reads, such as the ones of a route
 // that streams `request.body` itself, are never copied.
 const unparsedBodies = new WeakMap<Request, Request>();
+const wrappedRequests = new WeakSet<Request>();
 const bodyReaders = ["text", "json", "arrayBuffer", "formData", "blob", "bytes"] as const;
 
 function keepUnparsedBody(request: Request) {
+  // Elysia runs the plugin's onRequest once per nesting level that registered the middleware.
+  if (wrappedRequests.has(request)) return;
+  wrappedRequests.add(request);
   for (const name of bodyReaders) {
     const read = request[name]?.bind(request);
     if (!read) continue;

@@ -109,6 +109,17 @@ describe("streaming route after a universal middleware", () => {
     expect(seen).toBe('{"a":1}');
     expect(await res.json()).toEqual({ bytes: 7 });
   });
+  it("works for a middleware registered again inside a group", async () => {
+    const noop = createMiddleware(() => async () => {});
+    const app = new Elysia().use(noop()).group("/g", (g) => g.use(noop()).post("/j", (c) => ({ got: c.body })));
+    const url = "http://localhost/g/j";
+    const res = await app.handle(
+      new Request(url, { method: "POST", headers: { "content-type": "application/json" }, body: '{"a":1}' }),
+    );
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ got: { a: 1 } });
+    expect((await app.handle(new Request(url))).status).toBe(404);
+  });
 });
 
 // Bun's native request: an eager `request.clone()` in `onRequest` used to lock the body the route streams.
