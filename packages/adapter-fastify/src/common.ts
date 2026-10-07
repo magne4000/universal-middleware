@@ -132,7 +132,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
         return reply.send(response);
       }
 
-      reply.callNotFound();
+      return reply.callNotFound();
     });
   };
 }
@@ -196,21 +196,17 @@ export function createMiddleware<
 
           if (payload instanceof Response) {
             mergeHeadersInto(payload.headers, getHeaders(reply));
-          } else if (isBodyInit(payload)) {
+          } else if (payload === undefined || isBodyInit(payload)) {
             payload = new Response(payload, {
               headers: new Headers(getHeaders(reply)),
               status: reply.statusCode,
             });
-          } else if (payload !== undefined) {
+          } else {
             throw new TypeError("Payload is not a Response or BodyInit compatible");
           }
 
           const middlewares = request[pendingMiddlewaresSymbol];
           delete request[pendingMiddlewaresSymbol];
-
-          if (!payload) {
-            reply.callNotFound();
-          }
 
           const newResponse = await middlewares?.reduce(
             async (prev, curr) => {
@@ -221,9 +217,14 @@ export function createMiddleware<
             Promise.resolve(payload as Response),
           );
 
-          const r = newResponse ?? payload;
-          if (!r) {
-            reply.callNotFound();
+          const r = (newResponse ?? payload) as Response;
+          if (request.method === "HEAD") {
+            // Fastify's head route runs after this hook and only accepts a string, a buffer or a stream
+            reply.code(r.status);
+            for (const [name, value] of r.headers) {
+              reply.header(name, value);
+            }
+            return r.body ?? undefined;
           } else {
             return r;
           }
