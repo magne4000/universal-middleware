@@ -30,7 +30,7 @@ export type ElysiaMiddleware<In extends Universal.Context, Out extends Universal
 // still get the exact bytes, whatever Elysia's parsing makes of them.
 const unparsedBodies = new WeakMap<Request, Request>();
 
-/** Elysia `onParse` hook: remembers the request body without parsing it, so Elysia's own parsing goes on. */
+/** Elysia `onRequest` hook (before any `onParse`): remembers the request body without parsing it, so Elysia's own parsing goes on. */
 export function captureRequestBody(request: Request): void {
   if (request.body) unparsedBodies.set(request, request.clone());
 }
