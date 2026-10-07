@@ -57,16 +57,27 @@ function keepBody(request: Request) {
   for (const [name, value] of Object.entries(readers)) Object.defineProperty(request, name, { value });
 }
 
+// Below this a body is copied eagerly: building the stream costs more than copying the bytes.
+const eagerLimit = 64 * 1024;
+
 async function requestOf(request: Request) {
   if (request.method === "GET" || request.method === "HEAD") return request.clone();
   const kept = keptBodies.get(request);
-  if (kept) return cloneRequest(request, { body: await kept });
-  // Nothing read the body yet: copy it only if the middleware does, so a route that streams it keeps it.
+  if (kept && Number(request.headers.get("content-length")) <= eagerLimit) {
+    return cloneRequest(request, { body: await kept });
+  }
+  // Costs nothing until the middleware reads the body: it then gets the kept bytes, or a copy of the
+  // stream when nothing read the body yet, so a route that streams it keeps it.
   let copy: ReadableStreamDefaultReader<Uint8Array> | undefined;
   return cloneRequest(request, {
     body: new ReadableStream(
       {
         async pull(controller) {
+          const bytes = copy ? undefined : keptBodies.get(request);
+          if (bytes) {
+            controller.enqueue(new Uint8Array(await bytes));
+            return controller.close();
+          }
           copy ??= request.clone().body?.getReader();
           const chunk = await copy?.read();
           if (chunk && !chunk.done) controller.enqueue(chunk.value);
