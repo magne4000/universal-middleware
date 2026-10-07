@@ -1,5 +1,13 @@
 # @universal-middleware/srvx
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [10e6e5f]
+- Updated dependencies [6bb65ff]
+  - @universal-middleware/core@0.5.0
+
 ## 0.1.3
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/elysia-v0.3.2...elysia-v0.3.3) (2024-12-09)
 
+## 0.6.6
+
+### Patch Changes
+
+- 6add5b5: fix(elysia): a universal middleware no longer replaces Elysia's body parsing for the routes after it; in an app with no universal middleware, a `createHandler` on a route with a body schema no longer gets the body (Node: 500 `unusable`; Bun: an empty body), and an app hook that reads `request.body` directly before the middleware makes a middleware that reads the body fail
+- Updated dependencies [10e6e5f]
+- Updated dependencies [6bb65ff]
+  - @universal-middleware/core@0.5.0
+
 ## 0.6.5
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.2...fastify-v0.4.3) (2024-12-09)
 
+## 0.5.27
+
+### Patch Changes
+
+- 6add5b5: fix(fastify): a universal middleware no longer breaks the body of the routes after it, and `fastify-raw-body` is not required to read it
+- b624589: fix(fastify): keep redirects, empty replies and `HEAD` and 404 answers when a middleware returns a response handler
+- Updated dependencies [10e6e5f]
+- Updated dependencies [6add5b5]
+- Updated dependencies [6bb65ff]
+- Updated dependencies [6add5b5]
+  - @universal-middleware/core@0.5.0
+  - @universal-middleware/node@0.2.5
+
 ## 0.5.26
 
 ### Patch Changes

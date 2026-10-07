@@ -1,5 +1,19 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.4.32
+
+### Patch Changes
+
+- 6ca1d6d: On Express, a request body of up to 1 MiB that a universal middleware read is no longer empty for the Express handlers that run after it, such as `express.json()`.
+- daf1869: fix(express): `connectToWeb()` gives the app's routes the caller's context through `getContext(req)`, including the context srvx keeps on the request
+- 6add5b5: fix(express): use the body already parsed by `express.json()` and the like instead of failing on the consumed stream
+- Updated dependencies [10e6e5f]
+- Updated dependencies [6add5b5]
+- Updated dependencies [6bb65ff]
+- Updated dependencies [6add5b5]
+  - @universal-middleware/core@0.5.0
+  - @universal-middleware/node@0.2.5
+
 ## 0.4.31
 
 ### Patch Changes
