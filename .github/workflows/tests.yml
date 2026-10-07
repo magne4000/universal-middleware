@@ -81,8 +81,11 @@ jobs:
       - name: Install
         run: pnpm install
 
+      # Since turbo 2.11.4, `turbo run build` sometimes never exits on Windows after every task succeeded.
+      # A build takes well under 2 minutes, so fail early instead of hanging until the 6-hour job limit.
       - name: Build
         run: pnpm run build
+        timeout-minutes: 10
 
       - run: pnpm exec playwright install chromium
         if: matrix.cwd == 'tests-examples/tests-tool'

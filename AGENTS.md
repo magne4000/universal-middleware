@@ -207,6 +207,7 @@ Runs tests with a matrix approach for comprehensive coverage:
 - **Bun not available:** Elysia tests will fail with "bun: not found" - this is expected in environments without Bun
 - **Deno not available:** Some runtime tests require Deno
 - **Vercel tests:** Require VERCEL_TOKEN, or a `vercel login` session locally; CI skips them when the secret is unavailable
+- **Windows Build step timed out:** since turbo 2.11.4, `turbo run build` sometimes never exits on Windows after all tasks succeed; the step fails after 10 minutes, so re-run the failed job
 
 ### Cache Issues
 **Problem:** Turbo cache causes stale builds  
