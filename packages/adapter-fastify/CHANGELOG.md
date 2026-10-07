@@ -1,5 +1,15 @@
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.2...fastify-v0.4.3) (2024-12-09)
 
+## 0.6.0
+
+### Minor Changes
+
+- 627168a: feat!: routes registered with `apply()` follow rou3 v0.12 through `@universal-middleware/core` 0.5, which aligns them with URLPattern: `*` matches the rest of the path, a bare `**` sets `runtime.params["0"]`, a `-` ends a param name, only one trailing slash is ignored, and a route holds at most one catch-all. See the core 0.5.0 changelog.
+
+### Patch Changes
+
+- 5eadb0d: fix(fastify): keep the context per request instead of on the shared route config
+
 ## 0.5.27
 
 ### Patch Changes
