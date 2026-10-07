@@ -1,7 +1,7 @@
 import { EventEmitter } from "node:events";
 import { type IncomingMessage, type OutgoingHttpHeader, type OutgoingHttpHeaders, ServerResponse } from "node:http";
 import { PassThrough, Readable } from "node:stream";
-import type { RuntimeAdapterTarget } from "@universal-middleware/core";
+import { contextSymbol, type RuntimeAdapterTarget } from "@universal-middleware/core";
 import type { Express as Express5 } from "express";
 import type { Express as Express4 } from "express4";
 
@@ -38,11 +38,17 @@ export type WebHandler<InContext extends Universal.Context = Universal.Context, 
  * @beta
  */
 export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoolean): WebHandler {
-  return async (request: Request, _context, runtime): Promise<Response | undefined> => {
+  return async (request: Request, context, runtime): Promise<Response | undefined> => {
     const realReq: IncomingMessage | undefined =
       // biome-ignore lint/suspicious/noExplicitAny: srvx request
       (runtime && "req" in runtime && runtime.req) || (request as any).runtime?.node?.req;
     const req = realReq ?? createIncomingMessage(request);
+    // The app's routes read the caller's context with getContext(req); srvx keeps a middleware's context on the request.
+    // Set, not defaulted: one Node request can pass through several apps, and each must see its own caller's context.
+    // biome-ignore lint/suspicious/noExplicitAny: srvx request
+    const callerContext = context ?? (request as any).context;
+    // biome-ignore lint/suspicious/noExplicitAny: decorated req
+    if (callerContext) (req as any)[contextSymbol] = callerContext;
     const { res, onReadable } = createServerResponse(req);
 
     // A real server wires client disconnect to the request itself; a synthetic req/res does

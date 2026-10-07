@@ -3,7 +3,7 @@ import { Readable } from "node:stream";
 import type { RuntimeAdapterTarget, UniversalHandler } from "@universal-middleware/core";
 import express from "express";
 import { describe, expect, it } from "vitest";
-import { connectToWeb, createHandler, createIncomingMessage } from "../src/index.js";
+import { connectToWeb, createHandler, createIncomingMessage, getContext } from "../src/index.js";
 
 // In-process tests for `connectToWeb` driving a full Express app over the
 // synthetic (no `runtime.node`) path — the bridge `@vikejs/express` relies on.
@@ -375,5 +375,42 @@ describe("createIncomingMessage", () => {
     });
 
     expect(req.complete).toBe(true);
+  });
+});
+
+describe("connectToWeb: the caller's context reaches the app", () => {
+  it("routes read the context passed to the handler", async () => {
+    const app = express();
+    app.get("/c", (req, res) => res.json(getContext(req)));
+    const res = defined(await connectToWeb(app)(new Request("http://localhost/c"), { user: "alice" }));
+    expect(await res.json()).toEqual({ user: "alice" });
+  });
+
+  it("routes read the context srvx keeps on the request", async () => {
+    const app = express();
+    app.get("/c", (req, res) => res.json(getContext(req)));
+    const request = Object.assign(new Request("http://localhost/c"), { context: { user: "alice" } });
+    const res = defined(await connectToWeb(app)(request));
+    expect(await res.json()).toEqual({ user: "alice" });
+  });
+
+  it("each app on one Node request sees its own caller's context", async () => {
+    const app = express();
+    app.get("/c", (req, res) => res.json(getContext(req)));
+    const req = createIncomingMessage(new Request("http://localhost/c"));
+    const runtime = { req } as unknown as RuntimeAdapterTarget<unknown>;
+    await connectToWeb(app)(new Request("http://localhost/c"), { user: "alice" }, runtime);
+    const res = defined(await connectToWeb(app)(new Request("http://localhost/c"), { user: "bob" }, runtime));
+    expect(await res.json()).toEqual({ user: "bob" });
+  });
+
+  it("an app called without a context keeps the one already on the Node request", async () => {
+    const app = express();
+    app.get("/c", (req, res) => res.json(getContext(req)));
+    const req = createIncomingMessage(new Request("http://localhost/c"));
+    const runtime = { req } as unknown as RuntimeAdapterTarget<unknown>;
+    await connectToWeb(app)(new Request("http://localhost/c"), { user: "alice" }, runtime);
+    const res = defined(await connectToWeb(app)(new Request("http://localhost/c"), undefined, runtime));
+    expect(await res.json()).toEqual({ user: "alice" });
   });
 });
