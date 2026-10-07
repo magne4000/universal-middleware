@@ -1,6 +1,8 @@
+import { spawn, spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import type { UniversalMiddleware } from "@universal-middleware/core";
 import { Elysia } from "elysia";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { apply, createMiddleware } from "../src/index.js";
 
 // A universal middleware registered before a route must leave Elysia's own body parsing alone.
@@ -53,5 +55,74 @@ describe("body after a universal middleware", () => {
     expect(res.status).toBe(200);
     expect(seen).toBe('{"a":1}');
     expect(await res.json()).toEqual({ got: { a: 1 } });
+  });
+});
+
+// A route with `parse: "none"` reads `request.body` itself, as an upload handler would.
+const streamedBytes = async ({ request }: { request: Request }) => {
+  const reader = (request.body as ReadableStream<Uint8Array>).getReader();
+  let bytes = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) return { bytes };
+    bytes += value.length;
+  }
+};
+
+describe("streaming route after a universal middleware", () => {
+  const streamRoute = (middleware: UniversalMiddleware) => {
+    const app = new Elysia();
+    apply(app, [middleware]);
+    return app.post("/stream", streamedBytes, { parse: "none" });
+  };
+
+  it("streams the body without copying the request", async () => {
+    const clone = vi.spyOn(Request.prototype, "clone");
+    try {
+      const res = await streamRoute(async () => {}).handle(
+        new Request("http://localhost/stream", { method: "POST", body: '{"a":1}' }),
+      );
+      expect(await res.json()).toEqual({ bytes: 7 });
+      expect(clone).not.toHaveBeenCalled();
+    } finally {
+      clone.mockRestore();
+    }
+  });
+
+  it("gives the middleware the bytes and the route the whole stream when the middleware reads the body", async () => {
+    let seen: string | undefined;
+    const res = await streamRoute(async (request) => {
+      seen = await request.text();
+    }).handle(new Request("http://localhost/stream", { method: "POST", body: '{"a":1}' }));
+    expect(seen).toBe('{"a":1}');
+    expect(await res.json()).toEqual({ bytes: 7 });
+  });
+});
+
+// Bun's native request has its body locked for the route once `request.body` was read before a copy.
+describe.runIf(spawnSync("bun", ["--version"]).status === 0)("on Bun", () => {
+  it("streams the body of a route with parse none after a universal middleware", async () => {
+    const source = fileURLToPath(new URL("../src/index.ts", import.meta.url));
+    const script = `
+      import { Elysia } from "elysia";
+      import { createMiddleware } from ${JSON.stringify(source)};
+      const app = new Elysia()
+        .use(createMiddleware(() => async () => {})())
+        .post("/stream", ${streamedBytes.toString()}, { parse: "none" })
+        .listen(0);
+      console.log(app.server.port);
+    `;
+    const server = spawn("bun", ["-e", script], { cwd: fileURLToPath(new URL("..", import.meta.url)) });
+    try {
+      const port = await new Promise<string>((resolve, reject) => {
+        server.stdout.once("data", (data) => resolve(String(data).trim()));
+        server.once("error", reject);
+        server.once("exit", () => reject(new Error("bun exited before listening")));
+      });
+      const res = await fetch(`http://localhost:${port}/stream`, { method: "POST", body: '{"a":1}' });
+      expect(await res.json()).toEqual({ bytes: 7 });
+    } finally {
+      server.kill();
+    }
   });
 });

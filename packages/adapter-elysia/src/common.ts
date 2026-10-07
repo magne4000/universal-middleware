@@ -9,6 +9,7 @@ import type {
 import {
   attachUniversal,
   bindUniversal,
+  cloneRequest,
   contextSymbol,
   getAdapterRuntime,
   universalSymbol,
@@ -25,13 +26,47 @@ export type ElysiaMiddleware<In extends Universal.Context, Out extends Universal
   typeof initPlugin
 >;
 
-// Elysia parses the body of the routes that use it before any hook runs, consuming the request
-// stream. The plugin's `onRequest` hook (it runs before any `onParse`) keeps an unread copy so that
-// universal middlewares and handlers still get the exact bytes, whatever Elysia's parsing makes of them.
+// Elysia parses the body of the routes that need it before any hook runs, consuming the request
+// stream. The plugin's `onRequest` hook (it runs before any `onParse`) arranges for an unread copy to
+// be taken right before the first read, so that universal middlewares and handlers still get the exact
+// bytes, whatever Elysia's parsing makes of them. Requests nobody reads, such as the ones of a route
+// that streams `request.body` itself, are never copied.
 const unparsedBodies = new WeakMap<Request, Request>();
+const bodyReaders = ["text", "json", "arrayBuffer", "formData", "blob", "bytes"] as const;
+
+function keepUnparsedBody(request: Request) {
+  for (const name of bodyReaders) {
+    const read = request[name]?.bind(request);
+    if (!read) continue;
+    Object.defineProperty(request, name, {
+      value: () => {
+        if (!unparsedBodies.has(request)) unparsedBodies.set(request, request.clone());
+        return read();
+      },
+    });
+  }
+}
 
 function requestOf(request: Request) {
-  return (unparsedBodies.get(request) ?? request).clone();
+  const unparsed = unparsedBodies.get(request);
+  if (unparsed) return unparsed.clone();
+  if (request.method === "GET" || request.method === "HEAD") return request.clone();
+  // Nothing read the body yet: copy it only if the middleware does, so a route that streams it keeps it.
+  let copy: ReadableStreamDefaultReader<Uint8Array> | undefined;
+  return cloneRequest(request, {
+    body: new ReadableStream(
+      {
+        async pull(controller) {
+          copy ??= request.clone().body?.getReader();
+          const chunk = await copy?.read();
+          if (chunk && !chunk.done) controller.enqueue(chunk.value);
+          else controller.close();
+        },
+        cancel: (reason) => copy?.cancel(reason),
+      },
+      { highWaterMark: 0 },
+    ),
+  });
 }
 
 /**
@@ -137,9 +172,7 @@ export function createMiddleware<
 
 function initPlugin<Context extends Universal.Context = Universal.Context>() {
   return new Elysia({ name: "universal-middleware-context" })
-    .onRequest(({ request }) => {
-      if (request.body) unparsedBodies.set(request, request.clone());
-    })
+    .onRequest(({ request }) => keepUnparsedBody(request))
     .derive(() => {
       return {
         [contextSymbol]: {} as Context,
