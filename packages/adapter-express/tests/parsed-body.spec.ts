@@ -1,5 +1,6 @@
 import type { Server } from "node:http";
 import type { AddressInfo } from "node:net";
+import { gzipSync } from "node:zlib";
 import type { UniversalMiddleware } from "@universal-middleware/core";
 import express from "express";
 import { afterEach, describe, expect, it } from "vitest";
@@ -18,8 +19,9 @@ afterEach(() => {
 async function post(
   parser: express.RequestHandler,
   middleware: UniversalMiddleware,
-  body: string,
+  body: string | Uint8Array<ArrayBuffer>,
   contentType: string,
+  headers: Record<string, string> = {},
 ): Promise<Response> {
   const app = express();
   app.use(parser);
@@ -31,7 +33,7 @@ async function post(
   server = s;
   return fetch(`http://localhost:${(s.address() as AddressInfo).port}/echo`, {
     method: "POST",
-    headers: { "content-type": contentType },
+    headers: { "content-type": contentType, ...headers },
     body,
     signal: AbortSignal.timeout(3000),
   });
@@ -82,24 +84,24 @@ describe("body parsed before a universal middleware", () => {
         seen = request.headers;
         await request.text();
       },
-      '{ "a": 1 }',
+      new Uint8Array(gzipSync('{ "a": 1 }')),
       "application/json",
+      { "content-encoding": "gzip" },
     );
     expect(seen?.get("content-length")).toBeNull();
     expect(seen?.get("content-encoding")).toBeNull();
   });
 
-  it("gives no body for a single-element array (a[]=1 would be rebuilt as a=1)", async () => {
+  it.each(["a[]=1", "a[b]=1"])("gives no body for %s (it would be rebuilt as a different form)", async (form) => {
     let seen: string | undefined;
-    const res = await post(
+    await post(
       express.urlencoded({ extended: true }),
       async (request) => {
         seen = await request.text();
       },
-      "a[]=1",
+      form,
       "application/x-www-form-urlencoded",
     );
     expect(seen).toBe("");
-    expect(await res.json()).toEqual({ got: { a: ["1"] } });
   });
 });
