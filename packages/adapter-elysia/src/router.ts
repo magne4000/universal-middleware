@@ -8,7 +8,7 @@ import {
   universalSymbol,
 } from "@universal-middleware/core";
 import type { AnyElysia } from "elysia";
-import { captureRequestBody, createHandler, createMiddleware } from "./common";
+import { createHandler, createMiddleware } from "./common";
 
 export type App = AnyElysia;
 
@@ -34,7 +34,6 @@ export class UniversalElysiaRouter extends UniversalRouter implements UniversalR
 }
 
 export function apply(app: App, middlewares: EnhancedMiddlewareElysia[]) {
-  app.onRequest((ctx) => captureRequestBody(ctx.request));
   const router = new UniversalElysiaRouter(app);
   applyCore(router, middlewares as EnhancedMiddleware[]);
 }
