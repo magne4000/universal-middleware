@@ -13,8 +13,10 @@ permissions:
   contents: write
   pull-requests: write
 
+# A pull request cancels its previous run. Pushes to main are grouped per commit so they never cancel each other:
+# Release runs after Tests succeeds on main, and a cancelled run would skip the release.
 concurrency:
-  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref || github.run_id }}"
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.sha }}"
   cancel-in-progress: true
 
 defaults:
