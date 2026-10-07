@@ -30,18 +30,8 @@ export class UniversalRouter implements UniversalRouterInterface {
   }
 
   route(handler: EnhancedMiddleware) {
-    const { path: rawPath, method } = assertRoute(handler);
-    const path = decodePattern(rawPath);
-    const umHandler = getUniversal(handler);
-
-    if (Array.isArray(method)) {
-      for (const m of method) {
-        addRoute(this.router, m, path, umHandler);
-      }
-    } else {
-      addRoute(this.router, method, path, umHandler);
-    }
-
+    const { path, method } = assertRoute(handler);
+    addRoutes(this.router, method, path, getUniversal(handler));
     return this;
   }
 
@@ -61,7 +51,7 @@ export class UniversalRouter implements UniversalRouterInterface {
   get [universalSymbol](): UniversalMiddleware {
     const noCastPipe = pipe.bind({ noCast: true });
     return (request, ctx, runtime) => {
-      const router = findRoute(this.router, request.method, encodePath(decodePath(url(request).pathname)));
+      const router = match(this.router, request);
 
       if (router) {
         const routerCtx = getUniversalProp(router.data, contextSymbol);
@@ -131,18 +121,24 @@ export async function applyAsync(
 function scopeToPath(middleware: EnhancedMiddleware): EnhancedMiddleware {
   const path = getUniversalProp(middleware, pathSymbol);
   if (!path) return middleware;
-  const method = getUniversalProp(middleware, methodSymbol);
   const matcher = createRouter<true>();
-  for (const m of Array.isArray(method) ? method : [method]) {
-    addRoute(matcher, m, decodePattern(path), true);
-  }
-  const um = getUniversal(middleware) as UniversalMiddleware;
+  addRoutes(matcher, getUniversalProp(middleware, methodSymbol), path, true);
+  const umMiddleware = getUniversal(middleware) as UniversalMiddleware;
   const scoped: UniversalMiddleware = (request, ctx, runtime) =>
-    findRoute(matcher, request.method, encodePath(decodePath(url(request).pathname)))
-      ? um(request, ctx, runtime)
-      : undefined;
-  const name = getUniversalProp(middleware, nameSymbol);
-  return enhance(scoped, { ...(name && { name }), order: getUniversalProp(middleware, orderSymbol), immutable: false });
+    match(matcher, request) ? umMiddleware(request, ctx, runtime) : undefined;
+  // `pipe` sorts by `order` again
+  return enhance(scoped, { order: getUniversalProp(middleware, orderSymbol), immutable: false });
+}
+
+function addRoutes<T>(router: RouterContext<T>, method: string | string[] | undefined, rawPath: string, data: T) {
+  const path = decodePattern(rawPath);
+  for (const m of Array.isArray(method) ? method : [method]) {
+    addRoute(router, m, path, data);
+  }
+}
+
+function match<T>(router: RouterContext<T>, request: Request) {
+  return findRoute(router, request.method, encodePath(decodePath(url(request).pathname)));
 }
 
 /**

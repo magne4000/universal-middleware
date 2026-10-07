@@ -148,6 +148,27 @@ describe("a middleware with a path and an order runs only for that path", () => 
     expect((await run("/%61dmin/settings")).status).toBe(401);
   });
 
+  test("keeps its order relative to the handler", async () => {
+    const calls: string[] = [];
+    const log = (name: string, order: number) =>
+      enhance(
+        () => {
+          calls.push(name);
+        },
+        { name, path: "/log", order },
+      );
+    const handler = enhance(
+      () => {
+        calls.push("handler");
+        return new Response("ok");
+      },
+      { name: "handler", path: "/log", method: "GET" },
+    );
+    const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
+    await pipeRoute([log("after", 10), handler, log("before", -10)])(new Request("http://localhost/log"), {}, runtime);
+    expect(calls).toEqual(["before", "handler", "after"]);
+  });
+
   test("respects its method", async () => {
     const response = await run("/admin/settings", { method: "HEAD", headers: { "x-auth": "1" } });
     expect(response.headers.get("x-settings")).toBe(null);

@@ -21,7 +21,6 @@ const enhancedHandler = (() => enhance(handler, {
   // The order property is specific to Middleware configuration
   // order: 10,  // Positive values execute AFTER handlers in the middleware chain
                  // Negative values execute BEFORE handlers in the middleware chain
-                 // A middleware with a `path` only runs for the requests that path matches
 })) satisfies Get<[], UniversalHandler>;
 ```
 
@@ -31,7 +30,7 @@ The `apply` function is a helper exported by most adapters that:
 - Automatically registers them with the framework-specific router in the correct order
 - Handles route registration based on the `path` and `method` metadata
 - Manages middleware sequencing based on the `order` property (negative orders run before handlers, positive after)
-- Runs a middleware that has a `path` only for the requests that path (and its `method`, if set) matches
+- Runs a middleware that has a `path` only for the requests a route with the same `path` (and `method`, if set) would match
 
 For example:
 
