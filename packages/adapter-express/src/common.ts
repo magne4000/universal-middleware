@@ -1,6 +1,7 @@
 import type { ServerResponse } from "node:http";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import { adaptLendingBody, handBodyBack } from "./body.js";
 import { pendingMiddlewaresSymbol } from "./const.js";
 import { createRequestAdapter } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
@@ -38,7 +39,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
     return bindUniversal(handler, async function universalHandlerExpress(req, res, next) {
       try {
         req[contextSymbol] ??= {} as InContext;
-        const request = requestAdapter(req, res);
+        const request = adaptLendingBody(requestAdapter, req, res);
         const response: Response | undefined = await this[universalSymbol](
           request,
           req[contextSymbol],
@@ -46,12 +47,14 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
         );
 
         if (!response) {
+          handBodyBack(req);
           nextOr404(res, next);
         } else {
           await sendResponse(response, res);
         }
       } catch (error) {
         if (next) {
+          handBodyBack(req);
           next(error);
         } else {
           console.error(error);
@@ -88,8 +91,11 @@ export function createMiddleware<
     return bindUniversal(middleware, async function universalMiddlewareExpress(req, res, next) {
       try {
         req[contextSymbol] ??= {} as InContext;
-        const request = requestAdapter(req, res);
+        const request = adaptLendingBody(requestAdapter, req, res);
         const response = await this[universalSymbol](request, getContext(req), getRuntime(req, res));
+
+        // A returned `Response` ends the chain and may still be reading the body
+        if (!(response instanceof Response)) handBodyBack(req);
 
         if (!response) {
           return nextOr404(res, next);
@@ -117,6 +123,7 @@ export function createMiddleware<
         }
       } catch (error) {
         if (next) {
+          handBodyBack(req);
           next(error);
         } else {
           console.error(error);
