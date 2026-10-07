@@ -30,6 +30,7 @@ The `apply` function is a helper exported by most adapters that:
 - Automatically registers them with the framework-specific router in the correct order
 - Handles route registration based on the `path` and `method` metadata
 - Manages middleware sequencing based on the `order` property (negative orders run before handlers, positive after)
+- Runs a middleware that has a `path` only for the requests a route with the same `path` (and `method`, if set) would match
 
 For example:
 

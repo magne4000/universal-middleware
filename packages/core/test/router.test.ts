@@ -108,3 +108,69 @@ describe("params() decodes like the router", () => {
     expect(params(new Request(`http://localhost${path}`), runtime, pattern)).toEqual({ id: "1" });
   });
 });
+
+describe("a middleware with a path and an order runs only for that path", () => {
+  const page = enhance(() => new Response("page"), { name: "page", path: "/**", method: ["GET", "HEAD"] });
+  const auth = enhance(
+    (request: Request) => (request.headers.has("x-auth") ? undefined : new Response("Unauthorized", { status: 401 })),
+    { name: "auth", path: "/admin/**", order: -800 },
+  );
+  const header = enhance(
+    () => (response: Response) => {
+      response.headers.set("x-settings", "yes");
+      return response;
+    },
+    { name: "header", path: "/admin/settings", method: "GET", order: 200 },
+  );
+  const router = pipeRoute([page, auth, header]);
+  const run = async (path: string, init?: RequestInit) => {
+    const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
+    return (await router(new Request(`http://localhost${path}`, init), {}, runtime)) as Response;
+  };
+
+  test("runs for a matching path", async () => {
+    expect((await run("/admin/settings")).status).toBe(401);
+  });
+
+  test("is skipped for any other path", async () => {
+    const response = await run("/about");
+    expect(await response.text()).toBe("page");
+    expect(response.headers.get("x-settings")).toBe(null);
+  });
+
+  test("every matching middleware runs, then the handler", async () => {
+    const response = await run("/admin/settings", { headers: { "x-auth": "1" } });
+    expect(await response.text()).toBe("page");
+    expect(response.headers.get("x-settings")).toBe("yes");
+  });
+
+  test("matches the decoded path, like a route", async () => {
+    expect((await run("/%61dmin/settings")).status).toBe(401);
+  });
+
+  test("keeps its order relative to the handler", async () => {
+    const calls: string[] = [];
+    const log = (name: string, order: number) =>
+      enhance(
+        () => {
+          calls.push(name);
+        },
+        { name, path: "/log", order },
+      );
+    const handler = enhance(
+      () => {
+        calls.push("handler");
+        return new Response("ok");
+      },
+      { name: "handler", path: "/log", method: "GET" },
+    );
+    const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
+    await pipeRoute([log("after", 10), handler, log("before", -10)])(new Request("http://localhost/log"), {}, runtime);
+    expect(calls).toEqual(["before", "handler", "after"]);
+  });
+
+  test("respects its method", async () => {
+    const response = await run("/admin/settings", { method: "HEAD", headers: { "x-auth": "1" } });
+    expect(response.headers.get("x-settings")).toBe(null);
+  });
+});
