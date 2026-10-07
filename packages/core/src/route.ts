@@ -1,4 +1,5 @@
 import { parse } from "regexparam";
+import { decodeParam, decodePath } from "./decode";
 import type { RuntimeAdapter } from "./types";
 
 function exec(
@@ -14,7 +15,7 @@ function exec(
 
   for (let i = 0; i < result.keys.length; i++) {
     if (matches[i + 1]) {
-      out[result.keys[i]] = matches[i + 1];
+      out[result.keys[i]] = decodeParam(matches[i + 1]);
     }
   }
 
@@ -23,7 +24,7 @@ function exec(
 
 function paramsFromRequest(request: Request, path: string): null | Record<string, string> {
   const url = new URL(request.url);
-  return exec(url.pathname, parse(path));
+  return exec(decodePath(url.pathname), parse(decodePath(path)));
 }
 
 /**

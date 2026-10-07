@@ -1,5 +1,6 @@
 import { addRoute, createRouter, findRoute, type RouterContext } from "rou3";
 import { contextSymbol, methodSymbol, nameSymbol, pathSymbol, universalSymbol } from "./const";
+import { decodeParams, decodePath } from "./decode";
 import { pipe } from "./pipe";
 import type {
   Enhance,
@@ -29,7 +30,8 @@ export class UniversalRouter implements UniversalRouterInterface {
   }
 
   route(handler: EnhancedMiddleware) {
-    const { path, method } = assertRoute(handler);
+    const { path: rawPath, method } = assertRoute(handler);
+    const path = decodePath(rawPath);
     const umHandler = getUniversal(handler);
 
     if (Array.isArray(method)) {
@@ -59,7 +61,7 @@ export class UniversalRouter implements UniversalRouterInterface {
   get [universalSymbol](): UniversalMiddleware {
     const noCastPipe = pipe.bind({ noCast: true });
     return (request, ctx, runtime) => {
-      const router = findRoute(this.router, request.method, url(request).pathname);
+      const router = findRoute(this.router, request.method, decodePath(url(request).pathname));
 
       if (router) {
         const routerCtx = getUniversalProp(router.data, contextSymbol);
@@ -73,7 +75,7 @@ export class UniversalRouter implements UniversalRouterInterface {
             : router.data;
         if (router.params) {
           runtime.params ??= {};
-          Object.assign(runtime.params, router.params);
+          Object.assign(runtime.params, decodeParams(router.params));
         }
         return handler(request, ctx, runtime);
       }
