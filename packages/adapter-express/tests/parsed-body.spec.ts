@@ -1,0 +1,151 @@
+import type { Server } from "node:http";
+import type { AddressInfo } from "node:net";
+import { gzipSync } from "node:zlib";
+import type { UniversalMiddleware } from "@universal-middleware/core";
+import express from "express";
+import { afterEach, describe, expect, it } from "vitest";
+import { apply } from "../src/index.js";
+
+// A body parser registered before the universal middleware has already consumed the request stream.
+// The middleware must see the parsed body and the next handler must still get it.
+
+let server: Server | undefined;
+
+afterEach(() => {
+  server?.close();
+  server = undefined;
+});
+
+async function post(
+  parser: express.RequestHandler,
+  middleware: UniversalMiddleware,
+  body: string | Uint8Array<ArrayBuffer>,
+  contentType: string,
+  headers: Record<string, string> = {},
+): Promise<Response> {
+  const app = express();
+  app.use(parser);
+  apply(app, [middleware]);
+  app.post("/echo", (req, res) => res.json({ got: req.body }));
+  const s = await new Promise<Server>((resolve) => {
+    const listening = app.listen(0, () => resolve(listening));
+  });
+  server = s;
+  return fetch(`http://localhost:${(s.address() as AddressInfo).port}/echo`, {
+    method: "POST",
+    headers: { "content-type": contentType, ...headers },
+    body,
+    signal: AbortSignal.timeout(3000),
+  });
+}
+
+describe("body parsed before a universal middleware", () => {
+  it("lets the middleware read a body express.json() already parsed", async () => {
+    let seen: string | undefined;
+    const res = await post(
+      express.json(),
+      async (request) => {
+        seen = await request.text();
+      },
+      '{"a":1}',
+      "application/json",
+    );
+    expect(res.status).toBe(200);
+    expect(seen).toBe('{"a":1}');
+    expect(await res.json()).toEqual({ got: { a: 1 } });
+  });
+
+  it("gives no body when the parsed body can't be rebuilt exactly (multipart)", async () => {
+    const multipart: express.RequestHandler = (req, _res, next) => {
+      req.on("data", () => {});
+      req.on("end", () => {
+        req.body = { a: "1" };
+        next();
+      });
+    };
+    let seen: string | undefined;
+    const res = await post(
+      multipart,
+      async (request) => {
+        seen = await request.text();
+      },
+      '--b\r\nContent-Disposition: form-data; name="a"\r\n\r\n1\r\n--b--\r\n',
+      "multipart/form-data; boundary=b",
+    );
+    expect(res.status).toBe(200);
+    expect(seen).toBe("");
+  });
+
+  it("drops the headers that described the original bytes of a rebuilt body", async () => {
+    let seen: Headers | undefined;
+    await post(
+      express.json(),
+      async (request) => {
+        seen = request.headers;
+        await request.text();
+      },
+      new Uint8Array(gzipSync('{ "a": 1 }')),
+      "application/json",
+      { "content-encoding": "gzip" },
+    );
+    expect(seen?.get("content-length")).toBeNull();
+    expect(seen?.get("content-encoding")).toBeNull();
+  });
+
+  it.each(["a[]=1", "a[b]=1"])("gives no body for %s (it would be rebuilt as a different form)", async (form) => {
+    let seen: string | undefined;
+    await post(
+      express.urlencoded({ extended: true }),
+      async (request) => {
+        seen = await request.text();
+      },
+      form,
+      "application/x-www-form-urlencoded",
+    );
+    expect(seen).toBe("");
+  });
+
+  it.each([
+    ["urlencoded", express.urlencoded({ extended: true }), "a=1&b=2", "application/x-www-form-urlencoded", "a=1&b=2"],
+    ["text", express.text(), "héllo", "text/plain", "héllo"],
+    ["raw", express.raw(), "raw bytes", "application/octet-stream", "raw bytes"],
+    [
+      "a +json type",
+      express.json({ type: "application/vnd.api+json" }),
+      '{"a":1}',
+      "application/vnd.api+json",
+      '{"a":1}',
+    ],
+    ["an empty JSON body", express.json(), "", "application/json", ""],
+  ])("gives the middleware the body of %s", async (_name, parser, body, contentType, expected) => {
+    let seen: string | undefined;
+    await post(
+      parser,
+      async (request) => {
+        seen = await request.text();
+      },
+      body,
+      contentType,
+    );
+    expect(seen).toBe(expected);
+  });
+
+  it("serializes the parsed body only when a middleware reads it", async () => {
+    let serialized = 0;
+    const parser: express.RequestHandler = (req, _res, next) => {
+      req.on("data", () => {});
+      req.on("end", () => {
+        req.body = {
+          toJSON() {
+            serialized++;
+            return { a: 1 };
+          },
+        };
+        next();
+      });
+    };
+    await post(parser, async () => {}, '{"a":1}', "application/json");
+    // Once, by the route's own `res.json()`; the unread request body adds none
+    expect(serialized).toBe(1);
+  });
+});

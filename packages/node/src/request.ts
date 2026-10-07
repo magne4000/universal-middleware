@@ -25,6 +25,9 @@ export interface DecoratedRequest<C extends Universal.Context = Universal.Contex
   socket?: PossiblyEncryptedSocket;
   // biome-ignore lint/suspicious/noExplicitAny: we only care about the field being present
   rawBody?: any;
+  /** Set by a body parser (e.g. `express.json()`) that already consumed the stream */
+  // biome-ignore lint/suspicious/noExplicitAny: whatever the parser produced
+  body?: any;
   originalUrl?: string;
   params?: Record<string, string>;
   [contextSymbol]?: C;
@@ -102,6 +105,13 @@ export function createRequestAdapter(
       host = "localhost";
     }
 
+    // The rebuilt body is decoded and re-serialized, so the headers describing the original bytes no longer apply
+    if (hasParsedBody(req)) {
+      headers = { ...headers };
+      delete headers["content-length"];
+      delete headers["content-encoding"];
+    }
+
     const abortController = new AbortController();
     res.once("close", () => {
       if (!res.writableEnded) abortController.abort();
@@ -122,6 +132,10 @@ export function createRequestAdapter(
   };
 }
 
+function hasParsedBody(req: DecoratedRequest) {
+  return req.rawBody === undefined && (req.readableDidRead || req.readableEnded) && req.body !== undefined;
+}
+
 function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
   if (req.method === "GET" || req.method === "HEAD") {
     return;
@@ -131,6 +145,11 @@ function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
   // that pre-parse the body.
   if (req.rawBody !== undefined) {
     return req.rawBody;
+  }
+
+  // A body parser already consumed the stream: serve what it parsed.
+  if (hasParsedBody(req)) {
+    return parsedBody(req);
   }
 
   if (!bun && !deno) {
@@ -157,4 +176,52 @@ function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
       req.destroy(reason instanceof Error ? reason : undefined);
     },
   });
+}
+
+/** Rebuilds the body a parser left on `req.body`. It is only serialized once the request body is read. */
+function parsedBody(req: DecoratedRequest): ReadableStream<Uint8Array> {
+  return new ReadableStream(
+    {
+      pull(controller) {
+        const bytes = serializeParsedBody(req);
+        if (bytes) controller.enqueue(bytes);
+        controller.close();
+      },
+    },
+    { highWaterMark: 0 },
+  );
+}
+
+/** The bytes of the parsed body, or undefined when it can't be rebuilt faithfully (then the request has no body). */
+function serializeParsedBody(req: DecoratedRequest): Uint8Array | undefined {
+  const { body, headers } = req;
+  // A parser such as `express.json()` sets `{}` even when the request had no body.
+  // HTTP/2 doesn't need `Content-Length`, so only HTTP/1 tells an empty body from the absence of framing headers.
+  if (
+    req.httpVersionMajor < 2 &&
+    headers["transfer-encoding"] === undefined &&
+    (headers["content-length"] ?? "0") === "0"
+  )
+    return;
+  if (body instanceof Uint8Array) return body;
+
+  const contentType = String(headers["content-type"]).split(";")[0]!.trim().toLowerCase();
+  const encoder = new TextEncoder();
+  if (contentType === "application/json" || contentType.endsWith("+json")) {
+    // A string under a JSON type is taken as a JSON string ("x"), not as raw JSON text from a text parser
+    return encoder.encode(JSON.stringify(body));
+  }
+  if (typeof body === "string") return encoder.encode(body);
+  if (contentType === "application/x-www-form-urlencoded" && body && typeof body === "object") {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(body)) {
+      // `a[]=1` parses to `["1"]` and would be rebuilt as `a=1`, which parses back to a string
+      if (Array.isArray(value) && value.length === 1) return;
+      for (const item of Array.isArray(value) ? value : [value]) {
+        if (typeof item !== "string") return;
+        params.append(key, item);
+      }
+    }
+    return encoder.encode(params.toString());
+  }
 }

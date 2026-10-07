@@ -3,8 +3,7 @@ import { Elysia } from "elysia";
 import { describe, expect, it } from "vitest";
 import { apply } from "../src/index.js";
 
-// A context-adding middleware. Reading `context.body` (which `cloneRequestWithBody`
-// does) is what makes Elysia's sucrose inference eagerly parse the request body.
+// A context-adding middleware: the route below must still receive the raw JSON bytes unchanged.
 const ctxMw = enhance(async (_req, ctx) => ({ ...ctx, db: {} }), {
   name: "db",
   immutable: false,
