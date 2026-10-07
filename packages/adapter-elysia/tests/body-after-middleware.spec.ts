@@ -1,7 +1,7 @@
 import type { UniversalMiddleware } from "@universal-middleware/core";
 import { Elysia } from "elysia";
 import { describe, expect, it } from "vitest";
-import { apply } from "../src/index.js";
+import { apply, createMiddleware } from "../src/index.js";
 
 // A universal middleware registered before a route must leave Elysia's own body parsing alone.
 
@@ -10,7 +10,7 @@ function build(middleware: UniversalMiddleware, app: Elysia = new Elysia()) {
   return app.post("/echo", (c) => ({ got: c.body }));
 }
 
-function post(app: ReturnType<typeof build>, body: string, contentType: string) {
+function post(app: { handle: (request: Request) => Response | Promise<Response> }, body: string, contentType: string) {
   return app.handle(
     new Request("http://localhost/echo", { method: "POST", headers: { "content-type": contentType }, body }),
   );
@@ -41,5 +41,17 @@ describe("body after a universal middleware", () => {
     const res = await post(app, JSON.stringify({ a: 1 }), "application/json");
     expect(seen).toBe('{"a":1}');
     expect(await res.json()).toEqual({ got: { parsed: '{"a":1}' } });
+  });
+
+  it("still reaches the route when the middleware is added with app.use() instead of apply()", async () => {
+    let seen: string | undefined;
+    const middleware = createMiddleware(() => async (request) => {
+      seen = await request.text();
+    })();
+    const app = new Elysia().use(middleware).post("/echo", (c) => ({ got: c.body }));
+    const res = await post(app, JSON.stringify({ a: 1 }), "application/json");
+    expect(res.status).toBe(200);
+    expect(seen).toBe('{"a":1}');
+    expect(await res.json()).toEqual({ got: { a: 1 } });
   });
 });

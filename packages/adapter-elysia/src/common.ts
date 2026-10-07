@@ -32,7 +32,7 @@ const unparsedBodies = new WeakMap<Request, Request>();
 
 /** Elysia `onRequest` hook (before any `onParse`): remembers the request body without parsing it, so Elysia's own parsing goes on. */
 export function captureRequestBody(request: Request): void {
-  if (request.body) unparsedBodies.set(request, request.clone());
+  if (request.body && !unparsedBodies.has(request)) unparsedBodies.set(request, request.clone());
 }
 
 function requestOf(request: Request) {
@@ -142,6 +142,7 @@ export function createMiddleware<
 
 function initPlugin<Context extends Universal.Context = Universal.Context>() {
   return new Elysia({ name: "universal-middleware-context" })
+    .onRequest(({ request }) => captureRequestBody(request))
     .derive(() => {
       return {
         [contextSymbol]: {} as Context,
