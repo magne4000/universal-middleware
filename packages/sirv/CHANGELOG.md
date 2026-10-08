@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.29
+
+### Patch Changes
+
+- Updated dependencies [0dc053f]
+  - @universal-middleware/core@0.6.0
+
 ## 0.1.28
 
 ### Patch Changes

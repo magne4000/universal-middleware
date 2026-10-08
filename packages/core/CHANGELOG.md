@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/core-v0.3.2...core-v0.3.3) (2024-12-09)
 
+## 0.6.0
+
+### Minor Changes
+
+- 0dc053f: A middleware with a `path` and a non-zero `order` now runs only for the requests that path (and its `method`, if set) matches, instead of being run everywhere with a warning.
+
 ## 0.5.0
 
 ### Minor Changes

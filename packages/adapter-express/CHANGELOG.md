@@ -1,5 +1,13 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies [0dc053f]
+  - @universal-middleware/core@0.6.0
+  - @universal-middleware/node@0.2.6
+
 ## 0.5.0
 
 ### Minor Changes
