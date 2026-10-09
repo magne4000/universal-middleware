@@ -607,10 +607,10 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
 
         await genDts(mapping, options);
 
-        const report = genReport(mapping);
+        const report = genReport(mapping, options);
 
         if (!options?.doNotEditPackageJson) {
-          const { path, packageJson } = await readAndEditPackageJson(report);
+          const { path, packageJson } = await readAndEditPackageJson(report, options);
           await writePackageJson(path, packageJson);
         }
 
@@ -648,7 +648,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
           builder.initialOptions.external.push(...maybeExternals);
         }
 
-        const normalizedInput = normalizeInput(builder.initialOptions.entryPoints);
+        const normalizedInput = normalizeInput(builder.initialOptions.entryPoints, options);
 
         if (!normalizedInput) return;
 
@@ -729,10 +729,10 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
 
           await genDts(mapping, options);
 
-          const report = genReport(mapping);
+          const report = genReport(mapping, options);
 
           if (!options?.doNotEditPackageJson) {
-            const { path, packageJson } = await readAndEditPackageJson(report);
+            const { path, packageJson } = await readAndEditPackageJson(report, options);
             await writePackageJson(path, packageJson);
           }
 

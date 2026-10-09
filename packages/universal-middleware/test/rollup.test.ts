@@ -3,9 +3,11 @@ import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import swc from "@rollup/plugin-swc";
 import { type OutputChunk, type Plugin, type RollupLog, type RollupOutput, rollup } from "rollup";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import plugin from "../src/rollup";
-import { adapters, expectNbOutput, noMiddlewaresSupport, options } from "./common";
+import { adapters, buildInTempPackage, expectNbOutput, noMiddlewaresSupport, options } from "./common";
+
+vi.mock("package-up", () => ({ packageUp: vi.fn() }));
 
 function onwarn(warning: RollupLog) {
   if (warning.code === "CIRCULAR_DEPENDENCY") return;
@@ -234,6 +236,30 @@ describe("rollup", () => {
     expect(handler?.name).toEqual(join("test", "files", "folder1", "handler"));
 
     testRollupOutput(gen, "handler", entry);
+  });
+
+  it("writes package.json according to `dts` and `externalDependencies`", options, async () => {
+    const input = { handler: "test/files/folder1/handler.ts" };
+    const packageJson = await buildInTempPackage(async () => {
+      const result = await rollup({
+        input,
+        plugins: [
+          plugin({ dts: false, externalDependencies: true }),
+          nodeResolve(),
+          commonjs(),
+          swc(),
+          resolveTsSource,
+        ],
+        onwarn,
+      });
+      await result.generate({});
+    });
+
+    expect(packageJson.dependencies).toMatchObject({
+      "@universal-middleware/hono": "^0",
+      "@universal-middleware/express": "^0",
+    });
+    expect(Object.values(packageJson.exports).filter((entry) => entry.types)).toEqual([]);
   });
 
   it("generates selected server files", options, async () => {

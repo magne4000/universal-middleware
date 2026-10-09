@@ -1,9 +1,11 @@
 import { join } from "node:path";
 import { type BuildResult, build } from "esbuild";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import plugin from "../src/esbuild";
 import type { Options } from "../src/plugin";
-import { adapters, expectNbOutput, noMiddlewaresSupport, options } from "./common";
+import { adapters, buildInTempPackage, expectNbOutput, noMiddlewaresSupport, options } from "./common";
+
+vi.mock("package-up", () => ({ packageUp: vi.fn() }));
 
 describe("esbuild", () => {
   it("generates all server files (in/out input)", options, async () => {
@@ -213,6 +215,52 @@ describe("esbuild", () => {
     expect(findOutput(result, entry)).toSatisfy((s: string) => s.startsWith("dist/handler"));
 
     testEsbuildOutput(result, "handler", options, entry);
+  });
+
+  it("writes package.json according to `dts` and `externalDependencies`", options, async () => {
+    const entry = "test/files/folder1/handler.ts";
+    const packageJson = await buildInTempPackage(() =>
+      build({
+        entryPoints: { handler: entry },
+        plugins: [plugin({ dts: false, externalDependencies: true })],
+        outdir: "dist",
+        write: false,
+        metafile: true,
+        bundle: true,
+        platform: "neutral",
+        format: "esm",
+        target: "es2022",
+        splitting: true,
+      }),
+    );
+
+    expect(packageJson.dependencies).toMatchObject({
+      "@universal-middleware/hono": "^0",
+      "@universal-middleware/express": "^0",
+    });
+    expect(Object.values(packageJson.exports).filter((entry) => entry.types)).toEqual([]);
+  });
+
+  it("does not recommend an object input with `ignoreRecommendations`", options, async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      await build({
+        entryPoints: ["test/files/folder1/handler.ts", "test/files/middleware.ts"],
+        plugins: [plugin({ doNotEditPackageJson: true, dts: false, ignoreRecommendations: true })],
+        outdir: "dist",
+        write: false,
+        metafile: true,
+        bundle: true,
+        platform: "neutral",
+        format: "esm",
+        target: "es2022",
+        splitting: true,
+      });
+
+      expect(warn).not.toHaveBeenCalledWith(expect.stringContaining("Prefer using an object"));
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   it("respects outbase", options, async () => {
