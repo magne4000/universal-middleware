@@ -28,7 +28,7 @@
     "@universal-middleware/core": "workspace:^"
   },
   "peerDependencies": {
-    "elysia": "^1"
+    "elysia": "^1.4"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
