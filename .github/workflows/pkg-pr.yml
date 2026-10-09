@@ -13,7 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      - run: npm i -g --force corepack && corepack enable
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -25,4 +27,5 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - run: pnpx pkg-pr-new publish './packages/*'
+      # `--pnpm` packs with pnpm, which resolves the `catalog:` and `workspace:` versions in the manifests
+      - run: pnpm dlx pkg-pr-new@0.0.91 publish --pnpm './packages/*'

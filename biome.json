@@ -38,7 +38,8 @@
         "**/packages/node/src/response.ts",
         "**/packages/core/src/types.ts",
         "**/*.test.ts",
-        "**/*.test-d.ts"
+        "**/*.test-d.ts",
+        "**/*.spec.ts"
       ],
       "linter": {
         "rules": {

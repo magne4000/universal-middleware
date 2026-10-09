@@ -8,7 +8,7 @@ import { describe, expect, it, vi } from "vitest";
 //
 // Ported from srvx#229 (hop-aware `X-Forwarded-*` resolution).
 
-// biome-ignore lint/suspicious/noExplicitAny: minimal stand-ins for req/res
+// Minimal stand-ins for req/res
 type Any = any;
 
 function fakeReq(headers: Record<string, string>, url = "/p"): Any {

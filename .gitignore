@@ -92,7 +92,6 @@ out
 dist
 
 # Gatsby files
-.cache/
 # Comment in the public line in if your project uses Gatsby and not Next.js
 # https://nextjs.org/blog/next-9-1#public-directory-support
 # public
@@ -104,7 +103,6 @@ dist
 
 # vuepress v2.x temp and cache directory
 .temp
-.cache
 
 # Docusaurus cache and generated files
 .docusaurus
@@ -125,11 +123,14 @@ dist
 .vscode-test
 
 # yarn v2
-.yarn/cacheg
+.yarn/cache
 .yarn/unplugged
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# pnpm store, when installing with `--store-dir .pnpm-store` (see AGENTS.md)
+.pnpm-store
 
 # temp
 .DS_Store

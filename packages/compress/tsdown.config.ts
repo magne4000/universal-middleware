@@ -12,5 +12,5 @@ export default defineMiddlewareTsdown({
   ],
   // `fflate` is a devDependency, so inline it into the bundle (core and the
   // adapters, also devDependencies, are inlined by `defineMiddlewareTsdown`).
-  deps: { alwaysBundle: ["fflate"] },
+  deps: { alwaysBundle: ["fflate"], onlyBundle: ["fflate"] },
 });

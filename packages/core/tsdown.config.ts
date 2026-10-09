@@ -7,5 +7,5 @@ export default defineTsdown({
   },
   runtime: "node",
   // Inline `rou3` rather than leaving it an external runtime dependency.
-  deps: { neverBundle: true, alwaysBundle: ["rou3"] },
+  deps: { neverBundle: true, alwaysBundle: ["rou3"], onlyBundle: ["rou3"] },
 });
