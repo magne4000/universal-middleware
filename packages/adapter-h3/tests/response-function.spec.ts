@@ -1,3 +1,4 @@
+import { once } from "node:events";
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import { Readable } from "node:stream";
@@ -105,6 +106,8 @@ describe("response function and a route returning a value h3 converts", () => {
         this.push("x");
       },
     });
+    // Each of these tests fails by timeout if the stream is never released
+    const closed = once(source, "close");
     const app = createApp();
     apply(app, [step]);
     app.use(
@@ -112,11 +115,11 @@ describe("response function and a route returning a value h3 converts", () => {
       eventHandler(() => source),
     );
     await toWebHandler(app)(new Request("http://localhost/route", { method: "HEAD" }));
-    await new Promise((resolve) => setImmediate(resolve));
-    expect(source.destroyed).toBe(true);
+    await closed;
   });
   it.each(["HEAD", "cancellation"])("%s releases a Node stream that is waiting for data", async (mode) => {
     const source = new Readable({ read() {} });
+    const closed = once(source, "close");
     const app = createApp();
     apply(app, [step]);
     app.use(
@@ -128,8 +131,7 @@ describe("response function and a route returning a value h3 converts", () => {
         new Request("http://localhost/route", { method: mode === "HEAD" ? "HEAD" : "GET" }),
       );
       if (mode === "cancellation") void res.body?.cancel();
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      expect(source.destroyed).toBe(true);
+      await closed;
     } finally {
       source.destroy();
     }
@@ -145,13 +147,13 @@ describe("response function and a route returning a value h3 converts", () => {
   );
   it.each([204, 304])("status %s releases a Node stream it doesn't send", async (status) => {
     const source = new Readable({ read() {} });
+    const closed = once(source, "close");
     try {
       await send((event) => {
         setResponseStatus(event, status);
         return source;
       }, true);
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      expect(source.destroyed).toBe(true);
+      await closed;
     } finally {
       source.destroy();
     }

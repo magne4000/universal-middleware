@@ -58,26 +58,14 @@ async function testCompressionFlushing(importPath: string, algorithm: string, de
     }
     const reader = compressedStream.getReader();
 
-    // Read all chunks with timeout protection
-    const readChunks = async () => {
-      const timeout = setTimeout(() => {
-        throw new Error("Test timed out while reading chunks");
-      }, 5000); // 5 second timeout
-
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          collector.ondata(value);
-          // Small delay to simulate processing time
-          await new Promise((resolve) => setTimeout(resolve, 5));
-        }
-      } finally {
-        clearTimeout(timeout);
-      }
-    };
-
-    await readChunks();
+    // Read all chunks
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      collector.ondata(value);
+      // Small delay to simulate processing time
+      await new Promise((resolve) => setTimeout(resolve, 5));
+    }
 
     // We should have received at least as many chunks as we input (evidence of proper flushing)
     // We input 3 chunks, so we should get at least 3 chunks out

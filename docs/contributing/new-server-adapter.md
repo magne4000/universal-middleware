@@ -15,7 +15,6 @@ packages/adapter-{server-name}/
 ├── tests/
 │   ├── entry-{server-name}.ts    # Test entry point
 │   └── {server-name}.spec.ts     # Test specifications
-├── deno.json          # Deno configuration for testing
 ├── package.json
 ├── readme.md
 ├── tsconfig.json
@@ -28,7 +27,7 @@ packages/adapter-{server-name}/
 
 #### `package.json`
 - Set name to `@universal-middleware/{server-name}`
-- Include test scripts for different runtimes (node, bun, deno)
+- Include test scripts for different runtimes (node, bun, deno). Deno runs the entry with `deno run --unstable-byonm --unstable-sloppy-imports -A`, which resolves packages from `node_modules`, so the package needs no `deno.json`
 - Add dependencies on `@universal-middleware/core` and the target server framework
 - Include appropriate keywords for discoverability
 - Set version to `0.0.0` initially
@@ -55,10 +54,6 @@ packages/adapter-{server-name}/
 - Export `defineTsdown({ ... })` from `@universal-middleware/tsdown-config`
 - Set `runtime` to `"node"` or `"neutral"`, and list any `deps` bundling exceptions
 - The shared config handles DTS, target, and clean builds
-
-#### `deno.json`
-- Configure Deno imports for testing
-- Map test dependencies to local dist folders
 
 #### `wrangler.toml` (if Cloudflare compatible)
 - Configure Cloudflare Workers/Pages deployment

@@ -1066,9 +1066,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
-      vercel:
-        specifier: 'catalog:'
-        version: 62.2.0(@emnapi/runtime@1.11.3)(rollup@4.64.0)
       vite:
         specifier: 'catalog:'
         version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
