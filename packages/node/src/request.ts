@@ -96,12 +96,14 @@ export function createRequestAdapter(
 
     let host = hostOverride || (trustProxy && forwardedValue(headers, "host")) || headers.host;
 
-    if (!host && !warned) {
-      console.warn(
-        "Could not automatically determine the origin host, using 'localhost'. " +
-          "Use the 'origin' option or the 'ORIGIN' environment variable to set the origin explicitly.",
-      );
-      warned = true;
+    if (!host) {
+      if (!warned) {
+        console.warn(
+          "Could not automatically determine the origin host, using 'localhost'. " +
+            "Use the 'origin' option or the 'ORIGIN' environment variable to set the origin explicitly.",
+        );
+        warned = true;
+      }
       host = "localhost";
     }
 
