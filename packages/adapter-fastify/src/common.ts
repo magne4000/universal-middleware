@@ -1,4 +1,5 @@
 import type { IncomingMessage } from "node:http";
+import { Readable } from "node:stream";
 import {
   type Awaitable,
   attachUniversal,
@@ -22,6 +23,8 @@ import fp from "fastify-plugin";
 
 const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
 const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
+// The Fetch standard's null body statuses: a Response with one of them can't have a body
+const nullBodyStatuses = new Set([101, 103, 204, 205, 304]);
 
 export type FastifyHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, RouteHandlerMethod>;
 export type FastifyMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
@@ -63,42 +66,26 @@ function withoutHeadBody(request: FastifyRequest, response: Response): Response 
 }
 
 function getHeaders(reply: FastifyReply): Headers {
-  const ret = new Headers();
-  const headers = reply.getHeaders();
-
-  let setCookie = reply.getHeader("set-cookie");
-  if (typeof setCookie === "string") {
-    setCookie = [setCookie];
-  }
-  if (Array.isArray(setCookie)) {
-    for (const cookie of setCookie) {
-      ret.append("set-cookie", cookie);
+  const headers = new Headers();
+  for (const [name, value] of Object.entries(reply.getHeaders())) {
+    // A list (several cookies, `reply.header("link", [a, b])`) holds several values of the same header
+    if (Array.isArray(value)) {
+      for (const item of value) headers.append(name, item);
+    } else if (value !== undefined) {
+      headers.set(name, String(value));
     }
   }
-
-  for (const [key, value] of Object.entries(headers)) {
-    if (key === "set-cookie") continue;
-    if (typeof value === "string") {
-      ret.set(key, value);
-    } else if (typeof value === "number") {
-      ret.set(key, String(value));
-    } else if (Array.isArray(value)) {
-      if (value.length === 1) {
-        ret.set(key, value[0]);
-      } else if (value.length > 1) {
-        console.warn(`Header "${key}" should not be an array. Only last value will be sent`);
-        ret.set(key, value[value.length - 1]);
-      }
-    }
-  }
-
-  return ret;
+  return headers;
 }
 
 function getRawRequest(req: FastifyRequest): DecoratedRequest {
-  if (req.body === undefined || "rawBody" in req.raw) return req.raw as DecoratedRequest;
+  const raw: DecoratedRequest = req.raw;
+  // `request.protocol` follows Fastify's `trustProxy`, as Express's `req.protocol` follows its `trust proxy`.
+  // Defined rather than assigned: Express (through @fastify/express) puts a getter-only `protocol` on the prototype.
+  Object.defineProperty(raw, "protocol", { value: req.protocol, configurable: true, enumerable: true });
+  if (req.body === undefined || "rawBody" in raw) return raw;
   if ("rawBody" in req) {
-    Object.defineProperty(req.raw, "rawBody", {
+    Object.defineProperty(raw, "rawBody", {
       get() {
         return req.rawBody;
       },
@@ -107,10 +94,10 @@ function getRawRequest(req: FastifyRequest): DecoratedRequest {
     });
   } else {
     // Fastify already consumed the stream; the node adapter reads the parsed body from here
-    Object.defineProperty(req.raw, "body", { value: req.body, configurable: true, enumerable: true });
+    Object.defineProperty(raw, "body", { value: req.body, configurable: true, enumerable: true });
   }
 
-  return req.raw;
+  return raw;
 }
 
 export function createHandler<T extends unknown[], InContext extends Universal.Context>(
@@ -201,31 +188,42 @@ export function createMiddleware<
           if (request[wrappedResponseSymbol] !== false) return payload;
           request[wrappedResponseSymbol] = true;
 
+          let response: Response;
           if (payload instanceof Response) {
-            mergeHeadersInto(payload.headers, getHeaders(reply));
-          } else if (payload === undefined || isBodyInit(payload)) {
-            payload = new Response(payload, {
+            // Merged into a new Response: the handler's may have immutable headers, as `Response.redirect()` and
+            // `fetch()` give theirs
+            response = new Response(nullBodyStatuses.has(payload.status) ? null : payload.body, {
+              status: payload.status,
+              statusText: payload.statusText,
+              headers: mergeHeadersInto(new Headers(payload.headers), getHeaders(reply)),
+            });
+            if (!response.body) patchBody(response);
+          } else if (payload === undefined || isBodyInit(payload) || payload instanceof Readable) {
+            // A route sends a file, or a proxied body, as a Node stream. The cast only bridges the types:
+            // `node:stream/web` declares the global `ReadableStream` apart from the DOM's, which `Response` takes.
+            const body =
+              payload instanceof Readable
+                ? (Readable.toWeb(payload) as unknown as ReadableStream<Uint8Array>)
+                : payload;
+            response = new Response(body, {
               headers: getHeaders(reply),
               status: reply.statusCode,
             });
           } else {
-            throw new TypeError("Payload is not a Response or BodyInit compatible");
+            throw new TypeError("Payload is not a Response, a Node stream or BodyInit compatible");
           }
 
           const middlewares = request[pendingMiddlewaresSymbol];
           delete request[pendingMiddlewaresSymbol];
 
-          const newResponse = await middlewares?.reduce(
-            async (prev, curr) => {
-              const p = await prev;
-              const newR = await curr(p);
-              cancelReplacedBody(p, newR);
-              return newR ?? p;
-            },
-            Promise.resolve(payload as Response),
-          );
+          const newResponse = await middlewares?.reduce(async (prev, curr) => {
+            const p = await prev;
+            const newR = await curr(p);
+            cancelReplacedBody(p, newR);
+            return newR ?? p;
+          }, Promise.resolve(response));
 
-          const r = (newResponse ?? payload) as Response;
+          const r = newResponse ?? response;
           if (request.method === "HEAD") {
             // Fastify's head route runs after this hook and only accepts a string, a buffer or a stream
             reply.code(r.status);
@@ -235,7 +233,7 @@ export function createMiddleware<
             // An idle stream would keep the HEAD response open
             void r.body?.cancel().catch(() => {});
             // Nothing is sent for HEAD: the replaced body is released now, not after `cancelReplacedBody`'s delay
-            if (r !== payload) void (payload as Response).body?.cancel().catch(() => {});
+            if (r !== response) void response.body?.cancel().catch(() => {});
             // `undefined` would keep the previous payload, `null` breaks Fastify's own HEAD hook, and a string
             // makes Fastify send `content-length: 0`. An empty stream keeps the content-length of `r`, if any.
             return new ReadableStream({ start: (controller) => controller.close() });
