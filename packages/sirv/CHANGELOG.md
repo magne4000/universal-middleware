@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.30
+
+### Patch Changes
+
+- d1363db: The packages that the published files import, at runtime or only in their types, are declared as peer dependencies: each adapter's framework (optional for type-only packages such as `@cloudflare/workers-types`), and for compress and sirv the frameworks of their per-server entries, all optional. The Vercel adapter no longer installs `@universal-middleware/express`, which it only needs for types; it and the other adapter packages it references are optional peers.
+- 967b047: The packages declare `engines.node: ">=22"`, the versions they are built for and tested on. Node 20 reached its end of life in April 2026; package managers now warn when installing on it.
+- eca2954: Framework peer dependencies accept the whole major version (`hono ^4`, `fastify ^5`, `h3 ^1`, `elysia ^1`, `@webroute/route ^0.8`, `@cloudflare/workers-types ^4 || ^5`) instead of the latest release when the package was built (`hono ^4.13.13`, `@cloudflare/workers-types ^5.20261004.1`, …), which gave apps on an older minor an unmet peer warning.
+- ab96dd1: Importing an adapter entry such as `@universal-middleware/sirv/hono` works again: its JS and types no longer import `universal-middleware`, which was only a devDependency.
+- Updated dependencies [aa3d958]
+- Updated dependencies [7d163e4]
+- Updated dependencies [967b047]
+- Updated dependencies [a8c7d38]
+- Updated dependencies [3953127]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [eca2954]
+  - @universal-middleware/core@0.6.1
+
 ## 0.1.29
 
 ### Patch Changes

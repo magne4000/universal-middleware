@@ -1,7 +1,7 @@
 {
   "name": "universal-middleware",
   "type": "module",
-  "version": "0.6.33",
+  "version": "0.6.34",
   "description": "Write middlewares and handlers once, and build them for every supported server",
   "license": "MIT",
   "engines": {

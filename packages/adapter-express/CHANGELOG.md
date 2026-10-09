@@ -1,5 +1,27 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.5.2
+
+### Patch Changes
+
+- aa3d958: When a response function replaces the Response, the body of the replaced one is cancelled, so an endless body (Server-Sent Events, a proxied stream) no longer keeps running. It is left alone when the replacement still reads it (the same stream, `pipeThrough`, `clone()`, `text()`, a wrapper that pulls from it). With Express, a response function no longer makes the adapter keep a second copy of the app's output in memory.
+- 967b047: The packages declare `engines.node: ">=22"`, the versions they are built for and tested on. Node 20 reached its end of life in April 2026; package managers now warn when installing on it.
+- bbe2ee8: `getRuntime` is exported, as the other adapters already did. The Express adapter also exports the `NodeAdapterHandlerOptions` and `NodeAdapterMiddlewareOptions` types of its `createHandler` and `createMiddleware` options.
+- e0215e0: fix(express): `apply()` and `App` type-check against Express 4 and 5 apps without needing `express4` types, which the published declarations used to import
+- 92a3206: `createIncomingMessage`, which `connectToWeb` uses when it creates the Node request itself, gives the request a `Host` header from the request URL unless the `Request` has one. Without it, `req.headers.host` was undefined, and universal handlers saw `http://localhost/…` with a warning, whatever host the request was for.
+- Updated dependencies [aa3d958]
+- Updated dependencies [7d163e4]
+- Updated dependencies [967b047]
+- Updated dependencies [a8c7d38]
+- Updated dependencies [3953127]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [2d36e0d]
+- Updated dependencies [92a3206]
+- Updated dependencies [01f8ccb]
+- Updated dependencies [eca2954]
+  - @universal-middleware/core@0.6.1
+  - @universal-middleware/node@0.2.7
+
 ## 0.5.1
 
 ### Patch Changes
