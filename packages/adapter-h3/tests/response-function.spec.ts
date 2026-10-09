@@ -49,6 +49,19 @@ describe("response function and a route returning a value h3 converts", () => {
     expectLikeH3(() => Buffer.from("raw"), { status: 200, type: null, body: "raw" }));
   it("Node stream", () =>
     expectLikeH3(() => Readable.from([Buffer.from("a"), Buffer.from("b")]), { status: 200, type: null, body: "ab" }));
+  it("Node stream where ReadableStream.from is missing (Bun)", async () => {
+    const { from } = ReadableStream as unknown as { from: unknown };
+    Object.defineProperty(ReadableStream, "from", { value: undefined, configurable: true });
+    try {
+      await expectLikeH3(() => Readable.from([Buffer.from("a"), Buffer.from("b")]), {
+        status: 200,
+        type: null,
+        body: "ab",
+      });
+    } finally {
+      Object.defineProperty(ReadableStream, "from", { value: from, configurable: true, writable: true });
+    }
+  });
   it("object with arrayBuffer() and a type", () =>
     expectLikeH3(() => ({ type: "text/plain", arrayBuffer: async () => new TextEncoder().encode("blob").buffer }), {
       status: 200,

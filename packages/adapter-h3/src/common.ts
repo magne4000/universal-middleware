@@ -92,14 +92,26 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
   };
 }
 
+// `ReadableStream.from` is missing on Bun
+function toWebStream(iterable: AsyncIterable<Uint8Array>): ReadableStream<Uint8Array> {
+  const iterator = iterable[Symbol.asyncIterator]();
+  return new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      const { value, done } = await iterator.next();
+      if (done) controller.close();
+      else controller.enqueue(value);
+    },
+    async cancel() {
+      await iterator.return?.();
+    },
+  });
+}
+
 // What h3 sends for a value that isn't a Response, as h3's own `handleHandlerResponse` (not exported) converts it
 async function toPayload(value: unknown): Promise<{ body: BodyInit | null; type?: string }> {
   if (typeof value === "string") return { body: value, type: MIMES.html };
   if (isBodyInit(value)) return { body: value };
-  if (isStream(value)) {
-    const streams = ReadableStream as unknown as { from(iterable: AsyncIterable<unknown>): ReadableStream };
-    return { body: streams.from(value as AsyncIterable<unknown>) };
-  }
+  if (isStream(value)) return { body: toWebStream(value as AsyncIterable<Uint8Array>) };
   const { arrayBuffer } = value as { arrayBuffer?: unknown };
   if (typeof arrayBuffer === "function") return { body: await arrayBuffer.call(value), type: (value as Blob).type };
   if (typeof value === "object" || typeof value === "boolean" || typeof value === "number") {
