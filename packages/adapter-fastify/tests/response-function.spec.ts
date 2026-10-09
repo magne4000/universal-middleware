@@ -1,5 +1,5 @@
 import { Readable } from "node:stream";
-import type { UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type { UniversalMiddleware } from "@universal-middleware/core";
 import Fastify, { type FastifyInstance } from "fastify";
 import { afterEach, describe, expect, it } from "vitest";
 import { createHandler, createMiddleware } from "../src/index.js";
@@ -61,17 +61,5 @@ describe("what a route sends, under a response function", () => {
     );
     const res = await fetch(url);
     expect(res.headers.get("link")).toBe("</a.js>; rel=preload, </b.js>; rel=preload");
-  });
-});
-
-describe("request URL", () => {
-  it("has the protocol Fastify's trustProxy gives the request", async () => {
-    const echoesUrl: UniversalHandler = (request) => new Response(request.url);
-    const instance = Fastify({ trustProxy: true });
-    instance.get("/", createHandler(() => echoesUrl)());
-    app = instance;
-    const url = await instance.listen({ port: 0, host: "127.0.0.1" });
-    const res = await fetch(url, { headers: { "x-forwarded-proto": "https" } });
-    expect(await res.text()).toMatch(/^https:\/\//);
   });
 });

@@ -179,6 +179,19 @@ describe("connectToWeb (synthetic path) — responses", () => {
     expect(res.body).toBeNull();
   });
 
+  it("keeps the status message and the repeated headers of writeHead's flat list", async () => {
+    const app = express();
+    app.get("/t", (_req, res) => {
+      res.writeHead(201, "Made", ["x-a", "1", "x-a", "2"]);
+      res.end("ok");
+    });
+    const res = defined(await connectToWeb(app)(new Request("http://localhost/t")));
+    expect(res.status).toBe(201);
+    expect(res.statusText).toBe("Made");
+    expect(res.headers.get("x-a")).toBe("1, 2");
+    expect(await res.text()).toBe("ok");
+  });
+
   it("streams a chunked response without buffering it all first", async () => {
     const fh = appFrom(() => async () => {
       const enc = new TextEncoder();

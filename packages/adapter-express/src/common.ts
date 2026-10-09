@@ -4,7 +4,7 @@ import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from
 import { BadRequestError } from "@universal-middleware/node";
 import { adaptLendingBody, handBodyBack } from "./body.js";
 import { pendingMiddlewaresSymbol } from "./const.js";
-import { createRequestAdapter } from "./request.js";
+import { createRequestAdapter, expressOrigin } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
 import type {
   DecoratedRequest,
@@ -33,6 +33,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
   options: NodeAdapterHandlerOptions = {},
 ): Get<T, NodeHandler<InContext>> {
   const requestAdapter = createRequestAdapter(options);
+  const adapt = (req: DecoratedRequest, res: ServerResponse) => requestAdapter(req, res, expressOrigin(req));
 
   return (...args) => {
     const handler = handlerFactory(...args);
@@ -40,7 +41,7 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
     return bindUniversal(handler, async function universalHandlerExpress(req, res, next) {
       try {
         req[contextSymbol] ??= {} as InContext;
-        const request = adaptLendingBody(requestAdapter, req, res);
+        const request = adaptLendingBody(adapt, req, res);
         const response: Response | undefined = await this[universalSymbol](
           request,
           req[contextSymbol],
@@ -87,6 +88,7 @@ export function createMiddleware<
   options: NodeAdapterMiddlewareOptions = {},
 ): Get<T, NodeMiddleware<InContext, OutContext>> {
   const requestAdapter = createRequestAdapter(options);
+  const adapt = (req: DecoratedRequest, res: ServerResponse) => requestAdapter(req, res, expressOrigin(req));
 
   return (...args) => {
     const middleware = middlewareFactory(...args);
@@ -94,7 +96,7 @@ export function createMiddleware<
     return bindUniversal(middleware, async function universalMiddlewareExpress(req, res, next) {
       try {
         req[contextSymbol] ??= {} as InContext;
-        const request = adaptLendingBody(requestAdapter, req, res);
+        const request = adaptLendingBody(adapt, req, res);
         const response = await this[universalSymbol](request, getContext(req), getRuntime(req, res));
 
         // A returned `Response` ends the chain and may still be reading the body

@@ -2,6 +2,7 @@ import type { ServerResponse } from "node:http";
 import type { Readable } from "node:stream";
 import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
 import { nodeHeadersToWeb } from "@universal-middleware/core";
+import { originSymbol } from "./const.js";
 import { forwardedValue, trustsProxy } from "./forwarded.js";
 import type { DecoratedRequest } from "./request.js";
 
@@ -96,10 +97,11 @@ function getFullUrl(pathnameOrFull: string, req: DecoratedRequest): string {
   try {
     return new URL(pathnameOrFull).href;
   } catch {
-    // Without the opt-in, any client could set the header and point the redirect
-    // at a host of its choosing. `responseAdapter` cannot see `createRequestAdapter`'s
-    // `trustProxy` option, so redirects honor only the `TRUST_PROXY` env var — set it
-    // to keep request.url and redirect origins consistent behind a proxy.
+    // The origin of the request URL, so that a redirect stays on it, whatever set it: the `origin` option,
+    // the forwarding headers, or the framework's trust-proxy setting.
+    if (req[originSymbol]) return new URL(pathnameOrFull, req[originSymbol]).href;
+    // No `Request` was made for this request. Without the opt-in, any client could set the header and
+    // point the redirect at a host of its choosing, so only the `TRUST_PROXY` env var enables it.
     const trustProxy = trustsProxy();
     // Same order as `createRequestAdapter`: Express's `req.protocol` follows its own `trust proxy` setting
     const protocol =

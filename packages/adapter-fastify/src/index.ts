@@ -1,6 +1,7 @@
 export {
   createHandler,
   createMiddleware,
+  type FastifyAdapterOptions,
   type FastifyHandler,
   type FastifyMiddleware,
   getContext,
