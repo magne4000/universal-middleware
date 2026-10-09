@@ -143,6 +143,19 @@ describe("response function and a route returning a value h3 converts", () => {
       { status, body: "" },
     ),
   );
+  it.each([204, 304])("status %s releases a Node stream it doesn't send", async (status) => {
+    const source = new Readable({ read() {} });
+    try {
+      await send((event) => {
+        setResponseStatus(event, status);
+        return source;
+      }, true);
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(source.destroyed).toBe(true);
+    } finally {
+      source.destroy();
+    }
+  });
   it("object with arrayBuffer() and a type", () =>
     expectLikeH3(() => ({ type: "text/plain", arrayBuffer: async () => new TextEncoder().encode("blob").buffer }), {
       status: 200,

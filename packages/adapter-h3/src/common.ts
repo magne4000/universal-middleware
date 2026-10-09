@@ -143,7 +143,9 @@ export const universalOnBeforeResponse = defineResponseMiddleware(
       const status = getResponseStatus(event);
       // As h3 sends it: no default type with 304, and no body with a status that can't have one (`Response` throws)
       if (type && status !== 304 && !headers.has("content-type")) headers.set("content-type", type);
-      response.body = new Response(status === 204 || status === 205 || status === 304 ? null : body, {
+      const bodyless = status === 204 || status === 205 || status === 304;
+      if (bodyless && body instanceof ReadableStream) void body.cancel().catch(() => {});
+      response.body = new Response(bodyless ? null : body, {
         headers,
         // h3 answers `null` with 204 unless a status was set
         status: body === null && status === 200 ? 204 : status,
