@@ -134,6 +134,15 @@ describe("response function and a route returning a value h3 converts", () => {
       source.destroy();
     }
   });
+  it.each([204, 304])("status %s with an object keeps the status and sends no body", (status) =>
+    expectLikeH3(
+      (event) => {
+        setResponseStatus(event, status);
+        return { a: 1 };
+      },
+      { status, body: "" },
+    ),
+  );
   it("object with arrayBuffer() and a type", () =>
     expectLikeH3(() => ({ type: "text/plain", arrayBuffer: async () => new TextEncoder().encode("blob").buffer }), {
       status: 200,
