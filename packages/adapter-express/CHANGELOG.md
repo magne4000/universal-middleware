@@ -1,5 +1,36 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.5.3
+
+### Patch Changes
+
+- c7e1579: `apply(app, middlewares, options)` passes `options` (`origin`, `trustProxy`) to every middleware and handler it adapts.
+- c7e1579: `connectToWeb` keeps the status message of the app's response, and the repeated headers of a `res.writeHead()` flat `[name, value, …]` list: the status text was dropped, and the list gave headers named `0`, `1`, ….
+- 956083e: A universal handler placed after a body parser such as `express.json()` reads the parsed body when a universal middleware before the parser left the body unread. It read an empty body.
+- 956083e: The `Request` the Express adapter makes again once a universal middleware has read the body reuses the abort signal of the first one, instead of adding a `close` listener to the response each time: 11 middlewares that read the body raised a `MaxListenersExceededWarning`.
+- 956083e: The body of the Response a response function returns is read only as fast as the client takes it, and is cancelled when the client leaves or when the request is a `HEAD`. An endless body (Server-Sent Events, a proxied stream) was read on, and held in memory, after the client had left.
+- 956083e: Under a response function, the Express app's response keeps what Node would have sent:
+  
+  - the status, status message and headers passed to `res.writeHead()`, which were dropped;
+  - a string written with an encoding (`res.write(data, "hex")`), which was encoded as UTF-8;
+  - the callbacks of `res.write()` and `res.end()`, which were never called, and `res.end()` returns the response;
+  - backpressure: `res.write()` returns false, and `drain` follows, when the app writes faster than the response is sent. The app's whole output was held in memory.
+  
+  A Response without a body, returned by the response function, is sent without a body: the app's body was sent with it.
+- c7e1579: The request URL takes its host, like its protocol, from Express's `trust proxy` setting: the first `X-Forwarded-Host` when the setting trusts the peer, with Express 4 and 5. Behind a proxy that terminates TLS, the URL was `https://<internal host>/…`. A relative redirect `Location` read by `responseAdapter` is made absolute with the origin of the request URL, so it follows `trust proxy` and the `origin` option too.
+  
+  `createRequestAdapter`'s adapter takes an optional third argument, the protocol and host the server framework resolved for the request (`RequestOrigin`).
+- 956083e: A request whose `Host` header, or trusted forwarded host, isn't a host and an optional port is rejected with a `BadRequestError` (400), as is `OPTIONS *`. The header was pasted in front of the path: with `Host: x/admin?`, a request for `/public` got the URL `http://x/admin?/public`, so a universal handler saw the path `/admin` while Express or Fastify routed `/public`. A request whose target is a full URL (`GET http://example.com/path`) takes its host and path from it, instead of failing with a 500. Without `next`, the Express adapter answers a `BadRequestError` with a 400 and doesn't log it.
+- Updated dependencies [d8e6816]
+- Updated dependencies [956083e]
+- Updated dependencies [c7e1579]
+- Updated dependencies [956083e]
+- Updated dependencies [956083e]
+- Updated dependencies [956083e]
+- Updated dependencies [d8e6816]
+  - @universal-middleware/core@0.6.2
+  - @universal-middleware/node@0.2.8
+
 ## 0.5.2
 
 ### Patch Changes

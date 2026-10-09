@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/core-v0.3.2...core-v0.3.3) (2024-12-09)
 
+## 0.6.2
+
+### Patch Changes
+
+- d8e6816: `getAdapterRuntime`, which adapters call for every middleware of every request, builds the runtime object directly instead of merging three intermediate ones. Its declared return type is `RuntimeAdapter`.
+
 ## 0.6.1
 
 ### Patch Changes
