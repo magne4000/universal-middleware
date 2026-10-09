@@ -73,7 +73,8 @@ export async function sendResponse(fetchResponse: Response, nodeResponse: Server
       if (!isClientGone(error)) console.error(error);
     });
   } else {
-    nodeResponse.setHeader("content-length", "0");
+    // A 204 has no content to measure, and a 304's Content-Length describes the 200 response (RFC 9110 §8.6)
+    if (fetchResponse.status !== 204 && fetchResponse.status !== 304) nodeResponse.setHeader("content-length", "0");
     nodeResponse.end();
   }
 }
@@ -105,7 +106,12 @@ function getFullUrl(pathnameOrFull: string, req: DecoratedRequest): string {
       (trustProxy && forwardedValue(req.headers, "proto")) ||
       req.protocol ||
       (req.socket?.encrypted ? "https" : "http");
-    const host = (trustProxy && forwardedValue(req.headers, "host")) || req.headers.host || "localhost";
+    // HTTP/2 clients send the host as `:authority`, as `createRequestAdapter` reads it
+    const host =
+      (trustProxy && forwardedValue(req.headers, "host")) ||
+      req.headers[":authority"] ||
+      req.headers.host ||
+      "localhost";
 
     return new URL(pathnameOrFull, `${protocol}://${host}`).href;
   }

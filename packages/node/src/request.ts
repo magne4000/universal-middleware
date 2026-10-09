@@ -59,6 +59,23 @@ export interface NodeRequestAdapterOptions {
   trustProxy?: boolean;
 }
 
+/** The client sent a request that a fetch `Request` can't represent, such as a malformed `Host` header */
+export class BadRequestError extends Error {
+  override name = "BadRequestError";
+  /** The status Express's error handler responds with */
+  readonly status = 400;
+  /** The status Fastify's error handler responds with */
+  readonly statusCode = 400;
+}
+
+// An RFC 3986 host (IP-literal or reg-name, without percent-encoding) and port. Anything else would put part of the
+// header in the URL's userinfo, path, query or fragment: `Host: x/admin?` turned `/public` into `http://x/admin?/public`.
+const VALID_HOST = /^(?:\[[\da-f:.]+\]|[\w!$&'()*+,;=~.-]+)(?::\d*)?$/i;
+const VALID_SCHEME = /^[a-z][a-z\d+.-]*$/i;
+
+const signalSymbol = Symbol("universal-middleware.signal");
+type SignalledResponse = ServerResponse & { [signalSymbol]?: AbortSignal };
+
 /** Create a function that converts a Node HTTP request into a fetch API `Request` object */
 export function createRequestAdapter(
   options: NodeRequestAdapterOptions = {},
@@ -73,7 +90,7 @@ export function createRequestAdapter(
 
   let warned = false;
 
-  return function requestAdapter(req, res) {
+  return function requestAdapter(req, res: SignalledResponse) {
     // Reuse already created request
     if (req[requestSymbol]) {
       return req[requestSymbol];
@@ -95,7 +112,21 @@ export function createRequestAdapter(
       ((req.socket as any)?.encrypted && "https") ||
       "http";
 
-    let host = hostOverride || (trustProxy && forwardedValue(headers, "host")) || authority || headers.host;
+    let target = req.originalUrl ?? req.url ?? "/";
+    let targetHost: string | undefined;
+    if (!target.startsWith("/")) {
+      // The absolute-form (RFC 9112 §3.2.2) carries the host, which replaces the Host header.
+      // The asterisk-form of `OPTIONS *` has no URL a `Request` could hold.
+      if (!/^https?:\/\//i.test(target) || !URL.canParse(target)) {
+        throw new BadRequestError(`Unsupported request target: ${target}`);
+      }
+      const absolute = new URL(target);
+      targetHost = absolute.host;
+      target = absolute.pathname + absolute.search;
+    }
+
+    let host =
+      hostOverride || (trustProxy && forwardedValue(headers, "host")) || targetHost || authority || headers.host;
 
     if (!host) {
       if (!warned) {
@@ -115,16 +146,30 @@ export function createRequestAdapter(
       delete headers["content-encoding"];
     }
 
-    const abortController = new AbortController();
-    res.once("close", () => {
-      if (!res.writableEnded) abortController.abort();
-    });
+    if (!VALID_SCHEME.test(protocol) || !VALID_HOST.test(host)) {
+      throw new BadRequestError(`Invalid request origin: ${protocol}://${host}`);
+    }
+    const url = `${protocol}://${host}${target}`;
+    // A port or an IP address out of range passes the checks above
+    if (!URL.canParse(url)) {
+      throw new BadRequestError(`Invalid request URL: ${url}`);
+    }
 
-    const request = new Request(`${protocol}://${host}${req.originalUrl ?? req.url}`, {
+    // One signal per response: the `Request` made again for the same request, once its body was handed back, reuses it
+    let signal = res[signalSymbol];
+    if (!signal) {
+      const abortController = new AbortController();
+      res.once("close", () => {
+        if (!res.writableEnded) abortController.abort();
+      });
+      signal = res[signalSymbol] = abortController.signal;
+    }
+
+    const request = new Request(url, {
       method: req.method,
       headers,
       body: convertBody(req),
-      signal: abortController.signal,
+      signal,
       // @ts-expect-error
       duplex: "half",
     });

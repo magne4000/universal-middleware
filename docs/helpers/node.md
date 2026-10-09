@@ -17,7 +17,7 @@ npm install @universal-middleware/node
 | Import path | Exports | `node:` imports |
 |---|---|---|
 | `@universal-middleware/node` | All utilities | — |
-| `@universal-middleware/node/request` | `createRequestAdapter` | ❌ none |
+| `@universal-middleware/node/request` | `createRequestAdapter`, `BadRequestError` | ❌ none |
 | `@universal-middleware/node/response` | `sendResponse`, `responseAdapter` | ✅ `node:stream` |
 
 ## `createRequestAdapter`
@@ -36,7 +36,7 @@ const requestAdapter = createRequestAdapter({
 });
 
 const server = http.createServer((req, res) => {
-  const request = requestAdapter(req);
+  const request = requestAdapter(req, res);
   // `request` is now a standard fetch API Request
   console.log(request.url, request.method);
   res.end();
@@ -50,6 +50,12 @@ const server = http.createServer((req, res) => {
 | `origin` | `string` | Sets the origin part of the URL. Defaults to `process.env.ORIGIN`. If not set, the origin is inferred from protocol and hostname headers. |
 | `trustProxy` | `boolean` | Trust `X-Forwarded-Proto`, `X-Forwarded-Host`, and `X-Forwarded-For` headers. Defaults to `true` if `process.env.TRUST_PROXY === "1"`. |
 
+A request target that is a full URL (`GET http://example.com/path`) gives the request its host and path.
+When the request has no URL a `Request` can hold, the adapter throws a `BadRequestError`, whose `status` and
+`statusCode` are 400: Express and Fastify answer it with a 400. That is the case of a `Host` header, or a trusted
+forwarded host, that isn't a host and an optional port, as it would otherwise change the path of the URL. It is also the
+case of `OPTIONS *`.
+
 ## `sendResponse`
 
 Sends a fetch API `Response` into a Node.js `ServerResponse` stream, including status code, headers, and body.
@@ -62,7 +68,7 @@ import * as http from "node:http";
 const requestAdapter = createRequestAdapter();
 
 const server = http.createServer(async (req, res) => {
-  const request = requestAdapter(req);
+  const request = requestAdapter(req, res);
   const response = new Response("Hello, world!", { status: 200 });
   await sendResponse(response, res);
 });

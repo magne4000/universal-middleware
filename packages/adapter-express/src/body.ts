@@ -23,7 +23,14 @@ export function adaptLendingBody(
   if (req.method === "GET" || req.method === "HEAD") return adapt(req, res);
   // the body is already in `rawBody` (set by environments that parse it before Express, e.g. Google Cloud Functions)
   // `readableEnded`: a body parser such as `express.json()` consumed the stream, so a lend would read an empty body
-  if (req.rawBody !== undefined || req.readableEnded) return adapt(req, res);
+  if (req.rawBody !== undefined || req.readableEnded) {
+    // the same goes for a lend an earlier middleware left unread: the next `Request` gets the parsed body instead
+    if (req[lentSymbol]) {
+      req[lentSymbol] = undefined;
+      delete req[requestSymbol];
+    }
+    return adapt(req, res);
+  }
   // an earlier middleware left its lend unread: keep its `Request`
   if (req[lentSymbol]) return adapt(req, res);
 

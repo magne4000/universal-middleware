@@ -172,6 +172,54 @@ describe("body read by a universal middleware", () => {
     expect(new Set(seen).size).toBe(1);
   });
 
+  it("reaches a universal handler after express.json() when a middleware before the parser left it unread", async () => {
+    const ignores: UniversalMiddleware = async () => {};
+    const url = await start(
+      (app) =>
+        app.post(
+          "/echo",
+          express.json(),
+          createHandler(() => async (request) => Response.json(await request.json()))(),
+        ),
+      [ignores],
+    );
+    const res = await postJson(`${url}/echo`, { a: 1 });
+    expect(await res.json()).toEqual({ a: 1 });
+  });
+
+  it("aborts the request signal when the client leaves, without piling up listeners, after middlewares read the body", async () => {
+    const warnings: string[] = [];
+    const onWarning = (w: Error) => warnings.push(w.name);
+    process.on("warning", onWarning);
+    const reached = Promise.withResolvers<void>();
+    const aborted = Promise.withResolvers<void>();
+    const reads: UniversalMiddleware = async (request) => {
+      await request.text();
+    };
+    const url = await start(
+      (app) =>
+        app.post(
+          "/wait",
+          createHandler(() => async (request) => {
+            reached.resolve();
+            await new Promise((resolve) => request.signal.addEventListener("abort", resolve, { once: true }));
+            aborted.resolve();
+            return new Response("too late");
+          })(),
+        ),
+      Array(12).fill(reads),
+    );
+    const ctrl = new AbortController();
+    const pending = fetch(`${url}/wait`, { method: "POST", body: "abc", signal: ctrl.signal }).catch(() => undefined);
+    await reached.promise;
+    ctrl.abort();
+    await pending;
+    // Times out if the signal of the Request made again for the handler never aborts
+    await aborted.promise;
+    process.off("warning", onWarning);
+    expect(warnings).not.toContain("MaxListenersExceededWarning");
+  });
+
   it("reaches express.json() through connectToWeb's synthetic request", async () => {
     const app = express();
     apply(app, [readsBody]);
