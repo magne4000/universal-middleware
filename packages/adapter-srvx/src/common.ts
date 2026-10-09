@@ -5,7 +5,7 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import { bindUniversal, cancelReplacedBody, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import type { ServerHandler, ServerMiddleware, ServerRequest } from "srvx";
 
 export type SrvxHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, ServerHandler>;
@@ -51,7 +51,9 @@ export function createMiddleware<
 
       if (typeof response === "function") {
         const res = await next();
-        return (await response(res)) ?? res;
+        const replacement = await response(res);
+        cancelReplacedBody(res, replacement);
+        return replacement ?? res;
       } else if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
           return response;

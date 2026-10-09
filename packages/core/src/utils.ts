@@ -42,6 +42,20 @@ export function mergeHeadersInto(first: Headers, ...sources: Headers[]) {
   return first;
 }
 
+/**
+ * Cancels the body of a Response that a response function replaced, so an endless one (SSE, a proxied stream)
+ * does not keep running. The body is left alone when the replacement may still use it: when it is the same stream,
+ * or when something locked or read it by the next macrotask (`pipeThrough`, `clone`, `text()`, a wrapper that pulls
+ * from it). A wrapper that only starts reading later (`highWaterMark: 0`, such as `ReadableStream.from`) is not seen.
+ */
+export function cancelReplacedBody(replaced: Response, replacement: Response | null | undefined): void {
+  const body = replaced.body;
+  if (!replacement || replacement === replaced || !body || replacement.body === body) return;
+  setTimeout(() => {
+    if (!body.locked && !replaced.bodyUsed) body.cancel().catch(() => {});
+  });
+}
+
 export function nodeHeadersToWeb(nodeHeaders: OutgoingHttpHeaders): Headers {
   const headers: [string, string][] = [];
 

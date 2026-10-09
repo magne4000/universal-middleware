@@ -5,7 +5,13 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import {
+  bindUniversal,
+  cancelReplacedBody,
+  contextSymbol,
+  getAdapterRuntime,
+  universalSymbol,
+} from "@universal-middleware/core";
 import type { Env, ExecutionContext, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
 
 interface UniversalEnv {
@@ -79,8 +85,10 @@ export function createMiddleware<
 
       if (typeof response === "function") {
         await next();
-        const res = await response(honoContext.res);
+        const original = honoContext.res;
+        const res = await response(original);
         if (res) {
+          cancelReplacedBody(original, res);
           honoContext.res = res;
         }
       } else if (response !== null && typeof response === "object") {
