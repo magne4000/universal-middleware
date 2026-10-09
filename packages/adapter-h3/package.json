@@ -25,6 +25,9 @@
   "dependencies": {
     "@universal-middleware/core": "workspace:^"
   },
+  "peerDependencies": {
+    "h3": "catalog:"
+  },
   "devDependencies": {
     "@swc/core": "catalog:",
     "@types/node": "catalog:",

@@ -24,6 +24,9 @@
   "dependencies": {
     "@universal-middleware/core": "workspace:^"
   },
+  "peerDependencies": {
+    "elysia": "catalog:"
+  },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
     "@sinclair/typebox": "^0.34.52",
