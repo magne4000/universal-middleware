@@ -1,5 +1,6 @@
 // Shared tsdown build config for the monorepo. `defineConfig` is only an
 // identity helper, so returning a plain object is equivalent.
+// Plain JavaScript, so every Node version loads it without type stripping; its types are in index.d.ts.
 
 import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
