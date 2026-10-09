@@ -24,10 +24,8 @@
     "@universal-middleware/core": "workspace:^"
   },
   "devDependencies": {
-    "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tsdown-config": "workspace:*",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },

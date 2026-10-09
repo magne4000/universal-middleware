@@ -27,19 +27,20 @@
   },
   "devDependencies": {
     "@fastify/helmet": "^13.1.1",
-    "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "@universal-middleware/tsdown-config": "workspace:*",
     "fastify": "catalog:",
     "fastify-plugin": "^6.0.0",
-    "fastify-raw-body": "^6.0.1",
-    "rimraf": "catalog:",
+    "fastify-raw-body": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "fastify": "catalog:"
   },
   "sideEffects": false,
   "keywords": [

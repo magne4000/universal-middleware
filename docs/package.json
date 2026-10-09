@@ -3,7 +3,6 @@
   "private": true,
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "type": "module",
   "scripts": {
     "dev": "vitepress dev",
@@ -36,7 +35,7 @@
     "h3": "catalog:",
     "hono": "catalog:",
     "srvx": "catalog:",
-    "typescript": "^6.0.3",
+    "typescript": "catalog:docs",
     "universal-middleware": "workspace:*",
     "vitepress": "^1.6.4"
   }

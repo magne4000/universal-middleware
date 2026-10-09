@@ -2,7 +2,7 @@
   "name": "universal-middleware",
   "type": "module",
   "version": "0.6.33",
-  "description": "",
+  "description": "Write middlewares and handlers once, and build them for every supported server",
   "license": "MIT",
   "repository": "https://github.com/magne4000/universal-middleware",
   "bugs": {
@@ -136,7 +136,6 @@
     "@swc/core": "catalog:",
     "@universal-middleware/tsdown-config": "workspace:*",
     "esbuild": "^0.28.2",
-    "rimraf": "catalog:",
     "rollup": "^4.64.0",
     "tsdown": "catalog:",
     "typescript": "catalog:",
@@ -144,20 +143,12 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.2",
-    "@rollup/plugin-node-resolve": "^16.0.0",
     "esbuild": ">=0.24.2",
     "rollup": ">=4.34.1",
     "vite": ">=5.4.14"
   },
   "peerDependenciesMeta": {
     "rollup": {
-      "optional": true
-    },
-    "@rollup/plugin-commonjs": {
-      "optional": true
-    },
-    "@rollup/plugin-node-resolve": {
       "optional": true
     },
     "vite": {

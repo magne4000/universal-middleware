@@ -26,17 +26,22 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
-    "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "@universal-middleware/tsdown-config": "workspace:*",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
-    "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
+  },
+  "peerDependencies": {
+    "@cloudflare/workers-types": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@cloudflare/workers-types": {
+      "optional": true
+    }
   },
   "sideEffects": false,
   "keywords": [

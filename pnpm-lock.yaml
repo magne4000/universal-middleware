@@ -9,21 +9,30 @@ catalogs:
     '@cloudflare/workers-types':
       specifier: ^5.20261004.1
       version: 5.20261006.1
+    '@hattip/adapter-node':
+      specifier: ^0.0.49
+      version: 0.0.49
     '@hattip/core':
       specifier: ^0.0.49
       version: 0.0.49
     '@hattip/router':
       specifier: ^0.0.49
       version: 0.0.49
+    '@hono/node-server':
+      specifier: ^2.1.3
+      version: 2.1.3
     '@swc/core':
       specifier: ^1.16.13
       version: 1.16.13
+    '@types/bun':
+      specifier: ^1.4.2
+      version: 1.4.2
     '@types/express':
       specifier: ^5.0.6
       version: 5.0.6
     '@types/node':
-      specifier: ^20.19.35
-      version: 20.19.42
+      specifier: ^22.18.0
+      version: 22.20.5
     '@webroute/route':
       specifier: ^0.8.0
       version: 0.8.0
@@ -36,15 +45,18 @@ catalogs:
     fastify:
       specifier: ^5.12.5
       version: 5.12.5
+    fastify-raw-body:
+      specifier: ^6.0.1
+      version: 6.0.1
     h3:
       specifier: ^1.15.11
       version: 1.15.11
     hono:
       specifier: ^4.13.13
       version: 4.13.13
-    rimraf:
-      specifier: ^6.1.3
-      version: 6.1.3
+    mri:
+      specifier: ^1.2.0
+      version: 1.2.0
     srvx:
       specifier: ^1.0.5
       version: 1.0.5
@@ -57,6 +69,9 @@ catalogs:
     typescript:
       specifier: ^7.0.2
       version: 7.0.2
+    vercel:
+      specifier: ^62.2.0
+      version: 62.2.0
     vite:
       specifier: ^8.3.2
       version: 8.3.3
@@ -66,6 +81,10 @@ catalogs:
     wrangler:
       specifier: ^4.147.0
       version: 4.147.0
+  docs:
+    typescript:
+      specifier: ^6.0.3
+      version: 6.0.3
 
 overrides:
   '@vercel/node>typescript': ^7.0.2
@@ -84,7 +103,7 @@ importers:
         version: 3.0.3
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       file-type:
         specifier: ^22.1.1
         version: 22.1.1
@@ -167,7 +186,7 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5
       typescript:
-        specifier: ^6.0.3
+        specifier: catalog:docs
         version: 6.0.3
       universal-middleware:
         specifier: workspace:*
@@ -178,15 +197,9 @@ importers:
 
   examples/tool:
     devDependencies:
-      '@hono/node-server':
-        specifier: ^2.1.3
-        version: 2.1.3(hono@4.13.13)
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -199,9 +212,6 @@ importers:
       h3:
         specifier: 'catalog:'
         version: 1.15.11
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -221,39 +231,30 @@ importers:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
         version: 5.20261006.1
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
       '@universal-middleware/tsdown-config':
         specifier: workspace:*
         version: link:../tsdown-config
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
-      tsx:
-        specifier: 'catalog:'
-        version: 4.23.15
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
       wrangler:
         specifier: 'catalog:'
-        version: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@20.19.42)
+        version: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@22.20.5)
 
   packages/adapter-elysia:
     dependencies:
@@ -267,12 +268,9 @@ importers:
       '@sinclair/typebox':
         specifier: ^0.34.52
         version: 0.34.52
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -282,27 +280,21 @@ importers:
       elysia:
         specifier: 'catalog:'
         version: 1.4.30(@sinclair/typebox@0.34.52)(@types/bun@1.4.2)(file-type@22.1.1)(typescript@7.0.2)
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
-      tsx:
-        specifier: 'catalog:'
-        version: 4.23.15
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
       wrangler:
         specifier: 'catalog:'
-        version: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@20.19.42)
+        version: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@22.20.5)
 
   packages/adapter-express:
     dependencies:
@@ -313,9 +305,6 @@ importers:
         specifier: workspace:^
         version: link:../node
     devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/express':
         specifier: 'catalog:'
         version: 5.0.6
@@ -324,7 +313,7 @@ importers:
         version: '@types/express@4.17.25'
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -340,9 +329,6 @@ importers:
       helmet:
         specifier: ^8.3.0
         version: 8.3.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -354,10 +340,10 @@ importers:
         version: 7.0.2
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/adapter-fastify:
     dependencies:
@@ -371,12 +357,9 @@ importers:
       '@fastify/helmet':
         specifier: ^13.1.1
         version: 13.1.1
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -390,11 +373,8 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       fastify-raw-body:
-        specifier: ^6.0.1
-        version: 6.0.1
-      rimraf:
         specifier: 'catalog:'
-        version: 6.1.3
+        version: 6.0.1
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -406,10 +386,10 @@ importers:
         version: 7.0.2
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/adapter-h3:
     dependencies:
@@ -417,12 +397,9 @@ importers:
         specifier: workspace:^
         version: link:../core
     devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -432,9 +409,6 @@ importers:
       h3:
         specifier: 'catalog:'
         version: 1.15.11
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -446,10 +420,10 @@ importers:
         version: 7.0.2
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/adapter-hattip:
     dependencies:
@@ -467,7 +441,7 @@ importers:
         specifier: ^0.0.49
         version: 0.0.49
       '@hattip/adapter-node':
-        specifier: ^0.0.49
+        specifier: 'catalog:'
         version: 0.0.49
       '@hattip/compose':
         specifier: ^0.0.49
@@ -481,21 +455,15 @@ importers:
       '@hattip/router':
         specifier: 'catalog:'
         version: 0.0.49
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
       '@universal-middleware/tsdown-config':
         specifier: workspace:*
         version: link:../tsdown-config
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -507,13 +475,13 @@ importers:
         version: 7.0.2
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
       wrangler:
         specifier: 'catalog:'
-        version: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@20.19.42)
+        version: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@22.20.5)
 
   packages/adapter-hono:
     dependencies:
@@ -522,14 +490,11 @@ importers:
         version: link:../core
     devDependencies:
       '@hono/node-server':
-        specifier: ^2.1.3
-        version: 2.1.3(hono@4.13.13)
-      '@swc/core':
         specifier: 'catalog:'
-        version: 1.16.13
+        version: 2.1.3(hono@4.13.13)
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -539,9 +504,6 @@ importers:
       hono:
         specifier: 'catalog:'
         version: 4.13.13
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -553,13 +515,13 @@ importers:
         version: 7.0.2
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
       wrangler:
         specifier: 'catalog:'
-        version: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@20.19.42)
+        version: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@22.20.5)
 
   packages/adapter-srvx:
     dependencies:
@@ -567,21 +529,15 @@ importers:
         specifier: workspace:^
         version: link:../core
     devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
       '@universal-middleware/tsdown-config':
         specifier: workspace:*
         version: link:../tsdown-config
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       srvx:
         specifier: 'catalog:'
         version: 1.0.5
@@ -596,22 +552,16 @@ importers:
         version: 7.0.2
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
-      wrangler:
-        specifier: 'catalog:'
-        version: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@20.19.42)
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/adapter-vercel:
     dependencies:
       '@universal-middleware/core':
         specifier: workspace:^
         version: link:../core
-      '@universal-middleware/express':
-        specifier: workspace:^
-        version: link:../adapter-express
       '@universal-middleware/node':
         specifier: workspace:^
         version: link:../node
@@ -622,18 +572,18 @@ importers:
       '@hattip/router':
         specifier: 'catalog:'
         version: 0.0.49
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/express':
         specifier: 'catalog:'
         version: 5.0.6
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/elysia':
         specifier: workspace:^
         version: link:../adapter-elysia
+      '@universal-middleware/express':
+        specifier: workspace:^
+        version: link:../adapter-express
       '@universal-middleware/fastify':
         specifier: workspace:^
         version: link:../adapter-fastify
@@ -667,27 +617,21 @@ importers:
       hono:
         specifier: 'catalog:'
         version: 4.13.13
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
-      tsx:
-        specifier: 'catalog:'
-        version: 4.23.15
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
       vercel:
-        specifier: ^62.2.0
+        specifier: 'catalog:'
         version: 62.2.0(@emnapi/runtime@1.11.3)(rollup@4.64.0)
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/adapter-webroute:
     dependencies:
@@ -696,14 +640,11 @@ importers:
         version: link:../core
     devDependencies:
       '@hono/node-server':
-        specifier: ^2.1.3
-        version: 2.1.3(hono@4.13.13)
-      '@swc/core':
         specifier: 'catalog:'
-        version: 1.16.13
+        version: 2.1.3(hono@4.13.13)
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/tests':
         specifier: workspace:*
         version: link:../tests
@@ -722,9 +663,6 @@ importers:
       hono:
         specifier: 'catalog:'
         version: 4.13.13
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -736,22 +674,19 @@ importers:
         version: 7.0.2
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/compress:
     devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/bun':
-        specifier: ^1.4.2
+        specifier: 'catalog:'
         version: 1.4.2
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/core':
         specifier: workspace:^
         version: link:../core
@@ -767,9 +702,6 @@ importers:
       h3:
         specifier: 'catalog:'
         version: 1.15.11
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -781,10 +713,10 @@ importers:
         version: link:../universal-middleware
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/core:
     dependencies:
@@ -801,18 +733,15 @@ importers:
       '@hattip/core':
         specifier: 'catalog:'
         version: 0.0.49
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/bun':
-        specifier: ^1.4.2
+        specifier: 'catalog:'
         version: 1.4.2
       '@types/express':
         specifier: 'catalog:'
         version: 5.0.6
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/tsdown-config':
         specifier: workspace:*
         version: link:../tsdown-config
@@ -831,9 +760,6 @@ importers:
       hono:
         specifier: 'catalog:'
         version: 4.13.13
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       rou3:
         specifier: ^0.12.1
         version: 0.12.1
@@ -848,10 +774,10 @@ importers:
         version: 7.0.2
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/node:
     dependencies:
@@ -859,18 +785,12 @@ importers:
         specifier: workspace:^
         version: link:../core
     devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/tsdown-config':
         specifier: workspace:*
         version: link:../tsdown-config
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -890,15 +810,12 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
     devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/bun':
-        specifier: ^1.4.2
+        specifier: 'catalog:'
         version: 1.4.2
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/express':
         specifier: workspace:^
         version: link:../adapter-express
@@ -911,9 +828,6 @@ importers:
       h3:
         specifier: 'catalog:'
         version: 1.15.11
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -925,35 +839,29 @@ importers:
         version: link:../universal-middleware
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/tests:
     dependencies:
       mri:
-        specifier: ^1.2.0
+        specifier: 'catalog:'
         version: 1.2.0
       zx:
         specifier: ^8.8.5
         version: 8.8.5
     devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.16.13
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware/core':
         specifier: workspace:*
         version: link:../core
       '@universal-middleware/tsdown-config':
         specifier: workspace:*
         version: link:../tsdown-config
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -962,10 +870,10 @@ importers:
         version: 7.0.2
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/tsdown-config: {}
 
@@ -1032,9 +940,6 @@ importers:
       esbuild:
         specifier: ^0.28.2
         version: 0.28.2
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       rollup:
         specifier: ^4.64.0
         version: 4.64.0
@@ -1057,23 +962,23 @@ importers:
         specifier: ^0.6.24
         version: 0.6.24
       '@hattip/adapter-node':
-        specifier: ^0.0.49
+        specifier: 'catalog:'
         version: 0.0.49
       '@hattip/router':
         specifier: 'catalog:'
         version: 0.0.49
       '@hono/node-server':
-        specifier: ^2.1.3
+        specifier: 'catalog:'
         version: 2.1.3(hono@4.13.13)
       '@hono/vite-dev-server':
         specifier: ^0.26.1
-        version: 0.26.1(hono@4.13.13)(wrangler@4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@20.19.42))
+        version: 0.26.1(hono@4.13.13)(wrangler@4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@22.20.5))
       '@types/express':
         specifier: 'catalog:'
         version: 5.0.6
       '@types/node':
         specifier: 'catalog:'
-        version: 20.19.42
+        version: 22.20.5
       '@universal-middleware-examples/tool':
         specifier: workspace:*
         version: link:../../examples/tool
@@ -1129,7 +1034,7 @@ importers:
         specifier: 'catalog:'
         version: 5.12.5
       fastify-raw-body:
-        specifier: ^6.0.1
+        specifier: 'catalog:'
         version: 6.0.1
       got:
         specifier: ^16.0.0
@@ -1141,7 +1046,7 @@ importers:
         specifier: 'catalog:'
         version: 4.13.13
       mri:
-        specifier: ^1.2.0
+        specifier: 'catalog:'
         version: 1.2.0
       npm-run-all2:
         specifier: ^9.0.3
@@ -1149,9 +1054,6 @@ importers:
       playwright-chromium:
         specifier: ^1.63.0
         version: 1.63.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.3
       srvx:
         specifier: 'catalog:'
         version: 1.0.5
@@ -1165,17 +1067,17 @@ importers:
         specifier: 'catalog:'
         version: 7.0.2
       vercel:
-        specifier: ^62.2.0
+        specifier: 'catalog:'
         version: 62.2.0(@emnapi/runtime@1.11.3)(rollup@4.64.0)
       vite:
         specifier: 'catalog:'
-        version: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
       wrangler:
         specifier: 'catalog:'
-        version: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@20.19.42)
+        version: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@22.20.5)
 
 packages:
 
@@ -3170,8 +3072,8 @@ packages:
   '@types/node@20.11.0':
     resolution: {integrity: sha512-o9bjXmDNcF7GbM4CNQpmi+TutCgap/K3w1JyKgxAjqx41zp9qlIAVFi0IhCNsJcXolEqLWhbFbEeL0PvYm4pcQ==}
 
-  '@types/node@20.19.42':
-    resolution: {integrity: sha512-5L7SUaFC1RyDraj2yRhyBzHTobyXHmohD100CChNtyPyleoq37Mqab5Gn8XEKI04dfN/oqPdpHk38MgcQWHbZg==}
+  '@types/node@22.20.5':
+    resolution: {integrity: sha512-U2+DNr+wSjpsTS/wZGYHq7GcwfuSmKiKvoPvK22zwTlRhU91yOniN4qRR5KhIjvif7ysw/dz/hKmfDH0Ris4aA==}
 
   '@types/node@25.9.2':
     resolution: {integrity: sha512-G05zqtJhcDLb8uslf5EjCxXg9G1KQxiV8OS0R26IC//Eoyitzqe8z37I7cqvnZlrlSfgocQRfSn/AHBZJJFyGw==}
@@ -5208,9 +5110,6 @@ packages:
     resolution: {integrity: sha512-vpm09aKwq6H9phqRQzecoDpD8TmVyGw70qmWlyq5onxY7tqyTTFVvxMykxQSQKILBSFlbXpypIw2T1Ml7+DDtw==}
     engines: {node: '>=8'}
 
-  package-json-from-dist@1.0.1:
-    resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
-
   package-manager-detector@1.8.0:
     resolution: {integrity: sha512-yQA4H19AmPEoMUeavPMDIe1higySl/gH/yaQrkT/s07Qp+7pp2hYz30N3z2l5BkjVkF9Ow6o0wjJamm2y7Sn0A==}
 
@@ -5454,11 +5353,6 @@ packages:
 
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
-
-  rimraf@6.1.3:
-    resolution: {integrity: sha512-LKg+Cr2ZF61fkcaK1UdkH2yEBBKnYjTyWzTJT6KNPcSPaiT7HSdhtMXQuN5wkTX0Xu72KQ1l8S42rlmexS2hSA==}
-    engines: {node: 20 || >=22}
-    hasBin: true
 
   rolldown-plugin-dts@0.28.5:
     resolution: {integrity: sha512-yYd3C9CeJwqjOc9X23m0Tyxcqic491uLZlfg51szT287S8zCCqLR2uoySoElgqy2CLn7PdXcEo1dlkBs4n1WHg==}
@@ -6024,6 +5918,7 @@ packages:
   vercel@62.2.0:
     resolution: {integrity: sha512-hwet6qXoOfZEc6waIx1VgI2nLl83wwuZZnFqKSsKJ47UFi9waEezPmAV7uNOx8Fq+6JTJIi+lRnxFXr9YFW3Eg==}
     engines: {node: '>= 20'}
+    deprecated: Known CLI self-upgrade bug. Reinstall vercel@latest using your package manager instead of running vc upgrade from this version.
     hasBin: true
 
   verkit@0.4.0:
@@ -6860,13 +6755,13 @@ snapshots:
     dependencies:
       hono: 4.13.13
 
-  '@hono/vite-dev-server@0.26.1(hono@4.13.13)(wrangler@4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@20.19.42))':
+  '@hono/vite-dev-server@0.26.1(hono@4.13.13)(wrangler@4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@22.20.5))':
     dependencies:
       '@hono/node-server': 1.19.14(hono@4.13.13)
       hono: 4.13.13
       minimatch: 9.0.9
     optionalDependencies:
-      wrangler: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@20.19.42)
+      wrangler: 4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@22.20.5)
 
   '@iconify-json/simple-icons@1.2.85':
     dependencies:
@@ -7861,7 +7756,7 @@ snapshots:
     dependencies:
       undici-types: 5.26.5
 
-  '@types/node@20.19.42':
+  '@types/node@22.20.5':
     dependencies:
       undici-types: 6.21.0
 
@@ -8377,14 +8272,14 @@ snapshots:
       vite: 5.4.21(@types/node@25.9.2)(lightningcss@1.33.0)
       vue: 3.5.43(typescript@6.0.3)
 
-  '@vitest/mocker@5.0.3(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))':
+  '@vitest/mocker@5.0.3(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/spy': 5.0.3
       estree-walker: 3.0.3
       magic-string: 1.4.3
     optionalDependencies:
-      vite: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+      vite: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
 
   '@vitest/mocker@5.0.3(vite@8.3.3(@types/node@25.9.2)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))':
     dependencies:
@@ -10019,10 +9914,10 @@ snapshots:
 
   mimic-response@4.0.0: {}
 
-  miniflare@5.20261001.0-alpha(@types/node@20.19.42):
+  miniflare@5.20261001.0-alpha(@types/node@22.20.5):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
-      sharp: 0.35.4(@types/node@20.19.42)
+      sharp: 0.35.4(@types/node@22.20.5)
       undici: 7.29.1
       workerd: 1.20261001.1
       ws: 8.21.0
@@ -10241,8 +10136,6 @@ snapshots:
 
   p-finally@2.0.1: {}
 
-  package-json-from-dist@1.0.1: {}
-
   package-manager-detector@1.8.0: {}
 
   package-up@5.0.0:
@@ -10449,11 +10342,6 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  rimraf@6.1.3:
-    dependencies:
-      glob: 13.0.6
-      package-json-from-dist: 1.0.1
-
   rolldown-plugin-dts@0.28.5(rolldown@1.2.11)(typescript@7.0.2):
     dependencies:
       dts-resolver: 3.0.0
@@ -10654,7 +10542,7 @@ snapshots:
 
   setprototypeof@1.2.0: {}
 
-  sharp@0.35.4(@types/node@20.19.42):
+  sharp@0.35.4(@types/node@22.20.5):
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
@@ -10685,7 +10573,7 @@ snapshots:
       '@img/sharp-win32-arm64': 0.35.4
       '@img/sharp-win32-ia32': 0.35.4
       '@img/sharp-win32-x64': 0.35.4
-      '@types/node': 20.19.42
+      '@types/node': 22.20.5
 
   shebang-command@2.0.0:
     dependencies:
@@ -11209,7 +11097,7 @@ snapshots:
       fsevents: 2.3.3
       lightningcss: 1.33.0
 
-  vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1):
+  vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -11217,7 +11105,7 @@ snapshots:
       rolldown: 1.2.11
       tinyglobby: 0.2.17
     optionalDependencies:
-      '@types/node': 20.19.42
+      '@types/node': 22.20.5
       esbuild: 0.28.2
       fsevents: 2.3.3
       tsx: 4.23.15
@@ -11286,10 +11174,10 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vitest@5.0.3(@edge-runtime/vm@3.2.0)(@types/node@20.19.42)(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)):
+  vitest@5.0.3(@edge-runtime/vm@3.2.0)(@types/node@22.20.5)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)):
     dependencies:
       '@types/chai': 5.2.3
-      '@vitest/mocker': 5.0.3(vite@8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@vitest/mocker': 5.0.3(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
       chai: 6.2.2
       es-module-lexer: 2.3.2
       expect-type: 1.4.0
@@ -11300,11 +11188,11 @@ snapshots:
       tinybench: 6.2.0
       tinyexec: 1.3.1
       tinyglobby: 0.2.17
-      vite: 8.3.3(@types/node@20.19.42)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
+      vite: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       why-is-node-running: 3.2.1
     optionalDependencies:
       '@edge-runtime/vm': 3.2.0
-      '@types/node': 20.19.42
+      '@types/node': 22.20.5
     transitivePeerDependencies:
       - msw
 
@@ -11369,13 +11257,13 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20261001.1
       '@cloudflare/workerd-windows-64': 1.20261001.1
 
-  wrangler@4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@20.19.42):
+  wrangler@4.147.0(@cloudflare/workers-types@5.20261006.1)(@types/node@22.20.5):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.5.0
       '@cloudflare/unenv-preset': 2.16.2(unenv@2.0.0-rc.24)(workerd@1.20261001.1)
       blake3-wasm: 2.1.5
       esbuild: 0.28.2
-      miniflare: 5.20261001.0-alpha(@types/node@20.19.42)
+      miniflare: 5.20261001.0-alpha(@types/node@22.20.5)
       path-to-regexp: 6.3.0
       unenv: 2.0.0-rc.24
       workerd: 1.20261001.1

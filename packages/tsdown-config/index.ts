@@ -12,7 +12,7 @@ type Chunk = { type: string; isEntry?: boolean; facadeModuleId?: string | null; 
 
 interface Options {
   entry: string[] | Record<string, string>;
-  /** Sets `platform` and the default `target` (`neutral` → es2022, `node` → node20). */
+  /** Sets `platform` and the default `target` (`neutral` → es2022, `node` → node22). */
   runtime: "neutral" | "node";
   target?: string;
   deps?: Deps;
@@ -127,7 +127,7 @@ async function bundleAdapterDts(chunks: Chunk[], alwaysBundle: (string | RegExp)
 export function defineTsdown({ runtime, target, deps = { neverBundle: true }, dts = true, ...rest }: Options) {
   return {
     platform: runtime === "neutral" ? "neutral" : "node",
-    target: target ?? (runtime === "neutral" ? "es2022" : "node20"),
+    target: target ?? (runtime === "neutral" ? "es2022" : "node22"),
     fixedExtension: false,
     dts,
     deps,
