@@ -10,6 +10,7 @@ export default defineMiddlewareTsdown({
       serversExportNames: "./[dir]/[server]",
     }),
   ],
-  // `fflate` and core are devDependencies, so inline them into the bundle.
-  deps: { neverBundle: true, alwaysBundle: ["fflate", "@universal-middleware/core"] },
+  // `fflate` is a devDependency, so inline it into the bundle (core and the
+  // adapters, also devDependencies, are inlined by `defineMiddlewareTsdown`).
+  deps: { alwaysBundle: ["fflate"] },
 });
