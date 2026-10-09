@@ -17,6 +17,7 @@ import {
   universalSymbol,
 } from "@universal-middleware/core";
 import {
+  createError,
   defineResponseMiddleware,
   type EventHandler,
   eventHandler,
@@ -24,6 +25,8 @@ import {
   getResponseStatus,
   getResponseStatusText,
   type H3Event,
+  isStream,
+  MIMES,
   sendWebResponse,
   toWebRequest,
 } from "h3";
@@ -89,6 +92,23 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
   };
 }
 
+// What h3 sends for a value that isn't a Response, as h3's own `handleHandlerResponse` (not exported) converts it
+async function toPayload(value: unknown): Promise<{ body: BodyInit | null; type?: string }> {
+  if (typeof value === "string") return { body: value, type: MIMES.html };
+  if (isBodyInit(value)) return { body: value };
+  if (isStream(value)) {
+    const streams = ReadableStream as unknown as { from(iterable: AsyncIterable<unknown>): ReadableStream };
+    return { body: streams.from(value as AsyncIterable<unknown>) };
+  }
+  const { arrayBuffer } = value as { arrayBuffer?: unknown };
+  if (typeof arrayBuffer === "function") return { body: await arrayBuffer.call(value), type: (value as Blob).type };
+  if (typeof value === "object" || typeof value === "boolean" || typeof value === "number") {
+    return { body: JSON.stringify(value), type: MIMES.json };
+  }
+  if (typeof value === "bigint") return { body: value.toString(), type: MIMES.json };
+  throw createError({ statusCode: 500, statusMessage: `[h3] Cannot send ${typeof value} as response.` });
+}
+
 export const universalOnBeforeResponse = defineResponseMiddleware(
   async (
     event: H3Event,
@@ -102,14 +122,17 @@ export const universalOnBeforeResponse = defineResponseMiddleware(
 
     if (response.body instanceof Response) {
       mergeHeadersInto(response.body.headers, nodeHeadersToWeb(getResponseHeaders(event)));
-    } else if (isBodyInit(response.body)) {
-      response.body = new Response(response.body, {
-        headers: nodeHeadersToWeb(getResponseHeaders(event)),
-        status: getResponseStatus(event),
+    } else {
+      const { body, type } = await toPayload(response.body);
+      const headers = nodeHeadersToWeb(getResponseHeaders(event));
+      if (type && !headers.has("content-type")) headers.set("content-type", type);
+      const status = getResponseStatus(event);
+      response.body = new Response(body, {
+        headers,
+        // h3 answers `null` with 204 unless a status was set
+        status: body === null && status === 200 ? 204 : status,
         statusText: getResponseStatusText(event),
       });
-    } else {
-      throw new TypeError("Payload is not a Response or BodyInit compatible");
     }
 
     const middlewares = event.context[pendingMiddlewaresSymbol];
