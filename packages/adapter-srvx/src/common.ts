@@ -87,6 +87,9 @@ export function getContext<Context extends Universal.Context = Universal.Context
 }
 
 export function getRuntime(request: ServerRequest): RuntimeAdapter {
+  // workerd methods throw "Illegal invocation" when called on another `this`
+  const cloudflareContext = request.runtime?.cloudflare?.context;
+
   return getAdapterRuntime(
     "srvx",
     {
@@ -97,7 +100,7 @@ export function getRuntime(request: ServerRequest): RuntimeAdapter {
       env: request.runtime?.cloudflare?.env,
       ctx: {
         waitUntil: request.waitUntil?.bind(request),
-        passThroughOnException: request.runtime?.cloudflare?.context.passThroughOnException,
+        passThroughOnException: cloudflareContext?.passThroughOnException.bind(cloudflareContext),
       },
       req: request.runtime?.node?.req,
       res: request.runtime?.node?.res,

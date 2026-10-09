@@ -1,5 +1,7 @@
+import type { CloudflareWorkerdRuntime } from "@universal-middleware/core";
 import { type Run, runTests } from "@universal-middleware/tests";
 import * as vitest from "vitest";
+import { createHandler } from "../src/index.js";
 
 const port = 3900;
 
@@ -76,4 +78,35 @@ const runs: Run[] = [
 
 runTests(runs, {
   vitest,
+});
+
+vitest.describe("cloudflare runtime", () => {
+  vitest.it("calls ExecutionContext methods with their context as `this`", async () => {
+    // Like workerd's ExecutionContext, these methods fail when called with another `this`
+    class ExecutionContext {
+      calls: string[] = [];
+      waitUntil(_promise: Promise<unknown>) {
+        this.calls.push("waitUntil");
+      }
+      passThroughOnException() {
+        this.calls.push("passThroughOnException");
+      }
+    }
+    const context = new ExecutionContext();
+    // What srvx/cloudflare sets on the request
+    const request = Object.assign(new Request("http://localhost/"), {
+      waitUntil: context.waitUntil.bind(context),
+      runtime: { name: "cloudflare", cloudflare: { env: {}, context } },
+    });
+    const handler = createHandler(() => (_request: Request, _context: Universal.Context, runtime) => {
+      const { ctx } = runtime as CloudflareWorkerdRuntime;
+      ctx?.waitUntil?.(Promise.resolve());
+      ctx?.passThroughOnException?.();
+      return new Response("ok");
+    })();
+
+    const response = await handler(request as never);
+    vitest.expect(await response.text()).toBe("ok");
+    vitest.expect(context.calls).toEqual(["waitUntil", "passThroughOnException"]);
+  });
 });
