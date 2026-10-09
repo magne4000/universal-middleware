@@ -299,7 +299,7 @@ type ExtractInContext<T> = T extends (...args: any[]) => UniversalMiddleware<inf
 export type Target = '${target}';
 export type RuntimeAdapter = RuntimeAdapterTarget<Target>;
 export type InContext = ExtractInContext<typeof ${type}>;
-export type OutContext = ${info.outContext?.(type) ?? "unknown"};
+export type OutContext = ${info.outContext?.(type) ?? "Universal.Context"};
 export type Args = ExtractT<typeof ${type}>;
 export type Middleware = ReturnType<ReturnType<typeof ${fn}<${generics}>>>;
 export default ${fn}(${type}) as (...args: Args) => Middleware;
