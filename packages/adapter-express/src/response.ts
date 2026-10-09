@@ -33,7 +33,6 @@ function override<T extends DecoratedServerResponse>(
       nodeResponse.writeHead(nodeResponse.statusCode);
     }
     if (args[0] && args[0].length > 0) {
-      // console.log("write", args[0]);
       // Once the captured output is cancelled (the response was replaced), the app's later writes are dropped
       forwardTo.write(args[0]).catch((error) => {
         if (forwardTo.desiredSize !== null) console.error(error);
