@@ -2,10 +2,23 @@ import { EventEmitter } from "node:events";
 import { type IncomingMessage, type OutgoingHttpHeader, type OutgoingHttpHeaders, ServerResponse } from "node:http";
 import { PassThrough, Readable } from "node:stream";
 import { contextSymbol, type RuntimeAdapterTarget } from "@universal-middleware/core";
-import type { Express as Express5 } from "express";
-import type { Express as Express4 } from "express4";
+import type { DecoratedRequest, DecoratedServerResponse } from "./types.js";
 
-export type Express = Express4 | Express5;
+type ExpressRequestHandler = (
+  req: DecoratedRequest,
+  res: DecoratedServerResponse,
+  next: (err?: unknown) => void,
+) => unknown;
+
+/**
+ * The parts of an Express 4 or 5 application the adapter uses.
+ * Declared here so that the published types do not depend on a given `express` or `@types/express` version.
+ */
+export interface Express {
+  (req: IncomingMessage, res: ServerResponse): void;
+  use(...handlers: ExpressRequestHandler[]): unknown;
+  all(path: string, ...handlers: ExpressRequestHandler[]): unknown;
+}
 
 const statusCodesWithoutBody = [
   100, // Continue
@@ -280,13 +293,4 @@ function flattenHeaders(headers: OutgoingHttpHeaders): [string, string][] {
   }
 
   return flatHeaders;
-}
-
-// https://expressjs.com/en/guide/migrating-5.html#app.del
-export function isExpressV4(app: Express): app is Express4 {
-  return "del" in app;
-}
-
-export function isExpressV5(app: Express): app is Express5 {
-  return !isExpressV4(app);
 }
