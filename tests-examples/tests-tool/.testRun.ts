@@ -9,19 +9,15 @@ import fetch, { type Response as GotResponse } from "got";
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 
 type RunOptions = Parameters<typeof run>[1] & {
-  portCommand?: string;
-  prefix?: string;
-  noMiddleware?: boolean;
   noCompression?: boolean;
-  fixExit?: boolean;
 };
 
 export function testRun(
-  cmd: `pnpm run ${"dev" | "prod"}:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia" | "vercel" | "srvx"}${string}`,
+  cmd: `pnpm run ${"dev" | "prod"}:${"hono" | "express" | "fastify" | "hattip" | "h3" | "pages" | "worker" | "elysia" | "srvx"}${string}`,
   port: number,
   options?: RunOptions,
 ) {
-  run(`${cmd} ${options?.portCommand ?? "--port"} ${port}`, {
+  run(`${cmd} --port ${port}`, {
     tolerateError: true,
     serverUrl: `http://localhost:${port}`,
     ...options,
@@ -29,38 +25,29 @@ export function testRun(
   });
 
   test("/", async () => {
-    const response = await fetch.get(`${getServerUrl()}${options?.prefix ?? ""}/`);
+    const response = await fetch.get(`${getServerUrl()}/`);
 
     const content = response.body;
 
-    if (!options?.noMiddleware) {
-      expect(content).toContain('"World!!!"');
-      expect(response.headers["x-universal-hello"]).toBe("World!!!");
-    }
+    expect(content).toContain('"World!!!"');
+    expect(response.headers["x-universal-hello"]).toBe("World!!!");
 
-    if (!options?.noMiddleware && !options?.noCompression) {
+    if (!options?.noCompression) {
       expect(getEncoding(response)).toMatch(/gzip|deflate/);
     }
   });
 
   test("/user/:name", async () => {
-    const content = await fetch.get(`${getServerUrl()}${options?.prefix ?? ""}/user/magne4000`).text();
+    const content = await fetch.get(`${getServerUrl()}/user/magne4000`).text();
 
     expect(content).toBe("User name is: magne4000");
   });
 
-  if (options?.fixExit) {
-    process.on("exit", (code) => {
-      process.exit(0);
-      console.log({ code });
-    });
-  }
-
-  if (!options?.noMiddleware && !options?.noCompression) {
+  if (!options?.noCompression) {
     test("/big-file", async () => {
       await autoRetry(
         async () => {
-          const response = await fetch.get(`${getServerUrl()}${options?.prefix ?? ""}/big-file`, {
+          const response = await fetch.get(`${getServerUrl()}/big-file`, {
             followRedirect: false,
           });
 

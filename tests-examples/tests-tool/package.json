@@ -16,7 +16,6 @@
     "dev:srvx": "tsx src/srvx-entry.ts",
     "dev:pages": "wrangler pages dev",
     "dev:worker": "wrangler dev src/cloudflare-worker-entry.ts",
-    "dev:vercel": "vercel dev",
     "prod:express": "node dist/express.js",
     "prod:fastify": "node dist/fastify.js",
     "prod:hattip": "node dist/hattip.js",
@@ -66,7 +65,6 @@
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "vercel": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
