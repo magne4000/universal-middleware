@@ -30,22 +30,33 @@
     "@hattip/adapter-bun": "^0.0.49",
     "@hattip/adapter-cloudflare-workers": "^0.0.49",
     "@hattip/adapter-deno": "^0.0.49",
-    "@hattip/adapter-node": "^0.0.49",
+    "@hattip/adapter-node": "catalog:",
     "@hattip/compose": "^0.0.49",
     "@hattip/core": "catalog:",
     "@hattip/cors": "^0.0.49",
     "@hattip/router": "catalog:",
-    "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "@universal-middleware/tsdown-config": "workspace:*",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
+  },
+  "peerDependencies": {
+    "@hattip/compose": "^0.0.49",
+    "@hattip/core": "catalog:",
+    "@hattip/router": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@hattip/compose": {
+      "optional": true
+    },
+    "@hattip/router": {
+      "optional": true
+    }
   },
   "sideEffects": false,
   "keywords": [

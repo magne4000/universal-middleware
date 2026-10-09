@@ -26,18 +26,18 @@
     "@universal-middleware/core": "workspace:^"
   },
   "devDependencies": {
-    "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "@universal-middleware/tsdown-config": "workspace:*",
-    "rimraf": "catalog:",
     "srvx": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:",
-    "wrangler": "catalog:"
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "srvx": ">=0.8"
   },
   "sideEffects": false,
   "keywords": [

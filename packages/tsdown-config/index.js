@@ -102,7 +102,7 @@ async function bundleAdapterDts(chunks, alwaysBundle) {
 export function defineTsdown({ runtime, target, deps = { neverBundle: true }, dts = true, ...rest }) {
   return {
     platform: runtime === "neutral" ? "neutral" : "node",
-    target: target ?? (runtime === "neutral" ? "es2022" : "node20"),
+    target: target ?? (runtime === "neutral" ? "es2022" : "node22"),
     fixedExtension: false,
     dts,
     deps,

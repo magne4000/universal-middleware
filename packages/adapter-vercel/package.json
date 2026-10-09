@@ -47,16 +47,15 @@
   },
   "dependencies": {
     "@universal-middleware/core": "workspace:^",
-    "@universal-middleware/express": "workspace:^",
     "@universal-middleware/node": "workspace:^"
   },
   "devDependencies": {
     "@hattip/core": "catalog:",
     "@hattip/router": "catalog:",
-    "@swc/core": "catalog:",
     "@types/express": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/elysia": "workspace:^",
+    "@universal-middleware/express": "workspace:^",
     "@universal-middleware/fastify": "workspace:^",
     "@universal-middleware/h3": "workspace:^",
     "@universal-middleware/hattip": "workspace:^",
@@ -68,15 +67,19 @@
     "fastify": "catalog:",
     "h3": "catalog:",
     "hono": "catalog:",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
-    "tsx": "catalog:",
     "typescript": "catalog:",
-    "vercel": "^62.2.0",
+    "vercel": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@universal-middleware/elysia": "workspace:^",
+    "@universal-middleware/express": "workspace:^",
+    "@universal-middleware/fastify": "workspace:^",
+    "@universal-middleware/hattip": "workspace:^",
+    "@universal-middleware/hono": "workspace:^",
+    "@universal-middleware/srvx": "workspace:^",
     "@universal-middleware/h3": "workspace:^",
     "@hattip/core": "catalog:",
     "express": "catalog:",
@@ -87,6 +90,24 @@
     "srvx": ">=0.8"
   },
   "peerDependenciesMeta": {
+    "@universal-middleware/elysia": {
+      "optional": true
+    },
+    "@universal-middleware/express": {
+      "optional": true
+    },
+    "@universal-middleware/fastify": {
+      "optional": true
+    },
+    "@universal-middleware/hattip": {
+      "optional": true
+    },
+    "@universal-middleware/hono": {
+      "optional": true
+    },
+    "@universal-middleware/srvx": {
+      "optional": true
+    },
     "@universal-middleware/h3": {
       "optional": true
     },

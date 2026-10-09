@@ -27,19 +27,20 @@
     "@universal-middleware/core": "workspace:^"
   },
   "devDependencies": {
-    "@hono/node-server": "^2.1.3",
-    "@swc/core": "catalog:",
+    "@hono/node-server": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "@universal-middleware/tsdown-config": "workspace:*",
     "hono": "catalog:",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
+  },
+  "peerDependencies": {
+    "hono": "catalog:"
   },
   "sideEffects": false,
   "keywords": [

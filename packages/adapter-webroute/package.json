@@ -26,8 +26,7 @@
     "@universal-middleware/core": "workspace:^"
   },
   "devDependencies": {
-    "@hono/node-server": "^2.1.3",
-    "@swc/core": "catalog:",
+    "@hono/node-server": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "@universal-middleware/tsdown-config": "workspace:*",
@@ -35,12 +34,20 @@
     "@webroute/route": "catalog:",
     "@webroute/router": "^0.4.0",
     "hono": "catalog:",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@webroute/middleware": "^0.10.0",
+    "@webroute/route": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@webroute/middleware": {
+      "optional": true
+    }
   },
   "sideEffects": false,
   "keywords": [

@@ -147,26 +147,6 @@
       "import": "./dist/middlewares/universal-h3-middleware-guard.middleware.js",
       "default": "./dist/middlewares/universal-h3-middleware-guard.middleware.js"
     },
-    "./dummy-handler-cloudflare": {
-      "types": "./dist/handlers/universal-cloudflare-handler-handler.d.ts",
-      "import": "./dist/handlers/universal-cloudflare-handler-handler.js",
-      "default": "./dist/handlers/universal-cloudflare-handler-handler.js"
-    },
-    "./middlewares/context-middleware-cloudflare": {
-      "types": "./dist/middlewares/universal-cloudflare-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-cloudflare-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-cloudflare-middleware-context.middleware.js"
-    },
-    "./middlewares/headers-middleware-cloudflare": {
-      "types": "./dist/middlewares/universal-cloudflare-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-cloudflare-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-cloudflare-middleware-headers.middleware.js"
-    },
-    "./middlewares/guard-middleware-cloudflare": {
-      "types": "./dist/middlewares/universal-cloudflare-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-cloudflare-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-cloudflare-middleware-guard.middleware.js"
-    },
     "./dummy-handler-cloudflare-worker": {
       "types": "./dist/handlers/universal-cloudflare-worker-handler-handler.d.ts",
       "import": "./dist/handlers/universal-cloudflare-worker-handler-handler.js",
@@ -177,30 +157,15 @@
       "import": "./dist/handlers/universal-cloudflare-pages-handler-handler.js",
       "default": "./dist/handlers/universal-cloudflare-pages-handler-handler.js"
     },
-    "./middlewares/context-middleware-cloudflare-worker": {
-      "types": "./dist/middlewares/universal-cloudflare-worker-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-cloudflare-worker-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-cloudflare-worker-middleware-context.middleware.js"
-    },
     "./middlewares/context-middleware-cloudflare-pages": {
       "types": "./dist/middlewares/universal-cloudflare-pages-middleware-context.middleware.d.ts",
       "import": "./dist/middlewares/universal-cloudflare-pages-middleware-context.middleware.js",
       "default": "./dist/middlewares/universal-cloudflare-pages-middleware-context.middleware.js"
     },
-    "./middlewares/headers-middleware-cloudflare-worker": {
-      "types": "./dist/middlewares/universal-cloudflare-worker-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-cloudflare-worker-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-cloudflare-worker-middleware-headers.middleware.js"
-    },
     "./middlewares/headers-middleware-cloudflare-pages": {
       "types": "./dist/middlewares/universal-cloudflare-pages-middleware-headers.middleware.d.ts",
       "import": "./dist/middlewares/universal-cloudflare-pages-middleware-headers.middleware.js",
       "default": "./dist/middlewares/universal-cloudflare-pages-middleware-headers.middleware.js"
-    },
-    "./middlewares/guard-middleware-cloudflare-worker": {
-      "types": "./dist/middlewares/universal-cloudflare-worker-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-cloudflare-worker-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-cloudflare-worker-middleware-guard.middleware.js"
     },
     "./middlewares/guard-middleware-cloudflare-pages": {
       "types": "./dist/middlewares/universal-cloudflare-pages-middleware-guard.middleware.d.ts",
@@ -297,36 +262,6 @@
       "import": "./dist/handlers/universal-vercel-node-handler-params.handler.js",
       "default": "./dist/handlers/universal-vercel-node-handler-params.handler.js"
     },
-    "./middlewares/context-middleware-vercel-edge": {
-      "types": "./dist/middlewares/universal-vercel-edge-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-vercel-edge-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-vercel-edge-middleware-context.middleware.js"
-    },
-    "./middlewares/context-middleware-vercel-node": {
-      "types": "./dist/middlewares/universal-vercel-node-middleware-context.middleware.d.ts",
-      "import": "./dist/middlewares/universal-vercel-node-middleware-context.middleware.js",
-      "default": "./dist/middlewares/universal-vercel-node-middleware-context.middleware.js"
-    },
-    "./middlewares/headers-middleware-vercel-edge": {
-      "types": "./dist/middlewares/universal-vercel-edge-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-vercel-edge-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-vercel-edge-middleware-headers.middleware.js"
-    },
-    "./middlewares/headers-middleware-vercel-node": {
-      "types": "./dist/middlewares/universal-vercel-node-middleware-headers.middleware.d.ts",
-      "import": "./dist/middlewares/universal-vercel-node-middleware-headers.middleware.js",
-      "default": "./dist/middlewares/universal-vercel-node-middleware-headers.middleware.js"
-    },
-    "./middlewares/guard-middleware-vercel-edge": {
-      "types": "./dist/middlewares/universal-vercel-edge-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-vercel-edge-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-vercel-edge-middleware-guard.middleware.js"
-    },
-    "./middlewares/guard-middleware-vercel-node": {
-      "types": "./dist/middlewares/universal-vercel-node-middleware-guard.middleware.d.ts",
-      "import": "./dist/middlewares/universal-vercel-node-middleware-guard.middleware.js",
-      "default": "./dist/middlewares/universal-vercel-node-middleware-guard.middleware.js"
-    },
     "./dummy-handler-srvx": {
       "types": "./dist/handlers/universal-srvx-handler-handler.d.ts",
       "import": "./dist/handlers/universal-srvx-handler-handler.js",
@@ -362,14 +297,11 @@
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@hono/node-server": "^2.1.3",
-    "@swc/core": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/core": "workspace:*",
     "@universal-middleware/tsdown-config": "workspace:*",
     "elysia": "catalog:",
     "h3": "catalog:",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "universal-middleware": "workspace:^"

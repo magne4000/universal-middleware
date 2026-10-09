@@ -23,19 +23,53 @@
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@swc/core": "catalog:",
-    "@types/bun": "^1.4.2",
+    "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/express": "workspace:^",
     "@universal-middleware/tsdown-config": "workspace:*",
     "elysia": "catalog:",
     "h3": "catalog:",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "universal-middleware": "workspace:^",
     "vite": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@hattip/compose": "^0.0.49",
+    "@webroute/middleware": "^0.10.0",
+    "@webroute/route": "catalog:",
+    "elysia": "catalog:",
+    "fastify": "catalog:",
+    "h3": "catalog:",
+    "hono": "catalog:",
+    "srvx": ">=0.8"
+  },
+  "peerDependenciesMeta": {
+    "@hattip/compose": {
+      "optional": true
+    },
+    "@webroute/middleware": {
+      "optional": true
+    },
+    "@webroute/route": {
+      "optional": true
+    },
+    "elysia": {
+      "optional": true
+    },
+    "fastify": {
+      "optional": true
+    },
+    "h3": {
+      "optional": true
+    },
+    "hono": {
+      "optional": true
+    },
+    "srvx": {
+      "optional": true
+    }
   },
   "sideEffects": false,
   "keywords": [

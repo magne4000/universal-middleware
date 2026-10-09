@@ -16,20 +16,66 @@
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@swc/core": "catalog:",
-    "@types/bun": "^1.4.2",
+    "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "@universal-middleware/core": "workspace:^",
     "@universal-middleware/tsdown-config": "workspace:*",
     "elysia": "catalog:",
     "fflate": "^0.8.3",
     "h3": "catalog:",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "universal-middleware": "workspace:^",
     "vite": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@hattip/compose": "^0.0.49",
+    "@hattip/core": "catalog:",
+    "@types/express": "^4 || ^5",
+    "@webroute/middleware": "^0.10.0",
+    "@webroute/route": "catalog:",
+    "elysia": "catalog:",
+    "fastify": "catalog:",
+    "h3": "catalog:",
+    "hono": "catalog:",
+    "srvx": ">=0.8"
+  },
+  "peerDependenciesMeta": {
+    "@cloudflare/workers-types": {
+      "optional": true
+    },
+    "@hattip/compose": {
+      "optional": true
+    },
+    "@hattip/core": {
+      "optional": true
+    },
+    "@types/express": {
+      "optional": true
+    },
+    "@webroute/middleware": {
+      "optional": true
+    },
+    "@webroute/route": {
+      "optional": true
+    },
+    "elysia": {
+      "optional": true
+    },
+    "fastify": {
+      "optional": true
+    },
+    "h3": {
+      "optional": true
+    },
+    "hono": {
+      "optional": true
+    },
+    "srvx": {
+      "optional": true
+    }
   },
   "sideEffects": false,
   "keywords": [
@@ -40,7 +86,6 @@
     "hono-middleware",
     "hattip-middleware",
     "webroute-middleware",
-    "cloudflare-middleware",
     "fastify-middleware",
     "h3-middleware"
   ],
