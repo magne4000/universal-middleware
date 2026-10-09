@@ -38,19 +38,21 @@ import { expectTypeOf, test } from "vitest";
 
 test("hono", () => {
   expectTypeOf(honoContextMiddleware).returns.toEqualTypeOf<HonoMiddleware<Universal.Context, Universal.Context>>();
-  expectTypeOf(honoHeadersMiddleware).returns.toEqualTypeOf<HonoMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(honoHeadersMiddleware).returns.toEqualTypeOf<HonoMiddleware<{ hello?: string }, Universal.Context>>();
   expectTypeOf(honoHandler).returns.toEqualTypeOf<HonoHandler<Universal.Context>>();
 });
 
 test("express", () => {
   expectTypeOf(expressContextMiddleware).returns.toEqualTypeOf<NodeMiddleware<Universal.Context, Universal.Context>>();
-  expectTypeOf(expressHeadersMiddleware).returns.toEqualTypeOf<NodeMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(expressHeadersMiddleware).returns.toEqualTypeOf<NodeMiddleware<{ hello?: string }, Universal.Context>>();
   expectTypeOf(expressHandler).returns.toEqualTypeOf<NodeHandler<Universal.Context>>();
 });
 
 test("hattip", () => {
   expectTypeOf(hattipContextMiddleware).returns.toEqualTypeOf<HattipMiddleware<Universal.Context, Universal.Context>>();
-  expectTypeOf(hattipHeadersMiddleware).returns.toEqualTypeOf<HattipMiddleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(hattipHeadersMiddleware).returns.toEqualTypeOf<
+    HattipMiddleware<{ hello?: string }, Universal.Context>
+  >();
   expectTypeOf(hattipHandler).returns.toEqualTypeOf<HattipHandler<Universal.Context>>();
 });
 
@@ -71,14 +73,14 @@ test("fastify", () => {
     FastifyMiddleware<Universal.Context, Universal.Context>
   >();
   expectTypeOf(fastifyHeadersMiddleware).returns.toEqualTypeOf<
-    FastifyMiddleware<Universal.Context, Universal.Context>
+    FastifyMiddleware<{ hello?: string }, Universal.Context>
   >();
   expectTypeOf(fastifyHandler).returns.toEqualTypeOf<FastifyHandler<Universal.Context>>();
 });
 
 test("h3", () => {
   expectTypeOf(h3ContextMiddleware).returns.toEqualTypeOf<H3Middleware<Universal.Context, Universal.Context>>();
-  expectTypeOf(h3HeadersMiddleware).returns.toEqualTypeOf<H3Middleware<Universal.Context, Universal.Context>>();
+  expectTypeOf(h3HeadersMiddleware).returns.toEqualTypeOf<H3Middleware<{ hello?: string }, Universal.Context>>();
   expectTypeOf(h3Handler).returns.toEqualTypeOf<H3Handler<Universal.Context>>();
 });
 
@@ -87,7 +89,7 @@ test("cloudflare-pages", () => {
     CloudflarePagesFunction<Universal.Context, Universal.Context>
   >();
   expectTypeOf(cloudflarePagesHeadersMiddleware).returns.toEqualTypeOf<
-    CloudflarePagesFunction<Universal.Context, Universal.Context>
+    CloudflarePagesFunction<{ hello?: string }, Universal.Context>
   >();
   expectTypeOf(cloudflarePagesHandler).returns.toEqualTypeOf<
     CloudflarePagesFunction<Universal.Context, Universal.Context>
