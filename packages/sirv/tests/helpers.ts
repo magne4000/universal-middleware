@@ -1,4 +1,4 @@
-import { readFile, stat, unlink, writeFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import { createServer, type IncomingHttpHeaders, request, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { dirname, join } from "node:path";
@@ -112,15 +112,4 @@ export async function matches(res: Response, code: number, filepath: string, enc
   assert.equal(res.headers.get("content-type"), file.type);
   assert.equal(res.status, code);
   assert.equal(await res.text(), file.data);
-}
-
-export async function write(file: string, data: string) {
-  const filename = join(www, file);
-  await writeFile(filename, data);
-  return filename;
-}
-
-export async function remove(file: string) {
-  const filename = join(www, file);
-  await unlink(filename);
 }

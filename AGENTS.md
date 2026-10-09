@@ -122,8 +122,7 @@ packages/
 ├── adapter-*/              # Framework adapters (express, hono, fastify, h3, etc.)
 │   ├── src/               # TypeScript source
 │   ├── tests/             # Vitest tests
-│   ├── tsdown.config.ts   # Build configuration
-│   └── vitest.config.ts   # Test configuration
+│   └── tsdown.config.ts   # Build configuration
 ├── compress/              # Compression middleware
 ├── sirv/                  # Static file serving middleware
 ├── tests/                 # Shared test utilities
@@ -273,7 +272,7 @@ Each adapter package (`adapter-*`) converts the universal middleware format to f
 
 ### Creating New Packages
 - Follow existing adapter structure (see `packages/adapter-hono/` as example)
-- Include: `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
+- Include: `package.json`, `tsconfig.json`, `tsdown.config.ts`; add a `vitest.config.ts` only if the tests need options (Vitest's defaults need no file)
 - `pnpm-workspace.yaml` globs `packages/*`, so a new package there is picked up automatically
 - If it has tests, add it to `matrix.cwd` in `.github/workflows/tests.yml`
 

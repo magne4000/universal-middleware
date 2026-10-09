@@ -20,7 +20,7 @@ packages/adapter-{server-name}/
 ├── readme.md
 ├── tsconfig.json
 ├── tsdown.config.ts
-├── vitest.config.ts
+├── vitest.config.ts   # Only if the tests need options
 └── wrangler.toml      # Cloudflare configuration (if applicable)
 ```
 
@@ -64,9 +64,8 @@ packages/adapter-{server-name}/
 - Configure Cloudflare Workers/Pages deployment
 - Set compatibility date and flags
 
-#### `vitest.config.ts`
-- Configure Vitest for testing
-- Extend from root configuration if needed
+#### `vitest.config.ts` (if the tests need options)
+- Vitest's defaults need no config file; add one only for options such as a longer timeout
 
 ## 2. Update Core Package
 
@@ -121,9 +120,9 @@ cwd:
   - packages/adapter-{server-name}
 ```
 
-### `packages/tsdown-config/index.ts`
-Add the server name to the `middlewareServers` array. The `sirv` and `compress`
-builds both consume it, so a single edit covers both.
+### `packages/tsdown-config/index.js` and `index.d.ts`
+Add the server name to the `middlewareServers` array in `index.js`, which the builds run, and to its
+type in `index.d.ts`. The `sirv` and `compress` builds both consume it, so this covers both.
 
 ### `packages/universal-middleware/test/common.ts`
 Add server name to the `adapters` array for testing.
@@ -323,7 +322,7 @@ When creating a new server adapter, ensure you've updated:
 
 ### Build & Test Configuration
 - [ ] Added the package to `matrix.cwd` in `.github/workflows/tests.yml`
-- [ ] Added server to `packages/tsdown-config/index.ts` `middlewareServers` (covers sirv and compress)
+- [ ] Added server to `middlewareServers` in `packages/tsdown-config/index.js` and its type in `index.d.ts` (covers sirv and compress)
 
 ### Documentation
 - [ ] Updated `docs/reference/supported-adapters.md`

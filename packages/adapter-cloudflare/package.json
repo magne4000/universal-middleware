@@ -39,7 +39,7 @@
     "wrangler": "catalog:"
   },
   "peerDependencies": {
-    "@cloudflare/workers-types": "catalog:"
+    "@cloudflare/workers-types": "^4 || ^5"
   },
   "peerDependenciesMeta": {
     "@cloudflare/workers-types": {

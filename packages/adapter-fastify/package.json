@@ -43,7 +43,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "fastify": "catalog:"
+    "fastify": "^5"
   },
   "sideEffects": false,
   "keywords": [

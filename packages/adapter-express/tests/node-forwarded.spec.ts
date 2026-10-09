@@ -1,6 +1,6 @@
 import { EventEmitter } from "node:events";
 import { type IncomingMessage, ServerResponse } from "node:http";
-import { createRequestAdapter, responseAdapter } from "@universal-middleware/node";
+import { createRequestAdapter, type DecoratedRequest, responseAdapter } from "@universal-middleware/node";
 import { describe, expect, it, vi } from "vitest";
 
 // `@universal-middleware/node` has no test setup of its own; it is exercised
@@ -8,17 +8,13 @@ import { describe, expect, it, vi } from "vitest";
 //
 // Ported from srvx#229 (hop-aware `X-Forwarded-*` resolution).
 
-// Minimal stand-ins for req/res
-type Any = any;
-
-function fakeReq(headers: Record<string, string>, url = "/p"): Any {
-  return { method: "GET", url, headers, socket: {} };
+// Minimal stand-ins for req/res: cast because they only carry the fields the request adapter reads
+function fakeReq(headers: Record<string, string>, url = "/p"): DecoratedRequest {
+  return { method: "GET", url, headers, socket: {} } as unknown as DecoratedRequest;
 }
 
-function fakeRes(): Any {
-  const res = new EventEmitter() as Any;
-  res.writableEnded = false;
-  return res;
+function fakeRes(): ServerResponse {
+  return Object.assign(new EventEmitter(), { writableEnded: false }) as unknown as ServerResponse;
 }
 
 describe("createRequestAdapter — X-Forwarded-* resolution", () => {

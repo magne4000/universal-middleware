@@ -45,7 +45,7 @@
   },
   "peerDependencies": {
     "@webroute/middleware": "^0.10.0",
-    "@webroute/route": "catalog:"
+    "@webroute/route": "^0.8"
   },
   "peerDependenciesMeta": {
     "@webroute/middleware": {

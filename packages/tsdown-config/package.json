@@ -6,7 +6,7 @@
   "type": "module",
   "exports": {
     ".": {
-      "source": "./index.ts",
+      "types": "./index.d.ts",
       "default": "./index.js"
     }
   }

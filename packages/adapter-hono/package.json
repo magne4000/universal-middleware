@@ -43,7 +43,7 @@
     "wrangler": "catalog:"
   },
   "peerDependencies": {
-    "hono": "catalog:"
+    "hono": "^4"
   },
   "sideEffects": false,
   "keywords": [

@@ -213,15 +213,16 @@ describe("body read by a universal middleware", () => {
     const url = await start((app) => app.post("/echo", express.json(), (req, res) => res.json(req.body)), [forgets]);
     const res = await postJson(`${url}/echo`, { a: 1 });
     expect(await res.json()).toEqual({ a: 1 });
-    expect(await Promise.race([outcome.promise, new Promise((r) => setTimeout(() => r("hung"), 2000))])).toBe(
-      "The request body must be read before the middleware returns.",
-    );
+    expect(await outcome.promise).toBe("The request body must be read before the middleware returns.");
   });
 
   it("rejects the middleware's read when the client aborts the upload", async () => {
+    const reading = Promise.withResolvers<void>();
     const outcome = Promise.withResolvers<string>();
     const reads: UniversalMiddleware = async (request) => {
-      await request.text().then(
+      const text = request.text();
+      reading.resolve();
+      await text.then(
         () => outcome.resolve("read"),
         () => outcome.resolve("rejected"),
       );
@@ -229,10 +230,9 @@ describe("body read by a universal middleware", () => {
     const url = await start((app) => app.post("/echo", (_req, res) => res.end()), [reads]);
     const socket = connect(Number(new URL(url).port), "localhost");
     socket.write("POST /echo HTTP/1.1\r\nhost: x\r\ncontent-length: 100\r\n\r\n12345");
-    setTimeout(() => socket.destroy(), 100);
-    expect(await Promise.race([outcome.promise, new Promise((r) => setTimeout(() => r("hung"), 2000))])).toBe(
-      "rejected",
-    );
+    await reading.promise;
+    socket.destroy();
+    expect(await outcome.promise).toBe("rejected");
   });
 
   it("doesn't enqueue on a closed stream when the body arrives after a pending read was cancelled", async () => {
@@ -241,31 +241,43 @@ describe("body read by a universal middleware", () => {
     process.on("uncaughtException", onUncaught);
     try {
       const cancelled = Promise.withResolvers<void>();
-      const bodySent = Promise.withResolvers<void>();
-      const cancels: UniversalMiddleware = async (request) => {
-        if (request.method !== "POST" || !request.body) return;
+      const bodyArrived = Promise.withResolvers<void>();
+      const cancels: UniversalMiddleware = async (request, _context, runtime) => {
+        if (request.method !== "POST" || !request.body || runtime.adapter !== "express") return;
+        const { req } = runtime;
+        // The pending read makes the lend listen for "readable": cancel only once it does
+        const listening = Promise.withResolvers<void>();
+        const onListener = (event: string | symbol) => {
+          if (event === "readable") listening.resolve();
+        };
+        req.on("newListener", onListener);
         const reader = request.body.getReader();
         reader.read().catch(() => {});
-        await new Promise((r) => setTimeout(r, 50));
+        await listening.promise;
+        req.off("newListener", onListener);
+        // Prepended, so it runs before the lend's listener in the same emit
+        req.prependOnceListener("readable", () => bodyArrived.resolve());
         await reader.cancel();
         cancelled.resolve();
-        await bodySent.promise;
-        await new Promise((r) => setTimeout(r, 100));
+        await bodyArrived.promise;
       };
       const url = await start((app) => app.post("/echo", express.json(), (req, res) => res.json(req.body)), [cancels]);
       const socket = connect(Number(new URL(url).port), "localhost");
+      const responded = Promise.withResolvers<void>();
       let response = "";
       socket.on("data", (chunk) => {
         response += chunk;
+        if (response.includes('{"a":1}')) responded.resolve();
       });
       socket.write("POST /echo HTTP/1.1\r\nhost: x\r\ncontent-type: application/json\r\ncontent-length: 7\r\n\r\n");
       await cancelled.promise;
       socket.write('{"a":1}');
-      bodySent.resolve();
-      await new Promise((r) => setTimeout(r, 500));
-      socket.destroy();
+      // The lend's listener ran in the same emit as the one that resolved this: it must not have thrown
+      await bodyArrived.promise;
       expect(uncaught).toEqual([]);
-      expect(response).toContain('{"a":1}');
+      // The next handler still gets the body; times out otherwise
+      await responded.promise;
+      socket.destroy();
     } finally {
       process.off("uncaughtException", onUncaught);
     }
