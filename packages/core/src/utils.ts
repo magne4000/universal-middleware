@@ -216,7 +216,8 @@ export function attachUniversal<
  * A middleware is considered a handler if:
  * - It has an order equal to 0
  * - It has a path and no order
- * @internal
+ *
+ * Use it in an adapter that installs handlers itself, so they are classified the same way core does.
  */
 export function isHandler(m: EnhancedMiddleware) {
   const order = getUniversalProp(m, orderSymbol);

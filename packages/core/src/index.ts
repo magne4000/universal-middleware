@@ -30,6 +30,7 @@ export {
   getUniversal,
   getUniversalProp,
   isBodyInit,
+  isHandler,
   mergeHeadersInto,
   nodeHeadersToWeb,
   url,
