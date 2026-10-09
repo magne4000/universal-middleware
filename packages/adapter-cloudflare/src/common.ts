@@ -129,6 +129,8 @@ export function getRuntime(
   ...args: [EventContext<unknown, string, unknown>] | [unknown, ExecutionContext]
 ): RuntimeAdapter {
   const isContext = args.length === 1;
+  // workerd methods throw "Illegal invocation" when called on another `this`
+  const ctx = isContext ? args[0] : args[1];
 
   const key = isContext ? "cloudflare-pages" : "cloudflare-worker";
 
@@ -141,8 +143,8 @@ export function getRuntime(
     {
       env: isContext ? args[0].env : args[0],
       ctx: {
-        waitUntil: isContext ? args[0].waitUntil : args[1].waitUntil,
-        passThroughOnException: isContext ? args[0].passThroughOnException : args[1].passThroughOnException,
+        waitUntil: ctx.waitUntil?.bind(ctx),
+        passThroughOnException: ctx.passThroughOnException?.bind(ctx),
       },
     },
   );

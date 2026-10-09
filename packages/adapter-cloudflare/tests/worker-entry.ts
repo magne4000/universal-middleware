@@ -10,6 +10,7 @@ import {
   throwLateHandler,
 } from "@universal-middleware/tests/utils";
 import { apply, type CloudflareHandler, createHandler } from "../src/index.js";
+import { waitUntilMiddleware } from "./wait-until.js";
 
 let catchAllHandler: CloudflareHandler<Universal.Context>;
 
@@ -19,6 +20,7 @@ declare const TEST_CASE: string;
 switch (TEST_CASE) {
   case "router": {
     catchAllHandler = apply([
+      waitUntilMiddleware,
       middlewares.throwEarly,
       middlewares.throwLate,
       middlewares.guard,
@@ -37,6 +39,7 @@ switch (TEST_CASE) {
   }
   case "router_enhanced": {
     catchAllHandler = apply([
+      waitUntilMiddleware,
       routeParamHandler(),
       throwEarlyHandler(),
       throwLateHandler(),
@@ -57,6 +60,7 @@ switch (TEST_CASE) {
     catchAllHandler = createHandler(
       () =>
         pipe(
+          waitUntilMiddleware,
           middlewares.throwEarly,
           middlewares.throwLate,
           middlewares.guard,

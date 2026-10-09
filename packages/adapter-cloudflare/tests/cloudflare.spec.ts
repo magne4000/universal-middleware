@@ -48,6 +48,10 @@ runTests(runs, {
   vitest,
   retry: 3,
   concurrent: !process.env.CI,
+  test(response) {
+    // `runtime.ctx.waitUntil()` was called against the real workerd context
+    vitest.expect(response.headers.get("x-wait-until")).toBe("called");
+  },
 });
 
 vitest.describe("context", () => {
