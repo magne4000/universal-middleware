@@ -2,6 +2,7 @@ export {
   createHandler,
   createMiddleware,
   getContext,
+  getRuntime,
   type H3Handler,
   type H3Middleware,
   universalOnBeforeResponse,

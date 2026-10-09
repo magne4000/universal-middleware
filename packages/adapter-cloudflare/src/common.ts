@@ -99,9 +99,8 @@ export function createPagesFunction<
         if (response instanceof Response) {
           return response as unknown as CloudflareResponse;
         }
-        // Update context
-        // biome-ignore lint/suspicious/noExplicitAny: ignored
-        setContext(context.data, response as any);
+        // Update context: from here on, the request's data holds the OutContext
+        setContext(context.data as { [contextSymbol]?: OutContext }, response);
         return await context.next();
       }
 
@@ -143,9 +142,9 @@ export function getRuntime(
   const key = isContext ? "cloudflare-pages" : "cloudflare-worker";
 
   return getAdapterRuntime(
-    isContext ? "cloudflare-pages" : "cloudflare-worker",
+    key,
     {
-      params: isContext ? ((args[0].params as Record<string, string>) ?? undefined) : undefined,
+      params: isContext ? (args[0].params as Record<string, string>) : undefined,
       [key]: isContext ? args[0] : { env: args[0], ctx: args[1] },
     },
     {

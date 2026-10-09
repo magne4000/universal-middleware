@@ -223,3 +223,23 @@ export const streamCancelStatusHandler: Get<[], UniversalHandler> = () =>
       method: "GET",
     },
   );
+
+/**
+ * A Response whose body never ends, like Server-Sent Events: only `cancel()` releases it.
+ * `cancelled` resolves when it is cancelled.
+ */
+export function endlessResponse() {
+  const { promise: cancelled, resolve } = Promise.withResolvers<void>();
+  const state = { cancelled: false };
+  const response = new Response(
+    new ReadableStream<Uint8Array>({
+      pull: () => Promise.withResolvers<void>().promise,
+      cancel() {
+        state.cancelled = true;
+        resolve();
+      },
+    }),
+    { headers: { "content-type": "text/event-stream", "x-kept": "yes" } },
+  );
+  return { state, response, cancelled };
+}

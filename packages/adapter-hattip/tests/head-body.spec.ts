@@ -3,6 +3,7 @@ import type { AddressInfo } from "node:net";
 import { createServer } from "@hattip/adapter-node";
 import { createRouter, type Router } from "@hattip/router";
 import { enhance } from "@universal-middleware/core";
+import { endlessResponse } from "@universal-middleware/tests/utils";
 import { afterEach, describe, expect, it } from "vitest";
 import { apply, createHandler } from "../src/index.js";
 
@@ -16,20 +17,6 @@ afterEach(() => {
     server.close();
   }
 });
-
-function idleStream() {
-  const state = { cancelled: false };
-  const response = new Response(
-    new ReadableStream<Uint8Array>({
-      pull: () => new Promise<void>(() => {}),
-      cancel() {
-        state.cancelled = true;
-      },
-    }),
-    { headers: { "content-type": "text/event-stream", "x-kept": "yes" } },
-  );
-  return { state, response };
-}
 
 async function head(app: Router) {
   const server = createServer(app.buildHandler());
@@ -53,7 +40,7 @@ async function head(app: Router) {
 
 describe("HEAD with an endless body", () => {
   it("completes and cancels the body of a middleware without path", async () => {
-    const { state, response } = idleStream();
+    const { state, response } = endlessResponse();
     const app = createRouter();
     apply(app, [enhance(() => response, { name: "sse", order: -100 })]);
 
@@ -67,7 +54,7 @@ describe("HEAD with an endless body", () => {
   });
 
   it("completes and cancels the body of a handler", async () => {
-    const { state, response } = idleStream();
+    const { state, response } = endlessResponse();
     const app = createRouter();
     app.head("/events", createHandler(() => () => response)());
 
@@ -79,7 +66,7 @@ describe("HEAD with an endless body", () => {
   });
 
   it("completes and cancels the body when a response function runs over a native handler", async () => {
-    const { state, response } = idleStream();
+    const { state, response } = endlessResponse();
     const app = createRouter();
     apply(app, [enhance(() => (res: Response) => res, { name: "after", order: -100 })]);
     app.use("/events", () => response);
@@ -95,7 +82,7 @@ describe("HEAD with an endless body", () => {
     ["route", {}],
     ["path-scoped middleware", { order: -100 }],
   ])("answers HEAD from a GET-only %s and cancels the body", async (_, options) => {
-    const { state, response } = idleStream();
+    const { state, response } = endlessResponse();
     const app = createRouter();
     apply(app, [enhance(() => response, { method: "GET", path: "/events", ...options })]);
 
@@ -160,7 +147,7 @@ describe("HEAD with a response function", () => {
   });
 
   it("completes when an endless body is replaced by a finite one", async () => {
-    const { state, response } = idleStream();
+    const { state, response } = endlessResponse();
     const res = await headWith(
       () => new Response("replacement", { status: 202 }),
       () => response,

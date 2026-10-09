@@ -1,6 +1,7 @@
 import { parse } from "regexparam";
 import { decodeParam, decodePath } from "./decode";
 import type { RuntimeAdapter } from "./types";
+import { url } from "./utils";
 
 function exec(
   path: string,
@@ -23,8 +24,7 @@ function exec(
 }
 
 function paramsFromRequest(request: Request, path: string): null | Record<string, string> {
-  const url = new URL(request.url);
-  return exec(decodePath(url.pathname), parse(decodePath(path)));
+  return exec(decodePath(url(request).pathname), parse(decodePath(path)));
 }
 
 /**

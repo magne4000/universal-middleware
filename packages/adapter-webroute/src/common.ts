@@ -113,7 +113,7 @@ export function getContext<Context extends Universal.Context = Universal.Context
 export async function getRuntime(ctx: RequestCtx | undefined): Promise<RuntimeAdapter> {
   const parsed = await ctx?.parse();
 
-  const params = (parsed?.params as Record<string, string>) ?? undefined;
+  const params = parsed?.params as Record<string, string> | undefined;
 
   return getAdapterRuntime("webroute", {
     params,

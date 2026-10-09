@@ -112,7 +112,7 @@ export function createMiddleware<
   };
 }
 
-export function initContext<InContext extends Universal.Context = Universal.Context>(
+function initContext<InContext extends Universal.Context = Universal.Context>(
   context: AdapterRequestContext,
 ): InContext {
   context[contextSymbol] ??= {};
@@ -127,6 +127,10 @@ export function getContext<InContext extends Universal.Context = Universal.Conte
 }
 
 export function getRuntime(context: AdapterRequestContext): RuntimeAdapter {
+  // Each Hattip adapter (Node, Bun, Deno, Cloudflare...) puts some of these on `platform`
+  const platform = context.platform as
+    | { env?: unknown; context?: unknown; request?: unknown; response?: unknown }
+    | undefined;
   return getAdapterRuntime(
     "hattip",
     {
@@ -134,14 +138,10 @@ export function getRuntime(context: AdapterRequestContext): RuntimeAdapter {
       hattip: context,
     },
     {
-      // biome-ignore lint/suspicious/noExplicitAny: ignored
-      env: (context.platform as any)?.env,
-      // biome-ignore lint/suspicious/noExplicitAny: ignored
-      ctx: (context.platform as any)?.context,
-      // biome-ignore lint/suspicious/noExplicitAny: ignored
-      req: (context.platform as any)?.request,
-      // biome-ignore lint/suspicious/noExplicitAny: ignored
-      res: (context.platform as any)?.response,
+      env: platform?.env,
+      ctx: platform?.context,
+      req: platform?.request,
+      res: platform?.response,
     },
     context.request,
   );

@@ -1,3 +1,4 @@
+import { createRequestAdapter, sendResponse } from "@universal-middleware/node";
 import type { SrvxHandler } from "@universal-middleware/srvx";
 import type { VercelNodeHandlerRaw } from "../utils/common.js";
 
@@ -8,9 +9,9 @@ export function createNodeHandler(
   app: SrvxHandler<Universal.Context> | { fetch: SrvxHandler<Universal.Context> },
 ): VercelNodeHandlerRaw {
   const fn = typeof app === "function" ? app : app.fetch;
+  const requestAdapter = createRequestAdapter();
+
   return async function srvxHandlerVercelNode(message, response) {
-    const { createRequestAdapter, sendResponse } = await import("@universal-middleware/node");
-    const requestAdapter = createRequestAdapter();
     const request = requestAdapter(message, response);
     const res = await fn(request);
     return sendResponse(res, response);

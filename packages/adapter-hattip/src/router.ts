@@ -8,7 +8,7 @@ import {
   type UniversalRouterInterface,
   universalSymbol,
 } from "@universal-middleware/core";
-import { createHandler, createMiddleware } from "./common";
+import { createHandler, createMiddleware } from "./common.js";
 
 export type App = Router;
 

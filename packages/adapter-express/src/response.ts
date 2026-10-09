@@ -28,7 +28,6 @@ function override<T extends DecoratedServerResponse>(
   const original: any = nodeResponse[key];
 
   (nodeResponse as any)[key] = (...args: any) => {
-    // console.log("called", key, args);
     if (!nodeResponse.headersSent) {
       nodeResponse.writeHead(nodeResponse.statusCode);
     }
@@ -39,7 +38,6 @@ function override<T extends DecoratedServerResponse>(
       });
     }
     if (key === "end") {
-      // console.log("end");
       forwardTo.close().catch(() => {});
     }
     return true;
@@ -47,7 +45,6 @@ function override<T extends DecoratedServerResponse>(
 
   return {
     original(...args: any[]) {
-      // console.log("original", key, args);
       original.apply(nodeResponse, args);
     },
     restore() {
@@ -73,7 +70,6 @@ function overrideWriteHead<T extends DecoratedServerResponse>(nodeResponse: T, c
 
   return {
     original(...args: any) {
-      // console.log("original writeHead", args);
       original.apply(nodeResponse, args);
     },
     restore() {

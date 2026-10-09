@@ -111,7 +111,7 @@ const typesByServer: Record<
     handler: "CloudflarePagesFunction",
     typeHandler: "createPagesFunction",
     typeMiddleware: "createPagesFunction",
-    generics: (type) => (type === "handler" ? "Args, InContext, OutContext" : "Args, InContext, OutContext"),
+    generics: () => "Args, InContext, OutContext",
     target: "cloudflare",
   },
   "vercel-edge": {
@@ -164,10 +164,10 @@ function filterInput(input: string, importer?: string | undefined) {
   if (importer !== undefined && !importer.startsWith("virtual:universal-middleware")) {
     return null;
   }
-  if (input.match(/(^|\.|\/|\\\\)handler\.[cm]?[jt]sx?$/)) {
+  if (input.match(/(^|\.|\/|\\)handler\.[cm]?[jt]sx?$/)) {
     return "handler";
   }
-  if (input.match(/(^|\.|\/|\\\\)middleware\.[cm]?[jt]sx?$/)) {
+  if (input.match(/(^|\.|\/|\\)middleware\.[cm]?[jt]sx?$/)) {
     return "middleware";
   }
   return null;
@@ -240,7 +240,7 @@ function appendVirtualInputs(
 function applyOutbase(input: Record<string, string>, outbase: string) {
   if (!outbase) return input;
 
-  const re = new RegExp(`^(${outbase.replaceAll("\\\\", "/")}|${outbase.replaceAll("/", "\\\\")})/?`, "gu");
+  const re = new RegExp(`^(${toPosix(outbase)}|${outbase.replaceAll("/", "\\\\")})/?`, "gu");
 
   return Object.keys(input).reduce(
     (acc, key) => {
@@ -644,7 +644,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
         builder.initialOptions.external ??= [];
         builder.initialOptions.external.push("node:*", "elysia");
 
-        if (builder.initialOptions.bundle && options?.externalDependencies === true) {
+        if (options?.externalDependencies === true) {
           builder.initialOptions.external.push(...maybeExternals);
         }
 
@@ -660,7 +660,6 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
         builder.initialOptions.entryPoints = applyOutbase(builder.initialOptions.entryPoints, outbase);
 
         builder.onResolve({ filter: /^virtual:universal-middleware/ }, (args) => {
-          // console.log("onResolve:virtual", args);
           return {
             path: args.path,
             namespace: namespace,
@@ -670,15 +669,13 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
           };
         });
 
-        builder.onResolve({ filter: /(^|\.|\/|\\\\)(handler|middleware)\./ }, (args) => {
-          // console.log("onResolve:?", args);
+        builder.onResolve({ filter: /(^|\.|\/|\\)(handler|middleware)\./ }, (args) => {
           return {
             path: resolve(args.path),
           };
         });
 
         builder.onLoad({ filter: /.*/, namespace: namespace }, async (args) => {
-          // console.log("onLoad", args);
           if (args.path.startsWith(namespace) && !shouldLoad(args.path)) {
             return null;
           }
