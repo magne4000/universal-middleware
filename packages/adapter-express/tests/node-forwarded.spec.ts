@@ -198,6 +198,24 @@ describe("responseAdapter — redirect Location must not be attacker-controlled"
 
     expect(response.headers.get("location")).toBe("https://elsewhere.example/there");
   });
+
+  // Express resolves `req.protocol` with its own `trust proxy` setting, e.g. https behind a TLS-terminating proxy
+  it("uses the same protocol as the request URL, from Express's req.protocol", () => {
+    const incoming = {
+      method: "GET",
+      url: "/p",
+      headers: { host: "real.example" },
+      socket: {},
+      protocol: "https",
+    } as unknown as IncomingMessage;
+
+    const res = new ServerResponse(incoming);
+    res.statusCode = 302;
+    res.setHeader("location", "/next");
+
+    expect(createRequestAdapter()(incoming, res).url).toBe("https://real.example/p");
+    expect(responseAdapter(res).headers.get("location")).toBe("https://real.example/next");
+  });
 });
 
 describe("responseAdapter — redirect keeps its headers", () => {
