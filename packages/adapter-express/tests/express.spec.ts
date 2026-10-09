@@ -46,7 +46,7 @@ const runs: Run[] = [
     },
   },
   {
-    name: "adapter-express: node router",
+    name: "adapter-express: node router express@4",
     command: "pnpm run test:run-express:node",
     port: port++,
     env: {
@@ -55,7 +55,7 @@ const runs: Run[] = [
     },
   },
   {
-    name: "adapter-express: node router enhanced",
+    name: "adapter-express: node router enhanced express@4",
     command: "pnpm run test:run-express:node",
     port: port++,
     env: {

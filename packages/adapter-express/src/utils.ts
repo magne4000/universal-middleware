@@ -118,7 +118,8 @@ export function createIncomingMessage(request: Request): IncomingMessage {
   // biome-ignore lint/suspicious/noExplicitAny: Web/Node stream type clash
   const body = request.body ? Readable.fromWeb(request.body as any) : Readable.from([]);
 
-  const headers = Object.fromEntries(request.headers);
+  // A web Request carries its host in the URL, never as a Host header: give the app one, like Node does
+  const headers: Record<string, string> = { host: url.host, ...Object.fromEntries(request.headers) };
   // A web Request never surfaces content-length, so Node body parsers (e.g. express.json)
   // that gate on `type-is.hasBody()` would otherwise skip the body. Signal a streamed body.
   if (request.body && headers["content-length"] === undefined) {

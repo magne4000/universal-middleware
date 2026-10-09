@@ -12,7 +12,6 @@ if (!hasCredentials) {
 
 export default defineConfig({
   test: {
-    retry: 3,
     passWithNoTests: true,
     maxWorkers: 1,
     slowTestThreshold: 5000,

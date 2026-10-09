@@ -21,7 +21,7 @@ const token = process.env.VERCEL_TOKEN ? ` --token=${process.env.VERCEL_TOKEN}` 
 
 const runs: Run[] = [
   {
-    name: "adapter-vercel: node",
+    name: "adapter-vercel: h3-web",
     command: `pnpm run test:run-vercel:node${token}`,
     port,
     portOption: "--listen",

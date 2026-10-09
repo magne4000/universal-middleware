@@ -59,6 +59,19 @@ describe("connectToWeb (synthetic path) — body & basics", () => {
     expect(await res.text()).toBe("n=42");
   });
 
+  it("passes the Request's host to the app and to universal handlers", async () => {
+    const echoUrl: Factory = () => (request) => new Response(request.url);
+    const app = express();
+    app.get("/host", (req, res) => res.send(req.headers.host));
+    app.get("/t", createHandler(echoUrl)());
+    const fh = connectToWeb(app);
+
+    const host = defined(await fh(new Request("https://app.example:8443/host")));
+    const url = defined(await fh(new Request("https://app.example:8443/t?n=1")));
+    expect(await host.text()).toBe("app.example:8443");
+    expect(await url.text()).toBe("https://app.example:8443/t?n=1");
+  });
+
   it("returns undefined when the connect handler calls next() without responding", async () => {
     const app = express();
     app.use("/t", (_req, _res, next) => next());
@@ -217,16 +230,14 @@ describe("connectToWeb (synthetic path) — large body is streamed, not buffered
 });
 
 describe("connectToWeb (synthetic path) — abort propagation", () => {
+  // Each test fails by timing out if the abort never reaches the handler's signal.
   it("fires the handler's request.signal when the incoming request is aborted", async () => {
-    let signalFired = false;
+    const reached = Promise.withResolvers<void>();
+    const aborted = Promise.withResolvers<void>();
     const fh = appFrom(() => async (request) => {
-      await new Promise<void>((resolve) => {
-        request.signal.addEventListener("abort", () => {
-          signalFired = true;
-          resolve();
-        });
-        setTimeout(resolve, 2000);
-      });
+      request.signal.addEventListener("abort", () => aborted.resolve());
+      reached.resolve();
+      await aborted.promise;
       return new Response("done");
     });
 
@@ -236,27 +247,17 @@ describe("connectToWeb (synthetic path) — abort propagation", () => {
     const pending = fh(streamingRequest("http://localhost/t", { method: "POST", body, signal: ctrl.signal })).catch(
       () => undefined,
     );
-    await new Promise((r) => setTimeout(r, 50));
+    await reached.promise;
     ctrl.abort();
-    await new Promise((r) => setTimeout(r, 100));
+    await aborted.promise;
     await pending;
-    expect(signalFired).toBe(true);
   });
 
   it("fires the handler's signal when the incoming request is already aborted", async () => {
-    let signalFired = false;
+    const aborted = Promise.withResolvers<void>();
     const fh = appFrom(() => async (request) => {
-      await new Promise<void>((resolve) => {
-        if (request.signal.aborted) {
-          signalFired = true;
-          return resolve();
-        }
-        request.signal.addEventListener("abort", () => {
-          signalFired = true;
-          resolve();
-        });
-        setTimeout(resolve, 1000);
-      });
+      if (request.signal.aborted) aborted.resolve();
+      request.signal.addEventListener("abort", () => aborted.resolve());
       return new Response("done");
     });
 
@@ -266,23 +267,17 @@ describe("connectToWeb (synthetic path) — abort propagation", () => {
     await fh(streamingRequest("http://localhost/t", { method: "POST", body, signal: ctrl.signal })).catch(
       () => undefined,
     );
-    await new Promise((r) => setTimeout(r, 100));
-    expect(signalFired).toBe(true);
+    await aborted.promise;
   });
 
   it("fires the handler's signal when aborted mid-stream (after the response is readable)", async () => {
-    let signalFired = false;
+    const aborted = Promise.withResolvers<void>();
     const fh = appFrom(() => async (request) => {
-      request.signal.addEventListener("abort", () => {
-        signalFired = true;
-      });
-      const enc = new TextEncoder();
-      let i = 0;
+      request.signal.addEventListener("abort", () => aborted.resolve());
+      // One chunk, then the body stays open: the response is still streaming when the request is aborted
       const stream = new ReadableStream<Uint8Array>({
-        async pull(c) {
-          if (i >= 20) return c.close();
-          c.enqueue(enc.encode(`chunk${i++};`));
-          await new Promise((r) => setTimeout(r, 40));
+        start(c) {
+          c.enqueue(new TextEncoder().encode("chunk0;"));
         },
       });
       return new Response(stream, { headers: { "content-type": "text/plain" } });
@@ -301,8 +296,7 @@ describe("connectToWeb (synthetic path) — abort propagation", () => {
     const reader = (res.body as ReadableStream<Uint8Array>).getReader();
     await reader.read(); // first chunk -> response is now readable (abort listener must stay alive)
     ctrl.abort();
-    await new Promise((r) => setTimeout(r, 150));
-    expect(signalFired).toBe(true);
+    await aborted.promise;
   });
 });
 

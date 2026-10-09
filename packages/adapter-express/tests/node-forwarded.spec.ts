@@ -143,6 +143,15 @@ describe("createRequestAdapter — no Host header", () => {
       warn.mockRestore();
     }
   });
+
+  it("uses HTTP/2's :authority, which replaces the Host header", () => {
+    const request = createRequestAdapter()(
+      fakeReq({ ":method": "GET", ":scheme": "http", ":authority": "real.example", ":path": "/p" }),
+      fakeRes(),
+    );
+
+    expect(request.url).toBe("http://real.example/p");
+  });
 });
 
 describe("responseAdapter — redirect Location must not be attacker-controlled", () => {

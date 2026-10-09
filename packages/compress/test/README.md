@@ -4,6 +4,12 @@ This directory contains tests for the compression functionality in the `@univers
 
 ## Test Files
 
+### accept-encoding.spec.ts
+Tests `chooseBestEncoding`: an encoding refused with `q=0` is never picked, and a `*` wildcard matches codings the header does not name but loses to the ones it does.
+
+### cancel.spec.ts
+Tests that cancelling the compressed output stream cancels the source stream, so whatever backs it (a file, an upstream fetch) is released when a client disconnects.
+
 ### compression.spec.ts
 Tests the basic compression functionality using `handleCompression` with different encodings (gzip, deflate, brotli).
 
@@ -15,6 +21,9 @@ Tests the flush behavior of compression streams to ensure data is properly flush
 
 ### streaming.spec.ts
 Tests streaming compression with both zlib and fflate implementations, verifying that chunks are properly flushed during streaming.
+
+### threshold.spec.ts
+Tests the middleware's `threshold` option: bodies below it are sent uncompressed, and it defaults to 1024 bytes.
 
 ### whatwg-vs-fflate.spec.ts
 Demonstrates the difference between the WHATWG Compression API (which doesn't flush properly during streaming) and the fflate implementation (which does).
