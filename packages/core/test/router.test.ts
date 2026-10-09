@@ -110,7 +110,7 @@ describe("params() decodes like the router", () => {
 });
 
 describe("a middleware with a path and an order runs only for that path", () => {
-  const page = enhance(() => new Response("page"), { name: "page", path: "/**", method: ["GET", "HEAD"] });
+  const page = enhance(() => new Response("page"), { name: "page", path: "/**", method: ["GET", "HEAD", "POST"] });
   const auth = enhance(
     (request: Request) => (request.headers.has("x-auth") ? undefined : new Response("Unauthorized", { status: 401 })),
     { name: "auth", path: "/admin/**", order: -800 },
@@ -170,7 +170,46 @@ describe("a middleware with a path and an order runs only for that path", () => 
   });
 
   test("respects its method", async () => {
-    const response = await run("/admin/settings", { method: "HEAD", headers: { "x-auth": "1" } });
+    const response = await run("/admin/settings", { method: "POST", headers: { "x-auth": "1" } });
+    expect(await response.text()).toBe("page");
     expect(response.headers.get("x-settings")).toBe(null);
+  });
+});
+
+describe("a GET middleware or handler also runs for HEAD", () => {
+  const run = async (router: ReturnType<typeof pipeRoute>, method: string, path: string) => {
+    const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
+    return (await router(new Request(`http://localhost${path}`, { method }), {}, runtime)) as Response | undefined;
+  };
+  const auth = (extra: object) =>
+    enhance(() => new Response("Unauthorized", { status: 401 }), { name: "auth", method: "GET", ...extra });
+  const page = enhance(() => new Response("page"), { name: "page", path: "/admin/**", method: "GET" });
+
+  test("a path-scoped middleware with an order", async () => {
+    const router = pipeRoute([page, auth({ path: "/admin/**", order: -800 })]);
+    expect((await run(router, "GET", "/admin/settings"))?.status).toBe(401);
+    expect((await run(router, "HEAD", "/admin/settings"))?.status).toBe(401);
+  });
+
+  test("a handler with a path", async () => {
+    const router = pipeRoute([page]);
+    expect((await run(router, "HEAD", "/admin/settings"))?.status).toBe(200);
+  });
+
+  test("a HEAD handler wins over the GET handler", async () => {
+    const head = enhance(() => new Response(null, { status: 204 }), {
+      name: "head",
+      path: "/admin/**",
+      method: "HEAD",
+    });
+    const router = pipeRoute([page, head]);
+    expect((await run(router, "HEAD", "/admin/settings"))?.status).toBe(204);
+    expect((await run(router, "GET", "/admin/settings"))?.status).toBe(200);
+  });
+
+  test("a middleware for HEAD only is not run for GET", async () => {
+    const router = pipeRoute([page, auth({ path: "/admin/**", method: "HEAD", order: -800 })]);
+    expect((await run(router, "HEAD", "/admin/settings"))?.status).toBe(401);
+    expect((await run(router, "GET", "/admin/settings"))?.status).toBe(200);
   });
 });

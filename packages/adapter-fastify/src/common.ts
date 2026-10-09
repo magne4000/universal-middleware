@@ -53,6 +53,15 @@ function patchBody(response: Response) {
   return response;
 }
 
+// A HEAD response has no body, and an endless one (SSE, a proxied stream) would
+// keep Fastify from ever finishing the response. Headers and status are kept.
+// Pending response functions may still read the body, so they run first.
+function withoutHeadBody(request: FastifyRequest, response: Response): Response {
+  if (request.method !== "HEAD" || !response.body || request[pendingMiddlewaresSymbol]?.length) return response;
+  void response.body.cancel().catch(() => {});
+  return new Response(null, response);
+}
+
 function getHeaders(reply: FastifyReply): Headers {
   const ret = new Headers();
   const headers = reply.getHeaders();
@@ -122,11 +131,12 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
       );
 
       if (response) {
-        if (!response.body) {
-          patchBody(response);
+        const toSend = withoutHeadBody(request, response);
+        if (!toSend.body) {
+          patchBody(toSend);
         }
 
-        return reply.send(response);
+        return reply.send(toSend);
       }
 
       return reply.callNotFound();
@@ -175,11 +185,12 @@ export function createMiddleware<
                 // `wrapResponse` takes care of calling those middlewares right before sending the response
                 request[pendingMiddlewaresSymbol].push(response);
               } else if (response instanceof Response) {
-                if (!response.body) {
-                  patchBody(response);
+                const toSend = withoutHeadBody(request, response);
+                if (!toSend.body) {
+                  patchBody(toSend);
                 }
 
-                await reply.send(response);
+                await reply.send(toSend);
               } else {
                 setContext(request, response);
               }
@@ -221,7 +232,12 @@ export function createMiddleware<
             for (const [name, value] of r.headers) {
               reply.header(name, value);
             }
-            return r.body ?? undefined;
+            // An idle stream would keep the HEAD response open
+            void r.body?.cancel().catch(() => {});
+            if (r !== payload) void (payload as Response).body?.cancel().catch(() => {});
+            // `undefined` would keep the previous payload, `null` breaks Fastify's own HEAD hook, and a string
+            // makes Fastify send `content-length: 0`. An empty stream keeps the content-length of `r`, if any.
+            return new ReadableStream({ start: (controller) => controller.close() });
           } else {
             return r;
           }

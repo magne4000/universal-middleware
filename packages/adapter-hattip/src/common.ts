@@ -9,10 +9,31 @@ import type {
 } from "@universal-middleware/core";
 import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 
+// Number of response functions waiting for the response of `context.next()`
+const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
+
 declare module "@hattip/core" {
   interface AdapterRequestContext {
     [contextSymbol]?: Universal.Context;
+    [pendingMiddlewaresSymbol]?: number;
   }
+}
+
+// A HEAD response has no body, but `@hattip/adapter-node` pipes it to the end, so an endless one (SSE, a proxied
+// stream) never completes. Headers and status are kept. Bun and Deno already cancel it themselves.
+// Response functions waiting for this response may still read the body, so they run first.
+function withoutHeadBody(context: AdapterRequestContext, response: Response): Response {
+  if (
+    context.request.method !== "HEAD" ||
+    !response.body ||
+    (context.platform as { name?: string } | undefined)?.name !== "node" ||
+    context[pendingMiddlewaresSymbol]
+  ) {
+    return response;
+  }
+  void response.body.cancel().catch(() => {});
+  // Not `null`: `@hattip/adapter-node` would then send `content-length: 0` over the one of `response`
+  return new Response(new ReadableStream({ start: (controller) => controller.close() }), response);
 }
 
 export type HattipHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, _HattipHandler>;
@@ -32,7 +53,8 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
 
     return bindUniversal(handler, async function universalHandlerHattip(context) {
       const ctx = initContext<InContext>(context);
-      return this[universalSymbol](context.request, ctx, getRuntime(context));
+      const response = await this[universalSymbol](context.request, ctx, getRuntime(context));
+      return response instanceof Response ? withoutHeadBody(context, response) : response;
     });
   };
 }
@@ -55,13 +77,25 @@ export function createMiddleware<
       const response = await this[universalSymbol](context.request, ctx, getRuntime(context));
 
       if (typeof response === "function") {
-        const res = await context.next();
-        const actualRes = await response(res);
-        return actualRes ?? res;
+        const pending = context[pendingMiddlewaresSymbol] ?? 0;
+        context[pendingMiddlewaresSymbol] = pending + 1;
+        let res: Response;
+        let actualRes: Response | undefined;
+        try {
+          res = await context.next();
+          actualRes = await response(res);
+        } finally {
+          context[pendingMiddlewaresSymbol] = pending;
+        }
+        // A replaced HEAD body is never read, and an endless one would never be released
+        if (actualRes && actualRes !== res && context.request.method === "HEAD") {
+          void res.body?.cancel().catch(() => {});
+        }
+        return withoutHeadBody(context, actualRes ?? res);
       }
       if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
-          return response;
+          return withoutHeadBody(context, response);
         }
 
         // Update context

@@ -54,6 +54,15 @@ function memToWebRequest(event: H3Event): Request {
   return event.web.request;
 }
 
+// A HEAD response has no body, and an endless one (SSE, a proxied stream) would
+// keep h3 from ever finishing the response. Headers and status are kept.
+// Pending response functions may still read the body, so they run first.
+function withoutHeadBody(event: H3Event, response: Response): Response {
+  if (event.method !== "HEAD" || !response.body || event.context[pendingMiddlewaresSymbol]?.length) return response;
+  void response.body.cancel().catch(() => {});
+  return new Response(null, response);
+}
+
 /**
  * Creates a request handler to be passed to app.all() or any other route function
  */
@@ -65,14 +74,15 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
 
     return bindUniversal(
       handler,
-      eventHandler(function universalHandlerH3(
+      eventHandler(async function universalHandlerH3(
         this: {
           [universalSymbol]: UniversalHandler<InContext>;
         },
         event,
       ) {
         const ctx = initContext<InContext>(event);
-        return this[universalSymbol](memToWebRequest(event), ctx, getRuntime(event));
+        const response = await this[universalSymbol](memToWebRequest(event), ctx, getRuntime(event));
+        return response instanceof Response ? withoutHeadBody(event, response) : response;
       }),
       eventHandler,
     );
@@ -116,7 +126,11 @@ export const universalOnBeforeResponse = defineResponseMiddleware(
       );
 
       if (newResponse) {
-        await sendWebResponse(event, newResponse);
+        // A replaced HEAD body is never read, and an endless one would never be released
+        if (event.method === "HEAD" && newResponse !== response.body) {
+          void (response.body as Response).body?.cancel().catch(() => {});
+        }
+        await sendWebResponse(event, withoutHeadBody(event, newResponse));
       }
     }
   },
@@ -151,7 +165,7 @@ export function createMiddleware<
           event.context[pendingMiddlewaresSymbol].push(response);
         } else if (response !== null && typeof response === "object") {
           if (response instanceof Response) {
-            return response;
+            return withoutHeadBody(event, response);
           }
           // Update context
           event.context[contextSymbol] = response;
