@@ -36,15 +36,7 @@ export class UniversalRouter implements UniversalRouterInterface {
   }
 
   applyCatchAll() {
-    if (this.#handle404) {
-      for (const method of ["GET", "POST", "PATCH"]) {
-        addRoute(this.router, method, "/**", () => {
-          return new Response("NOT FOUND", {
-            status: 404,
-          });
-        });
-      }
-    }
+    // A request no route matches gets its 404 from `[universalSymbol]`, whatever its method
     return this;
   }
 
@@ -70,17 +62,22 @@ export class UniversalRouter implements UniversalRouterInterface {
         return handler(request, ctx, runtime);
       }
       if (this.#pipeMiddlewaresInUniversalRoute && this.#middlewares.length > 0) {
-        // biome-ignore lint/suspicious/noExplicitAny: ignored
-        const middlewares = noCastPipe(...(this.#middlewares as any[])) as UniversalMiddleware;
+        const unmatched = this.#handle404 ? [...this.#middlewares, notFound] : this.#middlewares;
+        // `pipe` resolves the object form of an EnhancedMiddleware at runtime, but its types only accept functions
+        const middlewares = noCastPipe(...(unmatched as unknown as UniversalMiddleware[])) as UniversalMiddleware;
         return middlewares(request, ctx, runtime);
       }
       if (this.#handle404) {
-        return new Response("NOT FOUND", {
-          status: 404,
-        });
+        return notFound();
       }
     };
   }
+}
+
+function notFound() {
+  return new Response("NOT FOUND", {
+    status: 404,
+  });
 }
 
 export function apply(router: UniversalRouterInterface, middlewares: EnhancedMiddleware[], defer?: boolean) {
