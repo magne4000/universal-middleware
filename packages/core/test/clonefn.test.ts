@@ -35,3 +35,7 @@ describe.each([
     expect(clone.propb).toEqual("c");
   });
 });
+
+test("cloneFunction keeps the original name", () => {
+  expect(cloneFunction(function original() {}).name).toBe("original");
+});

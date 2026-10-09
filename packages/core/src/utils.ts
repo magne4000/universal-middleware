@@ -139,6 +139,12 @@ export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
       m[optionsToSymbols[key as keyof UniversalOptions]] = value;
     }
   }
+  if (typeof options.name === "string") {
+    const descriptor = Object.getOwnPropertyDescriptor(m, "name");
+    if (!descriptor || descriptor.configurable) {
+      Object.defineProperty(m, "name", { value: options.name, configurable: true });
+    }
+  }
   return m;
 }
 
@@ -161,6 +167,7 @@ export function cloneFunction<F extends AnyFn>(originalFn: F): F {
   };
 
   Object.setPrototypeOf(extendedFunction, originalFn);
+  Object.defineProperty(extendedFunction, "name", { value: originalFn.name, configurable: true });
 
   return extendedFunction as F;
 }
