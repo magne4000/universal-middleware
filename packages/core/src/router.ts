@@ -137,8 +137,12 @@ function addRoutes<T>(router: RouterContext<T>, method: string | string[] | unde
   }
 }
 
+// A `GET` route also answers `HEAD`, unless a route for `HEAD` matches
 function match<T>(router: RouterContext<T>, request: Request) {
-  return findRoute(router, request.method, encodePath(decodePath(url(request).pathname)));
+  const pathname = encodePath(decodePath(url(request).pathname));
+  const route = findRoute(router, request.method, pathname);
+  if (route || request.method !== "HEAD") return route;
+  return findRoute(router, "GET", pathname);
 }
 
 /**
