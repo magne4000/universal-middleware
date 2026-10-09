@@ -4,6 +4,9 @@
   "version": "0.6.33",
   "description": "Write middlewares and handlers once, and build them for every supported server",
   "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
   "repository": "https://github.com/magne4000/universal-middleware",
   "bugs": {
     "url": "https://github.com/magne4000/universal-middleware/issues"
