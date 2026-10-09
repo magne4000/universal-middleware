@@ -80,7 +80,7 @@ export function createRequestAdapter(
     }
 
     let headers = req.headers as Record<string, string>;
-    // HTTP/2 clients send the host as the `:authority` pseudo-header instead of a Host header
+    // HTTP/2 clients send the host as the `:authority` pseudo-header, which wins over a Host header (RFC 9113 §8.3.1)
     const authority = headers[":authority"];
     // Filter out pseudo-headers
     if (headers[":method"]) {
@@ -95,7 +95,7 @@ export function createRequestAdapter(
       ((req.socket as any)?.encrypted && "https") ||
       "http";
 
-    let host = hostOverride || (trustProxy && forwardedValue(headers, "host")) || headers.host || authority;
+    let host = hostOverride || (trustProxy && forwardedValue(headers, "host")) || authority || headers.host;
 
     if (!host) {
       if (!warned) {

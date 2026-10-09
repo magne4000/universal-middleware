@@ -154,6 +154,18 @@ describe("createRequestAdapter — no Host header", () => {
   });
 });
 
+describe("createRequestAdapter — HTTP/2 :authority", () => {
+  // RFC 9113 §8.3.1: the Host header must not determine the target URI when `:authority` is present
+  it("prefers :authority over a Host header", () => {
+    const request = createRequestAdapter()(
+      fakeReq({ ":method": "GET", ":authority": "real.example", ":path": "/p", host: "other.example" }),
+      fakeRes(),
+    );
+
+    expect(request.url).toBe("http://real.example/p");
+  });
+});
+
 describe("responseAdapter — redirect Location must not be attacker-controlled", () => {
   // `getFullUrl` absolutized a relative Location using X-Forwarded-Host with no
   // `trustProxy` gate at all, turning a local redirect into an open redirect.
