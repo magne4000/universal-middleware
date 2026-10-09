@@ -4,7 +4,7 @@ import { handleCompression } from "./response";
 import type { CompressionOptions } from "./types";
 
 const compressMiddleware = ((options?: CompressionOptions) => (request) => {
-  const guesser = new EncodingGuesser(request);
+  const guesser = new EncodingGuesser(request, options);
 
   return function universalMiddlewareCompress(response) {
     const encoding = guesser.guessEncoding(response);
