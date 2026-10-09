@@ -7,9 +7,8 @@ import {
   type UniversalRouterInterface,
   universalSymbol,
 } from "@universal-middleware/core";
-import type { Express as Express5 } from "express";
 import { createHandler, createMiddleware } from "./common";
-import { type Express, isExpressV4, isExpressV5 } from "./utils";
+import type { Express } from "./utils";
 
 export type App = Express;
 
@@ -26,17 +25,14 @@ export class UniversalExpressRouter<T extends App> extends UniversalRouter imple
   }
 
   use(middleware: EnhancedMiddlewareExpress) {
-    (this.#app as Express5).use(createMiddleware(() => getUniversal(middleware as EnhancedMiddleware))());
+    this.#app.use(createMiddleware(() => getUniversal(middleware as EnhancedMiddleware))());
     return this;
   }
 
   applyCatchAll() {
-    if (isExpressV5(this.#app)) {
-      this.#app.all("/{*catchAll}", createHandler(() => this[universalSymbol] as UniversalHandler)());
-    }
-    if (isExpressV4(this.#app)) {
-      this.#app.all("/**", createHandler(() => this[universalSymbol] as UniversalHandler)());
-    }
+    const handler = createHandler(() => this[universalSymbol] as UniversalHandler)();
+    // https://expressjs.com/en/guide/migrating-5.html#app.del
+    this.#app.all("del" in this.#app ? "/**" : "/{*catchAll}", handler);
     return this;
   }
 }
