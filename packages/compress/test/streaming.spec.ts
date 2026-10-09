@@ -35,7 +35,6 @@ function createChunks(strings: string[]): Uint8Array[] {
 }
 
 // Helper to collect chunks from a ReadableStream
-// biome-ignore lint/suspicious/noExplicitAny: test
 async function collectChunks(stream: ReadableStream<Uint8Array>): Promise<Uint8Array<any>[]> {
   const reader = stream.getReader();
   const chunks: Uint8Array[] = [];

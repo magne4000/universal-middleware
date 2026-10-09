@@ -6,7 +6,12 @@ import { createRequire } from "node:module";
 import { join, relative } from "node:path";
 import { pathToFileURL } from "node:url";
 
-type Deps = { neverBundle?: boolean | (string | RegExp)[]; alwaysBundle?: (string | RegExp)[] };
+type Deps = {
+  neverBundle?: boolean | (string | RegExp)[];
+  alwaysBundle?: (string | RegExp)[];
+  /** The `node_modules` packages expected in the bundle: the build fails if another one ends up there */
+  onlyBundle?: (string | RegExp)[];
+};
 
 type Chunk = { type: string; isEntry?: boolean; facadeModuleId?: string | null; fileName: string; outDir: string };
 
@@ -131,6 +136,8 @@ export function defineTsdown({ runtime, target, deps = { neverBundle: true }, dt
     fixedExtension: false,
     dts,
     deps,
+    // Printed once per package by rolldown-plugin-dts as long as TypeScript 7 is installed; nothing to act on
+    suppressWarnings: ["TypeScript 7.0 does not yet have a stable API"],
     ...rest,
   };
 }

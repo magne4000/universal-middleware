@@ -6,5 +6,5 @@ export default defineTsdown({
   // Bundles `@universal-middleware/core` (a devDependency) and its transitive
   // deps, so it cannot use `neverBundle: true`; externalize only the frameworks
   // the oxc dts resolver cannot follow.
-  deps: { neverBundle: externalFrameworks },
+  deps: { neverBundle: externalFrameworks, onlyBundle: ["regexparam"] },
 });

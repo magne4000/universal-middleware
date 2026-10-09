@@ -1,6 +1,7 @@
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "https://turborepo.dev/schema.json",
   "agentGuidance": false,
+  "globalDependencies": ["tsconfig.json"],
   "tasks": {
     "build": {
       "outputs": ["dist/**"],
@@ -10,9 +11,6 @@
       "dependsOn": ["build"]
     },
     "test": {
-      "dependsOn": ["build"]
-    },
-    "lint": {
       "dependsOn": ["build"]
     }
   }

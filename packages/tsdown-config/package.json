@@ -5,9 +5,6 @@
   "description": "Shared tsdown build config for the universal-middleware monorepo",
   "type": "module",
   "exports": {
-    ".": {
-      "source": "./index.ts",
-      "default": "./index.js"
-    }
+    ".": "./index.ts"
   }
 }

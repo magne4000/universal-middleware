@@ -1,8 +1,9 @@
 name: Release
 
+# Whichever of the two finishes last on a commit of main triggers the release, once both succeeded
 on:
   workflow_run:
-    workflows: ["Tests"]
+    workflows: ["Tests", "Linting and typings"]
     types:
       - completed
     branches:
@@ -15,8 +16,31 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  select-mode:
+  gate:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    permissions:
+      actions: read # to read the runs of both workflows
+    steps:
+      - name: Check that Tests and Linting and typings succeeded on this commit
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          ready=true
+          for workflow in tests.yml lint-and-types.yml; do
+            conclusion=$(gh api "repos/${{ github.repository }}/actions/workflows/$workflow/runs?head_sha=$SHA&per_page=1" --jq '.workflow_runs[0].conclusion // ""')
+            echo "$workflow: ${conclusion:-not finished}"
+            [ "$conclusion" = "success" ] || ready=false
+          done
+          echo "ready=$ready" >> "$GITHUB_OUTPUT"
+
+  select-mode:
+    needs: gate
+    if: needs.gate.outputs.ready == 'true'
     runs-on: ubuntu-latest
     outputs:
       mode: ${{ steps.select-mode.outputs.mode }}

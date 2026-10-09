@@ -29,7 +29,7 @@ pnpm install
 pnpm run build
 ```
 
-**NOTE:** The build step is mandatory before running tests, linting, or typechecking due to turbo.json dependencies.
+**NOTE:** Build before running vitest or tsc inside one package: packages import each other's `dist/`. The root `test` and `test:typecheck` scripts build first.
 
 ## Build, Test, and Validation Commands
 
@@ -169,7 +169,7 @@ The CI has been split into two separate workflows that run on every PR and push 
 ### Lint and Types Workflow (.github/workflows/lint-and-types.yml)
 Runs linting, type checking, and documentation build on Ubuntu with Node 22:
 1. Install Deno (v2.9.6) - required for type checking
-2. Install Bun (latest) - required for Elysia adapter types
+2. Install Bun (pinned, e.g. 1.4.2) - required for Elysia adapter types
 3. Install pnpm
 4. Install dependencies: `pnpm install`
 5. Build: `pnpm run build`
@@ -180,7 +180,7 @@ Runs linting, type checking, and documentation build on Ubuntu with Node 22:
 ### Tests Workflow (.github/workflows/tests.yml)
 Runs tests with a matrix approach for comprehensive coverage:
 1. Install Deno (v2.9.6) - required for some tests
-2. Install Bun (latest) - required for Elysia adapter tests
+2. Install Bun (pinned, e.g. 1.4.2) - required for Elysia adapter tests
 3. Install pnpm
 4. Install dependencies: `pnpm install`
 5. Build: `pnpm run build`

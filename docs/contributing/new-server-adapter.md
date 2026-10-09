@@ -20,7 +20,6 @@ packages/adapter-{server-name}/
 ├── readme.md
 ├── tsconfig.json
 ├── tsdown.config.ts
-├── turbo.json         # Turbo build configuration
 ├── vitest.config.ts
 └── wrangler.toml      # Cloudflare configuration (if applicable)
 ```
@@ -56,9 +55,6 @@ packages/adapter-{server-name}/
 - Export `defineTsdown({ ... })` from `@universal-middleware/tsdown-config`
 - Set `runtime` to `"node"` or `"neutral"`, and list any `deps` bundling exceptions
 - The shared config handles DTS, target, and clean builds
-
-#### `turbo.json`
-- Configure build dependencies: `{"extends": ["//"], "tasks": {"build": {"outputs": ["dist/**"], "dependsOn": ["^build", "@universal-middleware/core#build"]}}}`
 
 #### `deno.json`
 - Configure Deno imports for testing

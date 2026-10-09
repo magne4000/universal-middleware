@@ -51,7 +51,7 @@ describe("body after a universal middleware", () => {
     const middleware: UniversalMiddleware = async (request) => {
       seen = await request.text();
     };
-    // biome-ignore lint/suspicious/noExplicitAny: an HTTP/2 instance isn't assignable to the default `App`
+    // An HTTP/2 instance isn't assignable to the default `App`
     await apply(app as any, [middleware]);
     app.post("/echo", async (req) => ({ got: req.body }));
     await app.listen({ port: 0 });
