@@ -50,8 +50,8 @@
   },
   "peerDependencies": {
     "@hattip/compose": "^0.0.49",
-    "@hattip/core": "catalog:",
-    "@hattip/router": "catalog:"
+    "@hattip/core": "^0.0.49",
+    "@hattip/router": "^0.0.49"
   },
   "peerDependenciesMeta": {
     "@hattip/compose": {

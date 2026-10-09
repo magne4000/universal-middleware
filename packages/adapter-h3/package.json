@@ -29,7 +29,7 @@
     "@universal-middleware/core": "workspace:^"
   },
   "peerDependencies": {
-    "h3": "catalog:"
+    "h3": "^1"
   },
   "devDependencies": {
     "@types/node": "catalog:",
