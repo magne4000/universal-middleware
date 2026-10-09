@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { enhance, params, pipeRoute, type RuntimeAdapter } from "../src/index";
+import { enhance, params, pipeRoute, type RuntimeAdapter, type UniversalMiddleware } from "../src/index";
 
 describe("pipeRoute matches the decoded pathname", () => {
   const route = (path: string) =>
@@ -177,7 +177,7 @@ describe("a middleware with a path and an order runs only for that path", () => 
 });
 
 describe("a GET middleware or handler also runs for HEAD", () => {
-  const run = async (router: ReturnType<typeof pipeRoute>, method: string, path: string) => {
+  const run = async (router: UniversalMiddleware, method: string, path: string) => {
     const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
     return (await router(new Request(`http://localhost${path}`, { method }), {}, runtime)) as Response | undefined;
   };
