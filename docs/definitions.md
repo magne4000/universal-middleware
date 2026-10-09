@@ -54,8 +54,8 @@ For instance, a `{ user: User }` context can be set by a middleware, then access
 > but with the same lifespan._
 
 > [!TIP]
-> Each adapter provides a `getContext` helper to retrieve the universal context
-> from any non-universal middleware or handler.
+> Each adapter provides a way to retrieve the universal context from any non-universal middleware or handler:
+> a `getContext` helper, or with Elysia, the `getContext()` function on its context.
 
 > [!TIP]
 > One can also override the global `Universal.Context`, making it visible to all Universal Middlewares.

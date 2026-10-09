@@ -103,10 +103,10 @@ The bundler plugin also accepts the following options:
 ```ts
 universalMiddleware({
   // Only generate files for selected servers. All enabled by default
-  servers?: ('hono' | 'express' | 'hattip' | 'fastify' | 'h3' | 'webroute' | 'cloudflare-pages' | 'cloudflare-worker' | 'elysia' | 'srvx')[];
+  servers?: ('hono' | 'express' | 'hattip' | 'fastify' | 'h3' | 'webroute' | 'cloudflare-pages' | 'cloudflare-worker' | 'vercel-edge' | 'vercel-node' | 'elysia' | 'srvx')[];
   // akin to esbuild `entryNames` for generated "exports" in package.json
   serversExportNames?: string;
-  // akin to ebsuild `entryNames` for generated "exports" in package.json
+  // akin to esbuild `entryNames` for generated "exports" in package.json
   entryExportNames?: string;
   // Disables some warning
   ignoreRecommendations?: boolean;

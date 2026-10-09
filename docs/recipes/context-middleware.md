@@ -214,10 +214,10 @@ const app = createRouter();
 // Now the universal context contains `{ hello: "world" }`.
 app.use(contextMiddleware("world"));
 
-app.get("/", (honoCtx) => {
+app.get("/", (ctx) => {
   // The universal context can be retrieved through `getContext` helper
   // outside of universal middlewares and handlers
-  const universalCtx = getContext<{ hello: string }>(honoCtx);
+  const universalCtx = getContext<{ hello: string }>(ctx);
   return new Response(`Hello ${universalCtx.hello}`);
 });
 

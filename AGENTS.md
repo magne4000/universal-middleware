@@ -7,14 +7,14 @@ This repository provides a framework for writing server middlewares and handlers
 **Project Type:** TypeScript monorepo using pnpm workspaces and Turbo for build orchestration  
 **Primary Language:** TypeScript (ES Modules)  
 **Package Manager:** pnpm 11.5.2 (required)  
-**Node Version:** Node.js 22.0.0 or higher (tested on 22, 24)  
-**Repository Size:** 15 packages + documentation + examples
+**Node Version:** Node.js 22.18 or higher (24.11 or higher on Node 24; tested on 22, 24)  
+**Repository Size:** 17 packages under `packages/` + documentation + examples
 
 ## Critical Setup Requirements
 
 ### Prerequisites
 1. **ALWAYS install pnpm first if not available:** `npm install -g pnpm@11.5.2`
-2. **Node version:** Must be 22.0.0 or higher (check with `node --version`)
+2. **Node version:** Must be 22.18 or higher, as tsdown requires (check with `node --version`)
 3. **ALWAYS run `pnpm install` before any other command** - dependencies must be installed fresh
 
 ### Initial Setup (Run in Order)
@@ -25,7 +25,7 @@ npm install -g pnpm@11.5.2
 # 2. Install all dependencies (REQUIRED - takes ~20-30 seconds, downloads ~174 MB for playwright)
 pnpm install
 
-# 3. Build all packages (REQUIRED before testing/linting - takes ~60 seconds)
+# 3. Build all packages (the root `test` and `test:typecheck` scripts build first; running vitest or tsc in one package needs it)
 pnpm run build
 ```
 
@@ -46,7 +46,7 @@ pnpm run build
 # Run linter (uses Biome)
 pnpm run lint
 # Takes: ~5 seconds
-# Must run AFTER build due to turbo.json dependencies
+# Does not need a build (Biome runs on the sources)
 # Config: biome.json (semicolons: always, indentWidth: 2, lineWidth: 120)
 ```
 
@@ -55,7 +55,7 @@ pnpm run lint
 # Run type checking across all packages
 pnpm run test:typecheck
 # Takes: ~45 seconds
-# Must run AFTER build due to turbo.json dependencies
+# Builds what it needs first (turbo `dependsOn: build`)
 # Each package has its own tsconfig.json
 ```
 
@@ -64,7 +64,7 @@ pnpm run test:typecheck
 # Run all tests (includes vitest unit tests + integration tests)
 pnpm run test
 # Takes: Several minutes (includes starting test servers)
-# Must run AFTER build due to turbo.json dependencies
+# Builds what it needs first (turbo `dependsOn: build`)
 # Note: Some tests require Bun and Deno which may not be in all environments
 ```
 
@@ -112,20 +112,21 @@ Build/verify there, then bring the finished changes back to the branch.
 - `turbo.json` - Build orchestration config (defines task dependencies)
 - `biome.json` - Linter and formatter configuration
 - `tsconfig.json` - Base TypeScript configuration (strict mode, ES2022)
-- `vitest.workspace.ts` - Test configuration workspace
 
 ### Package Structure
 ```
 packages/
 ├── core/                    # Core utilities and types (@universal-middleware/core)
+├── node/                    # Node request/response conversion shared by the Express, Fastify and Vercel adapters
 ├── adapter-*/              # Framework adapters (express, hono, fastify, h3, etc.)
 │   ├── src/               # TypeScript source
-│   ├── test/              # Vitest tests
+│   ├── tests/             # Vitest tests
 │   ├── tsdown.config.ts   # Build configuration
 │   └── vitest.config.ts   # Test configuration
 ├── compress/              # Compression middleware
 ├── sirv/                  # Static file serving middleware
 ├── tests/                 # Shared test utilities
+├── tsdown-config/         # Shared tsdown configuration (private)
 └── universal-middleware/  # Main package with bundler plugins
 
 examples/
@@ -146,7 +147,7 @@ docs/                     # VitePress documentation site
 
 **Build Configuration:**
 - Each package uses `tsdown` (Rolldown-based) for building (config in `tsdown.config.ts`)
-- Target: ES2022 for adapters, Node 20 for core/express/fastify
+- Target: ES2022 for runtime-neutral packages; the Node packages (core, node, express, fastify) get a Node target from `packages/tsdown-config`
 - Output: ESM format to `dist/` directory
 - Type definitions generated automatically
 
@@ -166,8 +167,8 @@ docs/                     # VitePress documentation site
 The CI has been split into two separate workflows that run on every PR and push to main:
 
 ### Lint and Types Workflow (.github/workflows/lint-and-types.yml)
-Runs linting, type checking, and documentation build on Ubuntu with Node 20:
-1. Install Deno (v2.6.4) - required for type checking
+Runs linting, type checking, and documentation build on Ubuntu with Node 22:
+1. Install Deno (v2.9.6) - required for type checking
 2. Install Bun (latest) - required for Elysia adapter types
 3. Install pnpm
 4. Install dependencies: `pnpm install`
@@ -178,30 +179,30 @@ Runs linting, type checking, and documentation build on Ubuntu with Node 20:
 
 ### Tests Workflow (.github/workflows/tests.yml)
 Runs tests with a matrix approach for comprehensive coverage:
-1. Install Deno (v2.6.4) - required for some tests
+1. Install Deno (v2.9.6) - required for some tests
 2. Install Bun (latest) - required for Elysia adapter tests
 3. Install pnpm
 4. Install dependencies: `pnpm install`
 5. Build: `pnpm run build`
-6. Install Playwright (only for tests-examples/tests-tool): `pnpm playwright install chromium`
+6. Install Playwright (only for tests-examples/tests-tool): `pnpm exec playwright install chromium`, run in `tests-examples/tests-tool`
 7. Run tests in specific package: `pnpm run test` (working directory: matrix.cwd)
 
 **Test Matrix:** 
 - **OS:** ubuntu-latest, windows-latest
-- **Node versions:** 20, 22, 24
-- **Packages tested:** All 15 packages (adapters, core, sirv, compress, universal-middleware, tests-tool)
+- **Node versions:** 22, 24
+- **Packages tested:** the 14 packages listed in `matrix.cwd` (adapters, core, sirv, compress, universal-middleware) and tests-tool; `packages/node` is tested through the Express and Fastify adapters
 - **Exclusions:** Windows only tests on Node 24; sirv and adapter-vercel skip Windows; tests-tool only runs on Node 24
 - **Environment:** Requires VERCEL_TOKEN secret for Vercel adapter tests; without it (pull requests from forks) the adapter-vercel test step is skipped with a notice
 
 ## Common Pitfalls and Workarounds
 
 ### Build Order Issues
-**Problem:** Running `pnpm run test` or `pnpm run lint` without building first fails  
-**Solution:** ALWAYS run `pnpm run build` after installing dependencies
+**Problem:** Running vitest or tsc directly in one package before building fails, because packages import each other's `dist/`  
+**Solution:** Run `pnpm run build` after installing dependencies (the root `test` and `test:typecheck` scripts build first)
 
 ### Dependency Installation
 **Problem:** Missing dependencies or version mismatches  
-**Solution:** Delete `node_modules` and `pnpm-lock.yaml`, then run `pnpm install`
+**Solution:** Delete `node_modules`, then run `pnpm install --frozen-lockfile`. Only update `pnpm-lock.yaml` on purpose, with `pnpm install`
 
 ### Test Failures in CI
 - **Bun not available:** Elysia tests will fail with "bun: not found" - this is expected in environments without Bun
@@ -215,7 +216,7 @@ Runs tests with a matrix approach for comprehensive coverage:
 
 ### Playwright Installation
 **Problem:** Chromium not installed for tests  
-**Solution:** Run `pnpm playwright install chromium` (downloads ~174 MB)
+**Solution:** Run `pnpm exec playwright install chromium` in `tests-examples/tests-tool` (downloads ~174 MB)
 
 ### Type Definition Files
 **Problem:** Type errors in imports from workspace packages  
@@ -272,8 +273,8 @@ Each adapter package (`adapter-*`) converts the universal middleware format to f
 ### Creating New Packages
 - Follow existing adapter structure (see `packages/adapter-hono/` as example)
 - Include: `package.json`, `tsconfig.json`, `tsdown.config.ts`, `vitest.config.ts`
-- Add to `vitest.workspace.ts` if includes tests
-- Add to `pnpm-workspace.yaml` packages list
+- `pnpm-workspace.yaml` globs `packages/*`, so a new package there is picked up automatically
+- If it has tests, add it to `matrix.cwd` in `.github/workflows/tests.yml`
 
 ## Trust These Instructions
 

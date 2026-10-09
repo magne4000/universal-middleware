@@ -1,16 +1,17 @@
 # `universal-middleware`
 
 Write middlewares and handlers once, target
-[srvx](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-hono),
+[Hono](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-hono),
+[srvx](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-srvx),
 [Express](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-express),
 [Cloudflare](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-cloudflare),
 [Hattip](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-hattip),
 [Webroute](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-webroute),
 [Fastify](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-fastify),
 [h3](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-h3),
-[Elysia](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-elysia)
+[Elysia](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-elysia),
 [Vercel](https://github.com/magne4000/universal-middleware/tree/main/packages/adapter-vercel)
-, (and more on the way!).
+(and more on the way!).
 
 ## Documentation
 
@@ -57,7 +58,7 @@ import demoMiddleware from "some-lib/middlewares/demo-middleware-hono";
 const app = new Hono();
 
 app.use(demoMiddleware({ header: 'X-Universal-Demo' }));
-app.get("/", () => new Response('ok')));
+app.get("/", () => new Response('ok'));
 
 export default app;
 ```

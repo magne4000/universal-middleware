@@ -131,6 +131,15 @@ export default defineConfig({
         link: "/reference/runtime-adapter",
       },
       { text: "Supported adapters", link: "/reference/supported-adapters" },
+      {
+        text: "Contributing",
+        items: [
+          {
+            text: "Creating a new server adapter",
+            link: "/contributing/new-server-adapter",
+          },
+        ],
+      },
     ],
 
     search: {
