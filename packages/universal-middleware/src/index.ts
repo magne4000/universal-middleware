@@ -3,4 +3,4 @@ import rollup from "./rollup.js";
 
 export { readAndEditPackageJson } from "./plugin.js";
 
-export { rollup, esbuild };
+export { esbuild, rollup };

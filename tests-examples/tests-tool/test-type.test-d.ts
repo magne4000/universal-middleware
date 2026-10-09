@@ -1,3 +1,12 @@
+import type { CloudflareHandler, CloudflarePagesFunction } from "@universal-middleware/cloudflare";
+import type { RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type { NodeHandler, NodeMiddleware } from "@universal-middleware/express";
+import type { FastifyHandler, FastifyMiddleware } from "@universal-middleware/fastify";
+import type { H3Handler, H3Middleware } from "@universal-middleware/h3";
+import type { HattipHandler, HattipMiddleware } from "@universal-middleware/hattip";
+import type { HonoHandler, HonoMiddleware } from "@universal-middleware/hono";
+import type { VercelEdgeHandler, VercelNodeHandler } from "@universal-middleware/vercel";
+import type { WebrouteHandler, WebrouteMiddleware } from "@universal-middleware/webroute";
 import handler from "@universal-middleware-examples/tool/dummy-handler";
 import cloudflarePagesHandler from "@universal-middleware-examples/tool/dummy-handler-cloudflare-pages";
 import cloudflareWorkerHandler from "@universal-middleware-examples/tool/dummy-handler-cloudflare-worker";
@@ -25,15 +34,6 @@ import h3HeadersMiddleware from "@universal-middleware-examples/tool/middlewares
 import hattipHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hattip";
 import honoHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-hono";
 import webrouteHeadersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-webroute";
-import type { CloudflareHandler, CloudflarePagesFunction } from "@universal-middleware/cloudflare";
-import type { RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import type { NodeHandler, NodeMiddleware } from "@universal-middleware/express";
-import type { FastifyHandler, FastifyMiddleware } from "@universal-middleware/fastify";
-import type { H3Handler, H3Middleware } from "@universal-middleware/h3";
-import type { HattipHandler, HattipMiddleware } from "@universal-middleware/hattip";
-import type { HonoHandler, HonoMiddleware } from "@universal-middleware/hono";
-import type { VercelEdgeHandler, VercelNodeHandler } from "@universal-middleware/vercel";
-import type { WebrouteHandler, WebrouteMiddleware } from "@universal-middleware/webroute";
 import { expectTypeOf, test } from "vitest";
 
 test("hono", () => {

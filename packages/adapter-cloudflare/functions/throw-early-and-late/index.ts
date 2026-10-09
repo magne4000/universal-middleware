@@ -1,4 +1,4 @@
-import { createPagesFunction } from "../../src/index.js";
 import { throwEarlyAndLateHandler } from "@universal-middleware/tests/utils";
+import { createPagesFunction } from "../../src/index.js";
 
 export const onRequest = createPagesFunction(throwEarlyAndLateHandler)();

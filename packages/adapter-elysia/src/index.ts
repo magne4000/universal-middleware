@@ -1,8 +1,8 @@
 export {
   createHandler,
   createMiddleware,
-  getRuntime,
   type ElysiaHandler,
   type ElysiaMiddleware,
+  getRuntime,
 } from "./common.js";
-export { type UniversalElysiaRouter, type App, apply } from "./router.js";
+export { type App, apply, type UniversalElysiaRouter } from "./router.js";

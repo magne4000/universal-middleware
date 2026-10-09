@@ -1,5 +1,5 @@
-import { createRequestAdapter, sendResponse } from "@universal-middleware/node";
 import type { App } from "@universal-middleware/hattip";
+import { createRequestAdapter, sendResponse } from "@universal-middleware/node";
 import type { VercelNodeHandlerRaw } from "../utils/common.js";
 import { createContext } from "../utils/hattip.js";
 

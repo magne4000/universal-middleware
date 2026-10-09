@@ -1,10 +1,10 @@
+import { createHandler } from "@universal-middleware/cloudflare";
+import type { UniversalMiddleware } from "@universal-middleware/core";
+import { pipe } from "@universal-middleware/core";
 import handler from "@universal-middleware-examples/tool/dummy-handler";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware";
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware";
 import paramsHandler from "@universal-middleware-examples/tool/params-handler";
-import { createHandler } from "@universal-middleware/cloudflare";
-import type { UniversalMiddleware } from "@universal-middleware/core";
-import { pipe } from "@universal-middleware/core";
 
 const paramsHandlerInstance = paramsHandler({
   route: "/user/:name",

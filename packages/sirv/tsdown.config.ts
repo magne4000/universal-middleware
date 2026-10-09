@@ -1,5 +1,5 @@
-import universalMiddleware from "universal-middleware/rollup";
 import { defineMiddlewareTsdown, middlewareServers } from "@universal-middleware/tsdown-config";
+import universalMiddleware from "universal-middleware/rollup";
 
 // `@universal-middleware/core` is a runtime dependency (imported for `url`), so
 // the default `neverBundle: true` correctly keeps it external.

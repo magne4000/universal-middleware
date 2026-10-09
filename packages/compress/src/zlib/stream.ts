@@ -1,13 +1,13 @@
 import {
-  constants,
   type BrotliCompress,
-  type Deflate,
-  type DeflateRaw,
-  type Gzip,
+  constants,
   createBrotliCompress,
   createDeflate,
   createDeflateRaw,
   createGzip,
+  type Deflate,
+  type DeflateRaw,
+  type Gzip,
 } from "node:zlib";
 import type { CompressionAlgorithm } from "../types";
 

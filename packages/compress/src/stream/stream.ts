@@ -1,4 +1,4 @@
-import { Gzip, Deflate, Zlib } from "fflate";
+import { Deflate, Gzip, Zlib } from "fflate";
 
 export function compressStream(
   input: ReadableStream<Uint8Array> | null,

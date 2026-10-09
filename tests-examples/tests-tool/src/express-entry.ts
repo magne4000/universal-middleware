@@ -1,12 +1,12 @@
+import compress from "@universal-middleware/compress/express";
+import { createHandler } from "@universal-middleware/express";
+import { sendBigFile } from "@universal-middleware/tests/utils-node";
 import handler from "@universal-middleware-examples/tool/dummy-handler-express";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-express";
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-express";
 import paramsHandler from "@universal-middleware-examples/tool/params-handler-express";
-import compress from "@universal-middleware/compress/express";
 import express from "express";
 import { args } from "./utils";
-import { sendBigFile } from "@universal-middleware/tests/utils-node";
-import { createHandler } from "@universal-middleware/express";
 
 declare global {
   namespace Express {

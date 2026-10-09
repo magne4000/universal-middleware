@@ -1,9 +1,9 @@
 export {
   createHandler,
   createMiddleware,
-  universalOnBeforeResponse,
   getContext,
   type H3Handler,
   type H3Middleware,
+  universalOnBeforeResponse,
 } from "./common.js";
-export { type UniversalH3Router, type App, apply } from "./router.js";
+export { type App, apply, type UniversalH3Router } from "./router.js";

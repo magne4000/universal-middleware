@@ -1,6 +1,6 @@
+import { createHandler, createMiddleware } from "@universal-middleware/hono";
 import { middlewares, throwEarlyAndLateHandler } from "@universal-middleware/tests/utils";
 import { Hono } from "hono";
-import { createHandler, createMiddleware } from "@universal-middleware/hono";
 import { createEdgeHandler } from "../../../src/hono.js";
 
 const app = new Hono();

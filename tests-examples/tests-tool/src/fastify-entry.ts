@@ -1,15 +1,15 @@
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import compress from "@universal-middleware/compress/fastify";
+import { createHandler } from "@universal-middleware/fastify";
+import { sendBigFile } from "@universal-middleware/tests/utils-node";
 import handler from "@universal-middleware-examples/tool/dummy-handler-fastify";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-fastify";
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-fastify";
 import paramsHandler from "@universal-middleware-examples/tool/params-handler-fastify";
-import compress from "@universal-middleware/compress/fastify";
 import fastify from "fastify";
 import rawBody from "fastify-raw-body";
 import { args } from "./utils";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { sendBigFile } from "@universal-middleware/tests/utils-node";
-import { createHandler } from "@universal-middleware/fastify";
 
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 

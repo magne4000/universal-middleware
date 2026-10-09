@@ -1,9 +1,9 @@
 import type {
+  Response as CloudflareResponse,
   EventContext,
   ExecutionContext,
   ExportedHandlerFetchHandler,
   PagesFunction,
-  Response as CloudflareResponse,
 } from "@cloudflare/workers-types";
 import type {
   Get,

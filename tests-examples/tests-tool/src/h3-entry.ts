@@ -1,14 +1,14 @@
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import compress from "@universal-middleware/compress/h3";
+import { createHandler, universalOnBeforeResponse } from "@universal-middleware/h3";
+import { sendBigFile } from "@universal-middleware/tests/utils-node";
 import handler from "@universal-middleware-examples/tool/dummy-handler-h3";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-h3";
 import headersMiddleware from "@universal-middleware-examples/tool/middlewares/headers-middleware-h3";
 import paramsHandler from "@universal-middleware-examples/tool/params-handler-h3";
-import compress from "@universal-middleware/compress/h3";
-import { createHandler, universalOnBeforeResponse } from "@universal-middleware/h3";
 import { createApp, createRouter, toNodeListener } from "h3";
 import { args } from "./utils";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { sendBigFile } from "@universal-middleware/tests/utils-node";
 
 const _dirname = typeof __dirname !== "undefined" ? __dirname : dirname(fileURLToPath(import.meta.url));
 

@@ -79,13 +79,13 @@ cd docs && pnpm run build-doc
 
 ### Formatting
 ```bash
-# Format code (auto-fixes)
-pnpm run format
+# Format code, sort imports and apply safe lint fixes (auto-fixes)
+pnpm run check
 # Uses Biome formatter with 2-space indentation
 ```
 
-**`biome format` and `biome lint` must run and pass** before any change is
-considered done (`pnpm run format` and `pnpm run lint`).
+**`pnpm exec biome ci .` must pass** before any change is considered done: it checks
+formatting, import order and lint, as CI does (`pnpm run check` fixes most of it).
 
 ### Local builds/tests in a mounted checkout
 
@@ -172,7 +172,7 @@ Runs linting, type checking, and documentation build on Ubuntu with Node 20:
 3. Install pnpm
 4. Install dependencies: `pnpm install`
 5. Build: `pnpm run build`
-6. Lint: `pnpm run lint`
+6. Biome: `pnpm exec biome ci .` (formatting, import order and lint)
 7. Typecheck: `pnpm run test:typecheck`
 8. Build docs: `cd docs && pnpm run build-doc`
 
@@ -258,7 +258,7 @@ Each adapter package (`adapter-*`) converts the universal middleware format to f
 1. **Install and Build First:** Always `pnpm install && pnpm run build`
 2. **Make Changes:** Edit source in `packages/*/src/`
 3. **Rebuild:** `pnpm run build` (or `turbo run build` in specific package)
-4. **Lint:** `pnpm run lint` (auto-fix with `pnpm run format`)
+4. **Lint:** `pnpm exec biome ci .` (auto-fix with `pnpm run check`)
 5. **Type Check:** `pnpm run test:typecheck`
 6. **Test:** `pnpm run test`
 7. **Validate:** Ensure CI steps pass locally before committing
