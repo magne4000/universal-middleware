@@ -1,6 +1,11 @@
 import { EventEmitter } from "node:events";
 import { type IncomingMessage, ServerResponse } from "node:http";
-import { createRequestAdapter, type DecoratedRequest, responseAdapter } from "@universal-middleware/node";
+import {
+  BadRequestError,
+  createRequestAdapter,
+  type DecoratedRequest,
+  responseAdapter,
+} from "@universal-middleware/node";
 import { describe, expect, it, vi } from "vitest";
 
 // `@universal-middleware/node` has no test setup of its own; it is exercised
@@ -53,6 +58,14 @@ describe("createRequestAdapter — X-Forwarded-* resolution", () => {
     const request = adapter(fakeReq({ host: "real.example", "x-forwarded-host": "evil.test" }), fakeRes());
 
     expect(new URL(request.url).host).toBe("real.example");
+  });
+
+  it("rejects an X-Forwarded-Host that would change the path", () => {
+    const adapter = createRequestAdapter({ trustProxy: true });
+
+    expect(() => adapter(fakeReq({ host: "real.example", "x-forwarded-host": "x/admin?" }), fakeRes())).toThrow(
+      BadRequestError,
+    );
   });
 });
 
@@ -247,6 +260,21 @@ describe("responseAdapter — redirect Location must not be attacker-controlled"
 
     expect(createRequestAdapter()(incoming, res).url).toBe("https://real.example/p");
     expect(responseAdapter(res).headers.get("location")).toBe("https://real.example/next");
+  });
+
+  it("takes an HTTP/2 request's host from :authority, as the request URL does", () => {
+    const incoming = {
+      method: "GET",
+      url: "/p",
+      headers: { ":method": "GET", ":authority": "real.example", ":path": "/p" },
+      socket: {},
+    } as unknown as IncomingMessage;
+
+    const res = new ServerResponse(incoming);
+    res.statusCode = 302;
+    res.setHeader("location", "/next");
+
+    expect(responseAdapter(res).headers.get("location")).toBe("http://real.example/next");
   });
 });
 

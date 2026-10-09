@@ -1,6 +1,7 @@
 import type { ServerResponse } from "node:http";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import { BadRequestError } from "@universal-middleware/node";
 import { adaptLendingBody, handBodyBack } from "./body.js";
 import { pendingMiddlewaresSymbol } from "./const.js";
 import { createRequestAdapter } from "./request.js";
@@ -57,10 +58,12 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
           handBodyBack(req);
           next(error);
         } else {
-          console.error(error);
+          // A malformed request is the client's error, not one to log
+          const badRequest = error instanceof BadRequestError;
+          if (!badRequest) console.error(error);
 
           if (!res.headersSent) {
-            res.statusCode = 500;
+            res.statusCode = badRequest ? error.status : 500;
           }
 
           if (!res.writableEnded) {
@@ -126,10 +129,12 @@ export function createMiddleware<
           handBodyBack(req);
           next(error);
         } else {
-          console.error(error);
+          // A malformed request is the client's error, not one to log
+          const badRequest = error instanceof BadRequestError;
+          if (!badRequest) console.error(error);
 
           if (!res.headersSent) {
-            res.statusCode = 500;
+            res.statusCode = badRequest ? error.status : 500;
           }
 
           if (!res.writableEnded) {
