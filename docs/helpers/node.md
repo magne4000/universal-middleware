@@ -86,6 +86,8 @@ apply(app, middlewares, { origin: "https://example.com" });
 ## `sendResponse`
 
 Sends a fetch API `Response` into a Node.js `ServerResponse` stream, including status code, headers, and body.
+A body already in memory (a string, a buffer, JSON) goes out in one write with its `Content-Length`. Any other body is
+streamed as fast as the client reads it, and cancelled if the client leaves.
 
 ```ts
 import { createRequestAdapter } from "@universal-middleware/node/request";

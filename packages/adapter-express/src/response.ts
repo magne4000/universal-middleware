@@ -10,20 +10,17 @@ export { responseAdapter, sendResponse };
 
 type WriteCallback = (error?: Error | null) => void;
 
-/**
- * Routes what the app writes to `writer` instead of the socket. Like a socket, `write()` returns false once
- * `writer` holds a buffer's worth of bytes, and "drain" follows when it has room again.
- */
+/** Routes the app's writes to `writer`. As a socket would, `write()` returns false once `writer` is full, then "drain" follows. */
 function captureOutput(nodeResponse: DecoratedServerResponse, writer: WritableStreamDefaultWriter<Uint8Array>) {
   let draining = false;
 
   function capture(chunk: string | Uint8Array | undefined, encoding: BufferEncoding | undefined): Promise<void> {
-    // The head goes out with the first write: holding it triggers the pending middlewares
+    // The first write sends the head, whose hold runs the pending middlewares
     if (!nodeResponse.headersSent) nodeResponse.writeHead(nodeResponse.statusCode);
     const bytes = typeof chunk === "string" ? Buffer.from(chunk, encoding) : chunk;
     if (!bytes?.byteLength) return Promise.resolve();
     return writer.write(bytes).catch((error) => {
-      // Once the capture is cancelled (the response was replaced), the app's later writes are dropped
+      // Writes after the capture was cancelled (the response was replaced) are dropped
       if (writer.desiredSize !== null) console.error(error);
     });
   }
@@ -71,7 +68,7 @@ function captureOutput(nodeResponse: DecoratedServerResponse, writer: WritableSt
   };
 }
 
-/** Holds the head back. Its first call runs `onHead`, and later ones no-op while the pending middlewares run. */
+/** Holds the head back: the first call runs `onHead`, later ones no-op while the pending middlewares run */
 function holdHead(nodeResponse: DecoratedServerResponse, onHead: () => void) {
   let held = false;
 
@@ -95,7 +92,7 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse, next?: (err?
 
   const original = { write: nodeResponse.write, end: nodeResponse.end, writeHead: nodeResponse.writeHead };
   const send = { write: original.write.bind(nodeResponse), end: original.end.bind(nodeResponse) };
-  // The app's output, held for the pending middlewares. It fills up like the response's own buffer would.
+  // The app's output, held for the pending middlewares, fills up like the response's own buffer would
   let capture!: TransformStreamDefaultController<Uint8Array>;
   const captured = new TransformStream<Uint8Array, Uint8Array>(
     {
@@ -123,14 +120,14 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse, next?: (err?
       for (const middleware of middlewares) {
         const tmp = await middleware(response);
         cancelReplacedBody(response, tmp);
-        // Do not hard-fail when encountering an undefined Response
+        // An undefined result keeps the Response
         if (tmp) response = tmp;
       }
     } catch (e) {
-      // Errors both sides: aborting the writer would wait on a write that waits for a read that never comes
+      // Errors both sides: aborting the writer would wait on a write that waits for a read nobody makes
       capture.error(e);
-      // The app may be in the middle of sending: its write ran the middlewares. What it has already scheduled
-      // (the rest of a piped body, its `end()`) goes to the errored capture, not to the response of the error handler.
+      // The app may be sending (its write ran the middlewares): what it already scheduled, such as its `end()`,
+      // must reach the errored capture, not the error handler's response
       await new Promise((resolve) => setImmediate(resolve));
       Object.assign(nodeResponse, original);
       if (next) {
@@ -148,13 +145,13 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse, next?: (err?
     const body = nodeResponse.req?.method === "HEAD" ? null : response.body;
     if (!body) {
       response.body?.cancel().catch(() => {});
-      // Nothing sends the app's output now. The overrides stay, to drop what the app still writes.
+      // The overrides stay, to drop what the app still writes
       if (!captured.readable.locked) captured.readable.cancel().catch(() => {});
       send.end();
       return;
     }
 
-    // Once the client is gone, the body is cancelled rather than read on: it may never end
+    // The body is cancelled when the client leaves, rather than read on: it may never end
     const gone = new AbortController();
     const onClose = () => gone.abort();
     nodeResponse.once("close", onClose);
@@ -163,8 +160,8 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse, next?: (err?
       await body.pipeTo(
         new WritableStream({
           async write(chunk) {
-            // Wait for the socket to take in what it buffered, as `pipe()` does. The wait ends, without failing,
-            // when the client leaves: Node's `pipeTo` doesn't cancel the body while the write it waits on rejects.
+            // Waits for the socket to drain, as `pipe()` does. Resolves when the client leaves: Node's `pipeTo`
+            // doesn't cancel the body while the write it waits on rejects.
             if (!send.write(chunk)) await once(nodeResponse, "drain", { signal: gone.signal }).catch(() => {});
           },
           close() {

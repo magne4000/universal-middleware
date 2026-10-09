@@ -46,6 +46,6 @@ export class UniversalExpressRouter<T extends App> extends UniversalRouter imple
 export function apply(app: Express, middlewares: EnhancedMiddlewareExpress[], options?: ApplyOptions) {
   const router = new UniversalExpressRouter(app, options);
   applyCore(router, middlewares as EnhancedMiddleware[], true);
-  // defer
+  // After the routes the app adds right after `apply()`
   Promise.resolve().then(() => router.applyCatchAll());
 }
