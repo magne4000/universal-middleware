@@ -16,9 +16,13 @@ import {
   universalSymbol,
 } from "@universal-middleware/core";
 import { Elysia, type Context as ElysiaContext, type Handler, NotFoundError } from "elysia";
+import { mapResponse as mapResponseBun } from "elysia/adapter/bun/handler";
+import { mapResponse as mapResponseWeb } from "elysia/adapter/web-standard/handler";
 
 const pendingSymbol = Symbol.for("unPending");
 const pendingHandledSymbol = Symbol.for("unPendingHandled");
+// The conversion of Elysia's default adapter, which differs on Bun (e.g. `text/plain;charset=utf-8` for a string)
+const mapResponse = typeof Bun === "undefined" ? mapResponseWeb : mapResponseBun;
 
 // biome-ignore lint/suspicious/noExplicitAny: avoid complex elysia types mismatch
 export type ElysiaHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, Handler<any, any>>;
@@ -163,34 +167,72 @@ export function createMiddleware<
             },
           )(elysiaContext1);
         })
-        .onAfterHandle(async (elysiaContext) => {
-          if (elysiaContext[pendingHandledSymbol]) return;
-
-          Object.defineProperty(elysiaContext, pendingHandledSymbol, {
-            value: true,
-          });
-
-          let currentResponse = elysiaContext.response as Response;
-
-          try {
-            for (const p of elysiaContext[pendingSymbol]) {
-              const res = await p(currentResponse);
-              if (res) {
-                cancelReplacedBody(currentResponse, res);
-                currentResponse = res;
-              }
-            }
-          } catch (e) {
-            console.error(e);
-            return e;
+        // With `aot: true`, Elysia validates the value an afterHandle hook returns against the route's response schema,
+        // then runs the next hook: returning the route's value unchanged hands it validated to the response functions.
+        // With `aot: false`, the first value a hook returns ends the hooks, and Elysia has no hook after validation.
+        // Elysia's compiled handler (`aot: true`) sets `responseValue` before the afterHandle hooks; `aot: false` doesn't.
+        .onAfterHandle(async function validateForResponseFunctions(elysiaContext) {
+          if (
+            "responseValue" in elysiaContext &&
+            !elysiaContext[pendingHandledSymbol] &&
+            elysiaContext[pendingSymbol].length > 0 &&
+            !(elysiaContext.response instanceof Response)
+          ) {
+            return elysiaContext.response;
           }
-
-          return currentResponse;
+          return runResponseFunctions(elysiaContext);
         })
+        .onAfterHandle(runResponseFunctions)
         // biome-ignore lint/suspicious/noExplicitAny: avoid recursive type error
         .as("scoped") as any,
     );
   };
+}
+
+interface ResponseFunctionsContext {
+  response: unknown;
+  set: ElysiaContext["set"];
+  [pendingSymbol]: ((response: Response) => Awaitable<Response | undefined>)[];
+  [pendingHandledSymbol]: boolean;
+}
+
+/** Runs the pending response functions on what Elysia would send for the route's value, once per request */
+async function runResponseFunctions(elysiaContext: ResponseFunctionsContext): Promise<unknown> {
+  if (elysiaContext[pendingHandledSymbol]) return;
+
+  Object.defineProperty(elysiaContext, pendingHandledSymbol, {
+    value: true,
+  });
+
+  const value = elysiaContext.response;
+  if (elysiaContext[pendingSymbol].length === 0) {
+    // With `aot: false`, Elysia only validates the route's value if an afterHandle hook returns it
+    return "responseValue" in elysiaContext ? undefined : value;
+  }
+
+  // What Elysia would send for the route's value, with the status and headers of `set`. Not with the cookies of
+  // `set.cookie`: Elysia adds them to the Response it sends (signed, with `aot: true`), and would add them twice.
+  const { set } = elysiaContext;
+  let currentResponse = await mapResponse(value, { status: set.status, headers: { ...set.headers } });
+
+  try {
+    for (const p of elysiaContext[pendingSymbol]) {
+      const res = await p(currentResponse);
+      if (res) {
+        cancelReplacedBody(currentResponse, res);
+        currentResponse = res;
+      }
+    }
+  } catch (e) {
+    console.error(e);
+    return e;
+  }
+
+  // Elysia merges `set` into the Response it sends: the headers the Response lacks, and the status if it is 200.
+  // The response functions got them already and may have changed them: `set` now describes the Response.
+  set.status = currentResponse.status;
+  set.headers = Object.fromEntries([...currentResponse.headers].filter(([name]) => name !== "set-cookie"));
+  return currentResponse;
 }
 
 function initPlugin<Context extends Universal.Context = Universal.Context>() {
