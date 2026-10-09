@@ -1,5 +1,6 @@
 import type { IncomingMessage } from "node:http";
 import {
+  type Awaitable,
   attachUniversal,
   bindUniversal,
   contextSymbol,
@@ -18,8 +19,8 @@ import { createRequestAdapter, type DecoratedRequest } from "@universal-middlewa
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import fp from "fastify-plugin";
 
-export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
-export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
+const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
+const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
 
 export type FastifyHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, RouteHandlerMethod>;
 export type FastifyMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
@@ -29,9 +30,7 @@ export type FastifyMiddleware<In extends Universal.Context, Out extends Universa
 
 declare module "fastify" {
   export interface FastifyRequest {
-    [pendingMiddlewaresSymbol]?: ((
-      response: Response,
-    ) => Response | Promise<Response | undefined> | undefined | Promise<undefined>)[];
+    [pendingMiddlewaresSymbol]?: ((response: Response) => Awaitable<Response | undefined>)[];
     [wrappedResponseSymbol]?: boolean;
     [contextSymbol]?: unknown;
   }
@@ -87,8 +86,7 @@ function getHeaders(reply: FastifyReply): Headers {
         ret.set(key, value[0]);
       } else if (value.length > 1) {
         console.warn(`Header "${key}" should not be an array. Only last value will be sent`);
-        // biome-ignore lint/style/noNonNullAssertion: ignored
-        ret.set(key, value.at(-1)!);
+        ret.set(key, value[value.length - 1]);
       }
     }
   }
@@ -206,7 +204,7 @@ export function createMiddleware<
             mergeHeadersInto(payload.headers, getHeaders(reply));
           } else if (payload === undefined || isBodyInit(payload)) {
             payload = new Response(payload, {
-              headers: new Headers(getHeaders(reply)),
+              headers: getHeaders(reply),
               status: reply.statusCode,
             });
           } else {
@@ -256,7 +254,7 @@ export function getContext<InContext extends Universal.Context = Universal.Conte
   return req[contextSymbol] as InContext;
 }
 
-export function setContext<InContext extends Universal.Context = Universal.Context>(
+function setContext<InContext extends Universal.Context = Universal.Context>(
   req: FastifyRequest,
   newContext: InContext,
 ): void {

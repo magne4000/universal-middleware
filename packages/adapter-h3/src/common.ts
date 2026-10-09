@@ -1,4 +1,5 @@
 import type {
+  Awaitable,
   Get,
   RuntimeAdapter,
   UniversalFn,
@@ -32,16 +33,14 @@ export type H3Middleware<In extends Universal.Context, Out extends Universal.Con
   EventHandler
 >;
 
-export const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
-export const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
+const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
+const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
 
 declare module "h3" {
   interface H3EventContext {
     [contextSymbol]?: Universal.Context;
     [wrappedResponseSymbol]?: boolean;
-    [pendingMiddlewaresSymbol]?: ((
-      response: Response,
-    ) => Response | Promise<Response> | undefined | Promise<undefined>)[];
+    [pendingMiddlewaresSymbol]?: ((response: Response) => Awaitable<Response | undefined>)[];
   }
 }
 
@@ -151,7 +150,7 @@ export function createMiddleware<
       middleware,
       eventHandler(async function universalMiddlewareH3(
         this: {
-          [universalSymbol]: UniversalHandler<InContext>;
+          [universalSymbol]: UniversalMiddleware<InContext, OutContext>;
         },
         event,
       ) {
@@ -176,7 +175,7 @@ export function createMiddleware<
   };
 }
 
-export function initContext<Context extends Universal.Context>(event: H3Event): Context {
+function initContext<Context extends Universal.Context>(event: H3Event): Context {
   event.context[contextSymbol] ??= {};
   return event.context[contextSymbol] as Context;
 }

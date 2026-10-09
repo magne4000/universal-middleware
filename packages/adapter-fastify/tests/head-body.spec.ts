@@ -1,31 +1,10 @@
 import { enhance } from "@universal-middleware/core";
+import { endlessResponse } from "@universal-middleware/tests/utils";
 import Fastify, { type HTTPMethods } from "fastify";
 import { describe, expect, it } from "vitest";
 import { apply, createHandler } from "../src/index.js";
 
 // A HEAD response has no body: an endless body (SSE, a proxied stream) must be cancelled, not awaited.
-
-function idleStream() {
-  let onCancel!: () => void;
-  const cancelled = new Promise<boolean>((resolve) => {
-    onCancel = () => resolve(true);
-  });
-  const state = {
-    cancelled: false,
-    wasCancelled: Promise.race([cancelled, new Promise<boolean>((r) => setTimeout(() => r(false), 1500))]),
-  };
-  const response = new Response(
-    new ReadableStream<Uint8Array>({
-      pull: () => new Promise<void>(() => {}),
-      cancel() {
-        state.cancelled = true;
-        onCancel();
-      },
-    }),
-    { headers: { "content-type": "text/event-stream", "x-kept": "yes" } },
-  );
-  return { state, response };
-}
 
 async function head(app: ReturnType<typeof Fastify>) {
   const host = await app.listen({ port: 0, host: "127.0.0.1" });
@@ -46,7 +25,7 @@ async function head(app: ReturnType<typeof Fastify>) {
 
 describe("HEAD with an endless body", () => {
   it("completes and cancels the body of a middleware without path", async () => {
-    const { state, response } = idleStream();
+    const { state, response } = endlessResponse();
     const app = Fastify();
     await apply(app, [enhance(() => response, { name: "sse", order: -100 })]);
 
@@ -60,7 +39,7 @@ describe("HEAD with an endless body", () => {
   });
 
   it("completes and cancels the body of a handler", async () => {
-    const { state, response } = idleStream();
+    const { state, response } = endlessResponse();
     const app = Fastify();
     app.route({ method: "HEAD", url: "/events", handler: createHandler(() => () => response)() });
 
@@ -72,7 +51,7 @@ describe("HEAD with an endless body", () => {
   });
 
   it("cancels the body a response function swaps in", async () => {
-    const { state, response } = idleStream();
+    const { response, cancelled } = endlessResponse();
     const app = Fastify();
     await apply(app, [enhance(() => () => response, { name: "swap", order: -100 })]);
     app.route({ method: "HEAD", url: "/events", handler: () => "ok" });
@@ -81,14 +60,15 @@ describe("HEAD with an endless body", () => {
 
     expect(res, "HEAD never completed").not.toBeNull();
     expect(res?.headers.get("x-kept")).toBe("yes");
-    expect(await state.wasCancelled, "the replacement body was leaked").toBe(true);
+    // Resolves once the replacement body is cancelled; a leak times the test out
+    await cancelled;
   });
 
   it.each([
     ["route", {}],
     ["path-scoped middleware", { order: -100 }],
   ])("answers HEAD from a GET-only %s and cancels the body", async (_, options) => {
-    const { state, response } = idleStream();
+    const { state, response } = endlessResponse();
     const app = Fastify();
     await apply(app, [enhance(() => response, { method: "GET", path: "/events", ...options })]);
 
@@ -153,7 +133,7 @@ describe("HEAD with a response function", () => {
   });
 
   it("completes when an endless body is replaced by a finite one", async () => {
-    const { state, response } = idleStream();
+    const { state, response } = endlessResponse();
     const res = await headWith(
       () => new Response("replacement", { status: 202 }),
       () => response,

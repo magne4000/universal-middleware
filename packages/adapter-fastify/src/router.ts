@@ -8,7 +8,7 @@ import {
   universalSymbol,
 } from "@universal-middleware/core";
 import type { FastifyInstance } from "fastify";
-import { createHandler, createMiddleware } from "./common";
+import { createHandler, createMiddleware } from "./common.js";
 
 export type App = FastifyInstance;
 

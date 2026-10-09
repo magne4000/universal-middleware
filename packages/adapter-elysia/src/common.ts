@@ -16,8 +16,8 @@ import {
 } from "@universal-middleware/core";
 import { Elysia, type Context as ElysiaContext, type Handler, NotFoundError } from "elysia";
 
-export const pendingSymbol = Symbol.for("unPending");
-export const pendingHandledSymbol = Symbol.for("unPendingHandled");
+const pendingSymbol = Symbol.for("unPending");
+const pendingHandledSymbol = Symbol.for("unPendingHandled");
 
 // biome-ignore lint/suspicious/noExplicitAny: avoid complex elysia types mismatch
 export type ElysiaHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, Handler<any, any>>;

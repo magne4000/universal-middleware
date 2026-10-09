@@ -8,7 +8,7 @@ import {
   universalSymbol,
 } from "@universal-middleware/core";
 import type { Hono } from "hono";
-import { createHandler, createMiddleware } from "./common";
+import { createHandler, createMiddleware } from "./common.js";
 
 // biome-ignore lint/suspicious/noExplicitAny: ignored
 export type App = Hono<any, any, any>;

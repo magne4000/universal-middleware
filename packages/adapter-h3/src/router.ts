@@ -8,7 +8,7 @@ import {
   universalSymbol,
 } from "@universal-middleware/core";
 import type { App } from "h3";
-import { createHandler, createMiddleware, universalOnBeforeResponse } from "./common";
+import { createHandler, createMiddleware, universalOnBeforeResponse } from "./common.js";
 
 export type { App };
 

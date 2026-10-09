@@ -5,7 +5,7 @@ import {
   UniversalRouter,
   universalSymbol,
 } from "@universal-middleware/core";
-import { createHandler } from "./common";
+import { createHandler } from "./common.js";
 
 type EnhancedMiddlewareCloudflare =
   | EnhancedMiddleware

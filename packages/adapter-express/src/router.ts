@@ -7,8 +7,8 @@ import {
   type UniversalRouterInterface,
   universalSymbol,
 } from "@universal-middleware/core";
-import { createHandler, createMiddleware } from "./common";
-import type { Express } from "./utils";
+import { createHandler, createMiddleware } from "./common.js";
+import type { Express } from "./utils.js";
 
 export type App = Express;
 

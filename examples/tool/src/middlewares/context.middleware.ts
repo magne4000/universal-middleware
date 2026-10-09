@@ -4,8 +4,7 @@
 import type { Get, UniversalMiddleware } from "@universal-middleware/core";
 
 const contextMiddleware = ((value) => (_request, ctx, _runtime) => {
-  // Return the new context, keeping complete type safety
-  // type-safe way. Equivalent to `ctx.hello = value`
+  // Return the new context, keeping complete type safety. Equivalent to `ctx.hello = value`
   return {
     ...ctx,
     hello: value,
