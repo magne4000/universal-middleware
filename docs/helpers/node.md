@@ -56,6 +56,33 @@ When the request has no URL a `Request` can hold, the adapter throws a `BadReque
 forwarded host, that isn't a host and an optional port, as it would otherwise change the path of the URL. It is also the
 case of `OPTIONS *`.
 
+### The server framework's origin
+
+The adapter takes an optional third argument: the protocol and host the server framework resolved for the request,
+from its own trust-proxy setting. They come after the `origin` option and the forwarding headers `trustProxy` trusts,
+and before what the adapter reads itself.
+
+```ts
+const request = requestAdapter(req, res, { protocol: "https", host: "public.example" });
+```
+
+A relative redirect `Location` read by `responseAdapter` is made absolute with the origin of that request's URL.
+
+### In the Express and Fastify adapters
+
+The Express adapter's `createHandler`, `createMiddleware` and `apply` take the options above. The request URL follows
+Express's `trust proxy` setting: `req.protocol`, and the first `X-Forwarded-Host` when the setting trusts the peer.
+
+The Fastify adapter's `createHandler`, `createMiddleware` and `apply` take only `origin`. The request URL has the
+protocol and host of Fastify's `request.protocol` and `request.host`, which follow its `trustProxy` option.
+`TRUST_PROXY=1` still makes the forwarding headers win, in both adapters.
+
+```ts
+import { apply } from "@universal-middleware/express";
+
+apply(app, middlewares, { origin: "https://example.com" });
+```
+
 ## `sendResponse`
 
 Sends a fetch API `Response` into a Node.js `ServerResponse` stream, including status code, headers, and body.

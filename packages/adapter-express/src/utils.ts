@@ -2,6 +2,7 @@ import { EventEmitter } from "node:events";
 import { type IncomingMessage, type OutgoingHttpHeader, type OutgoingHttpHeaders, ServerResponse } from "node:http";
 import { PassThrough, Readable } from "node:stream";
 import { contextSymbol, type RuntimeAdapterTarget } from "@universal-middleware/core";
+import { setHead } from "./head.js";
 import type { DecoratedRequest, DecoratedServerResponse } from "./types.js";
 
 type ExpressRequestHandler = (
@@ -70,7 +71,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
 
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: ignored
     return new Promise<Response | undefined>(async (resolve, reject) => {
-      onReadable(({ readable, headers, statusCode }) => {
+      onReadable(({ readable, headers, statusCode, statusMessage }) => {
         const hasBody = !statusCodesWithoutBody.includes(statusCode);
         // Keep forwarding aborts until a streaming body has fully flushed, then stop.
         if (stopForwardingAbort) {
@@ -80,6 +81,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
         resolve(
           new Response(hasBody ? toWebStream(readable) : null, {
             status: statusCode,
+            statusText: statusMessage,
             headers: flattenHeaders(headers),
           }),
         );
@@ -168,12 +170,22 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
   let handled = false;
 
   const onReadable = (
-    cb: (result: { readable: Readable; headers: OutgoingHttpHeaders; statusCode: number }) => void,
+    cb: (result: {
+      readable: Readable;
+      headers: OutgoingHttpHeaders;
+      statusCode: number;
+      statusMessage: string | undefined;
+    }) => void,
   ) => {
     const handleReadable = () => {
       if (handled) return;
       handled = true;
-      cb({ readable: Readable.from(passThrough), headers: res.getHeaders(), statusCode: res.statusCode });
+      cb({
+        readable: Readable.from(passThrough),
+        headers: res.getHeaders(),
+        statusCode: res.statusCode,
+        statusMessage: res.statusMessage,
+      });
     };
 
     passThrough.once("readable", handleReadable);
@@ -200,18 +212,7 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
     statusMessage?: string | OutgoingHttpHeaders | OutgoingHttpHeader[],
     headers?: OutgoingHttpHeaders | OutgoingHttpHeader[],
   ): ServerResponse {
-    res.statusCode = statusCode;
-    if (typeof statusMessage === "object") {
-      headers = statusMessage;
-      statusMessage = undefined;
-    }
-    if (headers) {
-      for (const [key, value] of Object.entries(headers)) {
-        if (value !== undefined) {
-          res.setHeader(key, value);
-        }
-      }
-    }
+    setHead(res, statusCode, statusMessage, headers);
     return res;
   };
 

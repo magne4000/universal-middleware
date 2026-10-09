@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Socket } from "node:net";
 import type { contextSymbol } from "@universal-middleware/core";
-import { env, requestSymbol } from "./const.js";
+import { env, originSymbol, requestSymbol } from "./const.js";
 import { forwardedValue, trustsProxy } from "./forwarded.js";
 
 export { env, requestSymbol };
@@ -32,6 +32,17 @@ export interface DecoratedRequest<C extends Universal.Context = Universal.Contex
   params?: Record<string, string>;
   [contextSymbol]?: C;
   [requestSymbol]?: Request;
+  /** The origin of the request URL, which a relative redirect `Location` is resolved against */
+  [originSymbol]?: string;
+}
+
+/**
+ * The protocol and host the server framework resolved for a request, from its own trust-proxy setting
+ * (Express's `trust proxy`, Fastify's `trustProxy`). They come after `origin` and the trusted forwarding headers.
+ */
+export interface RequestOrigin {
+  protocol?: string;
+  host?: string;
 }
 
 /** Adapter options */
@@ -40,11 +51,10 @@ export interface NodeRequestAdapterOptions {
    * Set the origin part of the URL to a constant value.
    * It defaults to `process.env.ORIGIN`. If neither is set,
    * the origin is computed from the protocol and hostname.
-   * To determine the protocol, `req.protocol` is tried first.
-   * If `trustProxy` is set, the forwarding headers are used.
-   * Otherwise, `req.socket.encrypted` is used.
-   * To determine the hostname, the forwarding headers
-   * (if `trustProxy` is set) or the `Host` header is used.
+   * If `trustProxy` is set, the forwarding headers are tried first.
+   * Then come the protocol and host the server framework resolved (the `RequestOrigin` argument),
+   * then `req.protocol` and `req.socket.encrypted` for the protocol,
+   * and the request target's host, `:authority` and the `Host` header for the host.
    */
   origin?: string;
   /**
@@ -79,7 +89,7 @@ type SignalledResponse = ServerResponse & { [signalSymbol]?: AbortSignal };
 /** Create a function that converts a Node HTTP request into a fetch API `Request` object */
 export function createRequestAdapter(
   options: NodeRequestAdapterOptions = {},
-): (req: DecoratedRequest, res: ServerResponse) => Request {
+): (req: DecoratedRequest, res: ServerResponse, resolved?: RequestOrigin) => Request {
   const { origin = env.ORIGIN, trustProxy = trustsProxy() } = options;
 
   let { protocol: protocolOverride, host: hostOverride } = origin ? new URL(origin) : ({} as Record<string, undefined>);
@@ -90,7 +100,7 @@ export function createRequestAdapter(
 
   let warned = false;
 
-  return function requestAdapter(req, res: SignalledResponse) {
+  return function requestAdapter(req, res: SignalledResponse, resolved) {
     // Reuse already created request
     if (req[requestSymbol]) {
       return req[requestSymbol];
@@ -107,6 +117,7 @@ export function createRequestAdapter(
     const protocol =
       protocolOverride ||
       (trustProxy && forwardedValue(headers, "proto")) ||
+      resolved?.protocol ||
       req.protocol ||
       // biome-ignore lint/suspicious/noExplicitAny: encrypted can exist in some express versions
       ((req.socket as any)?.encrypted && "https") ||
@@ -126,7 +137,12 @@ export function createRequestAdapter(
     }
 
     let host =
-      hostOverride || (trustProxy && forwardedValue(headers, "host")) || targetHost || authority || headers.host;
+      hostOverride ||
+      (trustProxy && forwardedValue(headers, "host")) ||
+      resolved?.host ||
+      targetHost ||
+      authority ||
+      headers.host;
 
     if (!host) {
       if (!warned) {
@@ -175,6 +191,7 @@ export function createRequestAdapter(
     });
 
     req[requestSymbol] = request;
+    req[originSymbol] = `${protocol}://${host}`;
 
     return request;
   };

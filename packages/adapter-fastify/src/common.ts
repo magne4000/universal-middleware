@@ -27,6 +27,16 @@ const wrappedResponseSymbol = Symbol.for("unWrappedResponse");
 const nullBodyStatuses = new Set([101, 103, 204, 205, 304]);
 
 export type FastifyHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, RouteHandlerMethod>;
+
+/** Adapter options */
+export interface FastifyAdapterOptions {
+  /**
+   * Set the origin part of the request URL to a constant value. It defaults to `process.env.ORIGIN`.
+   * Otherwise the protocol and host are Fastify's `request.protocol` and `request.host`, which follow its `trustProxy`
+   * option. `process.env.TRUST_PROXY=1` still makes the `X-Forwarded-*` and `Forwarded` headers win.
+   */
+  origin?: string;
+}
 export type FastifyMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
   UniversalMiddleware<In, Out>,
   FastifyPluginAsync
@@ -80,9 +90,6 @@ function getHeaders(reply: FastifyReply): Headers {
 
 function getRawRequest(req: FastifyRequest): DecoratedRequest {
   const raw: DecoratedRequest = req.raw;
-  // `request.protocol` follows Fastify's `trustProxy`, as Express's `req.protocol` follows its `trust proxy`.
-  // Defined rather than assigned: Express (through @fastify/express) puts a getter-only `protocol` on the prototype.
-  Object.defineProperty(raw, "protocol", { value: req.protocol, configurable: true, enumerable: true });
   if (req.body === undefined || "rawBody" in raw) return raw;
   if ("rawBody" in req) {
     Object.defineProperty(raw, "rawBody", {
@@ -102,8 +109,9 @@ function getRawRequest(req: FastifyRequest): DecoratedRequest {
 
 export function createHandler<T extends unknown[], InContext extends Universal.Context>(
   handlerFactory: Get<T, UniversalHandler<InContext>>,
+  options: FastifyAdapterOptions = {},
 ): Get<T, FastifyHandler<InContext>> {
-  const requestAdapter = createRequestAdapter();
+  const requestAdapter = createRequestAdapter({ origin: options.origin });
 
   return (...args) => {
     const handler = handlerFactory(...args);
@@ -111,7 +119,8 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
     return bindUniversal(handler, async function universalHandlerFastify(request, reply) {
       const ctx = initContext<InContext>(request);
       const response: Response | undefined = await this[universalSymbol](
-        requestAdapter(getRawRequest(request), reply.raw),
+        // The URL has the protocol and host Fastify gives the request, from its `trustProxy` option
+        requestAdapter(getRawRequest(request), reply.raw, { protocol: request.protocol, host: request.host }),
         ctx,
         getRuntime(request, reply),
       );
@@ -136,8 +145,9 @@ export function createMiddleware<
   OutContext extends Universal.Context,
 >(
   middlewareFactory: Get<T, UniversalMiddleware<InContext, OutContext>>,
+  options: FastifyAdapterOptions = {},
 ): Get<T, FastifyMiddleware<InContext, OutContext>> {
-  const requestAdapter = createRequestAdapter();
+  const requestAdapter = createRequestAdapter({ origin: options.origin });
 
   return (...args) => {
     const middleware = middlewareFactory(...args);
@@ -152,7 +162,7 @@ export function createMiddleware<
             async function universalMiddlewareFastify(request: FastifyRequest, reply: FastifyReply) {
               const ctx = initContext<InContext>(request);
               const response = await this[universalSymbol](
-                requestAdapter(getRawRequest(request), reply.raw),
+                requestAdapter(getRawRequest(request), reply.raw, { protocol: request.protocol, host: request.host }),
                 ctx,
                 getRuntime(request, reply),
               );

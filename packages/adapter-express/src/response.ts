@@ -3,6 +3,7 @@ import type { OutgoingHttpHeader, OutgoingHttpHeaders } from "node:http";
 import { cancelReplacedBody } from "@universal-middleware/core";
 import { responseAdapter, sendResponse, setResponseHeaders } from "@universal-middleware/node";
 import { pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./const.js";
+import { setHead } from "./head.js";
 import type { DecoratedServerResponse } from "./types.js";
 
 export { responseAdapter, sendResponse };
@@ -82,21 +83,7 @@ function holdHead(nodeResponse: DecoratedServerResponse, onHead: () => void) {
     if (held) return nodeResponse;
     held = true;
     // What this call would have sent is what the pending middlewares get
-    nodeResponse.statusCode = statusCode;
-    if (typeof statusMessage === "string") nodeResponse.statusMessage = statusMessage;
-    else headers ??= statusMessage;
-    if (Array.isArray(headers)) {
-      // A flat [name, value, …] list replaces the headers it names, and may repeat a name
-      for (let i = 0; i < headers.length; i += 2) nodeResponse.removeHeader(String(headers[i]));
-      for (let i = 0; i < headers.length; i += 2) {
-        const value = headers[i + 1];
-        nodeResponse.appendHeader(String(headers[i]), typeof value === "number" ? String(value) : value);
-      }
-    } else if (headers) {
-      for (const [name, value] of Object.entries(headers)) {
-        if (value !== undefined) nodeResponse.setHeader(name, value);
-      }
-    }
+    setHead(nodeResponse, statusCode, statusMessage, headers);
     onHead();
     return nodeResponse;
   };

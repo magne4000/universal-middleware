@@ -1,4 +1,5 @@
 export const requestSymbol = Symbol.for("unRequest");
+export const originSymbol = Symbol.for("unRequestOrigin");
 
 export const env: Record<string, string | undefined> =
   typeof globalThis.process?.env !== "undefined"
