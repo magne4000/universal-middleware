@@ -140,7 +140,10 @@ export function enhance<F extends AnyFn, O extends UniversalOptionsArg>(
     }
   }
   if (typeof options.name === "string") {
-    Object.defineProperty(m, "name", { value: options.name, configurable: true });
+    const descriptor = Object.getOwnPropertyDescriptor(m, "name");
+    if (!descriptor || descriptor.configurable) {
+      Object.defineProperty(m, "name", { value: options.name, configurable: true });
+    }
   }
   return m;
 }

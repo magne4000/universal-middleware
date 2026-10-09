@@ -28,4 +28,12 @@ describe("enhance: name", () => {
     expect(m.name).toBe("original");
     expect(getUniversalProp(m, nameSymbol)).toBeUndefined();
   });
+
+  test("leaves a non-configurable name alone", () => {
+    const original = function original() {};
+    Object.defineProperty(original, "name", { value: "fixed", configurable: false });
+    const m = enhance(original, { name: "logger", immutable: false });
+    expect(m.name).toBe("fixed");
+    expect(getUniversalProp(m, nameSymbol)).toBe("logger");
+  });
 });
