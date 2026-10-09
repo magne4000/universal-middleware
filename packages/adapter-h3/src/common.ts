@@ -92,14 +92,15 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
   };
 }
 
-// `ReadableStream.from` is missing on Bun
-function toWebStream(iterable: AsyncIterable<Uint8Array>): ReadableStream<Uint8Array> {
+// `ReadableStream.from` is missing on Bun. A stream with an encoding emits strings: a response function reads bytes
+function toWebStream(iterable: AsyncIterable<Uint8Array | string>): ReadableStream<Uint8Array> {
   const iterator = iterable[Symbol.asyncIterator]();
+  const encoder = new TextEncoder();
   return new ReadableStream<Uint8Array>({
     async pull(controller) {
       const { value, done } = await iterator.next();
       if (done) controller.close();
-      else controller.enqueue(value);
+      else controller.enqueue(typeof value === "string" ? encoder.encode(value) : value);
     },
     async cancel() {
       await iterator.return?.();
@@ -111,7 +112,7 @@ function toWebStream(iterable: AsyncIterable<Uint8Array>): ReadableStream<Uint8A
 async function toPayload(value: unknown): Promise<{ body: BodyInit | null; type?: string }> {
   if (typeof value === "string") return { body: value, type: MIMES.html };
   if (isBodyInit(value)) return { body: value };
-  if (isStream(value)) return { body: toWebStream(value as AsyncIterable<Uint8Array>) };
+  if (isStream(value)) return { body: toWebStream(value as AsyncIterable<Uint8Array | string>) };
   const { arrayBuffer } = value as { arrayBuffer?: unknown };
   if (typeof arrayBuffer === "function") return { body: await arrayBuffer.call(value), type: (value as Blob).type };
   if (typeof value === "object" || typeof value === "boolean" || typeof value === "number") {

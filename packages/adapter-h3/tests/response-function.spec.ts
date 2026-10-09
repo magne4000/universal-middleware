@@ -1,6 +1,16 @@
+import { createServer } from "node:http";
+import type { AddressInfo } from "node:net";
 import { Readable } from "node:stream";
 import { enhance } from "@universal-middleware/core";
-import { createApp, createError, eventHandler, setResponseHeader, setResponseStatus, toWebHandler } from "h3";
+import {
+  createApp,
+  createError,
+  eventHandler,
+  setResponseHeader,
+  setResponseStatus,
+  toNodeListener,
+  toWebHandler,
+} from "h3";
 import { describe, expect, it } from "vitest";
 import { apply } from "../src/index.js";
 
@@ -13,6 +23,13 @@ const step = enhance(
     return response;
   },
   { name: "step" },
+);
+
+const shout = enhance(
+  () => async (response: Response) => new Response((await response.text()).toUpperCase(), response),
+  {
+    name: "shout",
+  },
 );
 
 async function send(route: () => unknown, withStep: boolean) {
@@ -60,6 +77,23 @@ describe("response function and a route returning a value h3 converts", () => {
       });
     } finally {
       Object.defineProperty(ReadableStream, "from", { value: from, configurable: true, writable: true });
+    }
+  });
+  it("Node stream of strings, read by a response function", async () => {
+    const app = createApp();
+    apply(app, [shout]);
+    app.use(
+      "/route",
+      eventHandler(() => Readable.from(["a", "b"])),
+    );
+    const server = createServer(toNodeListener(app));
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    try {
+      const res = await fetch(`http://127.0.0.1:${(server.address() as AddressInfo).port}/route`);
+      expect(await res.text()).toBe("AB");
+    } finally {
+      server.closeAllConnections();
+      server.close();
     }
   });
   it("object with arrayBuffer() and a type", () =>
