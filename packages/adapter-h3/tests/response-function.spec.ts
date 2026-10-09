@@ -58,9 +58,10 @@ describe("response function and a route returning a value h3 converts", () => {
   it("object as JSON", () =>
     expectLikeH3(() => ({ a: 1 }), { status: 200, type: "application/json", body: '{"a":1}' }));
   it("array as JSON", () => expectLikeH3(() => [1, 2], { status: 200, type: "application/json", body: "[1,2]" }));
-  it("number and boolean as JSON", async () => {
+  it("number, boolean and bigint as JSON", async () => {
     await expectLikeH3(() => 42, { status: 200, type: "application/json", body: "42" });
     await expectLikeH3(() => false, { status: 200, type: "application/json", body: "false" });
+    await expectLikeH3(() => 5n, { status: 200, type: "application/json", body: "5" });
   });
   it("string as HTML", () => expectLikeH3(() => "<p>hi</p>", { status: 200, type: "text/html", body: "<p>hi</p>" }));
   it("null as 204", () => expectLikeH3(() => null, { status: 204, type: null, body: "" }));
@@ -97,6 +98,22 @@ describe("response function and a route returning a value h3 converts", () => {
       server.closeAllConnections();
       server.close();
     }
+  });
+  it("HEAD releases the Node stream", async () => {
+    const source = new Readable({
+      read() {
+        this.push("x");
+      },
+    });
+    const app = createApp();
+    apply(app, [step]);
+    app.use(
+      "/route",
+      eventHandler(() => source),
+    );
+    await toWebHandler(app)(new Request("http://localhost/route", { method: "HEAD" }));
+    await new Promise((resolve) => setImmediate(resolve));
+    expect(source.destroyed).toBe(true);
   });
   it("object with arrayBuffer() and a type", () =>
     expectLikeH3(() => ({ type: "text/plain", arrayBuffer: async () => new TextEncoder().encode("blob").buffer }), {
