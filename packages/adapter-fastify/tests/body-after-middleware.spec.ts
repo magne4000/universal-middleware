@@ -1,7 +1,7 @@
 import http2 from "node:http2";
 import type { AddressInfo } from "node:net";
 import type { UniversalMiddleware } from "@universal-middleware/core";
-import Fastify from "fastify";
+import Fastify, { type FastifyInstance } from "fastify";
 import { describe, expect, it } from "vitest";
 import { apply } from "../src/index.js";
 
@@ -51,8 +51,8 @@ describe("body after a universal middleware", () => {
     const middleware: UniversalMiddleware = async (request) => {
       seen = await request.text();
     };
-    // An HTTP/2 instance isn't assignable to the default `App`
-    await apply(app as any, [middleware]);
+    // An HTTP/2 instance isn't assignable to the default `App` (an HTTP/1 `FastifyInstance`)
+    await apply(app as unknown as FastifyInstance, [middleware]);
     app.post("/echo", async (req) => ({ got: req.body }));
     await app.listen({ port: 0 });
     const client = http2.connect(`http://localhost:${(app.server.address() as AddressInfo).port}`);

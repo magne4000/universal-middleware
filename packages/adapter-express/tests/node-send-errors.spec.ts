@@ -1,4 +1,4 @@
-import { createServer } from "node:http";
+import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import type { UniversalHandler } from "@universal-middleware/core";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -10,25 +10,30 @@ import { createHandler } from "../src/index.js";
 // Ported from srvx#243.
 
 describe("sendResponse — failures while sending", () => {
-  const servers: ReturnType<typeof createServer>[] = [];
+  const servers: Server[] = [];
 
   afterEach(() => {
     for (const server of servers.splice(0)) server.close();
     vi.restoreAllMocks();
   });
 
-  function serve(handler: UniversalHandler): number {
-    const server = createServer(createHandler(() => handler)());
+  // `sent` settles once the handler is done sending the response, and so done deciding what to log
+  function serve(handler: UniversalHandler): { port: number; sent: Promise<void> } {
+    const nodeHandler = createHandler(() => handler)();
+    const sent = Promise.withResolvers<void>();
+    const server = createServer((req, res) => {
+      nodeHandler<Promise<void>>(req, res).then(sent.resolve, sent.reject);
+    });
     servers.push(server);
     server.listen();
-    return (server.address() as AddressInfo).port;
+    return { port: (server.address() as AddressInfo).port, sent: sent.promise };
   }
 
   it("reports a body stream that fails mid-response", async () => {
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     const boom = new Error("body exploded");
 
-    const port = serve(
+    const { port, sent } = serve(
       () =>
         new Response(
           new ReadableStream<Uint8Array>({
@@ -48,6 +53,7 @@ describe("sendResponse — failures while sending", () => {
     await fetch(`http://localhost:${port}/`)
       .then((res) => res.text())
       .catch(() => undefined);
+    await sent;
 
     expect(consoleError).toHaveBeenCalledWith(boom);
   });
@@ -56,14 +62,14 @@ describe("sendResponse — failures while sending", () => {
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     let stop = false;
 
-    const port = serve(
+    const { port, sent } = serve(
       () =>
         new Response(
+          // Endless: backpressure, not a delay, keeps it from outrunning the client
           new ReadableStream<Uint8Array>({
-            async pull(controller) {
+            pull(controller) {
               if (stop) return controller.close();
               controller.enqueue(new Uint8Array(16 * 1024));
-              await new Promise((resolve) => setTimeout(resolve, 10));
             },
           }),
           { headers: { "content-type": "application/octet-stream" } },
@@ -76,7 +82,7 @@ describe("sendResponse — failures while sending", () => {
       const reader = (res.body as ReadableStream<Uint8Array>).getReader();
       await reader.read();
       ctrl.abort();
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await sent;
 
       expect(consoleError).not.toHaveBeenCalled();
     } finally {
@@ -86,18 +92,12 @@ describe("sendResponse — failures while sending", () => {
 
   it("cancels the body, quietly, when the client left before the response was ready", async () => {
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
-    let resolveCancelled!: () => void;
-    const cancelled = new Promise<void>((resolve) => {
-      resolveCancelled = resolve;
-    });
-    let resolveReached!: () => void;
-    const reached = new Promise<void>((resolve) => {
-      resolveReached = resolve;
-    });
+    const cancelled = Promise.withResolvers<void>();
+    const reached = Promise.withResolvers<void>();
 
-    const port = serve(async (request) => {
+    const { port, sent } = serve(async (request) => {
       // Produce the Response only once the client is gone.
-      resolveReached();
+      reached.resolve();
       await new Promise((resolve) => request.signal.addEventListener("abort", resolve, { once: true }));
       return new Response(
         new ReadableStream<Uint8Array>(
@@ -105,7 +105,7 @@ describe("sendResponse — failures while sending", () => {
             pull(controller) {
               controller.enqueue(new Uint8Array(16));
             },
-            cancel: resolveCancelled,
+            cancel: () => cancelled.resolve(),
           },
           { highWaterMark: 0 },
         ),
@@ -114,13 +114,13 @@ describe("sendResponse — failures while sending", () => {
 
     const ctrl = new AbortController();
     const pending = fetch(`http://localhost:${port}/`, { signal: ctrl.signal }).catch(() => undefined);
-    await reached;
+    await reached.promise;
     ctrl.abort();
     await pending;
 
-    await expect(
-      Promise.race([cancelled.then(() => "cancelled"), new Promise((r) => setTimeout(() => r("timeout"), 1000))]),
-    ).resolves.toBe("cancelled");
+    // Times out if the body is never cancelled
+    await cancelled.promise;
+    await sent;
     expect(consoleError).not.toHaveBeenCalled();
   });
 });

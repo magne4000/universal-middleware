@@ -1,4 +1,6 @@
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import * as http from "node:http";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { assert, describe, test } from "vitest";
 import sirv from "../src/middleware";
@@ -574,13 +576,15 @@ describe("dotfiles", () => {
 });
 
 describe("dev", () => {
+  // These tests write files, so they serve their own directory: other spec files read `tests/public` in parallel
   test("should not rely on initial Cache fill", async () => {
-    const server = utils.http({ dev: true });
+    const dir = await mkdtemp(join(tmpdir(), "sirv-dev-"));
+    const server = utils.http({ dev: true }, dir);
 
     try {
       assert.equal((await server.send("GET", "/foo.bar.js")).status, 404);
 
-      await utils.write("foo.bar.js", "hello there");
+      await writeFile(join(dir, "foo.bar.js"), "hello there");
 
       // matches() helper will work but assert here
       const res = await server.send("GET", "/foo.bar.js");
@@ -589,31 +593,32 @@ describe("dev", () => {
       assert.equal(await res.text(), "hello there");
       assert.equal(res.status, 200);
     } finally {
-      await utils.remove("foo.bar.js");
       server.close();
+      await rm(dir, { recursive: true, force: true });
     }
   });
 
   test("should not rely on file cached data", async () => {
-    const server = utils.http({ dev: true });
+    const dir = await mkdtemp(join(tmpdir(), "sirv-dev-"));
+    const server = utils.http({ dev: true }, dir);
 
     try {
-      await utils.write("foo.js", "version 1");
+      await writeFile(join(dir, "foo.js"), "version 1");
 
       // matches() helper will work but assert here
       const res1 = await server.send("GET", "/foo.js");
       assert.equal(await res1.text(), "version 1");
       assert.equal(res1.status, 200);
 
-      await utils.write("foo.js", "version 2");
+      await writeFile(join(dir, "foo.js"), "version 2");
 
       // matches() helper will work but assert here
       const res2 = await server.send("GET", "/foo.js");
       assert.equal(await res2.text(), "version 2");
       assert.equal(res2.status, 200);
     } finally {
-      await utils.remove("foo.js");
       server.close();
+      await rm(dir, { recursive: true, force: true });
     }
   });
 

@@ -1,21 +1,19 @@
 import { enhance } from "@universal-middleware/core";
 import { endlessResponse } from "@universal-middleware/tests/utils";
-import Fastify, { type HTTPMethods } from "fastify";
+import Fastify, { type FastifyInstance, type HTTPMethods } from "fastify";
 import { describe, expect, it } from "vitest";
 import { apply, createHandler } from "../src/index.js";
 
 // A HEAD response has no body: an endless body (SSE, a proxied stream) must be cancelled, not awaited.
 
-async function head(app: ReturnType<typeof Fastify>) {
+async function head(app: FastifyInstance) {
   const host = await app.listen({ port: 0, host: "127.0.0.1" });
   const ctrl = new AbortController();
   try {
-    const res = await Promise.race([
-      fetch(`${host}/events`, { method: "HEAD", signal: ctrl.signal }),
-      new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500)),
-    ]);
+    // A HEAD that never completes (its body stream still awaited) fails the test by timeout
+    const res = await fetch(`${host}/events`, { method: "HEAD", signal: ctrl.signal });
     // Node 22 fails a body read after the abort below, so read it first.
-    return res && new Response(await res.arrayBuffer(), res);
+    return new Response(await res.arrayBuffer(), res);
   } finally {
     ctrl.abort();
     app.server.closeAllConnections();
@@ -31,10 +29,9 @@ describe("HEAD with an endless body", () => {
 
     const res = await head(app);
 
-    expect(res, "HEAD never completed: the body stream is still awaited").not.toBeNull();
-    expect(res?.status).toBe(200);
-    expect(res?.headers.get("content-type")).toBe("text/event-stream");
-    expect(res?.headers.get("x-kept")).toBe("yes");
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toBe("text/event-stream");
+    expect(res.headers.get("x-kept")).toBe("yes");
     expect(state.cancelled).toBe(true);
   });
 
@@ -45,8 +42,7 @@ describe("HEAD with an endless body", () => {
 
     const res = await head(app);
 
-    expect(res, "HEAD never completed: the body stream is still awaited").not.toBeNull();
-    expect(res?.headers.get("x-kept")).toBe("yes");
+    expect(res.headers.get("x-kept")).toBe("yes");
     expect(state.cancelled).toBe(true);
   });
 
@@ -58,8 +54,7 @@ describe("HEAD with an endless body", () => {
 
     const res = await head(app);
 
-    expect(res, "HEAD never completed").not.toBeNull();
-    expect(res?.headers.get("x-kept")).toBe("yes");
+    expect(res.headers.get("x-kept")).toBe("yes");
     // Resolves once the replacement body is cancelled; a leak times the test out
     await cancelled;
   });
@@ -74,8 +69,7 @@ describe("HEAD with an endless body", () => {
 
     const res = await head(app);
 
-    expect(res, "HEAD never completed: the body stream is still awaited").not.toBeNull();
-    expect(res?.status).toBe(200);
+    expect(res.status).toBe(200);
     expect(state.cancelled).toBe(true);
   });
 });
@@ -97,17 +91,17 @@ describe("HEAD with a response function", () => {
   it("keeps the status and headers of a native Response returned unchanged", async () => {
     const res = await headWith((r) => r);
 
-    expect(res?.status).toBe(201);
-    expect(res?.headers.get("x-kept")).toBe("old");
-    expect(await res?.text()).toBe("");
+    expect(res.status).toBe(201);
+    expect(res.headers.get("x-kept")).toBe("old");
+    expect(await res.text()).toBe("");
   });
 
   it("sends the status and headers of a replaced Response", async () => {
     const res = await headWith(() => new Response("replacement", { status: 202, headers: { "x-kept": "new" } }));
 
-    expect(res?.status).toBe(202);
-    expect(res?.headers.get("x-kept")).toBe("new");
-    expect(await res?.text()).toBe("");
+    expect(res.status).toBe(202);
+    expect(res.headers.get("x-kept")).toBe("new");
+    expect(await res.text()).toBe("");
   });
 
   it("lets a response function read the body", async () => {
@@ -117,9 +111,9 @@ describe("HEAD with a response function", () => {
       return r;
     });
 
-    expect(res?.status).toBe(201);
-    expect(res?.headers.get("x-json")).toBe("hello");
-    expect(res?.headers.get("x-size")).toBe("7");
+    expect(res.status).toBe(201);
+    expect(res.headers.get("x-json")).toBe("hello");
+    expect(res.headers.get("x-size")).toBe("7");
   });
 
   it.each<[string, HTTPMethods | HTTPMethods[]]>([
@@ -128,8 +122,8 @@ describe("HEAD with a response function", () => {
   ])("sends the content-length of the response on %s", async (_, method) => {
     const declared = () => new Response("hello", { headers: { "content-length": "5" } });
 
-    expect((await headWith((r) => r, declared, method))?.headers.get("content-length")).toBe("5");
-    expect((await headWith((r) => r, source, method))?.headers.get("content-length")).toBeNull();
+    expect((await headWith((r) => r, declared, method)).headers.get("content-length")).toBe("5");
+    expect((await headWith((r) => r, source, method)).headers.get("content-length")).toBeNull();
   });
 
   it("completes when an endless body is replaced by a finite one", async () => {
@@ -139,8 +133,7 @@ describe("HEAD with a response function", () => {
       () => response,
     );
 
-    expect(res, "HEAD never completed").not.toBeNull();
-    expect(res?.status).toBe(202);
+    expect(res.status).toBe(202);
     expect(state.cancelled, "the replaced body was leaked").toBe(true);
   });
 });

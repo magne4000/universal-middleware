@@ -35,14 +35,15 @@ function createChunks(strings: string[]): Uint8Array[] {
 }
 
 // Helper to collect chunks from a ReadableStream
-async function collectChunks(stream: ReadableStream<Uint8Array>): Promise<Uint8Array<any>[]> {
+async function collectChunks(stream: ReadableStream<Uint8Array>): Promise<Uint8Array<ArrayBuffer>[]> {
   const reader = stream.getReader();
-  const chunks: Uint8Array[] = [];
+  const chunks: Uint8Array<ArrayBuffer>[] = [];
 
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
-    chunks.push(value);
+    // The compressors emit ArrayBuffer-backed chunks (`new Blob()` needs that); the stream type only says ArrayBufferLike
+    chunks.push(value as Uint8Array<ArrayBuffer>);
   }
 
   return chunks;

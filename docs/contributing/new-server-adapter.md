@@ -20,7 +20,7 @@ packages/adapter-{server-name}/
 ├── readme.md
 ├── tsconfig.json
 ├── tsdown.config.ts
-├── vitest.config.ts
+├── vitest.config.ts   # Only if the tests need options
 └── wrangler.toml      # Cloudflare configuration (if applicable)
 ```
 
@@ -64,9 +64,8 @@ packages/adapter-{server-name}/
 - Configure Cloudflare Workers/Pages deployment
 - Set compatibility date and flags
 
-#### `vitest.config.ts`
-- Configure Vitest for testing
-- Extend from root configuration if needed
+#### `vitest.config.ts` (if the tests need options)
+- Vitest's defaults need no config file; add one only for options such as a longer timeout
 
 ## 2. Update Core Package
 

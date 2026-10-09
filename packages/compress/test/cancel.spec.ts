@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, it } from "vitest";
 import { compressStream } from "../src/zlib/stream";
 
 // When a client disconnects mid-response the compressed stream is cancelled.
@@ -9,16 +9,16 @@ import { compressStream } from "../src/zlib/stream";
 
 describe("compressStream (zlib) :: cancellation", () => {
   it("should cancel the source stream when the compressed output is cancelled", async () => {
-    let sourceCancelled = false;
+    const sourceCancelled = Promise.withResolvers<void>();
 
+    // One chunk (zlib flushes it, so the output has something to read), then the source stays open:
+    // only a cancellation can end it
     const input = new ReadableStream<Uint8Array>({
-      async pull(controller) {
+      start(controller) {
         controller.enqueue(new Uint8Array(1024));
-        // Keep the producer from spinning while the test drives the consumer.
-        await new Promise((resolve) => setTimeout(resolve, 5));
       },
       cancel() {
-        sourceCancelled = true;
+        sourceCancelled.resolve();
       },
     });
 
@@ -28,8 +28,7 @@ describe("compressStream (zlib) :: cancellation", () => {
     await reader.read();
     await reader.cancel();
 
-    await new Promise((resolve) => setTimeout(resolve, 50));
-
-    expect(sourceCancelled).toBe(true);
+    // Times out if the cancellation never reaches the source
+    await sourceCancelled.promise;
   });
 });
