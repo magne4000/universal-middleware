@@ -126,6 +126,10 @@ export const universalOnBeforeResponse = defineResponseMiddleware(
       );
 
       if (newResponse) {
+        // A replaced HEAD body is never read, and an endless one would never be released
+        if (event.method === "HEAD" && newResponse !== response.body) {
+          void (response.body as Response).body?.cancel().catch(() => {});
+        }
         await sendWebResponse(event, withoutHeadBody(event, newResponse));
       }
     }

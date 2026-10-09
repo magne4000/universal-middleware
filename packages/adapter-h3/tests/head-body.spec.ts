@@ -158,7 +158,7 @@ describe("HEAD with a response function", () => {
   });
 
   it("completes when an endless body is replaced by a finite one", async () => {
-    const { response } = idleStream();
+    const { state, response } = idleStream();
     const res = await headWith(
       () => new Response("replacement", { status: 202 }),
       () => response,
@@ -166,5 +166,6 @@ describe("HEAD with a response function", () => {
 
     expect(res, "HEAD never completed").not.toBeNull();
     expect(res?.status).toBe(202);
+    expect(state.cancelled, "the replaced body was leaked").toBe(true);
   });
 });

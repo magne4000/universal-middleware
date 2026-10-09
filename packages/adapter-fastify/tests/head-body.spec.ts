@@ -1,5 +1,5 @@
 import { enhance } from "@universal-middleware/core";
-import Fastify from "fastify";
+import Fastify, { type HTTPMethods } from "fastify";
 import { describe, expect, it } from "vitest";
 import { apply, createHandler } from "../src/index.js";
 
@@ -103,10 +103,14 @@ describe("HEAD with an endless body", () => {
 describe("HEAD with a response function", () => {
   const source = () => new Response('"hello"', { status: 201, headers: { "x-kept": "old" } });
 
-  async function headWith(fn: (res: Response) => Response | Promise<Response>, handler: () => Response = source) {
+  async function headWith(
+    fn: (res: Response) => Response | Promise<Response>,
+    handler: () => Response = source,
+    method: HTTPMethods | HTTPMethods[] = ["GET", "HEAD"],
+  ) {
     const app = Fastify();
     await apply(app, [enhance(() => fn, { name: "after", order: -100 })]);
-    app.route({ method: ["GET", "HEAD"], url: "/events", handler: () => handler() });
+    app.route({ method, url: "/events", handler: () => handler() });
     return head(app);
   }
 
@@ -136,6 +140,16 @@ describe("HEAD with a response function", () => {
     expect(res?.status).toBe(201);
     expect(res?.headers.get("x-json")).toBe("hello");
     expect(res?.headers.get("x-size")).toBe("7");
+  });
+
+  it.each<[string, HTTPMethods | HTTPMethods[]]>([
+    ["a HEAD route", ["GET", "HEAD"]],
+    ["the HEAD route Fastify adds to a GET one", "GET"],
+  ])("sends the content-length of the response on %s", async (_, method) => {
+    const declared = () => new Response("hello", { headers: { "content-length": "5" } });
+
+    expect((await headWith((r) => r, declared, method))?.headers.get("content-length")).toBe("5");
+    expect((await headWith((r) => r, source, method))?.headers.get("content-length")).toBeNull();
   });
 
   it("completes when an endless body is replaced by a finite one", async () => {
