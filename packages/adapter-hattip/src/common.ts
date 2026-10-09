@@ -94,6 +94,10 @@ export function createMiddleware<
           context[pendingMiddlewaresSymbol] = pending;
         }
         cancelReplacedBody(res, actualRes);
+        // Nothing is sent for HEAD: the replaced body is released now, not after `cancelReplacedBody`'s delay
+        if (actualRes && actualRes !== res && context.request.method === "HEAD") {
+          void res.body?.cancel().catch(() => {});
+        }
         return withoutHeadBody(context, actualRes ?? res);
       }
       if (response !== null && typeof response === "object") {

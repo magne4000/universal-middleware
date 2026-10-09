@@ -128,6 +128,10 @@ export const universalOnBeforeResponse = defineResponseMiddleware(
       );
 
       if (newResponse) {
+        // Nothing is sent for HEAD: the replaced body is released now, not after `cancelReplacedBody`'s delay
+        if (event.method === "HEAD" && newResponse !== response.body) {
+          void (response.body as Response).body?.cancel().catch(() => {});
+        }
         await sendWebResponse(event, withoutHeadBody(event, newResponse));
       }
     }

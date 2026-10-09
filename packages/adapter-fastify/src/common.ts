@@ -236,6 +236,8 @@ export function createMiddleware<
             }
             // An idle stream would keep the HEAD response open
             void r.body?.cancel().catch(() => {});
+            // Nothing is sent for HEAD: the replaced body is released now, not after `cancelReplacedBody`'s delay
+            if (r !== payload) void (payload as Response).body?.cancel().catch(() => {});
             // `undefined` would keep the previous payload, `null` breaks Fastify's own HEAD hook, and a string
             // makes Fastify send `content-length: 0`. An empty stream keeps the content-length of `r`, if any.
             return new ReadableStream({ start: (controller) => controller.close() });
