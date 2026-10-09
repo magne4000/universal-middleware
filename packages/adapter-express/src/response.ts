@@ -1,3 +1,4 @@
+import { cancelReplacedBody } from "@universal-middleware/core";
 import { responseAdapter, sendResponse, setResponseHeaders } from "@universal-middleware/node";
 import { pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./const.js";
 import type { DecoratedServerResponse } from "./types.js";
@@ -33,7 +34,10 @@ function override<T extends DecoratedServerResponse>(
     }
     if (args[0] && args[0].length > 0) {
       // console.log("write", args[0]);
-      forwardTo.write(args[0]).catch(console.error);
+      // Once the captured output is cancelled (the response was replaced), the app's later writes are dropped
+      forwardTo.write(args[0]).catch((error) => {
+        if (forwardTo.desiredSize !== null) console.error(error);
+      });
     }
     if (key === "end") {
       // console.log("end");
@@ -104,6 +108,7 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse, next?: (err?
       response = responseAdapter(nodeResponse, reader1);
       for (const middleware of middlewares) {
         const tmp = await middleware(response);
+        cancelReplacedBody(response, tmp);
         // Do not hard-fail when encountering an undefined Response
         if (tmp) response = tmp;
       }
@@ -123,6 +128,8 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse, next?: (err?
     if (!response) return;
 
     const readableToOriginal = response.body ?? reader2;
+    // `reader2` carries the app's output only for a response without a body: otherwise it would buffer a copy of it
+    if (readableToOriginal !== reader2) reader2.cancel().catch(() => {});
 
     setResponseHeaders(response, nodeResponse, true);
     original.writeHead.restore();

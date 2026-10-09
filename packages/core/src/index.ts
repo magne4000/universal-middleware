@@ -24,6 +24,7 @@ export type * from "./types.js";
 export {
   attachUniversal,
   bindUniversal,
+  cancelReplacedBody,
   cloneRequest,
   enhance,
   getUniversal,

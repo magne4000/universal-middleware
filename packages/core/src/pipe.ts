@@ -1,6 +1,6 @@
 import { universalSymbol } from "./const";
 import type { AnyFn, Awaitable, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
-import { bindUniversal, getUniversal, isHandler, ordered } from "./utils";
+import { bindUniversal, cancelReplacedBody, getUniversal, isHandler, ordered } from "./utils";
 
 type _Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
 type Out<T> = T extends UniversalFn<infer X, infer _> ? _Out<X> : _Out<T>;
@@ -147,6 +147,7 @@ export function pipe<F extends AnyMiddleware[]>(
     for (const m of pending) {
       const r = await m(_response);
       if (r) {
+        cancelReplacedBody(_response, r);
         _response = r;
       }
     }

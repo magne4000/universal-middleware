@@ -7,7 +7,13 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import {
+  bindUniversal,
+  cancelReplacedBody,
+  contextSymbol,
+  getAdapterRuntime,
+  universalSymbol,
+} from "@universal-middleware/core";
 
 // Number of response functions waiting for the response of `context.next()`
 const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
@@ -87,10 +93,7 @@ export function createMiddleware<
         } finally {
           context[pendingMiddlewaresSymbol] = pending;
         }
-        // A replaced HEAD body is never read, and an endless one would never be released
-        if (actualRes && actualRes !== res && context.request.method === "HEAD") {
-          void res.body?.cancel().catch(() => {});
-        }
+        cancelReplacedBody(res, actualRes);
         return withoutHeadBody(context, actualRes ?? res);
       }
       if (response !== null && typeof response === "object") {

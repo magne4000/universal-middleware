@@ -9,6 +9,7 @@ import type {
 import {
   attachUniversal,
   bindUniversal,
+  cancelReplacedBody,
   cloneRequest,
   contextSymbol,
   getAdapterRuntime,
@@ -175,6 +176,7 @@ export function createMiddleware<
             for (const p of elysiaContext[pendingSymbol]) {
               const res = await p(currentResponse);
               if (res) {
+                cancelReplacedBody(currentResponse, res);
                 currentResponse = res;
               }
             }

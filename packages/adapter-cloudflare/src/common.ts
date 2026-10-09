@@ -12,7 +12,13 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import {
+  bindUniversal,
+  cancelReplacedBody,
+  contextSymbol,
+  getAdapterRuntime,
+  universalSymbol,
+} from "@universal-middleware/core";
 
 export type CloudflareHandler<In extends Universal.Context> = {
   fetch: UniversalFn<UniversalHandler<In>, ExportedHandlerFetchHandler>;
@@ -84,7 +90,9 @@ export function createPagesFunction<
 
       if (typeof response === "function") {
         const cloudflareResponse = await context.next();
-        const res = await response(cloudflareResponse as unknown as Response);
+        const original = cloudflareResponse as unknown as Response;
+        const res = await response(original);
+        cancelReplacedBody(original, res);
         return (res ?? cloudflareResponse) as unknown as CloudflareResponse;
       }
       if (response !== null && typeof response === "object") {

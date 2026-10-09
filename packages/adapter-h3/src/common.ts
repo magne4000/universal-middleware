@@ -7,6 +7,7 @@ import type {
 } from "@universal-middleware/core";
 import {
   bindUniversal,
+  cancelReplacedBody,
   contextSymbol,
   getAdapterRuntime,
   isBodyInit,
@@ -120,16 +121,13 @@ export const universalOnBeforeResponse = defineResponseMiddleware(
         async (prev, curr) => {
           const p = await prev;
           const newR = await curr(p);
+          cancelReplacedBody(p, newR);
           return newR ?? p;
         },
         Promise.resolve(response.body as Response),
       );
 
       if (newResponse) {
-        // A replaced HEAD body is never read, and an endless one would never be released
-        if (event.method === "HEAD" && newResponse !== response.body) {
-          void (response.body as Response).body?.cancel().catch(() => {});
-        }
         await sendWebResponse(event, withoutHeadBody(event, newResponse));
       }
     }
