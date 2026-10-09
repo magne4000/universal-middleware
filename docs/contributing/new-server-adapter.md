@@ -118,10 +118,11 @@ export * from "@universal-middleware/{server-name}";
 
 ## 4. Update Build and Test Configuration
 
-### `vitest.workspace.ts`
-Add the new adapter's vitest config:
-```typescript
-"./packages/adapter-{server-name}/vitest.config.ts",
+### `.github/workflows/tests.yml`
+Add the new adapter to the test matrix, or CI will not run its tests:
+```yaml
+cwd:
+  - packages/adapter-{server-name}
 ```
 
 ### `packages/tsdown-config/index.ts`
@@ -183,7 +184,7 @@ servers?: ('hono' | 'express' | 'hattip' | 'fastify' | 'h3' | 'webroute' | 'clou
 
 ### `docs/reference/runtime-adapter.md`
 Add a new runtime adapter example section:
-```typescript
+````md
 ```ts twoslash [{server-name}]
 // @noErrors
 import type { Runtime, {ServerName}Adapter } from "@universal-middleware/core";
@@ -204,11 +205,11 @@ const runtime: RuntimeAdapter;
 runtime.{server-name};
 //      ^^^^^^^^^^^^
 ```
-```
+````
 
 ### `docs/recipes/params-handler.md`
 Add usage example in the code group:
-```typescript
+````md
 ```ts twoslash [{server-name}.ts]
 import paramHandler from "@universal-middleware-examples/tool/params-handler-{server-name}";
 import { serve } from "{server-framework}";
@@ -225,31 +226,30 @@ const server = serve({
 
 export default server;
 ```
-```
+````
 
 ### `docs/recipes/context-middleware.md`
 Add usage example in the code group:
-```typescript
+````md
 ```ts twoslash [{server-name}.ts]
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-{server-name}";
 import { serve } from "{server-framework}";
-import { apply, getContext } from "@universal-middleware/{server-name}";
+import { apply } from "@universal-middleware/{server-name}";
 
 const server = serve({
   port: 3000,
   fetch: apply([
     contextMiddleware("world"),
     // Handler that uses the context
-    () => (request, ctx, runtime) => {
-      const universalCtx = getContext<{ hello: string }>(runtime);
-      return new Response(`Hello ${universalCtx.hello}`);
+    () => (request, ctx) => {
+      return new Response(`Hello ${ctx.hello}`);
     }
   ])
 });
 
 export default server;
 ```
-```
+````
 
 ## 6. Add Test Examples
 
@@ -259,7 +259,7 @@ Create a test entry file following the pattern of existing adapters.
 ### `tests-examples/tests-tool/package.json`
 1. Add dev script:
    ```json
-   "dev:{server-name}": "node --import @swc-node/register/esm-register src/{server-name}-entry.ts"
+   "dev:{server-name}": "tsx src/{server-name}-entry.ts"
    ```
 2. Add prod script:
    ```json
@@ -326,7 +326,7 @@ When creating a new server adapter, ensure you've updated:
 - [ ] Updated `packages/universal-middleware/test/common.ts` adapters array
 
 ### Build & Test Configuration
-- [ ] Updated `vitest.workspace.ts`
+- [ ] Added the package to `matrix.cwd` in `.github/workflows/tests.yml`
 - [ ] Added server to `packages/tsdown-config/index.ts` `middlewareServers` (covers sirv and compress)
 
 ### Documentation

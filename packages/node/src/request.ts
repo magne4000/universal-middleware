@@ -51,7 +51,7 @@ export interface NodeRequestAdapterOptions {
    * Whether to trust the forwarding headers. `X-Forwarded-*` is used, with the
    * standard `Forwarded` header (RFC 7239) filling any value it omits:
    * `proto`/`host` determine the origin when `origin` and
-   * `process.env.ORIGIN` are not set, and `for` determines the IP address.
+   * `process.env.ORIGIN` are not set.
    * The first entry is used when several are present, matching Express's
    * `trust proxy` — it is the client-facing value the proxy set. Defaults to
    * true if `process.env.TRUST_PROXY` is set to `1`, otherwise false.
@@ -65,7 +65,6 @@ export function createRequestAdapter(
 ): (req: DecoratedRequest, res: ServerResponse) => Request {
   const { origin = env.ORIGIN, trustProxy = trustsProxy() } = options;
 
-  // eslint-disable-next-line prefer-const
   let { protocol: protocolOverride, host: hostOverride } = origin ? new URL(origin) : ({} as Record<string, undefined>);
 
   if (protocolOverride) {

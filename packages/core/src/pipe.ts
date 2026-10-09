@@ -57,7 +57,7 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
  * @example piping a universal middleware into a universal handler
  * ```js
  * const m = pipe(
- *   (request, context, runtime) => return { status: "OK" },
+ *   (request, context, runtime) => ({ status: "OK" }),
  *   (request, context, runtime) => new Response(context.status),
  * );
  *
@@ -91,7 +91,7 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
  * import someExpressHandler from "my-lib/express";
  *
  * const m = pipe(
- *   (request, context, runtime) => return { status: "OK" },
+ *   (request, context, runtime) => ({ status: "OK" }),
  *   someExpressHandler,
  * );
  *
@@ -110,12 +110,12 @@ export function pipe<F extends AnyMiddleware[]>(
   this: { noCast?: boolean } | void,
   ...a: Pipe<F> extends F ? F : Pipe<F>
 ): ComposeReturnType<F> {
-  const ordererArgs = ordered(a);
+  const orderedArgs = ordered(a);
   const fn: UniversalMiddleware<any, any> = async function pipeInternal(request, context, runtime) {
     const pending: ((response: Response) => Awaitable<Response | undefined>)[] = [];
 
     let _response: Response | undefined;
-    for (const m of ordererArgs) {
+    for (const m of orderedArgs) {
       // only execute a handler if we still have no response
       if (isHandler(m) && _response) {
         continue;
@@ -128,7 +128,7 @@ export function pipe<F extends AnyMiddleware[]>(
         pending.push(response);
       } else if (response !== null && typeof response === "object") {
         // Do not override response if it already exists.
-        // The only to actually update the response is through a Response Function.
+        // The only way to replace it is through a Response Function.
         if (response instanceof Response) {
           if (!_response) {
             _response = response;
