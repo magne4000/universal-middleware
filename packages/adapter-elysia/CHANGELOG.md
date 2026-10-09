@@ -1,5 +1,22 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/elysia-v0.3.2...elysia-v0.3.3) (2024-12-09)
 
+## 0.7.2
+
+### Patch Changes
+
+- aa3d958: When a response function replaces the Response, the body of the replaced one is cancelled, so an endless body (Server-Sent Events, a proxied stream) no longer keeps running. It is left alone when the replacement still reads it (the same stream, `pipeThrough`, `clone()`, `text()`, a wrapper that pulls from it). With Express, a response function no longer makes the adapter keep a second copy of the app's output in memory.
+- 967b047: The packages declare `engines.node: ">=22"`, the versions they are built for and tested on. Node 20 reached its end of life in April 2026; package managers now warn when installing on it.
+- 936456e: `@universal-middleware/h3` and `@universal-middleware/elysia` now declare `h3` and `elysia` as peer dependencies, so they resolve the framework they import under strict package managers (pnpm without hoisting, Yarn PnP).
+- eca2954: Framework peer dependencies accept the whole major version (`hono ^4`, `fastify ^5`, `h3 ^1`, `elysia ^1`, `@webroute/route ^0.8`, `@cloudflare/workers-types ^4 || ^5`) instead of the latest release when the package was built (`hono ^4.13.13`, `@cloudflare/workers-types ^5.20261004.1`, …), which gave apps on an older minor an unmet peer warning.
+- Updated dependencies [aa3d958]
+- Updated dependencies [7d163e4]
+- Updated dependencies [967b047]
+- Updated dependencies [a8c7d38]
+- Updated dependencies [3953127]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [eca2954]
+  - @universal-middleware/core@0.6.1
+
 ## 0.7.1
 
 ### Patch Changes

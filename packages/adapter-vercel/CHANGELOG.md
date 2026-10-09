@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.4.36
+
+### Patch Changes
+
+- d1363db: The packages that the published files import, at runtime or only in their types, are declared as peer dependencies: each adapter's framework (optional for type-only packages such as `@cloudflare/workers-types`), and for compress and sirv the frameworks of their per-server entries, all optional. The Vercel adapter no longer installs `@universal-middleware/express`, which it only needs for types; it and the other adapter packages it references are optional peers.
+- 967b047: The packages declare `engines.node: ">=22"`, the versions they are built for and tested on. Node 20 reached its end of life in April 2026; package managers now warn when installing on it.
+- eca2954: Framework peer dependencies accept the whole major version (`hono ^4`, `fastify ^5`, `h3 ^1`, `elysia ^1`, `@webroute/route ^0.8`, `@cloudflare/workers-types ^4 || ^5`) instead of the latest release when the package was built (`hono ^4.13.13`, `@cloudflare/workers-types ^5.20261004.1`, …), which gave apps on an older minor an unmet peer warning.
+- bbe2ee8: The bundler plugin recognizes `handler` and `middleware` files and strips `outbase` with Windows path separators, where its patterns expected two backslashes instead of one. The Vercel adapter's srvx Node handler creates its request adapter once instead of on every request.
+- eca2954: The Vercel adapter no longer declares `express` as a peer dependency: none of its published files import it, only `@universal-middleware/express`. It required `^5.2.1`, so an Express 4 app got an unmet peer warning, although the adapter works with both.
+- Updated dependencies [aa3d958]
+- Updated dependencies [7d163e4]
+- Updated dependencies [a67d495]
+- Updated dependencies [d1363db]
+- Updated dependencies [967b047]
+- Updated dependencies [a8c7d38]
+- Updated dependencies [bbe2ee8]
+- Updated dependencies [3953127]
+- Updated dependencies [e0215e0]
+- Updated dependencies [92a3206]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [b038980]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [936456e]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [94a8ea6]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [2d36e0d]
+- Updated dependencies [92a3206]
+- Updated dependencies [01f8ccb]
+- Updated dependencies [eca2954]
+  - @universal-middleware/core@0.6.1
+  - @universal-middleware/express@0.5.2
+  - @universal-middleware/fastify@0.6.2
+  - @universal-middleware/h3@0.5.2
+  - @universal-middleware/hattip@0.5.2
+  - @universal-middleware/hono@0.5.2
+  - @universal-middleware/srvx@0.2.2
+  - @universal-middleware/elysia@0.7.2
+  - @universal-middleware/node@0.2.7
+
 ## 0.4.35
 
 ### Patch Changes

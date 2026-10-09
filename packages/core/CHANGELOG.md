@@ -1,5 +1,17 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/core-v0.3.2...core-v0.3.3) (2024-12-09)
 
+## 0.6.1
+
+### Patch Changes
+
+- aa3d958: When a response function replaces the Response, the body of the replaced one is cancelled, so an endless body (Server-Sent Events, a proxied stream) no longer keeps running. It is left alone when the replacement still reads it (the same stream, `pipeThrough`, `clone()`, `text()`, a wrapper that pulls from it). With Express, a response function no longer makes the adapter keep a second copy of the app's output in memory.
+- 7d163e4: With `handle404`, a request no route matches gets a 404 whatever its method. A `PUT`, `DELETE`, `OPTIONS` or other method that was not `GET`, `POST` or `PATCH` threw "No Response found" as soon as a middleware was registered.
+- 967b047: The packages declare `engines.node: ">=22"`, the versions they are built for and tested on. Node 20 reached its end of life in April 2026; package managers now warn when installing on it.
+- a8c7d38: `enhance(fn, { name })` also sets the `name` property of the returned function, so `enhance(fn, { name: 'logger' }).name` is `'logger'`. A clone made without a `name` option keeps the original function's name instead of `extendedFunction`. With `immutable: false`, a function whose `name` is non-configurable keeps it; `nameSymbol` still holds the given name.
+- 3953127: `isHandler` is now exported, so adapters that install handlers themselves can classify them the same way core does.
+- 6f3d3dc: A `HEAD` request is answered by the `GET` route or middleware when it has no `HEAD` route. This also applies to a middleware or handler with a `path`, as it already did without one.
+- eca2954: Framework peer dependencies accept the whole major version (`hono ^4`, `fastify ^5`, `h3 ^1`, `elysia ^1`, `@webroute/route ^0.8`, `@cloudflare/workers-types ^4 || ^5`) instead of the latest release when the package was built (`hono ^4.13.13`, `@cloudflare/workers-types ^5.20261004.1`, …), which gave apps on an older minor an unmet peer warning.
+
 ## 0.6.0
 
 ### Minor Changes

@@ -1,5 +1,47 @@
 ## [0.5.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.4...universal-middleware-v0.5.5) (2024-12-09)
 
+## 0.6.34
+
+### Patch Changes
+
+- 967b047: The packages declare `engines.node: ">=22"`, the versions they are built for and tested on. Node 20 reached its end of life in April 2026; package managers now warn when installing on it.
+- e1f3883: The types the bundler plugin generates for each server no longer fail a type check with `skipLibCheck: false` (`Type 'unknown' does not satisfy the constraint 'Context'`). As a result, a generated middleware's type now carries the context the middleware reads, for example `HonoMiddleware<{ hello?: string }, Universal.Context>`, where every middleware had `Universal.Context` before.
+- d1363db: The `Options` and `Report` types are exported. `@rollup/plugin-commonjs` and `@rollup/plugin-node-resolve` are no longer listed as peer dependencies: the plugin does not use them, and the declared range (`^28`) caused peer warnings with the current major.
+- e1b1c5c: The bundler plugin applies its `dts`, `externalDependencies` and `ignoreRecommendations` options where they were ignored: with `dts: false`, package.json no longer gets `types` entries for files that are not generated; with `externalDependencies: true`, the `@universal-middleware/*` packages left external are added to `dependencies`; with esbuild, `ignoreRecommendations` silences the warning about array entry points.
+- ed151f6: The bundler plugin writes `package.json` with a trailing newline, and leaves it untouched when its `exports` did not change.
+- bbe2ee8: The bundler plugin recognizes `handler` and `middleware` files and strips `outbase` with Windows path separators, where its patterns expected two backslashes instead of one. The Vercel adapter's srvx Node handler creates its request adapter once instead of on every request.
+- Updated dependencies [aa3d958]
+- Updated dependencies [7d163e4]
+- Updated dependencies [a67d495]
+- Updated dependencies [d1363db]
+- Updated dependencies [967b047]
+- Updated dependencies [a8c7d38]
+- Updated dependencies [bbe2ee8]
+- Updated dependencies [3953127]
+- Updated dependencies [e0215e0]
+- Updated dependencies [92a3206]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [b038980]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [936456e]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [94a8ea6]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [eca2954]
+- Updated dependencies [bbe2ee8]
+- Updated dependencies [eca2954]
+  - @universal-middleware/core@0.6.1
+  - @universal-middleware/express@0.5.2
+  - @universal-middleware/fastify@0.6.2
+  - @universal-middleware/h3@0.5.2
+  - @universal-middleware/hattip@0.5.2
+  - @universal-middleware/hono@0.5.2
+  - @universal-middleware/srvx@0.2.2
+  - @universal-middleware/elysia@0.7.2
+  - @universal-middleware/cloudflare@0.6.2
+  - @universal-middleware/webroute@0.4.14
+  - @universal-middleware/vercel@0.4.36
+
 ## 0.6.33
 
 ### Patch Changes

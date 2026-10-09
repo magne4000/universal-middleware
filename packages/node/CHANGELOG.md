@@ -1,5 +1,22 @@
 # @universal-middleware/node
 
+## 0.2.7
+
+### Patch Changes
+
+- 967b047: The packages declare `engines.node: ">=22"`, the versions they are built for and tested on. Node 20 reached its end of life in April 2026; package managers now warn when installing on it.
+- 2d36e0d: A request without a `Host` header gets `localhost` as its host every time, not only the first time: later ones got the URL `http://undefined/…`.
+- 92a3206: An HTTP/2 request takes its host from the `:authority` pseudo-header, which HTTP/2 clients send instead of `Host`, and which wins over a `Host` header when both are present (RFC 9113 §8.3.1). A request without a `Host` header got `localhost` and a warning before.
+- 01f8ccb: A relative redirect `Location` is made absolute with the same protocol as the request URL: Express's `req.protocol` is used, as `createRequestAdapter` does. Behind a proxy that terminates TLS, with Express's `trust proxy` enabled, a redirect to `/login` was turned into `http://…/login` while the request URL was `https://…`.
+- Updated dependencies [aa3d958]
+- Updated dependencies [7d163e4]
+- Updated dependencies [967b047]
+- Updated dependencies [a8c7d38]
+- Updated dependencies [3953127]
+- Updated dependencies [6f3d3dc]
+- Updated dependencies [eca2954]
+  - @universal-middleware/core@0.6.1
+
 ## 0.2.6
 
 ### Patch Changes
