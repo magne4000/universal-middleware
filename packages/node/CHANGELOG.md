@@ -1,5 +1,20 @@
 # @universal-middleware/node
 
+## 0.2.8
+
+### Patch Changes
+
+- 956083e: The `Request` the Express adapter makes again once a universal middleware has read the body reuses the abort signal of the first one, instead of adding a `close` listener to the response each time: 11 middlewares that read the body raised a `MaxListenersExceededWarning`.
+- c7e1579: The request URL takes its host, like its protocol, from Express's `trust proxy` setting: the first `X-Forwarded-Host` when the setting trusts the peer, with Express 4 and 5. Behind a proxy that terminates TLS, the URL was `https://<internal host>/…`. A relative redirect `Location` read by `responseAdapter` is made absolute with the origin of the request URL, so it follows `trust proxy` and the `origin` option too.
+  
+  `createRequestAdapter`'s adapter takes an optional third argument, the protocol and host the server framework resolved for the request (`RequestOrigin`).
+- 956083e: `sendResponse` no longer sends `Content-Length: 0` with a 204 Response, which must not carry one, nor with a 304, whose `Content-Length` describes the 200 response (RFC 9110 §8.6). Other Responses without a body still get it.
+- 956083e: `responseAdapter` makes a relative redirect `Location` absolute with an HTTP/2 request's `:authority`, as `createRequestAdapter` does for the request URL. It used `localhost`, as an HTTP/2 request may have no `Host` header.
+- 956083e: A request whose `Host` header, or trusted forwarded host, isn't a host and an optional port is rejected with a `BadRequestError` (400), as is `OPTIONS *`. The header was pasted in front of the path: with `Host: x/admin?`, a request for `/public` got the URL `http://x/admin?/public`, so a universal handler saw the path `/admin` while Express or Fastify routed `/public`. A request whose target is a full URL (`GET http://example.com/path`) takes its host and path from it, instead of failing with a 500. Without `next`, the Express adapter answers a `BadRequestError` with a 400 and doesn't log it.
+- d8e6816: `sendResponse` sends a body already in memory (a string, a buffer, JSON, a stream that is already complete) in one write, with its `Content-Length`, instead of chunked. It streams any other Web stream body itself, as fast as the client takes it, rather than through `Readable.fromWeb` and `pipeline`, and no longer imports `node:stream` for every response. `setResponseHeaders` no longer copies the Node response's headers outside of mirror mode.
+- Updated dependencies [d8e6816]
+  - @universal-middleware/core@0.6.2
+
 ## 0.2.7
 
 ### Patch Changes

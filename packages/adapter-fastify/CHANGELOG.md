@@ -1,5 +1,27 @@
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.2...fastify-v0.4.3) (2024-12-09)
 
+## 0.6.3
+
+### Patch Changes
+
+- d8e6816: The middlewares registered in the same Fastify instance share one `onSend` hook, which runs their response functions, instead of adding one hook each that every request went through.
+- c7e1579: The request URL has the protocol and host of Fastify's `request.protocol` and `request.host`, which follow its `trustProxy` option: the host was the `Host` header. `createHandler`, `createMiddleware` and `apply` take an `origin` option (`FastifyAdapterOptions`), which sets the origin of the URL, as `process.env.ORIGIN` does.
+- 55fba6e: The request URL has the protocol of Fastify's `request.protocol`, which follows Fastify's `trustProxy` option, as the Express adapter follows Express's `trust proxy`. Behind a proxy that terminates TLS, with `trustProxy` enabled, the URL was `http://…`.
+- 55fba6e: Under a response function, a Fastify route's response reaches the client whatever it was sent with:
+  
+  - a Node stream (`reply.send(fs.createReadStream(…))`) failed with a 500, "Payload is not a Response or BodyInit compatible";
+  - a universal handler's Response with immutable headers (`Response.redirect()`, a `fetch()` response) failed with a 500, "immutable", when the reply had a header to merge into it;
+  - a header set as a list (`reply.header("link", [a, b])`) kept only its last value, and logged a warning on every request. All its values are sent.
+- Updated dependencies [d8e6816]
+- Updated dependencies [956083e]
+- Updated dependencies [c7e1579]
+- Updated dependencies [956083e]
+- Updated dependencies [956083e]
+- Updated dependencies [956083e]
+- Updated dependencies [d8e6816]
+  - @universal-middleware/core@0.6.2
+  - @universal-middleware/node@0.2.8
+
 ## 0.6.2
 
 ### Patch Changes
