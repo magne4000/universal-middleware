@@ -367,9 +367,6 @@ importers:
       '@universal-middleware/node':
         specifier: workspace:^
         version: link:../node
-      fastify-raw-body:
-        specifier: ^6.0.1
-        version: 6.0.1
     devDependencies:
       '@fastify/helmet':
         specifier: ^13.1.1
@@ -392,6 +389,9 @@ importers:
       fastify-plugin:
         specifier: ^6.0.0
         version: 6.0.0
+      fastify-raw-body:
+        specifier: ^6.0.1
+        version: 6.0.1
       rimraf:
         specifier: 'catalog:'
         version: 6.1.3

@@ -23,8 +23,7 @@
   },
   "dependencies": {
     "@universal-middleware/core": "workspace:^",
-    "@universal-middleware/node": "workspace:^",
-    "fastify-raw-body": "^6.0.1"
+    "@universal-middleware/node": "workspace:^"
   },
   "devDependencies": {
     "@fastify/helmet": "^13.1.1",
@@ -34,6 +33,7 @@
     "@universal-middleware/tsdown-config": "workspace:*",
     "fastify": "catalog:",
     "fastify-plugin": "^6.0.0",
+    "fastify-raw-body": "^6.0.1",
     "rimraf": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
