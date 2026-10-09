@@ -1,6 +1,6 @@
+import { createHandler, createMiddleware } from "@universal-middleware/express";
 import { handler, middlewares } from "@universal-middleware/tests/utils";
 import express from "express";
-import { createHandler, createMiddleware } from "@universal-middleware/express";
 import { createNodeHandler } from "../../src/express.js";
 
 const app = express();

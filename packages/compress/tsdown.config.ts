@@ -1,5 +1,5 @@
-import universalMiddleware from "universal-middleware/rollup";
 import { defineMiddlewareTsdown, middlewareServers } from "@universal-middleware/tsdown-config";
+import universalMiddleware from "universal-middleware/rollup";
 
 export default defineMiddlewareTsdown({
   entry: ["./src/middleware.ts"],

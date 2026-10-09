@@ -1,5 +1,5 @@
-import { createRequestAdapter, sendResponse } from "@universal-middleware/node";
 import type { App } from "@universal-middleware/hono";
+import { createRequestAdapter, sendResponse } from "@universal-middleware/node";
 import type { VercelNodeHandlerRaw } from "../utils/common.js";
 
 /**

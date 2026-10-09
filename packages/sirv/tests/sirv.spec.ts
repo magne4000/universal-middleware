@@ -1,4 +1,5 @@
 import * as http from "node:http";
+import { join } from "node:path";
 import { assert, describe, test } from "vitest";
 import sirv from "../src/middleware";
 import * as utils from "./helpers";
@@ -9,7 +10,15 @@ describe("types", () => {
   });
 
   test("should be usable without arguments", () => {
-    assert.typeOf(sirv(), "function"); // traverses ENTIRE repo
+    // Without a `dir`, sirv serves the working directory: point it at the fixtures
+    // rather than walking the whole package, node_modules included
+    const cwd = process.cwd();
+    process.chdir(join(import.meta.dirname, "public"));
+    try {
+      assert.typeOf(sirv(), "function");
+    } finally {
+      process.chdir(cwd);
+    }
   });
 
   test("should be usable with `dir` argument only", () => {

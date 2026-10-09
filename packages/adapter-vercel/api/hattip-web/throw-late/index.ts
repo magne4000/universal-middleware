@@ -1,6 +1,6 @@
-import { middlewares, throwLateHandler } from "@universal-middleware/tests/utils";
 import { createRouter } from "@hattip/router";
 import { createHandler, createMiddleware } from "@universal-middleware/hattip";
+import { middlewares, throwLateHandler } from "@universal-middleware/tests/utils";
 import { createEdgeHandler } from "../../../src/hattip.js";
 
 const app = createRouter();

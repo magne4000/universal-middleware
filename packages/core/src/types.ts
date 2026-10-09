@@ -11,8 +11,8 @@ import type { Context as HonoContext } from "hono";
 import type { ServerRequest } from "srvx";
 import {
   contextSymbol,
-  type methodSymbol,
   type MiddlewareOrder,
+  type methodSymbol,
   type nameSymbol,
   type optionsToSymbols,
   type orderSymbol,

@@ -1,6 +1,6 @@
 import { ServerResponse } from "node:http";
-import { type Run, runTests } from "@universal-middleware/tests";
 import { setResponseHeaders } from "@universal-middleware/node";
+import { type Run, runTests } from "@universal-middleware/tests";
 import * as vitest from "vitest";
 
 let port = 3100;

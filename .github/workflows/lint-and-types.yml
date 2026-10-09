@@ -54,8 +54,8 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - name: Run lint
-        run: pnpm run lint
+      - name: Run Biome
+        run: pnpm exec biome ci .
 
       - name: Run typecheck
         run: pnpm run test:typecheck

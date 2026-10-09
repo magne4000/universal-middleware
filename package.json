@@ -10,6 +10,7 @@
     "test:typecheck": "turbo test:typecheck",
     "format": "biome format --write .",
     "lint": "biome lint .",
+    "check": "biome check --write .",
     "version-packages": "changeset version && pnpm i --lockfile-only && pnpm run format"
   },
   "keywords": [],

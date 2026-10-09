@@ -14,7 +14,7 @@ import {
   getAdapterRuntime,
   universalSymbol,
 } from "@universal-middleware/core";
-import { type Context as ElysiaContext, Elysia, type Handler, NotFoundError } from "elysia";
+import { Elysia, type Context as ElysiaContext, type Handler, NotFoundError } from "elysia";
 
 export const pendingSymbol = Symbol.for("unPending");
 export const pendingHandledSymbol = Symbol.for("unPendingHandled");

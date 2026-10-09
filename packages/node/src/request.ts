@@ -205,7 +205,7 @@ function serializeParsedBody(req: DecoratedRequest): Uint8Array | undefined {
     return;
   if (body instanceof Uint8Array) return body;
 
-  const contentType = String(headers["content-type"]).split(";")[0]!.trim().toLowerCase();
+  const contentType = String(headers["content-type"]).split(";")[0].trim().toLowerCase();
   const encoder = new TextEncoder();
   if (contentType === "application/json" || contentType.endsWith("+json")) {
     // A string under a JSON type is taken as a JSON string ("x"), not as raw JSON text from a text parser

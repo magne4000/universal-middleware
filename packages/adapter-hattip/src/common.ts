@@ -1,5 +1,5 @@
 import type { RequestHandler } from "@hattip/compose";
-import type { AdapterRequestContext, HattipHandler as _HattipHandler } from "@hattip/core";
+import type { HattipHandler as _HattipHandler, AdapterRequestContext } from "@hattip/core";
 import type {
   Get,
   RuntimeAdapter,

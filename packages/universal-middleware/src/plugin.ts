@@ -504,6 +504,15 @@ export async function readAndEditPackageJson(reports: Report[], options?: Option
   };
 }
 
+// The trailing newline is what formatters expect. An unchanged file is not rewritten,
+// so a build leaves the package's own package.json alone.
+async function writePackageJson(path: string, packageJson: unknown) {
+  const content = `${JSON.stringify(packageJson, undefined, 2)}\n`;
+  if ((await readFile(path, "utf8")) !== content) {
+    await writeFile(path, content);
+  }
+}
+
 const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (options?: Options) => {
   const serversExportNames = options?.serversExportNames ?? "./[dir]/[name]-[type]-[server]";
   const entryExportNames = options?.entryExportNames ?? "./[dir]/[name]-[type]";
@@ -602,7 +611,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
 
         if (!options?.doNotEditPackageJson) {
           const { path, packageJson } = await readAndEditPackageJson(report);
-          await writeFile(path, JSON.stringify(packageJson, undefined, 2));
+          await writePackageJson(path, packageJson);
         }
 
         await options?.buildEnd?.(report);
@@ -724,7 +733,7 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
 
           if (!options?.doNotEditPackageJson) {
             const { path, packageJson } = await readAndEditPackageJson(report);
-            await writeFile(path, JSON.stringify(packageJson, undefined, 2));
+            await writePackageJson(path, packageJson);
           }
 
           await options?.buildEnd?.(report);

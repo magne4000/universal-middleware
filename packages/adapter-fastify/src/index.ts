@@ -1,8 +1,8 @@
 export {
   createHandler,
   createMiddleware,
-  getContext,
   type FastifyHandler,
   type FastifyMiddleware,
+  getContext,
 } from "./common.js";
-export { type UniversalFastifyRouter, type App, apply } from "./router.js";
+export { type App, apply, type UniversalFastifyRouter } from "./router.js";

@@ -18,7 +18,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsdown",
-    "test": "vitest run --test-timeout=30000",
+    "test": "vitest run",
     "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
