@@ -10,4 +10,7 @@ export default defineMiddlewareTsdown({
     "middlewares/guard": "./src/middlewares/guard.middleware.ts",
   },
   plugins: [universalMiddleware()],
+  // Never published, and tests-tool checks the plugin's own `.d.ts` against the
+  // adapter packages' types, so keep importing them through `universal-middleware`.
+  inlineAdapters: false,
 });
