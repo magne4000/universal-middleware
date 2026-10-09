@@ -1,4 +1,8 @@
-import type { TestOptions } from "vitest";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { packageUp } from "package-up";
+import { type TestOptions, vi } from "vitest";
 
 export const adapters = [
   "hono",
@@ -25,4 +29,19 @@ export const options: TestOptions = {
 
 export function expectNbOutput(nbHandlers = 0, nbMiddlewares = 0) {
   return nbHandlers * (adapters.length + 1) + nbMiddlewares * (adapters.length + 1 - noMiddlewaresSupport.length);
+}
+
+export interface PackageJson {
+  dependencies?: Record<string, string>;
+  exports: Record<string, { types?: string; import: string }>;
+}
+
+// The plugin edits the package.json found by `packageUp`. A test file that mocks `package-up` gets it pointed at a
+// temporary one, rather than this package's own.
+export async function buildInTempPackage(build: () => Promise<unknown>): Promise<PackageJson> {
+  const path = join(await mkdtemp(join(tmpdir(), "universal-middleware-")), "package.json");
+  await writeFile(path, `${JSON.stringify({ name: "tmp" })}\n`);
+  vi.mocked(packageUp).mockResolvedValueOnce(path);
+  await build();
+  return JSON.parse(await readFile(path, "utf8"));
 }
