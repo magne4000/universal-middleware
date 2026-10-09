@@ -115,6 +115,25 @@ describe("response function and a route returning a value h3 converts", () => {
     await new Promise((resolve) => setImmediate(resolve));
     expect(source.destroyed).toBe(true);
   });
+  it.each(["HEAD", "cancellation"])("%s releases a Node stream that is waiting for data", async (mode) => {
+    const source = new Readable({ read() {} });
+    const app = createApp();
+    apply(app, [step]);
+    app.use(
+      "/route",
+      eventHandler(() => source),
+    );
+    try {
+      const res = await toWebHandler(app)(
+        new Request("http://localhost/route", { method: mode === "HEAD" ? "HEAD" : "GET" }),
+      );
+      if (mode === "cancellation") void res.body?.cancel();
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(source.destroyed).toBe(true);
+    } finally {
+      source.destroy();
+    }
+  });
   it("object with arrayBuffer() and a type", () =>
     expectLikeH3(() => ({ type: "text/plain", arrayBuffer: async () => new TextEncoder().encode("blob").buffer }), {
       status: 200,

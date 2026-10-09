@@ -103,6 +103,8 @@ function toWebStream(iterable: AsyncIterable<Uint8Array | string>): ReadableStre
       else controller.enqueue(typeof value === "string" ? encoder.encode(value) : value);
     },
     async cancel() {
+      // A source waiting for data keeps `iterator.next()` pending, which `return()` queues behind: destroy it first
+      (iterable as { destroy?: () => void }).destroy?.();
       await iterator.return?.();
     },
   });
