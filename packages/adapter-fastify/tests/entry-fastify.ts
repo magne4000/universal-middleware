@@ -21,7 +21,8 @@ const app = fastify();
 
 await app.register(helmet);
 
-// Mandatory if you need to access the request body in any Universal Middleware or Handler
+// Optional: universal middlewares and handlers can read the request body without it.
+// When registered, they get the exact bytes the client sent rather than the body re-encoded from what Fastify parsed.
 await app.register(rawBody);
 
 const post = (async (request) => {
