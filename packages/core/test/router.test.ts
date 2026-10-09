@@ -213,3 +213,22 @@ describe("a GET middleware or handler also runs for HEAD", () => {
     expect((await run(router, "GET", "/admin/settings"))?.status).toBe(200);
   });
 });
+
+describe("handle404 answers a request no route matches, whatever its method", () => {
+  const page = enhance(() => new Response("page"), { name: "page", path: "/page", method: "GET" });
+  const noop = enhance(() => undefined, { name: "noop" });
+  const router = pipeRoute([page, noop], { handle404: true });
+  const run = async (method: string, path: string) => {
+    const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
+    return (await router(new Request(`http://localhost${path}`, { method }), {}, runtime)) as Response;
+  };
+
+  test.each(["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "PROPFIND"])("%s", async (method) => {
+    expect((await run(method, "/missing")).status).toBe(404);
+  });
+
+  test("routes still answer, HEAD included", async () => {
+    expect((await run("GET", "/page")).status).toBe(200);
+    expect((await run("HEAD", "/page")).status).toBe(200);
+  });
+});
