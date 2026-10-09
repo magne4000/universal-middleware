@@ -160,3 +160,16 @@ jobs:
         uses: changesets/action/publish@v2
         with:
           pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir-artifact-id }}
+
+  # Once per commit: only the run whose gate passed deploys, after its release jobs, unless one of them failed
+  docs:
+    needs: [gate, select-mode, version, pack, publish]
+    if: ${{ !cancelled() && needs.gate.outputs.ready == 'true' && !contains(needs.*.result, 'failure') }}
+    permissions:
+      contents: read # to check out repo (actions/checkout)
+      pages: write # to deploy to GitHub Pages (actions/deploy-pages)
+      id-token: write # to authenticate the Pages deployment (actions/deploy-pages)
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    uses: ./.github/workflows/deploy.yml
