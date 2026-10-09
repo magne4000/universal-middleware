@@ -1,7 +1,7 @@
 import { type Run, runTests } from "@universal-middleware/tests";
 import * as vitest from "vitest";
 
-const port = 3820;
+const port = 3835;
 
 const expectInternalServerError = {
   tests: {
@@ -21,7 +21,7 @@ const token = process.env.VERCEL_TOKEN ? ` --token=${process.env.VERCEL_TOKEN}` 
 
 const runs: Run[] = [
   {
-    name: "adapter-vercel: node",
+    name: "adapter-vercel: hattip-node",
     command: `pnpm run test:run-vercel:node${token}`,
     port,
     portOption: "--listen",

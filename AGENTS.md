@@ -65,6 +65,7 @@ pnpm run test:typecheck
 pnpm run test
 # Takes: Several minutes (includes starting test servers)
 # Builds what it needs first (turbo `dependsOn: build`)
+# Keeps going after a failing package; turbo lists every failed task at the end
 # Note: Some tests require Bun and Deno which may not be in all environments
 ```
 

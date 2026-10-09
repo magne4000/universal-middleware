@@ -1,5 +1,4 @@
-import { describe } from "node:test";
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { deleteCookie, getCookie, getCookies, setCookie } from "../src/cookies/index";
 import { nodeHeadersToWeb } from "../src/utils";
 

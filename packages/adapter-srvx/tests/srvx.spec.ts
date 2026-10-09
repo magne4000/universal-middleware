@@ -66,14 +66,6 @@ const runs: Run[] = [
     staticContext: true,
     ...expectInternalServerError,
   },
-  // TODO replace this with cloudflare worker
-  // {
-  //   name: "adapter-srvx: wrangler",
-  //   command: `pnpm run test:run-srvx:wrangler --inspector-port ${port + 10000 + 5}`,
-  //   port: port + 5,
-  //   waitUntilType: "function",
-  //   delay: 1000,
-  // },
 ];
 
 runTests(runs, {

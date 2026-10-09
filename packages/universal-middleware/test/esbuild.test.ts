@@ -360,6 +360,8 @@ describe("esbuild", () => {
         platform: "neutral",
         format: "esm",
         target: "es2022",
+        // The rejection carries the error; don't also print it
+        logLevel: "silent",
       }),
     ).rejects.toThrow("bundle");
   });

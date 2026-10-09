@@ -9,7 +9,7 @@ const token = process.env.VERCEL_TOKEN ? ` --token=${process.env.VERCEL_TOKEN}` 
 
 const runs: Run[] = [
   {
-    name: "adapter-vercel: node",
+    name: "adapter-vercel: fastify-node",
     command: `pnpm run test:run-vercel:node${token}`,
     port,
     portOption: "--listen",
