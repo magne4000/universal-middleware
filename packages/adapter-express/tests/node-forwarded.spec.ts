@@ -1,7 +1,7 @@
 import { EventEmitter } from "node:events";
 import { type IncomingMessage, ServerResponse } from "node:http";
 import { createRequestAdapter, responseAdapter } from "@universal-middleware/node";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 // `@universal-middleware/node` has no test setup of its own; it is exercised
 // here because adapter-express (and adapter-fastify) build directly on it.
@@ -127,6 +127,21 @@ describe("createRequestAdapter — Forwarded (RFC 7239) resolution", () => {
       fakeRes(),
     );
     expect(request.url).toBe("http://real.example/p");
+  });
+});
+
+describe("createRequestAdapter — no Host header", () => {
+  it("falls back to localhost for every request, and warns once", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const adapter = createRequestAdapter();
+      const urls = [adapter(fakeReq({}), fakeRes()).url, adapter(fakeReq({}), fakeRes()).url];
+
+      expect(urls).toEqual(["http://localhost/p", "http://localhost/p"]);
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      warn.mockRestore();
+    }
   });
 });
 
