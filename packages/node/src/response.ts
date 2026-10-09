@@ -1,9 +1,9 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
+import type { ServerResponse } from "node:http";
 import type { Readable } from "node:stream";
 import type { ReadableStream as ReadableStreamNode } from "node:stream/web";
 import { nodeHeadersToWeb } from "@universal-middleware/core";
 import { forwardedValue, trustsProxy } from "./forwarded.js";
-import type { PossiblyEncryptedSocket } from "./request.js";
+import type { DecoratedRequest } from "./request.js";
 
 /**
  * Send a fetch API Response into a Node.js HTTP response stream.
@@ -91,7 +91,7 @@ function isClientGone(error: unknown): boolean {
   return CLIENT_GONE_CODES.has((error as NodeJS.ErrnoException | undefined)?.code ?? "");
 }
 
-function getFullUrl(pathnameOrFull: string, req: IncomingMessage): string {
+function getFullUrl(pathnameOrFull: string, req: DecoratedRequest): string {
   try {
     return new URL(pathnameOrFull).href;
   } catch {
@@ -100,9 +100,11 @@ function getFullUrl(pathnameOrFull: string, req: IncomingMessage): string {
     // `trustProxy` option, so redirects honor only the `TRUST_PROXY` env var — set it
     // to keep request.url and redirect origins consistent behind a proxy.
     const trustProxy = trustsProxy();
+    // Same order as `createRequestAdapter`: Express's `req.protocol` follows its own `trust proxy` setting
     const protocol =
       (trustProxy && forwardedValue(req.headers, "proto")) ||
-      ((req.socket as PossiblyEncryptedSocket | undefined)?.encrypted ? "https" : "http");
+      req.protocol ||
+      (req.socket?.encrypted ? "https" : "http");
     const host = (trustProxy && forwardedValue(req.headers, "host")) || req.headers.host || "localhost";
 
     return new URL(pathnameOrFull, `${protocol}://${host}`).href;
