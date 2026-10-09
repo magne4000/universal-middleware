@@ -14,10 +14,7 @@ export interface PossiblyEncryptedSocket extends Socket {
   encrypted?: boolean;
 }
 
-/**
- * `IncomingMessage` possibly augmented by Express-specific
- * `ip` and `protocol` properties.
- */
+/** `IncomingMessage`, with the fields Express and body parsers may add */
 export interface DecoratedRequest<C extends Universal.Context = Universal.Context>
   extends Omit<IncomingMessage, "socket"> {
   ip?: string;
@@ -32,54 +29,38 @@ export interface DecoratedRequest<C extends Universal.Context = Universal.Contex
   params?: Record<string, string>;
   [contextSymbol]?: C;
   [requestSymbol]?: Request;
-  /** The origin of the request URL, which a relative redirect `Location` is resolved against */
+  /** The request URL's origin, which relative redirects resolve against */
   [originSymbol]?: string;
 }
 
-/**
- * The protocol and host the server framework resolved for a request, from its own trust-proxy setting
- * (Express's `trust proxy`, Fastify's `trustProxy`). They come after `origin` and the trusted forwarding headers.
- */
+/** The protocol and host the server framework resolved for a request, e.g. from its own trust-proxy setting */
 export interface RequestOrigin {
   protocol?: string;
   host?: string;
 }
 
-/** Adapter options */
 export interface NodeRequestAdapterOptions {
   /**
-   * Set the origin part of the URL to a constant value.
-   * It defaults to `process.env.ORIGIN`. If neither is set,
-   * the origin is computed from the protocol and hostname.
-   * If `trustProxy` is set, the forwarding headers are tried first.
-   * Then come the protocol and host the server framework resolved (the `RequestOrigin` argument),
-   * then `req.protocol` and `req.socket.encrypted` for the protocol,
-   * and the request target's host, `:authority` and the `Host` header for the host.
+   * A constant origin for the URL. Defaults to `process.env.ORIGIN`. Otherwise the protocol and host come, in order,
+   * from the forwarding headers (with `trustProxy`), the framework's `RequestOrigin`, then `req.protocol` or the socket
+   * for the protocol, and the target, `:authority` or `Host` for the host.
    */
   origin?: string;
   /**
-   * Whether to trust the forwarding headers. `X-Forwarded-*` is used, with the
-   * standard `Forwarded` header (RFC 7239) filling any value it omits:
-   * `proto`/`host` determine the origin when `origin` and
-   * `process.env.ORIGIN` are not set.
-   * The first entry is used when several are present, matching Express's
-   * `trust proxy` — it is the client-facing value the proxy set. Defaults to
-   * true if `process.env.TRUST_PROXY` is set to `1`, otherwise false.
+   * Trust `X-Forwarded-Proto` and `X-Forwarded-Host`, completed by RFC 7239's `Forwarded`. The first entry is used,
+   * as Express does. Defaults to `process.env.TRUST_PROXY === "1"`.
    */
   trustProxy?: boolean;
 }
 
-/** The client sent a request that a fetch `Request` can't represent, such as a malformed `Host` header */
+/** The request has no URL a `Request` can hold, e.g. a malformed `Host`. Express and Fastify answer it with a 400. */
 export class BadRequestError extends Error {
   override name = "BadRequestError";
-  /** The status Express's error handler responds with */
   readonly status = 400;
-  /** The status Fastify's error handler responds with */
   readonly statusCode = 400;
 }
 
-// An RFC 3986 host (IP-literal or reg-name, without percent-encoding) and port. Anything else would put part of the
-// header in the URL's userinfo, path, query or fragment: `Host: x/admin?` turned `/public` into `http://x/admin?/public`.
+// An RFC 3986 host and port: anything else would land in the URL's userinfo, path, query or fragment (`Host: x/admin?`)
 const VALID_HOST = /^(?:\[[\da-f:.]+\]|[\w!$&'()*+,;=~.-]+)(?::\d*)?$/i;
 const VALID_SCHEME = /^[a-z][a-z\d+.-]*$/i;
 
@@ -101,7 +82,6 @@ export function createRequestAdapter(
   let warned = false;
 
   return function requestAdapter(req, res: SignalledResponse, resolved) {
-    // Reuse already created request
     if (req[requestSymbol]) {
       return req[requestSymbol];
     }
@@ -109,7 +89,6 @@ export function createRequestAdapter(
     let headers = req.headers as Record<string, string>;
     // HTTP/2 clients send the host as the `:authority` pseudo-header, which wins over a Host header (RFC 9113 §8.3.1)
     const authority = headers[":authority"];
-    // Filter out pseudo-headers
     if (headers[":method"]) {
       headers = Object.fromEntries(Object.entries(headers).filter(([key]) => !key.startsWith(":")));
     }
@@ -126,8 +105,7 @@ export function createRequestAdapter(
     let target = req.originalUrl ?? req.url ?? "/";
     let targetHost: string | undefined;
     if (!target.startsWith("/")) {
-      // The absolute-form (RFC 9112 §3.2.2) carries the host, which replaces the Host header.
-      // The asterisk-form of `OPTIONS *` has no URL a `Request` could hold.
+      // RFC 9112 §3.2.2: an absolute-form target carries the host. `OPTIONS *` has no URL a `Request` can hold.
       if (!/^https?:\/\//i.test(target) || !URL.canParse(target)) {
         throw new BadRequestError(`Unsupported request target: ${target}`);
       }
@@ -155,7 +133,7 @@ export function createRequestAdapter(
       host = "localhost";
     }
 
-    // The rebuilt body is decoded and re-serialized, so the headers describing the original bytes no longer apply
+    // The parsed body is re-serialized: the original framing headers no longer apply
     if (hasParsedBody(req)) {
       headers = { ...headers };
       delete headers["content-length"];
@@ -171,7 +149,7 @@ export function createRequestAdapter(
       throw new BadRequestError(`Invalid request URL: ${url}`);
     }
 
-    // One signal per response: the `Request` made again for the same request, once its body was handed back, reuses it
+    // One signal per response, shared by the `Request`s made again once a body was handed back
     let signal = res[signalSymbol];
     if (!signal) {
       const abortController = new AbortController();
@@ -206,25 +184,22 @@ function convertBody(req: DecoratedRequest): BodyInit | null | undefined {
     return;
   }
 
-  // Needed for Google Cloud Functions and some other environments
-  // that pre-parse the body.
+  // Set by environments that pre-parse the body (Google Cloud Functions)
   if (req.rawBody !== undefined) {
     return req.rawBody;
   }
 
-  // A body parser already consumed the stream: serve what it parsed.
+  // A body parser already consumed the stream
   if (hasParsedBody(req)) {
     return parsedBody(req);
   }
 
   if (!bun && !deno) {
-    // Node's `fetch` (undici) accepts a Node `Readable` directly as body;
-    // it converts internally with backpressure preserved.
+    // undici takes a Node `Readable` as body, with backpressure
     return req as unknown as BodyInit;
   }
 
-  // bun/deno: wrap as Web `ReadableStream` with proper backpressure — pause the
-  // source when the controller's queue fills, resume on `pull`, destroy on cancel.
+  // Bun and Deno need a Web stream: the source pauses when the queue is full, and resumes on `pull`
   return new ReadableStream({
     start(controller) {
       req.on("data", (chunk) => {
@@ -260,8 +235,7 @@ function parsedBody(req: DecoratedRequest): ReadableStream<Uint8Array> {
 /** The bytes of the parsed body, or undefined when it can't be rebuilt faithfully (then the request has no body). */
 function serializeParsedBody(req: DecoratedRequest): Uint8Array | undefined {
   const { body, headers } = req;
-  // A parser such as `express.json()` sets `{}` even when the request had no body.
-  // HTTP/2 doesn't need `Content-Length`, so only HTTP/1 tells an empty body from the absence of framing headers.
+  // Parsers set `{}` for a request without a body: only HTTP/1's framing headers tell (HTTP/2 may omit them)
   if (
     req.httpVersionMajor < 2 &&
     headers["transfer-encoding"] === undefined &&

@@ -111,12 +111,12 @@ export function createMiddleware<
               "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-middleware",
             );
           }
-          // Deno fix
-          // biome-ignore lint/suspicious/noExplicitAny: ignored
+          // Deno's request has no `complete`, which `on-finished` (in Express's error handler) reads
+          // biome-ignore lint/suspicious/noExplicitAny: Node's internal state
           if (req.complete === undefined) req.complete = (req as any)._readableState?.ended ?? true;
           wrapResponse(res, next);
           res[pendingMiddlewaresSymbol] ??= [];
-          // `wrapResponse` takes care of calling those middlewares right before sending the response
+          // `wrapResponse` runs them right before the response is sent
           res[pendingMiddlewaresSymbol].push(response);
           return nextOr404(res, next);
         }

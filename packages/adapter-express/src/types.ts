@@ -20,6 +20,5 @@ export type NodeHandler<In extends Universal.Context> = UniversalFn<
   <R>(req: DecoratedRequest<In>, res: DecoratedServerResponse, next?: (err?: unknown) => void) => R
 >;
 
-/** Adapter options */
 export interface NodeAdapterHandlerOptions extends NodeRequestAdapterOptions {}
 export interface NodeAdapterMiddlewareOptions extends NodeRequestAdapterOptions {}

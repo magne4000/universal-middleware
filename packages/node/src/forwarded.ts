@@ -1,19 +1,15 @@
 import type { IncomingHttpHeaders } from "node:http";
 import { env } from "./const.js";
 
-/** Whether the forwarding headers may be believed at all. */
+/** Whether the `TRUST_PROXY` env var lets the forwarding headers be believed */
 export function trustsProxy(): boolean {
   return env.TRUST_PROXY === "1";
 }
 
 /**
- * The client-facing `proto`/`host`, matching Express's `trust proxy`: the first
- * value, which is the original the client reached. `trustProxy` asserts the proxy
- * sets these headers, overwriting any client-supplied one.
- *
- * `X-Forwarded-*` wins; RFC 7239's `Forwarded` fills a param the legacy header
- * omits, so a client `Forwarded` passed through by a legacy proxy cannot override
- * what that proxy set.
+ * The client-facing `proto`/`host`: the first value, as Express's `trust proxy` reads it.
+ * `X-Forwarded-*` wins, and RFC 7239's `Forwarded` fills what it omits: a client's `Forwarded`, passed through by a
+ * proxy that sets only `X-Forwarded-*`, can't override that proxy.
  */
 export function forwardedValue(headers: IncomingHttpHeaders, param: "proto" | "host"): string | undefined {
   return firstListValue(headers[`x-forwarded-${param}`]) ?? firstForwardedElement(headers.forwarded)[param];

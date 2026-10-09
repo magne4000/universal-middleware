@@ -57,23 +57,22 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
       // biome-ignore lint/suspicious/noExplicitAny: srvx request
       (runtime && "req" in runtime && runtime.req) || (request as any).runtime?.node?.req;
     const req = realReq ?? createIncomingMessage(request);
-    // The app's routes read the caller's context with getContext(req); srvx keeps a middleware's context on the request.
-    // Set, not defaulted: one Node request can pass through several apps, and each must see its own caller's context.
+    // The app's routes read the caller's context with `getContext(req)` (srvx keeps it on the request). Set, not
+    // defaulted: a Node request can pass through several apps, each with its own caller.
     // biome-ignore lint/suspicious/noExplicitAny: srvx request
     const callerContext = context ?? (request as any).context;
     // biome-ignore lint/suspicious/noExplicitAny: decorated req
     if (callerContext) (req as any)[contextSymbol] = callerContext;
     const { res, onReadable } = createServerResponse(req);
 
-    // A real server wires client disconnect to the request itself; a synthetic req/res does
-    // not, so bridge the incoming abort to the handler while the response is in flight.
+    // A synthetic req/res isn't wired to the client: the incoming abort is bridged while the response is in flight
     const stopForwardingAbort = realReq ? undefined : forwardAbort(request.signal, req, res);
 
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: ignored
     return new Promise<Response | undefined>(async (resolve, reject) => {
       onReadable(({ readable, headers, statusCode, statusMessage }) => {
         const hasBody = !statusCodesWithoutBody.includes(statusCode);
-        // Keep forwarding aborts until a streaming body has fully flushed, then stop.
+        // Until a streaming body has flushed
         if (stopForwardingAbort) {
           if (hasBody) readable.once("close", stopForwardingAbort);
           else stopForwardingAbort();
@@ -120,30 +119,26 @@ export function createIncomingMessage(request: Request): IncomingMessage {
   // biome-ignore lint/suspicious/noExplicitAny: Web/Node stream type clash
   const body = request.body ? Readable.fromWeb(request.body as any) : Readable.from([]);
 
-  // A web Request carries its host in the URL, never as a Host header: give the app one, like Node does
+  // A Web Request has its host in the URL: the app gets a Host header, as Node gives it
   const headers: Record<string, string> = { host: url.host, ...Object.fromEntries(request.headers) };
-  // A web Request never surfaces content-length, so Node body parsers (e.g. express.json)
-  // that gate on `type-is.hasBody()` would otherwise skip the body. Signal a streamed body.
+  // Without `content-length` or `transfer-encoding`, body parsers (`type-is.hasBody()`) would skip the body
   if (request.body && headers["content-length"] === undefined) {
     headers["transfer-encoding"] = "chunked";
   }
 
-  // Express reads connection metadata off `req.socket` (e.g. `req.protocol` -> `socket.encrypted`);
-  // a synthetic request has no socket, so stub the field it reads to avoid a throw.
+  // Express reads `req.socket` (e.g. `socket.encrypted` for `req.protocol`), which a synthetic request lacks
   const message = Object.assign(body, {
     url: url.pathname + url.search,
     method: request.method,
     headers,
     rawHeaders: Object.entries(headers).flat(),
-    // Consumers still read a version off the message (e.g. morgan's `:http-version`).
+    // Loggers read it (morgan's `:http-version`)
     httpVersion: "1.1",
     httpVersionMajor: 1,
     httpVersionMinor: 1,
     complete: !request.body,
-    // A real EventEmitter, not a bare object: `on-finished` (which body parsers
-    // consult) attaches an `error`/`close` listener to the socket on the drain
-    // path, so a plain stub throws there. `readable` is load-bearing too — a
-    // non-readable socket reads as already finished and the body is skipped.
+    // An EventEmitter: `on-finished` (used by body parsers) listens to it. `readable` too: a socket that isn't
+    // readable reads as finished, and the body is skipped.
     socket: Object.assign(new EventEmitter(), { encrypted: url.protocol === "https:", readable: true }),
   }) as unknown as IncomingMessage;
 
@@ -155,14 +150,9 @@ export function createIncomingMessage(request: Request): IncomingMessage {
 }
 
 /**
- * Creates a custom ServerResponse object that allows for intercepting and streaming the response.
- *
+ * Creates a `ServerResponse` whose output is captured. `onReadable`'s callback gets the output stream, the headers and
+ * the status once the response starts.
  * @beta
- * @returns
- * An object containing:
- *   - res: The custom ServerResponse object.
- *   - onReadable: A function that takes a callback. The callback is invoked when the response is readable,
- *     providing an object with the readable stream, headers, and status code.
  */
 export function createServerResponse(incomingMessage: IncomingMessage) {
   const res = new ServerResponse(incomingMessage);
@@ -204,7 +194,7 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
   });
 
   res.write = passThrough.write.bind(passThrough);
-  // biome-ignore lint/suspicious/noExplicitAny: ignored
+  // biome-ignore lint/suspicious/noExplicitAny: `end`'s overloads differ from the PassThrough's
   res.end = passThrough.end.bind(passThrough) as any;
 
   res.writeHead = function writeHead(
@@ -223,10 +213,8 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
 }
 
 /**
- * Bridges a web `AbortSignal` to a synthetic Node `req`/`res` and returns a stop function.
- *
- * `createRequestAdapter` derives the handler's `request.signal` from `res`'s "close" event,
- * which a socketless `ServerResponse` never emits on its own — so emit it explicitly.
+ * Bridges a Web `AbortSignal` to a synthetic `req`/`res`, and returns a function that stops it.
+ * The request adapter aborts `request.signal` on `res`'s "close", which a socketless `ServerResponse` never emits.
  */
 function forwardAbort(signal: AbortSignal, req: IncomingMessage, res: ServerResponse): () => void {
   let active = true;
@@ -236,8 +224,7 @@ function forwardAbort(signal: AbortSignal, req: IncomingMessage, res: ServerResp
     res.emit("close");
     req.destroy();
   };
-  // An already-aborted signal must wait for the handler to register its "close" listener,
-  // which it does synchronously once invoked.
+  // An already-aborted signal waits for the handler to listen to "close", which it does synchronously
   if (signal.aborted) queueMicrotask(abort);
   else signal.addEventListener("abort", abort, { once: true });
   return () => {
@@ -247,7 +234,7 @@ function forwardAbort(signal: AbortSignal, req: IncomingMessage, res: ServerResp
 }
 
 function toWebStream(readable: Readable): ReadableStream {
-  // `ReadableStream.from` is unavailable on some runtimes/older Node versions.
+  // `ReadableStream.from` is missing from some runtimes
   return "from" in ReadableStream
     ? // biome-ignore lint/suspicious/noExplicitAny: Web/Node stream type clash
       (ReadableStream as any).from(readable)
@@ -269,8 +256,8 @@ const HOP_BY_HOP_HEADERS = new Set([
 
 function flattenHeaders(headers: OutgoingHttpHeaders): [string, string][] {
   const flatHeaders: [string, string][] = [];
-  // The captured body is never chunk-framed, so a copied `Transfer-Encoding` would
-  // misframe it when served for real. Names listed in `Connection` are hop-by-hop too.
+  // The captured body isn't chunk-framed: a copied `Transfer-Encoding` would misframe it. The names in `Connection`
+  // are hop-by-hop too.
   const connectionTokens = String(headers.connection ?? "").split(",");
   const dropped = new Set([...HOP_BY_HOP_HEADERS, ...connectionTokens.map((name) => name.trim().toLowerCase())]);
 

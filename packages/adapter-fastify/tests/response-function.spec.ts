@@ -63,3 +63,35 @@ describe("what a route sends, under a response function", () => {
     expect(res.headers.get("link")).toBe("</a.js>; rel=preload, </b.js>; rel=preload");
   });
 });
+
+describe("the response functions of several middlewares", () => {
+  const appends =
+    (name: string): UniversalMiddleware =>
+    () =>
+    (response: Response) => {
+      response.headers.append("x-order", name);
+      return response;
+    };
+
+  it("run once each, in order, in every app and child instance", async () => {
+    const apps = [Fastify(), Fastify()];
+    for (const instance of apps) {
+      await instance.register(createMiddleware(() => appends("a"))());
+      await instance.register(createMiddleware(() => appends("b"))());
+      await instance.register(async (child) => {
+        await child.register(createMiddleware(() => appends("c"))());
+        child.get("/child", async () => "child");
+      });
+      instance.get("/root", async () => "root");
+    }
+    try {
+      for (const instance of apps) {
+        const url = await instance.listen({ port: 0, host: "127.0.0.1" });
+        expect((await fetch(`${url}/root`)).headers.get("x-order")).toBe("a, b");
+        expect((await fetch(`${url}/child`)).headers.get("x-order")).toBe("a, b, c");
+      }
+    } finally {
+      await Promise.all(apps.map((instance) => instance.close()));
+    }
+  });
+});

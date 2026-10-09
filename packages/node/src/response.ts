@@ -6,82 +6,123 @@ import { originSymbol } from "./const.js";
 import { forwardedValue, trustsProxy } from "./forwarded.js";
 import type { DecoratedRequest } from "./request.js";
 
-/**
- * Send a fetch API Response into a Node.js HTTP response stream.
- */
+const NOT_READY = Symbol("not ready");
+// A body in memory is read at once and sent with its length. An endless stream may always be ready: after this many
+// reads, the body is streamed.
+const MAX_READS_AT_ONCE = 4;
+
+/** Send a fetch API Response into a Node.js HTTP response stream */
 export async function sendResponse(fetchResponse: Response, nodeResponse: ServerResponse): Promise<void> {
-  const fetchBody: unknown = fetchResponse.body;
-
-  let body: Readable | null = null;
-  if (!fetchBody) {
-    body = null;
-  } else if (typeof (fetchBody as any).pipe === "function") {
-    body = fetchBody as Readable;
-  } else if (typeof (fetchBody as any).pipeTo === "function") {
-    const { Readable } = await import("node:stream");
-    if (Readable.fromWeb) {
-      body = Readable.fromWeb(fetchBody as ReadableStreamNode);
-    } else {
-      const reader = (fetchBody as ReadableStream).getReader();
-      body = new Readable({
-        async read() {
-          try {
-            const { done, value } = await reader.read();
-            if (done) {
-              this.push(null);
-            } else {
-              const canContinue = this.push(value);
-              if (!canContinue) {
-                reader.releaseLock(); // Pause reading if backpressure occurs
-              }
-            }
-          } catch (e) {
-            this.destroy(e as Error);
-          }
-        },
-        destroy(err, callback) {
-          reader.cancel().finally(() => callback(err));
-        },
-      });
-    }
-  } else if (fetchBody) {
-    const { Readable } = await import("node:stream");
-    body = Readable.from(fetchBody as any);
-  }
-
+  // Another Response implementation may give a Node stream or an iterable
+  const body: unknown = fetchResponse.body;
   setResponseHeaders(fetchResponse, nodeResponse);
 
-  // Node discards a HEAD body at the wire, and an endless one (SSE, a proxied
-  // stream) would keep the response from ever finishing. The headers still
-  // describe what a GET would have sent.
-  if (nodeResponse.req?.method === "HEAD") {
-    body?.destroy();
-    nodeResponse.end();
+  if (body instanceof ReadableStream) return sendWebStream(body, nodeResponse);
+  if (body) return sendNodeStream(body, nodeResponse);
+  // HEAD keeps the GET's headers. A 204 has no content; a 304's length is the 200's (RFC 9110 §8.6).
+  if (nodeResponse.req?.method !== "HEAD" && fetchResponse.status !== 204 && fetchResponse.status !== 304) {
+    nodeResponse.setHeader("content-length", "0");
+  }
+  nodeResponse.end();
+}
+
+async function sendWebStream(body: ReadableStream<Uint8Array | string>, nodeResponse: ServerResponse): Promise<void> {
+  // Node discards a HEAD body, and an endless one (SSE, a proxied stream) would keep the response open.
+  // A client gone before the Response was ready doesn't get it either.
+  const head = nodeResponse.req?.method === "HEAD";
+  if (head || nodeResponse.destroyed) {
+    body.cancel().catch(console.error);
+    if (head) nodeResponse.end();
     return;
   }
 
-  if (body) {
-    const { pipeline } = await import("node:stream/promises");
-    // The client left before the Response was ready: `pipeline` would throw
-    // without destroying `body`, leaving a Web stream uncancelled.
-    if (nodeResponse.destroyed) {
-      // A failing cleanup would otherwise be an unhandled `error` event.
-      body.on("error", console.error);
-      body.destroy();
-      return;
+  const reader = body.getReader();
+  // An endless body is cancelled when the client leaves, rather than read on
+  const onClose = () => {
+    reader.cancel().catch(() => {});
+  };
+  nodeResponse.once("close", onClose);
+  try {
+    // A body in memory (a string, a buffer, JSON) goes out in one write, with its Content-Length
+    const chunks: Uint8Array[] = [];
+    let read = reader.read();
+    while (chunks.length < MAX_READS_AT_ONCE) {
+      const result = await Promise.race([read, Promise.resolve().then((): typeof NOT_READY => NOT_READY)]);
+      if (result === NOT_READY) break;
+      if (result.done) {
+        const bytes = chunks.length === 1 ? chunks[0] : Buffer.concat(chunks);
+        if (!nodeResponse.hasHeader("content-length") && !nodeResponse.hasHeader("transfer-encoding")) {
+          nodeResponse.setHeader("content-length", bytes.byteLength);
+        }
+        nodeResponse.end(bytes);
+        return;
+      }
+      // A stream of strings isn't a valid body, but Node sends it
+      chunks.push(typeof result.value === "string" ? Buffer.from(result.value) : result.value);
+      read = reader.read();
     }
-    await pipeline(body, nodeResponse).catch((error) => {
-      if (!isClientGone(error)) console.error(error);
-    });
-  } else {
-    // A 204 has no content to measure, and a 304's Content-Length describes the 200 response (RFC 9110 §8.6)
-    if (fetchResponse.status !== 204 && fetchResponse.status !== 304) nodeResponse.setHeader("content-length", "0");
+
+    // Anything else is streamed as fast as the client reads it
+    for (const chunk of chunks) nodeResponse.write(chunk);
+    for (let result = await read; !result.done; result = await reader.read()) {
+      if (nodeResponse.destroyed) {
+        reader.cancel().catch(() => {});
+        return;
+      }
+      const chunk = typeof result.value === "string" ? Buffer.from(result.value) : result.value;
+      if (!nodeResponse.write(chunk)) {
+        // Until the socket drains, or the client leaves
+        await new Promise<void>((resolve) => {
+          const done = () => {
+            nodeResponse.off("drain", done);
+            nodeResponse.off("close", done);
+            resolve();
+          };
+          nodeResponse.on("drain", done);
+          nodeResponse.on("close", done);
+        });
+      }
+    }
     nodeResponse.end();
+  } catch (error) {
+    // Cut the response short, so that the client doesn't take it for complete
+    if (!isClientGone(error)) console.error(error);
+    nodeResponse.destroy();
+  } finally {
+    nodeResponse.off("close", onClose);
   }
 }
 
-// A client vanishing mid-response is routine; every other send failure is a real
-// bug worth surfacing rather than swallowing.
+async function sendNodeStream(body: object, nodeResponse: ServerResponse): Promise<void> {
+  // Imported when needed: the main entry re-exports this module, and must load where `node:stream` doesn't exist
+  const { Readable } = await import("node:stream");
+  const readable: Readable =
+    typeof (body as any).pipe === "function"
+      ? (body as Readable)
+      : typeof (body as any).pipeTo === "function"
+        ? // A Web stream of another realm
+          Readable.fromWeb(body as ReadableStreamNode)
+        : Readable.from(body as any);
+
+  if (nodeResponse.req?.method === "HEAD") {
+    readable.destroy();
+    nodeResponse.end();
+    return;
+  }
+  // The client left before the Response was ready: `pipeline` would throw without destroying the body.
+  // A failing cleanup would otherwise be an unhandled `error` event.
+  if (nodeResponse.destroyed) {
+    readable.on("error", console.error);
+    readable.destroy();
+    return;
+  }
+  const { pipeline } = await import("node:stream/promises");
+  await pipeline(readable, nodeResponse).catch((error) => {
+    if (!isClientGone(error)) console.error(error);
+  });
+}
+
+// A client leaving mid-response is routine; any other send failure is a bug worth logging
 const CLIENT_GONE_CODES = new Set([
   "ECONNRESET",
   "EPIPE",
@@ -97,18 +138,15 @@ function getFullUrl(pathnameOrFull: string, req: DecoratedRequest): string {
   try {
     return new URL(pathnameOrFull).href;
   } catch {
-    // The origin of the request URL, so that a redirect stays on it, whatever set it: the `origin` option,
-    // the forwarding headers, or the framework's trust-proxy setting.
+    // The request URL's origin, whatever set it: the `origin` option, the forwarding headers or the framework.
     if (req[originSymbol]) return new URL(pathnameOrFull, req[originSymbol]).href;
-    // No `Request` was made for this request. Without the opt-in, any client could set the header and
-    // point the redirect at a host of its choosing, so only the `TRUST_PROXY` env var enables it.
+    // No `Request` was made. Any client can set the forwarding headers, so only `TRUST_PROXY` makes them count.
     const trustProxy = trustsProxy();
-    // Same order as `createRequestAdapter`: Express's `req.protocol` follows its own `trust proxy` setting
     const protocol =
       (trustProxy && forwardedValue(req.headers, "proto")) ||
       req.protocol ||
       (req.socket?.encrypted ? "https" : "http");
-    // HTTP/2 clients send the host as `:authority`, as `createRequestAdapter` reads it
+    // HTTP/2 clients send the host as `:authority`
     const host =
       (trustProxy && forwardedValue(req.headers, "host")) ||
       req.headers[":authority"] ||
@@ -125,7 +163,6 @@ export function responseAdapter(nodeResponse: ServerResponse, bodyInit?: BodyIni
   if ([301, 302, 303, 307, 308].includes(nodeResponse.statusCode) && nodeResponse.req) {
     const location = headers.get("location");
     if (location) {
-      // Convert pathname to full URL
       headers.set("location", getFullUrl(location, nodeResponse.req));
     }
   }
@@ -139,9 +176,7 @@ export function responseAdapter(nodeResponse: ServerResponse, bodyInit?: BodyIni
 
 /**
  * Applies Web Response headers to a Node.js response.
- *
- * In mirror mode, the Web Response headers replace the Node.js response header snapshot.
- * Otherwise, Set-Cookie is appended to preserve existing Node.js cookies when sending a fresh response.
+ * In mirror mode, they replace the Node.js response's. Otherwise, Set-Cookie is appended to the Node.js response's.
  */
 export function setResponseHeaders(fetchResponse: Response, nodeResponse: ServerResponse, mirror = false) {
   nodeResponse.statusCode = fetchResponse.status;
@@ -149,16 +184,13 @@ export function setResponseHeaders(fetchResponse: Response, nodeResponse: Server
     nodeResponse.statusMessage = fetchResponse.statusText;
   }
 
-  const nodeResponseHeaders = new Set(Object.keys(nodeResponse.getHeaders()));
-
   const setCookie = fetchResponse.headers.getSetCookie();
   if (mirror) {
-    // When omitted in mirror mode, existing Set-Cookie headers remain in nodeResponseHeaders
-    // and are removed by the cleanup below.
-    if (setCookie.length > 0) {
-      nodeResponse.setHeader("set-cookie", setCookie);
-      nodeResponseHeaders.delete("set-cookie");
+    // Only the Web Response's headers are kept
+    for (const name of nodeResponse.getHeaderNames()) {
+      if (!fetchResponse.headers.has(name)) nodeResponse.removeHeader(name);
     }
+    if (setCookie.length > 0) nodeResponse.setHeader("set-cookie", setCookie);
   } else {
     for (const cookie of setCookie) {
       nodeResponse.appendHeader("set-cookie", cookie);
@@ -166,15 +198,6 @@ export function setResponseHeaders(fetchResponse: Response, nodeResponse: Server
   }
 
   fetchResponse.headers.forEach((value, key) => {
-    nodeResponseHeaders.delete(key);
-    if (key === "set-cookie") return;
-    nodeResponse.setHeader(key, value);
+    if (key !== "set-cookie") nodeResponse.setHeader(key, value);
   });
-
-  if (mirror) {
-    // delete remaining node headers
-    nodeResponseHeaders.forEach((key) => {
-      nodeResponse.removeHeader(key);
-    });
-  }
 }

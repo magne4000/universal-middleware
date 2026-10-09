@@ -57,12 +57,3 @@ const checkUserAgentEquals = (platform: string): boolean => {
 
   return userAgent.startsWith(platform);
 };
-
-export function getRuntime(args?: Omit<Runtime, "runtime">): Runtime {
-  const key = getRuntimeKey();
-
-  return {
-    runtime: key,
-    ...args,
-  } as Runtime;
-}
