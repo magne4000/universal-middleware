@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.37
+
+### Patch Changes
+
+- Updated dependencies [0f9f2cf]
+  - @universal-middleware/elysia@0.8.0
+
 ## 0.4.36
 
 ### Patch Changes
