@@ -1,5 +1,13 @@
-import { universalSymbol } from "./const";
-import type { AnyFn, Awaitable, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
+import { nextRequestSymbol, universalSymbol } from "./const";
+import type {
+  AnyFn,
+  Awaitable,
+  EnhancedMiddleware,
+  RuntimeAdapter,
+  UniversalFn,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "./types";
 import { bindUniversal, cancelReplacedBody, getUniversal, isHandler, ordered } from "./utils";
 
 type _Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
@@ -112,47 +120,11 @@ export function pipe<F extends AnyMiddleware[]>(
 ): ComposeReturnType<F> {
   const orderedArgs = ordered(a);
   const fn: UniversalMiddleware<any, any> = async function pipeInternal(request, context, runtime) {
-    const pending: ((response: Response) => Awaitable<Response | undefined>)[] = [];
-
-    let _response: Response | undefined;
-    for (const m of orderedArgs) {
-      // only execute a handler if we still have no response
-      if (isHandler(m) && _response) {
-        continue;
-      }
-
-      const um = getUniversal(m);
-      const response = await um(request, context ?? {}, runtime);
-
-      if (typeof response === "function") {
-        pending.push(response);
-      } else if (response !== null && typeof response === "object") {
-        // Do not override response if it already exists.
-        // The only way to replace it is through a Response Function.
-        if (response instanceof Response) {
-          if (!_response) {
-            _response = response;
-          }
-        } else {
-          // Update context
-          context = response;
-        }
-      }
-    }
-
-    if (!_response) {
+    const { response, pending } = await runInOrder(orderedArgs, request, context, runtime);
+    if (!response) {
       throw new Error("No Response found");
     }
-
-    for (const m of pending) {
-      const r = await m(_response);
-      if (r) {
-        cancelReplacedBody(_response, r);
-        _response = r;
-      }
-    }
-
-    return _response;
+    return applyResponseFunctions(response, pending);
   };
 
   if (!this?.noCast) {
@@ -163,4 +135,83 @@ export function pipe<F extends AnyMiddleware[]>(
   }
 
   return fn as ComposeReturnType<F>;
+}
+
+/**
+ * Composes middlewares that aren't handlers, and passes the request on when none of them answers.
+ * `before` run in order until one answers. `after`, the post-handler ones, run once there is a response: right away
+ * when one of `before` answers, else on the response of what comes next. Every response function then applies to it,
+ * in order.
+ */
+export function pipeMiddlewares(before: EnhancedMiddleware[], after: EnhancedMiddleware[]): UniversalMiddleware {
+  return async function pipeMiddlewaresInternal(request, context, runtime) {
+    const first = await runInOrder(before, request, context, runtime, undefined, true);
+    const finish = async (response: Response) => {
+      const rest = await runInOrder(after, request, first.context, runtime, response);
+      return applyResponseFunctions(response, [...first.pending, ...rest.pending]);
+    };
+    if (first.response) {
+      return finish(first.response);
+    }
+    if (first.pending.length === 0 && after.length === 0) {
+      return first.context;
+    }
+    // The server takes a context or a response function from a middleware, not both: the context goes into its own
+    Object.assign(context, first.context);
+    return finish;
+  };
+}
+
+type ResponseFunction = (response: Response) => Awaitable<Response | undefined>;
+type LendingRequest = Request & { [nextRequestSymbol]?: () => Awaitable<Request> };
+
+// Every middleware runs, a handler (or any, with `untilAnswer`) only until something answers. The first Response
+// answers; a later one is ignored.
+async function runInOrder(
+  middlewares: EnhancedMiddleware[],
+  request: Request,
+  context: Universal.Context,
+  runtime: RuntimeAdapter,
+  response?: Response,
+  untilAnswer = false,
+) {
+  const pending: ResponseFunction[] = [];
+  for (const [i, m] of middlewares.entries()) {
+    if (response && (untilAnswer || isHandler(m))) {
+      continue;
+    }
+    // An adapter that lets every middleware read the body (Express, Elysia) makes a Request for each, until one
+    // answers: the answer may still be reading the body
+    const nextRequest = (request as LendingRequest)[nextRequestSymbol];
+    if (i > 0 && !response && nextRequest) {
+      request = await nextRequest();
+    }
+
+    const result = await getUniversal(m)(request, context ?? {}, runtime);
+
+    if (typeof result === "function") {
+      pending.push(result);
+    } else if (result instanceof Response) {
+      // Only a response function replaces the answer
+      if (response) {
+        cancelReplacedBody(result, response);
+      } else {
+        response = result;
+      }
+    } else if (result !== null && typeof result === "object") {
+      context = result;
+    }
+  }
+  return { response, pending, context };
+}
+
+async function applyResponseFunctions(response: Response, pending: ResponseFunction[]) {
+  for (const m of pending) {
+    const r = await m(response);
+    if (r) {
+      cancelReplacedBody(response, r);
+      response = r;
+    }
+  }
+  return response;
 }

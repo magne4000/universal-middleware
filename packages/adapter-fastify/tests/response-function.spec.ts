@@ -1,8 +1,8 @@
 import { Readable } from "node:stream";
-import type { UniversalMiddleware } from "@universal-middleware/core";
+import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
 import Fastify, { type FastifyInstance } from "fastify";
 import { afterEach, describe, expect, it } from "vitest";
-import { createHandler, createMiddleware } from "../src/index.js";
+import { apply, createHandler, createMiddleware } from "../src/index.js";
 
 // A response function gets what the route sent as a Response: whatever the route sent it with.
 
@@ -93,5 +93,29 @@ describe("the response functions of several middlewares", () => {
     } finally {
       await Promise.all(apps.map((instance) => instance.close()));
     }
+  });
+});
+
+describe("apply()", () => {
+  const refuses = enhance(() => new Response("unauthorized", { status: 401 }), { name: "refuses" });
+  const late = enhance(
+    () => (response: Response) => {
+      response.headers.set("x-late", "yes");
+      return response;
+    },
+    { name: "late", order: 300 },
+  );
+
+  it("after a middleware answers, runs only the ones with a positive order", async () => {
+    const ran: string[] = [];
+    const instance = Fastify();
+    app = instance;
+    await apply(instance, [refuses, enhance(() => void ran.push("sideEffect"), { name: "sideEffect" }), late]);
+    instance.get("/", async () => "route");
+    const url = await instance.listen({ port: 0, host: "127.0.0.1" });
+    const res = await fetch(url);
+    expect(res.status).toBe(401);
+    expect(ran).toEqual([]);
+    expect(res.headers.get("x-late")).toBe("yes");
   });
 });

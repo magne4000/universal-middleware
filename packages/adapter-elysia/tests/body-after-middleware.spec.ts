@@ -57,6 +57,19 @@ describe("body after a universal middleware", () => {
     expect(await res.json()).toEqual({ got: { a: "1" } });
   });
 
+  it("is read by every middleware of the list, then the route", async () => {
+    const seen: string[] = [];
+    const reads: UniversalMiddleware = async (request) => {
+      seen.push(await request.text());
+    };
+    const app = new Elysia();
+    apply(app, [reads, reads]);
+    app.post("/echo", (c) => ({ got: c.body }));
+    const res = await post(app, JSON.stringify({ a: 1 }), "application/json");
+    expect(seen).toEqual(['{"a":1}', '{"a":1}']);
+    expect(await res.json()).toEqual({ got: { a: 1 } });
+  });
+
   it("still reaches the route when the middleware is added with app.use() instead of apply()", async () => {
     let seen: string | undefined;
     const middleware = createMiddleware(() => async (request) => {

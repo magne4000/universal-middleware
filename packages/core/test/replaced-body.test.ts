@@ -94,4 +94,18 @@ describe("pipe", () => {
     expect(await result.text()).toBe("replacement");
     expect(state.cancelled).toBe(true);
   });
+
+  test("ignores a Response that comes after the answer, and cancels its body", async () => {
+    const { state, response } = endless();
+    const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
+
+    const result = await pipe(
+      () => new Response("answer"),
+      () => response,
+    )(new Request("http://localhost/"), {}, runtime);
+    await settle();
+
+    expect(await result.text()).toBe("answer");
+    expect(state.cancelled).toBe(true);
+  });
 });

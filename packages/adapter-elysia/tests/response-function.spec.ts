@@ -106,3 +106,20 @@ describe("aot: true", () => {
     expect(marked).toEqual({ ...plain, marked: "yes" });
   });
 });
+
+describe("apply()", () => {
+  const refuses = enhance(() => new Response("unauthorized", { status: 401 }), { name: "refuses" });
+
+  it("after a middleware answers, runs only the ones with a positive order", async () => {
+    const ran: string[] = [];
+    const app = new Elysia();
+    apply(app, [
+      refuses,
+      enhance(() => void ran.push("sideEffect"), { name: "sideEffect" }),
+      enhance(marks, { name: "marks", order: 300 }),
+    ]);
+    app.get("/", () => "route");
+    expect(await answer(app, "/")).toMatchObject({ status: 401, marked: "yes" });
+    expect(ran).toEqual([]);
+  });
+});

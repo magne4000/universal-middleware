@@ -13,6 +13,7 @@ import {
   cloneRequest,
   contextSymbol,
   getAdapterRuntime,
+  nextRequestSymbol,
   universalSymbol,
 } from "@universal-middleware/core";
 import { Elysia, type Context as ElysiaContext, type Handler, NotFoundError } from "elysia";
@@ -95,6 +96,11 @@ async function requestOf(request: Request) {
   });
 }
 
+// The middlewares `apply()` runs as one each read the body, as separate ones do
+async function lentRequestOf(request: Request): Promise<Request> {
+  return Object.assign(await requestOf(request), { [nextRequestSymbol]: () => lentRequestOf(request) });
+}
+
 /**
  * Creates a request handler to be passed to app.all() or any other route function
  */
@@ -151,7 +157,7 @@ export function createMiddleware<
             middleware,
             async function universalMiddlewareElysia(elysiaContext: typeof elysiaContext1) {
               const response = await this[universalSymbol](
-                await requestOf(elysiaContext.request),
+                await lentRequestOf(elysiaContext.request),
                 elysiaContext.getContext(),
                 getRuntime(elysiaContext),
               );

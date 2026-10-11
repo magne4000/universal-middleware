@@ -30,6 +30,7 @@ The `apply` function is a helper exported by most adapters that:
 - Automatically registers them with the framework-specific router in the correct order
 - Handles route registration based on the `path` and `method` metadata
 - Manages middleware sequencing based on the `order` property (negative orders run before handlers, positive after)
+- Sends the first Response a middleware returns: the middlewares after it with an `order` of 0 or less and the handlers don't run, the ones with a positive `order` still do, and every response function applies to that Response in order
 - Runs a middleware that has a `path` only for the requests a route with the same `path` (and `method`, if set) would match
 
 For example:

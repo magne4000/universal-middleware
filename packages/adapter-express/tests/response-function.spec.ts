@@ -1,9 +1,9 @@
 import type { Server } from "node:http";
 import type { AddressInfo } from "node:net";
-import type { UniversalMiddleware } from "@universal-middleware/core";
+import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
 import express from "express";
 import { afterEach, describe, expect, it } from "vitest";
-import { createMiddleware } from "../src/index.js";
+import { apply, createMiddleware } from "../src/index.js";
 
 // A response function holds the Express app's response back, so the adapter stands in for the socket:
 // what the app sends and how it is sent must survive the detour.
@@ -172,5 +172,28 @@ describe("the Response a response function returns", () => {
     expect((await res.arrayBuffer()).byteLength).toBe(chunks * 64 * 1024);
     // Without backpressure, most of the 8 MiB waits in the response's buffer
     expect(mostBuffered).toBeLessThan(1024 * 1024);
+  });
+});
+
+describe("apply()", () => {
+  const refuses = enhance(() => new Response("unauthorized", { status: 401 }), { name: "refuses" });
+  const late = enhance(
+    () => (response: Response) => {
+      response.headers.set("x-late", "yes");
+      return response;
+    },
+    { name: "late", order: 300 },
+  );
+
+  it("after a middleware answers, runs only the ones with a positive order", async () => {
+    const ran: string[] = [];
+    const url = await start((app) => {
+      apply(app, [refuses, enhance(() => void ran.push("sideEffect"), { name: "sideEffect" }), late]);
+      app.get("/", (_req, res) => res.send("route"));
+    });
+    const res = await fetch(url);
+    expect(res.status).toBe(401);
+    expect(ran).toEqual([]);
+    expect(res.headers.get("x-late")).toBe("yes");
   });
 });

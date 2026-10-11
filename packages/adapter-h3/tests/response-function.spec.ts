@@ -178,3 +178,22 @@ describe("response function and a route returning a value h3 converts", () => {
     expect((await send(() => createError({ statusCode: 418, statusMessage: "Teapot" }), true)).status).toBe(418));
   it("a value h3 cannot send is a 500", async () => expect((await send(() => Symbol("x"), true)).status).toBe(500));
 });
+
+describe("apply()", () => {
+  const refuses = enhance(() => new Response("unauthorized", { status: 401 }), { name: "refuses" });
+
+  it("after a middleware answers, runs only the ones with a positive order", async () => {
+    const ran: string[] = [];
+    const app = createApp();
+    apply(app, [
+      refuses,
+      enhance(() => void ran.push("sideEffect"), { name: "sideEffect" }),
+      enhance(step, { order: 300 }),
+    ]);
+    app.use(eventHandler(() => "route"));
+    const res = await toWebHandler(app)(new Request("http://localhost/"));
+    expect(res.status).toBe(401);
+    expect(ran).toEqual([]);
+    expect(res.headers.get("x-step")).toBe("yes");
+  });
+});

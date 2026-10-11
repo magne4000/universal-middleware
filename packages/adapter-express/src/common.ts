@@ -1,6 +1,12 @@
 import type { ServerResponse } from "node:http";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
-import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import {
+  bindUniversal,
+  contextSymbol,
+  getAdapterRuntime,
+  nextRequestSymbol,
+  universalSymbol,
+} from "@universal-middleware/core";
 import { BadRequestError } from "@universal-middleware/node";
 import { adaptLendingBody, handBodyBack } from "./body.js";
 import { pendingMiddlewaresSymbol } from "./const.js";
@@ -89,6 +95,14 @@ export function createMiddleware<
 ): Get<T, NodeMiddleware<InContext, OutContext>> {
   const requestAdapter = createRequestAdapter(options);
   const adapt = (req: DecoratedRequest, res: ServerResponse) => requestAdapter(req, res, expressOrigin(req));
+  // The middlewares `apply()` runs as one each read the body, as separate ones do
+  const lend = (req: DecoratedRequest, res: ServerResponse): Request =>
+    Object.assign(adaptLendingBody(adapt, req, res), {
+      [nextRequestSymbol]: () => {
+        handBodyBack(req);
+        return lend(req, res);
+      },
+    });
 
   return (...args) => {
     const middleware = middlewareFactory(...args);
@@ -96,7 +110,7 @@ export function createMiddleware<
     return bindUniversal(middleware, async function universalMiddlewareExpress(req, res, next) {
       try {
         req[contextSymbol] ??= {} as InContext;
-        const request = adaptLendingBody(adapt, req, res);
+        const request = lend(req, res);
         const response = await this[universalSymbol](request, getContext(req), getRuntime(req, res));
 
         // A returned `Response` ends the chain and may still be reading the body

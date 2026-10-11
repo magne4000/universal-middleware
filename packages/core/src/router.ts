@@ -1,7 +1,7 @@
 import { addRoute, createRouter, findRoute, type RouterContext } from "rou3";
 import { contextSymbol, methodSymbol, nameSymbol, orderSymbol, pathSymbol, universalSymbol } from "./const";
 import { decodeParams, decodePath, decodePattern, encodePath } from "./decode";
-import { pipe } from "./pipe";
+import { pipe, pipeMiddlewares } from "./pipe";
 import type {
   Enhance,
   EnhancedMiddleware,
@@ -9,7 +9,7 @@ import type {
   UniversalMiddleware,
   UniversalRouterInterface,
 } from "./types";
-import { enhance, getUniversal, getUniversalProp, isHandler, ordered, url } from "./utils";
+import { getUniversal, getUniversalProp, isHandler, ordered, url } from "./utils";
 
 export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<Enhance<UniversalHandler>>;
@@ -81,14 +81,13 @@ function notFound() {
 }
 
 export function apply(router: UniversalRouterInterface, middlewares: EnhancedMiddleware[], defer?: boolean) {
-  const ms = ordered(middlewares);
+  const { middleware, handlers } = split(middlewares);
 
-  for (const m of ms) {
-    if (isHandler(m)) {
-      router.route(m);
-    } else {
-      router.use(scopeToPath(m));
-    }
+  if (middleware) {
+    router.use(middleware);
+  }
+  for (const handler of handlers) {
+    router.route(handler);
   }
   if (!defer) {
     router.applyCatchAll();
@@ -100,18 +99,29 @@ export async function applyAsync(
   middlewares: EnhancedMiddleware[],
   defer?: boolean,
 ) {
-  const ms = ordered(middlewares);
+  const { middleware, handlers } = split(middlewares);
 
-  for (const m of ms) {
-    if (isHandler(m)) {
-      await router.route(m);
-    } else {
-      await router.use(scopeToPath(m));
-    }
+  if (middleware) {
+    await router.use(middleware);
+  }
+  for (const handler of handlers) {
+    await router.route(handler);
   }
   if (!defer) {
     await router.applyCatchAll();
   }
+}
+
+// The middlewares that aren't handlers become one. After an answer, only the post-handler ones (positive `order`) run
+function split(middlewares: EnhancedMiddleware[]) {
+  const ms = ordered(middlewares);
+  const afterHandlers = (m: EnhancedMiddleware) => getUniversalProp(m, orderSymbol, 0) > 0;
+  const before = ms.filter((m) => !isHandler(m) && !afterHandlers(m)).map(scopeToPath);
+  const after = ms.filter(afterHandlers).map(scopeToPath);
+  return {
+    middleware: before.length + after.length > 0 ? pipeMiddlewares(before, after) : undefined,
+    handlers: ms.filter(isHandler),
+  };
 }
 
 // A middleware with a `path` only runs for the requests a route with that `path` and `method` would match
@@ -123,8 +133,7 @@ function scopeToPath(middleware: EnhancedMiddleware): EnhancedMiddleware {
   const umMiddleware = getUniversal(middleware) as UniversalMiddleware;
   const scoped: UniversalMiddleware = (request, ctx, runtime) =>
     match(matcher, request) ? umMiddleware(request, ctx, runtime) : undefined;
-  // `pipe` sorts by `order` again
-  return enhance(scoped, { order: getUniversalProp(middleware, orderSymbol), immutable: false });
+  return scoped;
 }
 
 function addRoutes<T>(router: RouterContext<T>, method: string | string[] | undefined, rawPath: string, data: T) {

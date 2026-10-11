@@ -11,6 +11,7 @@ export {
   MiddlewareOrder,
   methodSymbol,
   nameSymbol,
+  nextRequestSymbol,
   orderSymbol,
   pathSymbol,
   universalSymbol,

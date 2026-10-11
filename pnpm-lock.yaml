@@ -690,6 +690,9 @@ importers:
       '@universal-middleware/core':
         specifier: workspace:^
         version: link:../core
+      '@universal-middleware/hono':
+        specifier: workspace:^
+        version: link:../adapter-hono
       '@universal-middleware/tsdown-config':
         specifier: workspace:*
         version: link:../tsdown-config
@@ -702,6 +705,9 @@ importers:
       h3:
         specifier: 'catalog:'
         version: 1.15.11
+      hono:
+        specifier: 'catalog:'
+        version: 4.13.13
       tsdown:
         specifier: 'catalog:'
         version: 0.23.0(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
