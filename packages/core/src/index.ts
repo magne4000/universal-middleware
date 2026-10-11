@@ -18,7 +18,7 @@ export {
 export { env } from "./env.js";
 export { pipe } from "./pipe.js";
 export { params } from "./route.js";
-export { apply, applyAsync, pipeRoute, UniversalRouter } from "./router.js";
+export { apply, applyAsync, createMatcher, pipeRoute, scopeToPath, UniversalRouter } from "./router.js";
 export { getRuntimeKey } from "./runtime.js";
 export type * from "./types.js";
 export {
