@@ -6,6 +6,7 @@ import type {
   PagesFunction,
 } from "@cloudflare/workers-types";
 import type {
+  Awaitable,
   Get,
   RuntimeAdapter,
   UniversalFn,
@@ -19,6 +20,9 @@ import {
   getAdapterRuntime,
   universalSymbol,
 } from "@universal-middleware/core";
+
+// The response functions of a request, applied in registration order by the function that returned the first one
+const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
 
 export type CloudflareHandler<In extends Universal.Context> = {
   fetch: UniversalFn<UniversalHandler<In>, ExportedHandlerFetchHandler>;
@@ -89,11 +93,28 @@ export function createPagesFunction<
       );
 
       if (typeof response === "function") {
-        const cloudflareResponse = await context.next();
-        const original = cloudflareResponse as unknown as Response;
-        const res = await response(original);
-        cancelReplacedBody(original, res);
-        return (res ?? cloudflareResponse) as unknown as CloudflareResponse;
+        const data = context.data as {
+          [pendingMiddlewaresSymbol]?: ((response: Response) => Awaitable<Response | undefined>)[];
+        };
+        const pending = data[pendingMiddlewaresSymbol];
+        if (pending) {
+          pending.push(response);
+          return await context.next();
+        }
+        const middlewares = [response];
+        data[pendingMiddlewaresSymbol] = middlewares;
+        let res: Response;
+        try {
+          res = (await context.next()) as unknown as Response;
+          for (const middleware of middlewares) {
+            const actualRes = await middleware(res);
+            cancelReplacedBody(res, actualRes);
+            res = actualRes ?? res;
+          }
+        } finally {
+          delete data[pendingMiddlewaresSymbol];
+        }
+        return res as unknown as CloudflareResponse;
       }
       if (response !== null && typeof response === "object") {
         if (response instanceof Response) {

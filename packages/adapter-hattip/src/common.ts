@@ -1,6 +1,7 @@
 import type { RequestHandler } from "@hattip/compose";
 import type { HattipHandler as _HattipHandler, AdapterRequestContext } from "@hattip/core";
 import type {
+  Awaitable,
   Get,
   RuntimeAdapter,
   UniversalFn,
@@ -15,13 +16,14 @@ import {
   universalSymbol,
 } from "@universal-middleware/core";
 
-// Number of response functions waiting for the response of `context.next()`
+// The response functions waiting for the response of `context.next()`, applied in registration order by the
+// middleware that returned the first one
 const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
 
 declare module "@hattip/core" {
   interface AdapterRequestContext {
     [contextSymbol]?: Universal.Context;
-    [pendingMiddlewaresSymbol]?: number;
+    [pendingMiddlewaresSymbol]?: ((response: Response) => Awaitable<Response | undefined>)[];
   }
 }
 
@@ -83,22 +85,29 @@ export function createMiddleware<
       const response = await this[universalSymbol](context.request, ctx, getRuntime(context));
 
       if (typeof response === "function") {
-        const pending = context[pendingMiddlewaresSymbol] ?? 0;
-        context[pendingMiddlewaresSymbol] = pending + 1;
+        const pending = context[pendingMiddlewaresSymbol];
+        if (pending) {
+          pending.push(response);
+          return;
+        }
+        const middlewares = [response];
+        context[pendingMiddlewaresSymbol] = middlewares;
         let res: Response;
-        let actualRes: Response | undefined;
         try {
           res = await context.next();
-          actualRes = await response(res);
+          for (const middleware of middlewares) {
+            const actualRes = await middleware(res);
+            cancelReplacedBody(res, actualRes);
+            // Nothing is sent for HEAD: the replaced body is released now, not after `cancelReplacedBody`'s delay
+            if (actualRes && actualRes !== res && context.request.method === "HEAD") {
+              void res.body?.cancel().catch(() => {});
+            }
+            res = actualRes ?? res;
+          }
         } finally {
-          context[pendingMiddlewaresSymbol] = pending;
+          delete context[pendingMiddlewaresSymbol];
         }
-        cancelReplacedBody(res, actualRes);
-        // Nothing is sent for HEAD: the replaced body is released now, not after `cancelReplacedBody`'s delay
-        if (actualRes && actualRes !== res && context.request.method === "HEAD") {
-          void res.body?.cancel().catch(() => {});
-        }
-        return withoutHeadBody(context, actualRes ?? res);
+        return withoutHeadBody(context, res);
       }
       if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
