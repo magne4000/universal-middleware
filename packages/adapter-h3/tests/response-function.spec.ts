@@ -2,8 +2,9 @@ import { once } from "node:events";
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import { Readable } from "node:stream";
-import { enhance } from "@universal-middleware/core";
+import { type EnhancedMiddleware, enhance } from "@universal-middleware/core";
 import {
+  type AppOptions,
   createApp,
   createError,
   eventHandler,
@@ -33,6 +34,8 @@ const shout = enhance(
     name: "shout",
   },
 );
+
+const replace = enhance(() => (response: Response) => new Response("replaced", response), { name: "replace" });
 
 async function send(route: (event: H3Event) => unknown, withStep: boolean) {
   const app = createApp();
@@ -177,4 +180,37 @@ describe("response function and a route returning a value h3 converts", () => {
   it("h3 error", async () =>
     expect((await send(() => createError({ statusCode: 418, statusMessage: "Teapot" }), true)).status).toBe(418));
   it("a value h3 cannot send is a 500", async () => expect((await send(() => Symbol("x"), true)).status).toBe(500));
+});
+
+describe("response function returning a new Response", () => {
+  function appWith(middleware: EnhancedMiddleware, options?: AppOptions) {
+    const app = createApp(options);
+    apply(app, [middleware]);
+    app.use(
+      "/route",
+      eventHandler(() => "<p>hi</p>"),
+    );
+    return app;
+  }
+
+  const sendWeb = (middleware: EnhancedMiddleware) =>
+    toWebHandler(appWith(middleware))(new Request("http://localhost/route"));
+
+  it("sends the new Response when the old body was read", async () =>
+    expect(await (await sendWeb(shout)).text()).toBe("<P>HI</P>"));
+  it("sends the new Response when the old body was never read", async () =>
+    expect(await (await sendWeb(replace)).text()).toBe("replaced"));
+  it("sends it once on a Node server", async () => {
+    const errors: unknown[] = [];
+    const server = createServer(toNodeListener(appWith(shout, { onError: (error) => void errors.push(error) })));
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    try {
+      const res = await fetch(`http://127.0.0.1:${(server.address() as AddressInfo).port}/route`);
+      expect(await res.text()).toBe("<P>HI</P>");
+      expect(errors).toEqual([]);
+    } finally {
+      server.closeAllConnections();
+      server.close();
+    }
+  });
 });
