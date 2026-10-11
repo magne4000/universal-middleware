@@ -18,7 +18,6 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "prepack": "pnpm build",
     "test": "vitest run",
     "test:run-hono:node": "tsx tests/entry-hono.ts",
     "test:run-hono:bun": "bun tests/entry-hono.ts",

@@ -112,7 +112,6 @@
   ],
   "scripts": {
     "build": "tsdown",
-    "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },

@@ -19,7 +19,6 @@
   "scripts": {
     "build": "tsdown",
     "test": "vitest --typecheck run",
-    "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {

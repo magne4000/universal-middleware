@@ -17,7 +17,6 @@
   "license": "MIT",
   "scripts": {
     "build": "tsdown",
-    "prepack": "pnpm build",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

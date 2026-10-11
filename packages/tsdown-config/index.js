@@ -107,6 +107,8 @@ export function defineTsdown({ runtime, target, deps = { neverBundle: true }, dt
     fixedExtension: false,
     dts,
     deps,
+    // A bundled import that doesn't resolve (a workspace package's dist missing) only warns, and rolldown keeps it external
+    failOnWarn: true,
     // Printed once per package by rolldown-plugin-dts as long as TypeScript 7 is installed; nothing to act on
     suppressWarnings: ["TypeScript 7.0 does not yet have a stable API"],
     ...rest,
