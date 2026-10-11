@@ -1,4 +1,5 @@
 import type {
+  Awaitable,
   Get,
   RuntimeAdapter,
   UniversalFn,
@@ -7,6 +8,15 @@ import type {
 } from "@universal-middleware/core";
 import { bindUniversal, cancelReplacedBody, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import type { ServerHandler, ServerMiddleware, ServerRequest } from "srvx";
+
+// The response functions of a request, applied in registration order by the middleware that returned the first one
+const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
+
+declare module "srvx" {
+  interface ServerRequest {
+    [pendingMiddlewaresSymbol]?: ((response: Response) => Awaitable<Response | undefined>)[];
+  }
+}
 
 export type SrvxHandler<In extends Universal.Context> = UniversalFn<UniversalHandler<In>, ServerHandler>;
 export type SrvxMiddleware<In extends Universal.Context, Out extends Universal.Context> = UniversalFn<
@@ -50,10 +60,25 @@ export function createMiddleware<
       const response = await this[universalSymbol](request, context, getRuntime(request));
 
       if (typeof response === "function") {
-        const res = await next();
-        const replacement = await response(res);
-        cancelReplacedBody(res, replacement);
-        return replacement ?? res;
+        const pending = request[pendingMiddlewaresSymbol];
+        if (pending) {
+          pending.push(response);
+          return next();
+        }
+        const middlewares = [response];
+        request[pendingMiddlewaresSymbol] = middlewares;
+        let res: Response;
+        try {
+          res = await next();
+          for (const middleware of middlewares) {
+            const replacement = await middleware(res);
+            cancelReplacedBody(res, replacement);
+            res = replacement ?? res;
+          }
+        } finally {
+          delete request[pendingMiddlewaresSymbol];
+        }
+        return res;
       } else if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
           return response;

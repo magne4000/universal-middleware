@@ -1,4 +1,5 @@
 import type {
+  Awaitable,
   Get,
   RuntimeAdapter,
   UniversalFn,
@@ -14,6 +15,9 @@ import {
 } from "@universal-middleware/core";
 import type { Env, ExecutionContext, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
 
+// The response functions of a request, applied in registration order by the middleware that returned the first one
+const pendingMiddlewaresSymbol = Symbol.for("unPendingMiddlewares");
+
 interface UniversalEnv {
   Bindings: Env["Bindings"] & {
     // biome-ignore lint/suspicious/noExplicitAny: avoid hono/cloudflare-pages typing conflict
@@ -21,6 +25,7 @@ interface UniversalEnv {
   };
   Variables: Env["Variables"] & {
     [contextSymbol]?: Universal.Context;
+    [pendingMiddlewaresSymbol]?: ((response: Response) => Awaitable<Response | undefined>)[];
   };
 }
 
@@ -84,12 +89,21 @@ export function createMiddleware<
       const response = await this[universalSymbol](honoContext.req.raw, context, getRuntime(honoContext));
 
       if (typeof response === "function") {
+        const pending = honoContext.get(pendingMiddlewaresSymbol);
+        if (pending) {
+          pending.push(response);
+          return next();
+        }
+        const middlewares = [response];
+        honoContext.set(pendingMiddlewaresSymbol, middlewares);
         await next();
-        const original = honoContext.res;
-        const res = await response(original);
-        if (res) {
-          cancelReplacedBody(original, res);
-          honoContext.res = res;
+        for (const middleware of middlewares) {
+          const original = honoContext.res;
+          const res = await middleware(original);
+          if (res) {
+            cancelReplacedBody(original, res);
+            honoContext.res = res;
+          }
         }
       } else if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
