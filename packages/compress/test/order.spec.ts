@@ -26,9 +26,9 @@ it("compresses the body a response function rewrote, when registered before it",
   await expect(decompressResponse(response, "gzip")).resolves.toBe(body.toUpperCase());
 });
 
-it("compresses the answer of a middleware listed after it", async () => {
+it("compresses the answer of a middleware listed before it", async () => {
   const app = new Hono();
-  apply(app, [compress(), serves]);
+  apply(app, [serves, compress()]);
 
   const response = await app.fetch(new Request("http://localhost/", { headers: { "accept-encoding": "gzip" } }));
 
