@@ -18,7 +18,6 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "prepack": "pnpm build",
     "test": "vitest run",
     "test:run-cloudflare:pages": "wrangler pages dev",
     "test:run-cloudflare:worker": "wrangler dev tests/worker-entry.ts",

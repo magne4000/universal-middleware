@@ -27,7 +27,6 @@ import {
   type H3Event,
   isStream,
   MIMES,
-  sendWebResponse,
   toWebRequest,
 } from "h3";
 
@@ -172,7 +171,8 @@ export const universalOnBeforeResponse = defineResponseMiddleware(
         if (event.method === "HEAD" && newResponse !== response.body) {
           void (response.body as Response).body?.cancel().catch(() => {});
         }
-        await sendWebResponse(event, withoutHeadBody(event, newResponse));
+        // h3 sends `response.body` once this hook returns
+        response.body = withoutHeadBody(event, newResponse);
       }
     }
   },

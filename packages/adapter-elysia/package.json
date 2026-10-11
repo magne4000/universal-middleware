@@ -18,7 +18,6 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "prepack": "pnpm build",
     "test": "vitest run",
     "test:run-elysia:bun": "bun --bun tests/entry-elysia.ts",
     "test:run-elysia:worker": "wrangler dev tests/entry-elysia-cloudflare.ts",

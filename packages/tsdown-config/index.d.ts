@@ -42,6 +42,7 @@ export type TsdownConfig = Omit<Options, "runtime"> & {
   platform: "neutral" | "node";
   target: string;
   fixedExtension: false;
+  failOnWarn: true;
   suppressWarnings: string[];
 };
 

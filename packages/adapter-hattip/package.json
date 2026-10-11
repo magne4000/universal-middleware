@@ -18,7 +18,6 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "prepack": "pnpm build",
     "test": "vitest run",
     "test:run-hattip:node": "tsx tests/entry-hattip.ts",
     "test:run-hattip:bun": "bun tests/entry-hattip.ts",

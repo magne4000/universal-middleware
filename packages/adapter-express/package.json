@@ -19,7 +19,6 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "prepack": "pnpm build",
     "test": "vitest run",
     "test:run-express:node": "tsx tests/entry-express.ts",
     "test:run-express:bun": "bun tests/entry-express.ts",

@@ -18,7 +18,6 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "prepack": "pnpm build",
     "test": "vitest run",
     "test:run-h3:node": "tsx tests/entry-h3.ts",
     "test:run-h3:bun": "bun tests/entry-h3.ts",

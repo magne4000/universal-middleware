@@ -18,7 +18,6 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "prepack": "pnpm build",
     "test": "vitest run",
     "test:run-webroute:node": "tsx tests/entry-webroute.ts",
     "test:run-webroute:bun": "bun tests/entry-webroute.ts",
