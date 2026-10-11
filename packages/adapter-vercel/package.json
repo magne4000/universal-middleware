@@ -43,7 +43,6 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "prepack": "pnpm build",
     "test:run-vercel:node": "vercel dev",
     "test": "vitest run",
     "test:typecheck": "tsc -p tsconfig.json --noEmit"
