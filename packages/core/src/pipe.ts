@@ -145,9 +145,9 @@ export function pipe<F extends AnyMiddleware[]>(
  */
 export function pipeMiddlewares(before: EnhancedMiddleware[], after: EnhancedMiddleware[]): UniversalMiddleware {
   return async function pipeMiddlewaresInternal(request, context, runtime) {
-    const first = await runInOrder(before, request, context, runtime, undefined, true);
+    const first = await runInOrder(before, request, context, runtime, { untilAnswer: true });
     const finish = async (response: Response) => {
-      const rest = await runInOrder(after, request, first.context, runtime, response);
+      const rest = await runInOrder(after, request, first.context, runtime, { answer: response });
       return applyResponseFunctions(response, [...first.pending, ...rest.pending]);
     };
     if (first.response) {
@@ -172,8 +172,7 @@ async function runInOrder(
   request: Request,
   context: Universal.Context,
   runtime: RuntimeAdapter,
-  response?: Response,
-  untilAnswer = false,
+  { answer: response, untilAnswer = false }: { answer?: Response; untilAnswer?: boolean } = {},
 ) {
   const pending: ResponseFunction[] = [];
   for (const [i, m] of middlewares.entries()) {
