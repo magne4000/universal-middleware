@@ -5,11 +5,12 @@ import { pipe, pipeMiddlewares } from "./pipe";
 import type {
   Enhance,
   EnhancedMiddleware,
+  HttpMethod,
   UniversalHandler,
   UniversalMiddleware,
   UniversalRouterInterface,
 } from "./types";
-import { getUniversal, getUniversalProp, isHandler, ordered, url } from "./utils";
+import { enhance, getUniversal, getUniversalProp, isHandler, ordered, url } from "./utils";
 
 export class UniversalRouter implements UniversalRouterInterface {
   public router: RouterContext<Enhance<UniversalHandler>>;
@@ -124,16 +125,29 @@ function split(middlewares: EnhancedMiddleware[]) {
   };
 }
 
-// A middleware with a `path` only runs for the requests a route with that `path` and `method` would match
-function scopeToPath(middleware: EnhancedMiddleware): EnhancedMiddleware {
+/**
+ * Wraps a middleware that has a `path` so it runs only for the requests a route with that `path` and `method` would
+ * match, as `apply()` does. A middleware without a `path` is returned as is.
+ */
+export function scopeToPath(middleware: EnhancedMiddleware): EnhancedMiddleware {
   const path = getUniversalProp(middleware, pathSymbol);
   if (!path) return middleware;
-  const matcher = createRouter<true>();
-  addRoutes(matcher, getUniversalProp(middleware, methodSymbol), path, true);
+  const isMatch = createMatcher(path, getUniversalProp(middleware, methodSymbol));
   const umMiddleware = getUniversal(middleware) as UniversalMiddleware;
   const scoped: UniversalMiddleware = (request, ctx, runtime) =>
-    match(matcher, request) ? umMiddleware(request, ctx, runtime) : undefined;
-  return scoped;
+    isMatch(request) ? umMiddleware(request, ctx, runtime) : undefined;
+  // `pipe` sorts by `order` again
+  return enhance(scoped, { order: getUniversalProp(middleware, orderSymbol), immutable: false });
+}
+
+/**
+ * Returns a check of whether a route with this `path` and `method` matches a request, as `apply()` routes it: the
+ * decoded pathname is matched, a `GET` route also matches `HEAD`, and without `method` any method matches.
+ */
+export function createMatcher(path: string, method?: HttpMethod | HttpMethod[]): (request: Request) => boolean {
+  const router = createRouter<true>();
+  addRoutes(router, method, path, true);
+  return (request) => match(router, request) !== undefined;
 }
 
 function addRoutes<T>(router: RouterContext<T>, method: string | string[] | undefined, rawPath: string, data: T) {

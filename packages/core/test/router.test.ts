@@ -1,5 +1,16 @@
 import { describe, expect, test } from "vitest";
-import { enhance, params, pipeRoute, type RuntimeAdapter, type UniversalMiddleware } from "../src/index";
+import {
+  createMatcher,
+  enhance,
+  getUniversal,
+  getUniversalProp,
+  orderSymbol,
+  params,
+  pipeRoute,
+  type RuntimeAdapter,
+  scopeToPath,
+  type UniversalMiddleware,
+} from "../src/index";
 
 describe("pipeRoute matches the decoded pathname", () => {
   const route = (path: string) =>
@@ -230,5 +241,66 @@ describe("handle404 answers a request no route matches, whatever its method", ()
   test("routes still answer, HEAD included", async () => {
     expect((await run("GET", "/page")).status).toBe(200);
     expect((await run("HEAD", "/page")).status).toBe(200);
+  });
+});
+
+describe("createMatcher matches a request as a route with the same path and method would", () => {
+  const request = (path: string, method = "GET") => new Request(`http://localhost${path}`, { method });
+
+  test("the path pattern", () => {
+    const isMatch = createMatcher("/admin/**", "GET");
+    expect(isMatch(request("/admin"))).toBe(true);
+    expect(isMatch(request("/admin/settings"))).toBe(true);
+    expect(isMatch(request("/about"))).toBe(false);
+  });
+
+  test("the decoded pathname", () => {
+    const isMatch = createMatcher("/café");
+    expect(isMatch(request("/caf%C3%A9"))).toBe(true);
+    expect(isMatch(request("/caf%c3%a9"))).toBe(true);
+  });
+
+  test("the method, a GET route also matching HEAD", () => {
+    const isMatch = createMatcher("/page", ["GET", "PUT"]);
+    expect(isMatch(request("/page", "PUT"))).toBe(true);
+    expect(isMatch(request("/page", "HEAD"))).toBe(true);
+    expect(isMatch(request("/page", "POST"))).toBe(false);
+  });
+
+  test("any method without one", () => {
+    const isMatch = createMatcher("/page");
+    expect(isMatch(request("/page", "DELETE"))).toBe(true);
+  });
+});
+
+describe("scopeToPath runs a middleware only on its path", () => {
+  const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
+  const auth = enhance(() => new Response("Unauthorized", { status: 401 }), {
+    name: "auth",
+    path: "/admin/**",
+    method: "GET",
+    order: -800,
+  });
+  const scoped = getUniversal(scopeToPath(auth)) as UniversalMiddleware;
+  const run = (path: string, method = "GET") =>
+    scoped(new Request(`http://localhost${path}`, { method }), {}, runtime) as Response | undefined;
+
+  test("runs for its path and method", () => {
+    expect(run("/admin/settings")?.status).toBe(401);
+    expect(run("/admin/settings", "HEAD")?.status).toBe(401);
+  });
+
+  test("is skipped for any other path or method", () => {
+    expect(run("/about")).toBeUndefined();
+    expect(run("/admin/settings", "POST")).toBeUndefined();
+  });
+
+  test("keeps its order", () => {
+    expect(getUniversalProp(scopeToPath(auth), orderSymbol)).toBe(-800);
+  });
+
+  test("returns a middleware without a path as is", () => {
+    const noPath = enhance(() => undefined, { name: "noPath", order: -800 });
+    expect(scopeToPath(noPath)).toBe(noPath);
   });
 });
