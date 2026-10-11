@@ -20,7 +20,7 @@ Tests the `EncodingGuesser` functionality that determines which compression algo
 Tests the flush behavior of compression streams to ensure data is properly flushed during streaming. This is critical for progressive streaming applications like React Server Components.
 
 ### order.spec.ts
-Tests that `compress()` compresses the answer of a middleware such as `sirv()` that `apply()` runs before it.
+Tests that `compress()` runs after the other middlewares: it compresses the body a response function rewrote, and the answer of a middleware such as `sirv()`.
 
 ### streaming.spec.ts
 Tests streaming compression with both zlib and fflate implementations, verifying that chunks are properly flushed during streaming.
