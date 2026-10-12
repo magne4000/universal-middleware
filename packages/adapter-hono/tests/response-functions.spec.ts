@@ -34,3 +34,27 @@ it("after a middleware answers, runs only the ones with a positive order", async
   expect(ran).toEqual([]);
   expect(response.headers.get("x-order")).toBe("late");
 });
+
+it("gives the route and the response functions the context a middleware returned", async () => {
+  const seen = (header: string, order?: number) =>
+    enhance(
+      (_request, context: { user?: string; routeData?: string }) => (response: Response) => {
+        response.headers.set(header, `${context.user} ${context.routeData}`);
+        return response;
+      },
+      { name: header, order },
+    );
+  const app = new Hono();
+  apply(app, [enhance(() => ({ user: "ann" }), { name: "user" }), seen("x-early"), seen("x-late", 100)]);
+  app.get(
+    "/",
+    createHandler(() => (_request, context: { routeData?: string }) => {
+      context.routeData = "visible";
+      return new Response("route");
+    })(),
+  );
+
+  const response = await app.fetch(new Request("http://localhost/"));
+  expect(response.headers.get("x-early")).toBe("ann visible");
+  expect(response.headers.get("x-late")).toBe("ann visible");
+});

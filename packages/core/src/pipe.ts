@@ -145,19 +145,19 @@ export function pipe<F extends AnyMiddleware[]>(
  */
 export function pipeMiddlewares(before: EnhancedMiddleware[], after: EnhancedMiddleware[]): UniversalMiddleware {
   return async function pipeMiddlewaresInternal(request, context, runtime) {
-    const first = await runInOrder(before, request, context, runtime, { untilAnswer: true });
+    // The server takes a context or a response function from a middleware, not both: its context stays the one the
+    // route and every response function see
+    const first = await runInOrder(before, request, context, runtime, { untilAnswer: true, inPlace: true });
     const finish = async (response: Response) => {
-      const rest = await runInOrder(after, request, first.context, runtime, { answer: response });
+      const rest = await runInOrder(after, request, context, runtime, { answer: response, inPlace: true });
       return applyResponseFunctions(response, [...first.pending, ...rest.pending]);
     };
     if (first.response) {
       return finish(first.response);
     }
     if (first.pending.length === 0 && after.length === 0) {
-      return first.context;
+      return context;
     }
-    // The server takes a context or a response function from a middleware, not both: the context goes into its own
-    Object.assign(context, first.context);
     return finish;
   };
 }
@@ -166,13 +166,17 @@ type ResponseFunction = (response: Response) => Awaitable<Response | undefined>;
 type LendingRequest = Request & { [nextRequestSymbol]?: (runtime: RuntimeAdapter) => Awaitable<Request> };
 
 // Every middleware runs, a handler (or any, with `untilAnswer`) only until something answers. The first Response
-// answers; a later one is ignored.
+// answers; a later one is ignored. A returned context replaces `context`, or with `inPlace` its contents.
 async function runInOrder(
   middlewares: EnhancedMiddleware[],
   request: Request,
   context: Universal.Context,
   runtime: RuntimeAdapter,
-  { answer: response, untilAnswer = false }: { answer?: Response; untilAnswer?: boolean } = {},
+  {
+    answer: response,
+    untilAnswer = false,
+    inPlace = false,
+  }: { answer?: Response; untilAnswer?: boolean; inPlace?: boolean } = {},
 ) {
   const pending: ResponseFunction[] = [];
   for (const [i, m] of middlewares.entries()) {
@@ -197,8 +201,13 @@ async function runInOrder(
       } else {
         response = result;
       }
-    } else if (result !== null && typeof result === "object") {
-      context = result;
+    } else if (result !== null && typeof result === "object" && result !== context) {
+      if (inPlace) {
+        for (const key of Object.keys(context)) delete context[key];
+        Object.assign(context, result);
+      } else {
+        context = result;
+      }
     }
   }
   return { response, pending, context };
