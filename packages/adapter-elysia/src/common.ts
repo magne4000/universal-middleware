@@ -67,16 +67,17 @@ function keepBody(request: Request) {
 // Below this a body is copied eagerly: building the stream costs more than copying the bytes.
 const eagerLimit = 64 * 1024;
 
-async function requestOf(request: Request) {
-  if (request.method === "GET" || request.method === "HEAD") return request.clone();
+// `request`'s body on `into`, a Request a middleware may have changed since
+async function requestOf(request: Request, into = request) {
+  if (request.method === "GET" || request.method === "HEAD") return into.clone();
   const kept = keptBodies.get(request);
   if (kept && Number(request.headers.get("content-length")) <= eagerLimit) {
-    return cloneRequest(request, { body: await kept });
+    return cloneRequest(into, { body: await kept });
   }
   // Costs nothing until the middleware reads the body: it then gets the kept bytes, or a copy of the
   // stream when nothing read the body yet, so a route that streams it keeps it.
   let copy: ReadableStreamDefaultReader<Uint8Array> | undefined;
-  return cloneRequest(request, {
+  return cloneRequest(into, {
     body: new ReadableStream(
       {
         async pull(controller) {
@@ -98,12 +99,13 @@ async function requestOf(request: Request) {
 }
 
 // The middlewares `apply()` runs as one each read the body, as separate ones do
-async function lend(request: Request): Promise<Request> {
-  const lent: Request & { [nextRequestSymbol]?: typeof nextRequest } = await requestOf(request);
+async function lend(request: Request, into?: Request): Promise<Request> {
+  const lent: Request & { [nextRequestSymbol]?: typeof nextRequest } = await requestOf(request, into);
   lent[nextRequestSymbol] = nextRequest;
   return lent;
 }
-const nextRequest = (runtime: RuntimeAdapter) => lend((runtime as ElysiaAdapter).elysia.request);
+const nextRequest = (request: Request, runtime: RuntimeAdapter) =>
+  lend((runtime as ElysiaAdapter).elysia.request, request);
 
 /**
  * Creates a request handler to be passed to app.all() or any other route function

@@ -32,14 +32,27 @@ export function adaptLendingBody(
   // An earlier middleware left its lend unread: its `Request` still applies
   if (req[lentSymbol]) return adapt(req, res);
 
-  const lend = new LentBody(req);
-  req[lentSymbol] = lend;
-  req.rawBody = new ReadableStream<Uint8Array>(lend, { highWaterMark: 0 });
+  req.rawBody = lendBody(req);
   try {
     return adapt(req, res);
   } finally {
     req.rawBody = undefined;
   }
+}
+
+/** `request` with the body `handBodyBack` restored, or `request` itself when the body was parsed before. */
+export function lendBodyAgain(req: LentRequest, request: Request): Request {
+  if (req.rawBody !== undefined || req.readableEnded) return request;
+  // @ts-expect-error RequestInit: duplex option is required when sending a body
+  const next = new Request(request, { body: lendBody(req), duplex: "half" });
+  req[requestSymbol] = next;
+  return next;
+}
+
+function lendBody(req: LentRequest): ReadableStream<Uint8Array> {
+  const lend = new LentBody(req);
+  req[lentSymbol] = lend;
+  return new ReadableStream<Uint8Array>(lend, { highWaterMark: 0 });
 }
 
 /** Make the bytes a middleware read readable again on the Node request. */

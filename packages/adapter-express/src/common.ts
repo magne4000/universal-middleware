@@ -14,7 +14,7 @@ import {
   universalSymbol,
 } from "@universal-middleware/core";
 import { BadRequestError } from "@universal-middleware/node";
-import { adaptLendingBody, handBodyBack } from "./body.js";
+import { adaptLendingBody, handBodyBack, lendBodyAgain } from "./body.js";
 import { pendingMiddlewaresSymbol } from "./const.js";
 import { createRequestAdapter, expressOrigin } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
@@ -102,15 +102,14 @@ export function createMiddleware<
   const requestAdapter = createRequestAdapter(options);
   const adapt = (req: DecoratedRequest, res: ServerResponse) => requestAdapter(req, res, expressOrigin(req));
   // The middlewares `apply()` runs as one each read the body, as separate ones do
-  const lend = (req: DecoratedRequest, res: ServerResponse): Request => {
-    const request: Request & { [nextRequestSymbol]?: typeof nextRequest } = adaptLendingBody(adapt, req, res);
+  const lend = (request: Request & { [nextRequestSymbol]?: typeof nextRequest }): Request => {
     request[nextRequestSymbol] = nextRequest;
     return request;
   };
-  const nextRequest = (runtime: RuntimeAdapter) => {
-    const { req, res } = runtime as ExpressAdapter & { req: DecoratedRequest };
+  const nextRequest = (request: Request, runtime: RuntimeAdapter) => {
+    const { req } = runtime as ExpressAdapter & { req: DecoratedRequest };
     handBodyBack(req);
-    return lend(req, res);
+    return lend(lendBodyAgain(req, request));
   };
 
   return (...args) => {
@@ -119,7 +118,11 @@ export function createMiddleware<
     return bindUniversal(middleware, async function universalMiddlewareExpress(req, res, next) {
       try {
         req[contextSymbol] ??= {} as InContext;
-        const response = await this[universalSymbol](lend(req, res), getContext(req), getRuntime(req, res));
+        const response = await this[universalSymbol](
+          lend(adaptLendingBody(adapt, req, res)),
+          getContext(req),
+          getRuntime(req, res),
+        );
 
         // A returned `Response` ends the chain and may still be reading the body
         if (!(response instanceof Response)) handBodyBack(req);

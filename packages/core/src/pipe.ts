@@ -163,7 +163,9 @@ export function pipeMiddlewares(before: EnhancedMiddleware[], after: EnhancedMid
 }
 
 type ResponseFunction = (response: Response) => Awaitable<Response | undefined>;
-type LendingRequest = Request & { [nextRequestSymbol]?: (runtime: RuntimeAdapter) => Awaitable<Request> };
+type LendingRequest = Request & {
+  [nextRequestSymbol]?: (request: Request, runtime: RuntimeAdapter) => Awaitable<Request>;
+};
 
 // Every middleware runs, a handler (or any, with `untilAnswer`) only until something answers. The first Response
 // answers; a later one is ignored. A returned context replaces `context`, or with `inPlace` its contents.
@@ -188,11 +190,7 @@ async function runInOrder(
     // middlewares left it. A body Express parsed before the list can't be lent again.
     const nextRequest = (request as LendingRequest)[nextRequestSymbol];
     if (!response && nextRequest && request.bodyUsed) {
-      const { body, bodyUsed } = await nextRequest(runtime);
-      if (!bodyUsed) {
-        // @ts-expect-error RequestInit: duplex option is required when sending a body
-        request = Object.assign(new Request(request, { body, duplex: "half" }), { [nextRequestSymbol]: nextRequest });
-      }
+      request = await nextRequest(request, runtime);
     }
 
     const result = await getUniversal(m)(request, context ?? {}, runtime);
