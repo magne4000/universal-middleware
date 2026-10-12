@@ -18,7 +18,6 @@ import {
   cancelReplacedBody,
   contextSymbol,
   getAdapterRuntime,
-  getUniversalProp,
   universalSymbol,
 } from "@universal-middleware/core";
 
@@ -94,9 +93,6 @@ export function createPagesFunction<
       );
 
       if (typeof response === "function") {
-        // An apply() list hands over with its response function the context its middlewares returned
-        const returned = getUniversalProp(response, contextSymbol);
-        if (returned) setContext(context.data as { [contextSymbol]?: Universal.Context }, returned);
         const data = context.data as {
           [pendingMiddlewaresSymbol]?: ((response: Response) => Awaitable<Response | undefined>)[];
         };

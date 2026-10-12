@@ -6,14 +6,7 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import {
-  bindUniversal,
-  cancelReplacedBody,
-  contextSymbol,
-  getAdapterRuntime,
-  getUniversalProp,
-  universalSymbol,
-} from "@universal-middleware/core";
+import { bindUniversal, cancelReplacedBody, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import type { ServerHandler, ServerMiddleware, ServerRequest } from "srvx";
 
 // The response functions of a request, applied in registration order by the middleware that returned the first one
@@ -67,9 +60,6 @@ export function createMiddleware<
       const response = await this[universalSymbol](request, context, getRuntime(request));
 
       if (typeof response === "function") {
-        // An apply() list hands over with its response function the context its middlewares returned
-        const returned = getUniversalProp(response, contextSymbol);
-        if (returned) setContext(request, returned);
         const pending = request[pendingMiddlewaresSymbol];
         if (pending) {
           pending.push(response);
