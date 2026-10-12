@@ -14,7 +14,7 @@ describe("compileEnhance", () => {
       'mod[Symbol.for("unPath")]="/**";' +
         'mod[Symbol.for("unMethod")]="GET";' +
         'mod[Symbol.for("unName")]="name";' +
-        'mod[Symbol.for("unOrder")]=-600;',
+        'mod[Symbol.for("unOrder")]=-1100;',
     );
     expect(
       compileEnhance("mod", {

@@ -266,7 +266,10 @@ apply(app, [
 ```
 
 > [!NOTE]
-> A middleware with a positive `order` runs after the handler: a context it returns doesn't reach the handler. A middleware that must run before the handler, like a cache that answers hits or a logger that times the handler, needs a negative `order`.
+> A middleware with a positive `order` runs after the handler: a context it returns doesn't reach the handler. A middleware that must run before the handler, like a cache that answers hits (`MiddlewareOrder.CACHING`) or a logger that times the handler, needs a negative `order`.
+
+`MiddlewareOrder` lists the usual slots, in the order they run: `CORS` first, so that its headers also reach an early 401 or 429, then rate limiting, authentication, authorization, caching, parsing and input validation before the handler; error pages, response transforms, headers, compression, conditional requests and logging after it.
+
 ## Support status
 
 The `apply` method is currently being rolled out across adapters.

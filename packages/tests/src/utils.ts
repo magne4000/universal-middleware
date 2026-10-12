@@ -264,10 +264,10 @@ export const ruleMiddlewares = [
     path: "/rule/handled",
     order: 100,
   }),
-  enhance(() => new Response("cached"), {
-    name: "cache",
+  enhance(() => new Response("not modified"), {
+    name: "conditional",
     path: "/rule/late-response",
-    order: MiddlewareOrder.RESPONSE_CACHING,
+    order: MiddlewareOrder.CONDITIONAL_REQUESTS,
   }),
 ];
 
