@@ -5,6 +5,8 @@ import {
   handler,
   middlewares,
   routeParamHandler,
+  ruleHandler,
+  ruleMiddlewares,
   throwEarlyAndLateHandler,
   throwEarlyHandler,
   throwLateHandler,
@@ -52,6 +54,8 @@ switch (TEST_CASE) {
       enhancedMiddlewares.guard,
       enhancedMiddlewares.throwEarly,
       enhancedMiddlewares.throwLate,
+      ...ruleMiddlewares,
+      ruleHandler(),
     ]);
 
     break;

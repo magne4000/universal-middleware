@@ -18,9 +18,9 @@ const enhancedHandler = (() => enhance(handler, {
   method: "GET", // Accepts a single method or array of methods: ["GET", "POST", "PATCH"]
   path: "/",     // rou3 v0.12 pattern syntax, close to URLPattern. See https://github.com/h3js/rou3
   
-  // The order property is specific to Middleware configuration
-  // order: 10,  // Positive values execute AFTER handlers in the middleware chain
-                 // Negative values execute BEFORE handlers in the middleware chain
+  // The order and runs properties are specific to Middleware configuration
+  // order: 10,  // Positive values run AFTER handlers, negative values BEFORE. See "Order and early responses" below
+  // runs: "always", // Overrides when the middleware runs, see below
 })) satisfies Get<[], UniversalHandler>;
 ```
 
@@ -29,7 +29,7 @@ The `apply` function is a helper exported by most adapters that:
 - Reads metadata from _enhanced_ middlewares/handlers (path, method, order)
 - Automatically registers them with the framework-specific router in the correct order
 - Handles route registration based on the `path` and `method` metadata
-- Manages middleware sequencing based on the `order` property (negative orders run before handlers, positive after)
+- Manages middleware sequencing based on the `order` property (negative orders run before handlers, positive after), and runs the same way on every adapter, see [Order and early responses](#order-and-early-responses)
 - Runs a middleware that has a `path` only for the requests a route with the same `path` (and `method`, if set) would match
 
 For example:
@@ -243,6 +243,32 @@ isMatch(new Request("http://localhost/admin/settings")); // true
 isMatch(new Request("http://localhost/admin/settings", { method: "HEAD" })); // true, a GET route also matches HEAD
 isMatch(new Request("http://localhost/about")); // false
 ```
+
+### Order and early responses
+
+`apply` sorts middlewares by `order` (no `order` counts as `0`; equal orders keep their list position), and registers each of them with the server. A middleware that returns a `Response` answers the request. What runs then depends on `runs`, which `order` sets by default:
+
+| `runs`                                     | When the middleware runs                                                                                    |
+|--------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| `"until-response"` (default for `order` ≤ 0) | At its place in the list, and not once a `Response` exists                                                  |
+| `"after-response"` (default for `order` > 0) | Once a `Response` exists: after the handler, or right after an earlier middleware answered. Returning a `Response` from it throws: it acts through a response function |
+| `"always"`                                   | At its place in the list, whether a `Response` exists or not. The first `Response` answers, a later one is ignored |
+
+Every response function then applies to the answer, in order.
+
+```ts
+apply(app, [
+  enhance(auth, { order: MiddlewareOrder.AUTHENTICATION }), // answers 401 without a session
+  logRequest, // no order: doesn't run once `auth` answered
+  enhance(compress(), { order: MiddlewareOrder.RESPONSE_COMPRESSION }), // compresses the 401 too
+  handler,
+]);
+```
+
+> [!NOTE]
+> A middleware with a positive `order` runs after the handler: a context it returns doesn't reach the handler. A middleware that must run before the handler, like a cache that answers hits (`MiddlewareOrder.CACHING`) or a logger that times the handler, needs a negative `order`.
+
+`MiddlewareOrder` lists the usual slots, in the order they run: `CORS` first, so that its headers also reach an early 401 or 429, then rate limiting, authentication, authorization, caching, parsing and input validation before the handler; error pages, response transforms, headers, compression, conditional requests and logging after it.
 
 ## Support status
 

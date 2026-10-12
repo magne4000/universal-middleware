@@ -13,6 +13,8 @@ export interface Run {
   delay?: number;
   env?: Record<string, string>;
   staticContext?: boolean;
+  /** The entry applies `ruleMiddlewares` and `ruleHandler()`. Default: `env.TEST_CASE === "router_enhanced"` */
+  rule?: boolean;
   streamCancel?: "skip" | "fail";
   tests?: {
     throwLate?: {
@@ -175,6 +177,41 @@ export function runTests(runs: Run[], options: Options) {
       const response = await fetch(`${host}${prefix ?? ""}/404`, fetchDefault);
       vitest.expect(response.status).toBe(404);
     });
+
+    const ruleTest = (run.rule ?? env?.TEST_CASE === "router_enhanced") ? vitest.test : vitest.test.skip;
+    const fetchRule = (path: string, init?: RequestInit) =>
+      fetch(`${host}${prefix ?? ""}/rule/${path}`, { ...fetchDefault, ...init });
+
+    ruleTest(
+      "apply(): an answer skips order <= 0, still runs positive orders",
+      { retry: 3, timeout: 30_000 },
+      async () => {
+        const response = await fetchRule("answered");
+        vitest.expect(response.status).toBe(401);
+        vitest.expect(await response.text()).toBe("late:ann(early(refused))");
+      },
+    );
+
+    ruleTest("apply(): `runs` overrides what `order` implies", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetchRule("runs");
+      vitest.expect(response.status).toBe(401);
+      vitest.expect(await response.text()).toBe("late:ann(always(early(refused)))");
+    });
+
+    ruleTest("apply(): positive orders run after the handler", { retry: 3, timeout: 30_000 }, async () => {
+      const response = await fetchRule("handled", { headers: { "x-auth": "1" } });
+      vitest.expect(response.status).toBe(200);
+      vitest.expect(await response.text()).toBe("late:ann(side(early(handler:ann:undefined)))");
+    });
+
+    ruleTest(
+      "apply(): a positive order returning a Response fails the request",
+      { retry: 3, timeout: 30_000 },
+      async () => {
+        const response = await fetchRule("late-response", { headers: { "x-auth": "1" } });
+        vitest.expect(response.status).toBe(500);
+      },
+    );
 
     // Skip for stateless environments (e.g. Cloudflare Workers) where module-level state
     // doesn't persist between requests, making the side-channel status endpoint unreliable.

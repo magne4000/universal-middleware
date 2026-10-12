@@ -1,7 +1,7 @@
 import type { Server, ServerResponse } from "node:http";
 import { type AddressInfo, connect } from "node:net";
 import { Readable } from "node:stream";
-import type { UniversalMiddleware } from "@universal-middleware/core";
+import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
 import express from "express";
 import { afterEach, describe, expect, it } from "vitest";
 import { adaptLendingBody } from "../src/body.js";
@@ -329,5 +329,42 @@ describe("body read by a universal middleware", () => {
     } finally {
       process.off("uncaughtException", onUncaught);
     }
+  });
+});
+
+// A positive-order middleware runs after an earlier one answered: the answer must still own the body it streams
+describe("an answer that streams the request body, with a middleware after it", () => {
+  const echoes: Record<string, UniversalMiddleware> = {
+    untouched: (request) => new Response(request.body),
+    "partly read": async (request) => {
+      const reader = (request.body as ReadableStream<Uint8Array>).getReader();
+      const first = await reader.read();
+      return new Response(
+        new ReadableStream<Uint8Array>({
+          start(controller) {
+            if (first.value) controller.enqueue(first.value);
+          },
+          async pull(controller) {
+            const { done, value } = await reader.read();
+            if (done) controller.close();
+            else controller.enqueue(value);
+          },
+        }),
+      );
+    },
+  };
+  const late = enhance(
+    () => async (response: Response) => {
+      const headers = new Headers(response.headers);
+      headers.delete("content-length");
+      return new Response(`late(${await response.text()})`, { status: response.status, headers });
+    },
+    { name: "late", order: 100 },
+  );
+
+  it.each(Object.keys(echoes))("sends the body, %s, through the later response function", async (name) => {
+    const url = await start(() => {}, [echoes[name], late]);
+    const res = await postJson(`${url}/echo`, { a: 1 });
+    expect(await res.text()).toBe('late({"a":1})');
   });
 });

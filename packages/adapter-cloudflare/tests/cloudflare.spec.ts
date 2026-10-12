@@ -39,6 +39,7 @@ const runs: Run[] = [
     command: `pnpm run test:run-cloudflare:worker --define TEST_CASE:'"router_enhanced"' --inspector-port ${port + 10000 + 3}`,
     waitUntilType: "function",
     staticContext: true,
+    rule: true,
     delay,
     streamCancel: "skip",
   },
