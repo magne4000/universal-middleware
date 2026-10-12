@@ -224,6 +224,62 @@ export const streamCancelStatusHandler: Get<[], UniversalHandler> = () =>
     },
   );
 
+// Wraps the body in `name(…)`. The length changes, so `content-length` goes
+const wrapBody = (name: string | ((context: { user?: string }) => string)) =>
+  ((_request, context) => async (response: Response) => {
+    const headers = new Headers(response.headers);
+    headers.delete("content-length");
+    const label = typeof name === "string" ? name : name(context);
+    return new Response(`${label}(${await response.text()})`, { status: response.status, headers });
+  }) satisfies UniversalMiddleware<{ user?: string }>;
+
+/**
+ * The middlewares of `apply()`'s rule tests, under `/rule/`. `refuses` answers 401 without an `x-auth` header:
+ * - `/rule/answered`: `late(early(refused))`, `side` skipped, `late` sees the context `user` returned
+ * - `/rule/runs`: also `always(…)`, whose late Response is ignored, and `until` skipped despite its positive order
+ * - `/rule/handled` (with `x-auth`): the handler doesn't see what the positive-order `post` returned
+ * - `/rule/late-response` (with `x-auth`): a positive-order middleware returning a Response gets a 500
+ */
+export const ruleMiddlewares = [
+  enhance(
+    wrapBody((context) => `late:${context.user}`),
+    { name: "late", path: "/rule/**", order: 100 },
+  ),
+  enhance(wrapBody("until"), { name: "until", path: "/rule/runs", order: 200, runs: "until-response" }),
+  enhance(() => new Response("ignored"), { name: "alwaysLate", path: "/rule/runs", order: 100, runs: "always" }),
+  enhance(wrapBody("always"), { name: "always", path: "/rule/runs", order: -100, runs: "always" }),
+  enhance(wrapBody("side"), { name: "side", path: "/rule/**", order: MiddlewareOrder.CUSTOM_PRE_PROCESSING }),
+  enhance(
+    (request: Request) => (request.headers.has("x-auth") ? undefined : new Response("refused", { status: 401 })),
+    { name: "refuses", path: "/rule/**", order: MiddlewareOrder.AUTHORIZATION },
+  ),
+  enhance((_request: Request, context: Universal.Context) => ({ ...context, user: "ann" }), {
+    name: "user",
+    path: "/rule/**",
+    order: MiddlewareOrder.AUTHENTICATION,
+  }),
+  enhance(wrapBody("early"), { name: "early", path: "/rule/**", order: MiddlewareOrder.RATE_LIMITING }),
+  enhance((_request: Request, context: Universal.Context) => ({ ...context, post: "yes" }), {
+    name: "post",
+    path: "/rule/handled",
+    order: 100,
+  }),
+  enhance(() => new Response("cached"), {
+    name: "cache",
+    path: "/rule/late-response",
+    order: MiddlewareOrder.RESPONSE_CACHING,
+  }),
+];
+
+export const ruleHandler: Get<[], UniversalHandler> = () =>
+  enhance(
+    (_request: Request, context: Universal.Context) => {
+      const { user, post } = context as { user?: string; post?: string };
+      return new Response(`handler:${user}:${post}`);
+    },
+    { name: "ruleHandler", path: "/rule/**", method: "GET" },
+  );
+
 /**
  * A Response whose body never ends, like Server-Sent Events: only `cancel()` releases it.
  * `cancelled` resolves when it is cancelled.

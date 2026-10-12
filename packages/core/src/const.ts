@@ -6,6 +6,7 @@ export const methodSymbol = Symbol.for("unMethod");
 export const orderSymbol = Symbol.for("unOrder");
 export const nameSymbol = Symbol.for("unName");
 export const urlSymbol = Symbol.for("unUrl");
+export const runsSymbol = Symbol.for("unRuns");
 
 /**
  * @internal
@@ -16,9 +17,15 @@ export const optionsToSymbols = {
   path: pathSymbol,
   order: orderSymbol,
   context: contextSymbol,
+  runs: runsSymbol,
 } as const;
 
 /**
+ * Usual `order` values. A middleware with a negative `order` (or none) runs before the handler, and not once a
+ * Response exists. One with a positive `order` runs once a Response exists: after the handler, or right after an
+ * earlier middleware's answer. It acts through a response function, and returning a Response from it throws. `runs`
+ * overrides this.
+ *
  * @alpha
  */
 export enum MiddlewareOrder {
@@ -34,7 +41,8 @@ export enum MiddlewareOrder {
   // Main Handler
   HANDLER = 0, // Main handler that generates the response.
 
-  // Post-handler Middlewares
+  // Post-handler Middlewares: they also run for an earlier middleware's answer. A cache that answers hits, or a logger
+  // that times the handler, needs a negative order
   RESPONSE_TRANSFORM = 100, // Response transformation middleware: Modifies the response payload.
   HEADER_MANAGEMENT = 200, // Header management middleware: Adds or modifies HTTP headers (e.g., caching, content type).
   RESPONSE_COMPRESSION = 300, // Response compression middleware: Compresses the response payload (e.g., gzip, brotli).

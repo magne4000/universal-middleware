@@ -5,6 +5,8 @@ import {
   handler,
   middlewares,
   routeParamHandler,
+  ruleHandler,
+  ruleMiddlewares,
   streamCancelHandler,
   streamCancelStatusHandler,
   throwEarlyAndLateHandler,
@@ -71,6 +73,8 @@ switch (TEST_CASE) {
       enhancedMiddlewares.guard,
       enhancedMiddlewares.throwEarly,
       enhancedMiddlewares.throwLate,
+      ...ruleMiddlewares,
+      ruleHandler(),
     ]);
 
     break;

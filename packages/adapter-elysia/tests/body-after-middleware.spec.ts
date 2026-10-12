@@ -1,6 +1,6 @@
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import type { UniversalMiddleware } from "@universal-middleware/core";
+import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
 import { Elysia } from "elysia";
 import { describe, expect, it, vi } from "vitest";
 import { apply, createMiddleware } from "../src/index.js";
@@ -157,6 +157,44 @@ describe("a body above the eager limit", () => {
     app.post("/big", streamedBytes, { parse: "none" });
     const res = await app.handle(big("z".repeat(size), "application/octet-stream"));
     expect(await res.json()).toEqual({ bytes: size });
+  });
+});
+
+// A positive-order middleware runs after an earlier one answered: the answer must still own the body it streams
+describe("an answer that streams the request body, with a middleware after it", () => {
+  const echoes: Record<string, UniversalMiddleware> = {
+    untouched: (request) => new Response(request.body),
+    "partly read": async (request) => {
+      const reader = (request.body as ReadableStream<Uint8Array>).getReader();
+      const first = await reader.read();
+      return new Response(
+        new ReadableStream<Uint8Array>({
+          start(controller) {
+            if (first.value) controller.enqueue(first.value);
+          },
+          async pull(controller) {
+            const { done, value } = await reader.read();
+            if (done) controller.close();
+            else controller.enqueue(value);
+          },
+        }),
+      );
+    },
+  };
+  const late = enhance(
+    () => async (response: Response) => new Response(`late(${await response.text()})`, { status: response.status }),
+    { name: "late", order: 100 },
+  );
+
+  it.each(Object.keys(echoes))("sends the body, %s, through the later response function", async (name) => {
+    const app = new Elysia();
+    apply(app, [echoes[name], late]);
+    const res = await post(
+      app.post("/echo", () => "route"),
+      '{"a":1}',
+      "application/json",
+    );
+    expect(await res.text()).toBe('late({"a":1})');
   });
 });
 

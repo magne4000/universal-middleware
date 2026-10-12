@@ -17,6 +17,7 @@ import {
   type optionsToSymbols,
   type orderSymbol,
   type pathSymbol,
+  type runsSymbol,
   type universalSymbol,
 } from "./const"; // Helpers
 
@@ -260,12 +261,23 @@ export type Get<T extends unknown[], U> = (...args: T) => U;
 
 // Router
 
+/**
+ * When a middleware that isn't a handler runs, relative to the Response that answers the request:
+ * - `until-response`: at its place in the list, and not once a Response exists
+ * - `after-response`: once a Response exists (the handler's, or an earlier middleware's); returning a Response throws
+ * - `always`: at its place in the list, Response or not; the first Response answers, a later one is ignored
+ *
+ * Defaults to `after-response` for a positive `order`, `until-response` otherwise.
+ */
+export type MiddlewareRuns = "until-response" | "after-response" | "always";
+
 export interface UniversalSymbols {
   [nameSymbol]: string;
   [methodSymbol]: HttpMethod | HttpMethod[];
   [pathSymbol]: string;
   [orderSymbol]: MiddlewareOrder | number;
   [contextSymbol]?: Universal.Context | undefined;
+  [runsSymbol]: MiddlewareRuns;
 }
 
 type OptionsToSymbols = typeof optionsToSymbols;
