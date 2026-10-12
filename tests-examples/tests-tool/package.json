@@ -60,7 +60,7 @@
     "hono": "catalog:",
     "mri": "catalog:",
     "npm-run-all2": "^9.0.3",
-    "playwright-chromium": "^1.63.0",
+    "playwright-chromium": "^1.64.0",
     "srvx": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",

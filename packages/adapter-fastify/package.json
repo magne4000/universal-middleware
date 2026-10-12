@@ -28,7 +28,7 @@
     "@universal-middleware/node": "workspace:^"
   },
   "devDependencies": {
-    "@fastify/helmet": "^13.1.1",
+    "@fastify/helmet": "^13.1.2",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "@universal-middleware/tsdown-config": "workspace:*",
