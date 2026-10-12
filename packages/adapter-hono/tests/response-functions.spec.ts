@@ -36,18 +36,20 @@ it("after a middleware answers, runs only the ones with a positive order", async
 });
 
 it("gives the route and the response functions the context a middleware returned", async () => {
+  const secret = Symbol("secret");
   const seen = (header: string, order?: number) =>
     enhance(
-      (_request, context: { user?: string; routeData?: string; role?: string; stale?: string }) =>
+      (_request, context: { user?: string; routeData?: string; role?: string; stale?: string; [secret]?: string }) =>
         (response: Response) => {
-          response.headers.set(header, `${context.user} ${context.routeData} ${context.role} ${context.stale}`);
+          const { user, routeData, role, stale, [secret]: hidden } = context;
+          response.headers.set(header, `${user} ${routeData} ${role} ${stale} ${hidden}`);
           return response;
         },
       { name: header, order },
     );
   const app = new Hono();
   apply(app, [
-    enhance(() => ({ stale: "yes" }), { name: "stale" }),
+    enhance(() => ({ stale: "yes", [secret]: "yes" }), { name: "stale" }),
     enhance(() => ({ user: "ann" }), { name: "user" }),
     enhance((_request, context: { role?: string }) => Object.assign(context, { role: "admin" }), { name: "role" }),
     seen("x-early"),
@@ -62,6 +64,6 @@ it("gives the route and the response functions the context a middleware returned
   );
 
   const response = await app.fetch(new Request("http://localhost/"));
-  expect(response.headers.get("x-early")).toBe("ann visible admin undefined");
-  expect(response.headers.get("x-late")).toBe("ann visible admin undefined");
+  expect(response.headers.get("x-early")).toBe("ann visible admin undefined undefined");
+  expect(response.headers.get("x-late")).toBe("ann visible admin undefined undefined");
 });

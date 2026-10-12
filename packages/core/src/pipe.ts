@@ -206,7 +206,7 @@ async function runInOrder(
       }
     } else if (result !== null && typeof result === "object" && result !== context) {
       if (inPlace) {
-        for (const key of Object.keys(context)) delete context[key];
+        for (const key of Reflect.ownKeys(context)) delete context[key];
         Object.assign(context, result);
       } else {
         context = result;
