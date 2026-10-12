@@ -38,14 +38,21 @@ it("after a middleware answers, runs only the ones with a positive order", async
 it("gives the route and the response functions the context a middleware returned", async () => {
   const seen = (header: string, order?: number) =>
     enhance(
-      (_request, context: { user?: string; routeData?: string }) => (response: Response) => {
-        response.headers.set(header, `${context.user} ${context.routeData}`);
-        return response;
-      },
+      (_request, context: { user?: string; routeData?: string; role?: string; stale?: string }) =>
+        (response: Response) => {
+          response.headers.set(header, `${context.user} ${context.routeData} ${context.role} ${context.stale}`);
+          return response;
+        },
       { name: header, order },
     );
   const app = new Hono();
-  apply(app, [enhance(() => ({ user: "ann" }), { name: "user" }), seen("x-early"), seen("x-late", 100)]);
+  apply(app, [
+    enhance(() => ({ stale: "yes" }), { name: "stale" }),
+    enhance(() => ({ user: "ann" }), { name: "user" }),
+    enhance((_request, context: { role?: string }) => Object.assign(context, { role: "admin" }), { name: "role" }),
+    seen("x-early"),
+    seen("x-late", 100),
+  ]);
   app.get(
     "/",
     createHandler(() => (_request, context: { routeData?: string }) => {
@@ -55,6 +62,6 @@ it("gives the route and the response functions the context a middleware returned
   );
 
   const response = await app.fetch(new Request("http://localhost/"));
-  expect(response.headers.get("x-early")).toBe("ann visible");
-  expect(response.headers.get("x-late")).toBe("ann visible");
+  expect(response.headers.get("x-early")).toBe("ann visible admin undefined");
+  expect(response.headers.get("x-late")).toBe("ann visible admin undefined");
 });
