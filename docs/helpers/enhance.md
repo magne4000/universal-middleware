@@ -260,7 +260,7 @@ Every response function then applies to the answer, in order.
 apply(app, [
   enhance(auth, { order: MiddlewareOrder.AUTHENTICATION }), // answers 401 without a session
   logRequest, // no order: doesn't run once `auth` answered
-  enhance(compress(), { order: MiddlewareOrder.RESPONSE_COMPRESSION }), // compresses the 401 too
+  compress(), // declares MiddlewareOrder.RESPONSE_COMPRESSION: compresses the 401 too
   handler,
 ]);
 ```
