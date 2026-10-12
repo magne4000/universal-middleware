@@ -187,6 +187,16 @@ describe("body read by a universal middleware", () => {
     expect(await res.json()).toEqual({ a: 1 });
   });
 
+  it("passes the request on after a middleware read the body express.json() parsed before the list", async () => {
+    const url = await start(
+      (app) => app.post("/echo", (req, res) => res.json(req.body)),
+      [readsBody, () => {}],
+      (app) => app.use(express.json()),
+    );
+    const res = await postJson(`${url}/echo`, { a: 1 });
+    expect(await res.json()).toEqual({ a: 1 });
+  });
+
   it("aborts the request signal when the client leaves, without piling up listeners, after middlewares read the body", async () => {
     const warnings: string[] = [];
     const onWarning = (w: Error) => warnings.push(w.name);
@@ -245,6 +255,21 @@ describe("body read by a universal middleware", () => {
     const res = await postJson(`${url}/echo`, { a: 1 });
     expect(await res.text()).toBe('{"a":1}');
     expect(seen).toEqual(['{"a":1}', '{"a":1}', '{"a":1}']);
+  });
+
+  it("keeps the headers a middleware of the list set, whether it read the body or not", async () => {
+    const setsAndReads: UniversalMiddleware = async (request) => {
+      request.headers.set("x-read", "yes");
+      await request.text();
+    };
+    const sets: UniversalMiddleware = (request) => {
+      request.headers.set("x-unread", "yes");
+    };
+    const answers: UniversalMiddleware = async (request) =>
+      new Response(`${request.headers.get("x-read")} ${request.headers.get("x-unread")} ${await request.text()}`);
+    const url = await start(() => {}, [setsAndReads, sets, answers]);
+    const res = await postJson(url, { a: 1 });
+    expect(await res.text()).toBe('yes yes {"a":1}');
   });
 
   it("reaches express.json() through connectToWeb's synthetic request", async () => {

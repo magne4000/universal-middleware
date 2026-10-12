@@ -183,11 +183,16 @@ async function runInOrder(
     if (response && (untilAnswer || isHandler(m))) {
       continue;
     }
-    // An adapter that lets every middleware read the body (Express, Elysia) lends a Request to each, until one
-    // answers: the answer may still be reading the body
+    // An adapter that lets every middleware read the body (Express, Elysia) lends it again once a middleware read it,
+    // until one answers: the answer may still be reading it. The rest of the Request, headers included, stays as the
+    // middlewares left it. A body Express parsed before the list can't be lent again.
     const nextRequest = (request as LendingRequest)[nextRequestSymbol];
-    if (i > 0 && !response && nextRequest) {
-      request = await nextRequest(runtime);
+    if (i > 0 && !response && nextRequest && request.bodyUsed) {
+      const { body, bodyUsed } = await nextRequest(runtime);
+      if (!bodyUsed) {
+        // @ts-expect-error RequestInit: duplex option is required when sending a body
+        request = Object.assign(new Request(request, { body, duplex: "half" }), { [nextRequestSymbol]: nextRequest });
+      }
     }
 
     const result = await getUniversal(m)(request, context ?? {}, runtime);

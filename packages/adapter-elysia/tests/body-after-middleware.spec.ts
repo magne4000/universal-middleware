@@ -70,6 +70,23 @@ describe("body after a universal middleware", () => {
     expect(await res.json()).toEqual({ got: { a: 1 } });
   });
 
+  it("keeps the headers a middleware of the list set, whether it read the body or not", async () => {
+    const setsAndReads: UniversalMiddleware = async (request) => {
+      request.headers.set("x-read", "yes");
+      await request.text();
+    };
+    const sets: UniversalMiddleware = (request) => {
+      request.headers.set("x-unread", "yes");
+    };
+    const answers: UniversalMiddleware = async (request) =>
+      new Response(`${request.headers.get("x-read")} ${request.headers.get("x-unread")} ${await request.text()}`);
+    const app = new Elysia();
+    apply(app, [setsAndReads, sets, answers]);
+    app.post("/echo", () => "route");
+    const res = await post(app, JSON.stringify({ a: 1 }), "application/json");
+    expect(await res.text()).toBe('yes yes {"a":1}');
+  });
+
   it("gives every step of a pipe() the Request a middleware built for it", async () => {
     const seen: string[] = [];
     const step: UniversalMiddleware = (request) => {
