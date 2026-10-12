@@ -1,5 +1,42 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/core-v0.3.2...core-v0.3.3) (2024-12-09)
 
+## 0.7.0
+
+### Minor Changes
+
+- 2f40695: With `apply()`, a middleware with an `order` of 0 or less (or none) no longer runs once an earlier middleware answered, as on the other adapters: a middleware listed after an authentication middleware that answers 401 doesn't run for that request.
+- 2f40695: With `apply()`, a middleware with a positive `order` runs once a `Response` exists:
+  
+  - It also runs when an earlier middleware answered: a compression middleware at `MiddlewareOrder.RESPONSE_COMPRESSION` now compresses what `sirv()` serves.
+  - It runs after the handler, no longer before it: a context it returns no longer reaches the handler. Give a middleware that must run before the handler a negative `order`, or `runs: "until-response"`.
+- 2f40695: With `apply()`, a middleware with a positive `order` (or `runs: "after-response"`) that returns a `Response` fails the request with a `TypeError` naming it. It used to answer on Hono, Express, Fastify, h3, Elysia and HatTip, and was ignored on srvx and Cloudflare. A cache that answers hits needs a negative `order`, such as `MiddlewareOrder.CACHING`.
+- 2f40695: `enhance()` takes a `runs` option, and `apply()` follows it the same way on every adapter:
+  
+  - `"until-response"`, the default for an `order` of 0 or less (or none): at its place in the list, and not once a middleware answered with a `Response`.
+  - `"after-response"`, the default for a positive `order`: once a `Response` exists, after the handler or right after an earlier middleware answered. It acts through a response function.
+  - `"always"`: at its place in the list, whether a `Response` exists or not. The first `Response` answers, a later one is ignored.
+  
+  Every response function of the list applies to the answer, in order. Each middleware is still registered with the server as its own middleware.
+- 2f40695: `MiddlewareOrder` moves from alpha to beta, and its slots follow the order in which they must run:
+  
+  - `CORS` is now first (-1100, was -600), so that a preflight isn't refused by authentication and an early 401 or 429 still gets CORS headers.
+  - `PARSING` (-600, was -500) now comes before `INPUT_VALIDATION` (-500, was -700), which validates the parsed body.
+  - New `CACHING` (-700), for a cache that answers hits. Its response function stores what comes back before the response transforms, which also run on hits.
+  - `RESPONSE_CACHING` is renamed `CONDITIONAL_REQUESTS` (400): ETag or Last-Modified, and 304 answers, on the body as sent. A cache that answers hits can't run at a positive order.
+  - `ERROR_HANDLING` is now 50 (was 600), so the error page it produces is transformed, compressed and logged. A thrown error goes to the server's own error handling.
+  - `LOGGING` is now last (800, was 500), so it logs the response as sent.
+- 85573be: `pipe()` runs its middlewares as `apply()` runs a list: sorted by `order`, and following `runs`. Once a middleware or handler answers with a `Response`:
+  
+  - A middleware with an `order` of 0 or less (or none) listed after it no longer runs: in `pipe(handler, logger)`, `logger` doesn't run. Give it a positive `order`, or `runs: "after-response"` or `"always"`.
+  - A middleware with a positive `order` that returns a `Response` fails the call with a `TypeError` naming it. It used to be ignored.
+  - An `always` middleware's later `Response` is ignored, and its body cancelled.
+- 85573be: When none of its middlewares answers, the middleware `pipe()` returns passes the request on instead of throwing "No Response found": it returns their context, or a response function that applies all of theirs to the response that comes next. When they return both, the context goes into the context object it was given. `pipeRoute()` without `handle404` does the same for a request no route matches.
+
+### Patch Changes
+
+- 4685d38: `createMatcher(path, method)` is exported: it returns `(request: Request) => boolean`, the check `apply()` uses to run a middleware that has a `path` only for the requests a route with that `path` and `method` would match (the decoded pathname, `HEAD` for a `GET` route, any method without `method`).
+- 85573be: `pipeRoute()` is no longer beta. It composes a list as `apply()` does into one universal middleware: it routes the handlers by `path` and `method`, and runs a middleware that has a `path` only for the requests that path matches.
+
 ## 0.6.2
 
 ### Patch Changes

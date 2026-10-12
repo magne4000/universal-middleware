@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- 1b37e70: `compress()` declares `order: MiddlewareOrder.RESPONSE_COMPRESSION`. With `apply()` or `pipe()`, it runs once a `Response` exists, wherever it is listed: `apply(app, [sirv("public"), compress()])` now compresses the files `sirv()` serves, and a middleware with a lower `order` that rewrites the body gets it uncompressed, even when listed after `compress()`. Registered one by one with the server, it still runs where it is registered.
+
+### Patch Changes
+
+- f31adbc: compress and sirv bundle the Universal Middleware packages they build on again, so they load under a strict resolver such as Yarn PnP, which refused those imports. The published compress 0.2.38 imported `@universal-middleware/core` and `@universal-middleware/elysia`, and sirv 0.1.30 imported `@universal-middleware/express`, without declaring them, because the release packed them while those packages were being rebuilt.
+
 ## 0.2.38
 
 ### Patch Changes

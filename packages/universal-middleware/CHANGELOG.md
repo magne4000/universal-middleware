@@ -1,5 +1,35 @@
 ## [0.5.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.4...universal-middleware-v0.5.5) (2024-12-09)
 
+## 0.6.36
+
+### Patch Changes
+
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [47953b1]
+- Updated dependencies [4685d38]
+- Updated dependencies [fb1a3f7]
+- Updated dependencies [47953b1]
+- Updated dependencies [47953b1]
+- Updated dependencies [2f40695]
+- Updated dependencies [85573be]
+- Updated dependencies [85573be]
+- Updated dependencies [85573be]
+- Updated dependencies [47953b1]
+  - @universal-middleware/core@0.7.0
+  - @universal-middleware/srvx@0.3.0
+  - @universal-middleware/cloudflare@0.7.0
+  - @universal-middleware/hono@0.6.0
+  - @universal-middleware/express@0.6.0
+  - @universal-middleware/fastify@0.7.0
+  - @universal-middleware/h3@0.6.0
+  - @universal-middleware/elysia@0.9.0
+  - @universal-middleware/hattip@0.6.0
+  - @universal-middleware/vercel@0.4.38
+  - @universal-middleware/webroute@0.4.15
+
 ## 0.6.35
 
 ### Patch Changes
