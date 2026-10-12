@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.4.38
+
+### Patch Changes
+
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [4685d38]
+- Updated dependencies [fb1a3f7]
+- Updated dependencies [47953b1]
+- Updated dependencies [47953b1]
+- Updated dependencies [2f40695]
+- Updated dependencies [85573be]
+- Updated dependencies [85573be]
+- Updated dependencies [85573be]
+- Updated dependencies [47953b1]
+  - @universal-middleware/core@0.7.0
+  - @universal-middleware/srvx@0.3.0
+  - @universal-middleware/hono@0.6.0
+  - @universal-middleware/express@0.6.0
+  - @universal-middleware/fastify@0.7.0
+  - @universal-middleware/h3@0.6.0
+  - @universal-middleware/elysia@0.9.0
+  - @universal-middleware/hattip@0.6.0
+  - @universal-middleware/node@0.2.9
+
 ## 0.4.37
 
 ### Patch Changes

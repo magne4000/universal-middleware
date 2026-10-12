@@ -1,5 +1,38 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/hattip-v0.3.2...hattip-v0.3.3) (2024-12-09)
 
+## 0.6.0
+
+### Minor Changes
+
+- 2f40695: With `apply()`, a middleware with a positive `order` runs once a `Response` exists:
+  
+  - It also runs when an earlier middleware answered: a compression middleware at `MiddlewareOrder.RESPONSE_COMPRESSION` now compresses what `sirv()` serves.
+  - It runs after the handler, no longer before it: a context it returns no longer reaches the handler. Give a middleware that must run before the handler a negative `order`, or `runs: "until-response"`.
+- 2f40695: With `apply()`, a middleware with a positive `order` (or `runs: "after-response"`) that returns a `Response` fails the request with a `TypeError` naming it. It used to answer on Hono, Express, Fastify, h3, Elysia and HatTip, and was ignored on srvx and Cloudflare. A cache that answers hits needs a negative `order`, such as `MiddlewareOrder.CACHING`.
+- 2f40695: `enhance()` takes a `runs` option, and `apply()` follows it the same way on every adapter:
+  
+  - `"until-response"`, the default for an `order` of 0 or less (or none): at its place in the list, and not once a middleware answered with a `Response`.
+  - `"after-response"`, the default for a positive `order`: once a `Response` exists, after the handler or right after an earlier middleware answered. It acts through a response function.
+  - `"always"`: at its place in the list, whether a `Response` exists or not. The first `Response` answers, a later one is ignored.
+  
+  Every response function of the list applies to the answer, in order. Each middleware is still registered with the server as its own middleware.
+- 47953b1: Fix: on HatTip, response functions apply in the order their middlewares are registered, as on every other adapter. They applied in reverse order, so the same list behaved differently per server. Registered one by one with `app.use()`, `compress()` then `rewrite`, where `rewrite` is a middleware whose response function edits the body, now hands gzip bytes to `rewrite`, as on every other adapter: register a body rewrite before `compress()`. `apply()` and `pipe()` sort them by `order` instead, and `compress()` declares `MiddlewareOrder.RESPONSE_COMPRESSION`.
+  
+  An app that relied on the reverse order sees two or more response functions swap. A HatTip handler registered between them now sees the response before they apply, because they all apply after the rest of the chain.
+
+### Patch Changes
+
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [4685d38]
+- Updated dependencies [2f40695]
+- Updated dependencies [85573be]
+- Updated dependencies [85573be]
+- Updated dependencies [85573be]
+  - @universal-middleware/core@0.7.0
+
 ## 0.5.2
 
 ### Patch Changes
