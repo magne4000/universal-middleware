@@ -183,7 +183,7 @@ Runs tests with a matrix approach for comprehensive coverage:
 2. Install Bun (pinned, e.g. 1.4.2) - required for Elysia adapter tests
 3. Install pnpm
 4. Install dependencies: `pnpm install`
-5. Build: `pnpm run build`
+5. Build: `pnpm run build` (on Windows, `pnpm -r run build`, without turbo: see Common Pitfalls)
 6. Install Playwright (only for tests-examples/tests-tool): `pnpm exec playwright install chromium`, run in `tests-examples/tests-tool`
 7. Run tests in specific package: `pnpm run test` (working directory: matrix.cwd)
 
@@ -208,7 +208,7 @@ Runs tests with a matrix approach for comprehensive coverage:
 - **Bun not available:** Elysia tests will fail with "bun: not found" - this is expected in environments without Bun
 - **Deno not available:** Some runtime tests require Deno
 - **Vercel tests:** Require VERCEL_TOKEN, or a `vercel login` session locally; CI skips them when the secret is unavailable
-- **Windows Build step timed out:** since turbo 2.11.4, `turbo run build` sometimes never exits on Windows after all tasks succeed; the step fails after 10 minutes, so re-run the failed job
+- **Windows builds don't use turbo:** since turbo 2.11.4, `turbo run build` sometimes never exits on Windows after all tasks succeed, so the Tests workflow builds there with `pnpm -r run build` (dependency order, no cache). The step still fails after 10 minutes if a build stalls
 
 ### Cache Issues
 **Problem:** Turbo cache causes stale builds  
