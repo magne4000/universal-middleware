@@ -82,8 +82,9 @@ describe("body read by a universal middleware", () => {
   });
 
   it("reaches a universal handler after a middleware read it", async () => {
-    const url = await start((app) =>
-      app.post("/echo", createHandler(() => async (request) => new Response(await request.text()))()),
+    const url = await start(
+      (app) => app.post("/echo", createHandler(() => async (request) => new Response(await request.text()))()),
+      [readsBody, () => {}],
     );
     const res = await postJson(`${url}/echo`, { a: 1 });
     expect(await res.text()).toBe('{"a":1}');
@@ -188,13 +189,18 @@ describe("body read by a universal middleware", () => {
   });
 
   it("passes the request on after a middleware read the body express.json() parsed before the list", async () => {
+    const seen: string[] = [];
+    const readsAgain: UniversalMiddleware = async (request) => {
+      seen.push(await request.text().catch(() => "unusable"));
+    };
     const url = await start(
       (app) => app.post("/echo", (req, res) => res.json(req.body)),
-      [readsBody, () => {}],
+      [readsBody, readsAgain],
       (app) => app.use(express.json()),
     );
     const res = await postJson(`${url}/echo`, { a: 1 });
     expect(await res.json()).toEqual({ a: 1 });
+    expect(seen).toEqual(["unusable"]);
   });
 
   it("aborts the request signal when the client leaves, without piling up listeners, after middlewares read the body", async () => {
