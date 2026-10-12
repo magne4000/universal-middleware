@@ -232,6 +232,18 @@ const server = serve({
 
 :::
 
+Code that runs middlewares itself can apply the same check with `createMatcher(path, method)`, for instance against a URL it rewrote:
+
+```ts
+import { createMatcher } from "@universal-middleware/core";
+
+const isMatch = createMatcher("/admin/**", "GET");
+
+isMatch(new Request("http://localhost/admin/settings")); // true
+isMatch(new Request("http://localhost/admin/settings", { method: "HEAD" })); // true, a GET route also matches HEAD
+isMatch(new Request("http://localhost/about")); // false
+```
+
 ## Support status
 
 The `apply` method is currently being rolled out across adapters.

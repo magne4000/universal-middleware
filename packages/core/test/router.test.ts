@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { enhance, params, pipeRoute, type RuntimeAdapter, type UniversalMiddleware } from "../src/index";
+import { createMatcher, enhance, params, pipeRoute, type RuntimeAdapter, type UniversalMiddleware } from "../src/index";
 
 describe("pipeRoute matches the decoded pathname", () => {
   const route = (path: string) =>
@@ -230,5 +230,61 @@ describe("handle404 answers a request no route matches, whatever its method", ()
   test("routes still answer, HEAD included", async () => {
     expect((await run("GET", "/page")).status).toBe(200);
     expect((await run("HEAD", "/page")).status).toBe(200);
+  });
+});
+
+describe("createMatcher matches a request as a route with the same path and method would", () => {
+  const request = (path: string, method = "GET") => new Request(`http://localhost${path}`, { method });
+
+  test("a named param", () => {
+    const isMatch = createMatcher("/users/:id", "GET");
+    expect(isMatch(request("/users/42"))).toBe(true);
+    expect(isMatch(request("/users"))).toBe(false);
+    expect(isMatch(request("/users/42/posts"))).toBe(false);
+  });
+
+  test("an unnamed segment wildcard", () => {
+    const isMatch = createMatcher("/files/*/meta", "GET");
+    expect(isMatch(request("/files/a.txt/meta"))).toBe(true);
+    expect(isMatch(request("/files/meta"))).toBe(false);
+  });
+
+  test("a catch-all wildcard", () => {
+    const isMatch = createMatcher("/admin/**", "GET");
+    expect(isMatch(request("/admin"))).toBe(true);
+    expect(isMatch(request("/admin/settings"))).toBe(true);
+    expect(isMatch(request("/admin/settings/users"))).toBe(true);
+    expect(isMatch(request("/about"))).toBe(false);
+  });
+
+  test("the decoded pathname", () => {
+    const isMatch = createMatcher("/café");
+    expect(isMatch(request("/caf%C3%A9"))).toBe(true);
+    expect(isMatch(request("/caf%c3%a9"))).toBe(true);
+    expect(isMatch(request("/cafe"))).toBe(false);
+  });
+
+  test("a GET matcher also matches HEAD", () => {
+    const isMatch = createMatcher("/page", "GET");
+    expect(isMatch(request("/page", "GET"))).toBe(true);
+    expect(isMatch(request("/page", "HEAD"))).toBe(true);
+    expect(isMatch(request("/page", "POST"))).toBe(false);
+  });
+
+  test("a list of methods", () => {
+    const isMatch = createMatcher("/page", ["POST", "PUT"]);
+    expect(isMatch(request("/page", "POST"))).toBe(true);
+    expect(isMatch(request("/page", "PUT"))).toBe(true);
+    expect(isMatch(request("/page", "GET"))).toBe(false);
+    expect(isMatch(request("/page", "HEAD"))).toBe(false);
+  });
+
+  test.each(["GET", "HEAD", "POST", "DELETE", "PROPFIND"])("any method without one: %s", (method) => {
+    expect(createMatcher("/page")(request("/page", method))).toBe(true);
+  });
+
+  test("another path does not match, whatever the method", () => {
+    expect(createMatcher("/page")(request("/other"))).toBe(false);
+    expect(createMatcher("/page", "GET")(request("/other", "HEAD"))).toBe(false);
   });
 });
