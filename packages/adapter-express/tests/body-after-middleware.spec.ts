@@ -244,17 +244,20 @@ describe("body read by a universal middleware", () => {
     expect(seen).toEqual(["/rewritten", "/rewritten"]);
   });
 
-  it("is read by every step of a pipe() a later middleware passes its Request to", async () => {
+  it("is read by every step of a pipe() a later middleware passes its read Request to", async () => {
     const seen: string[] = [];
     const reads: UniversalMiddleware = async (request) => {
       seen.push(await request.text());
     };
     const inner = pipe(reads, reads, async (request: Request) => new Response(await request.text()));
-    const passes: UniversalMiddleware = (request, context, runtime) => inner(request, context, runtime);
-    const url = await start((app) => app.post("/echo", (_req, res) => res.end()), [reads, passes]);
+    const readsAndPasses: UniversalMiddleware = async (request, context, runtime) => {
+      seen.push(await request.text());
+      return inner(request, context, runtime);
+    };
+    const url = await start((app) => app.post("/echo", (_req, res) => res.end()), [reads, readsAndPasses]);
     const res = await postJson(`${url}/echo`, { a: 1 });
     expect(await res.text()).toBe('{"a":1}');
-    expect(seen).toEqual(['{"a":1}', '{"a":1}', '{"a":1}']);
+    expect(seen).toEqual(['{"a":1}', '{"a":1}', '{"a":1}', '{"a":1}']);
   });
 
   it("keeps the headers a middleware of the list set, whether it read the body or not", async () => {

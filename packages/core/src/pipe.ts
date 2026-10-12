@@ -179,7 +179,7 @@ async function runInOrder(
   }: { answer?: Response; untilAnswer?: boolean; inPlace?: boolean } = {},
 ) {
   const pending: ResponseFunction[] = [];
-  for (const [i, m] of middlewares.entries()) {
+  for (const m of middlewares) {
     if (response && (untilAnswer || isHandler(m))) {
       continue;
     }
@@ -187,7 +187,7 @@ async function runInOrder(
     // until one answers: the answer may still be reading it. The rest of the Request, headers included, stays as the
     // middlewares left it. A body Express parsed before the list can't be lent again.
     const nextRequest = (request as LendingRequest)[nextRequestSymbol];
-    if (i > 0 && !response && nextRequest && request.bodyUsed) {
+    if (!response && nextRequest && request.bodyUsed) {
       const { body, bodyUsed } = await nextRequest(runtime);
       if (!bodyUsed) {
         // @ts-expect-error RequestInit: duplex option is required when sending a body
