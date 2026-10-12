@@ -6,8 +6,8 @@ export const methodSymbol = Symbol.for("unMethod");
 export const orderSymbol = Symbol.for("unOrder");
 export const nameSymbol = Symbol.for("unName");
 export const urlSymbol = Symbol.for("unUrl");
-// On a Request an adapter lent: given that Request once read and the runtime, returns it with the body again, for the
-// next middleware to read
+// On a Request an adapter lent: given that Request once read and the runtime, returns it with the body again, or as is
+// when it can't be, for the next middleware to read
 export const nextRequestSymbol = Symbol.for("unNextRequest");
 
 /**

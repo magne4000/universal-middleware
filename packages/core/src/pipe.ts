@@ -187,7 +187,7 @@ async function runInOrder(
     }
     // An adapter that lets every middleware read the body (Express, Elysia) lends it again once a middleware read it,
     // until one answers: the answer may still be reading it. The rest of the Request, headers included, stays as the
-    // middlewares left it. A body Express parsed before the list can't be lent again.
+    // middlewares left it.
     const nextRequest = (request as LendingRequest)[nextRequestSymbol];
     if (!response && nextRequest && request.bodyUsed) {
       request = await nextRequest(request, runtime);
