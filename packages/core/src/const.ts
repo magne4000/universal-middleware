@@ -6,7 +6,8 @@ export const methodSymbol = Symbol.for("unMethod");
 export const orderSymbol = Symbol.for("unOrder");
 export const nameSymbol = Symbol.for("unName");
 export const urlSymbol = Symbol.for("unUrl");
-// On a Request an adapter made: returns another one over the same body, for the next middleware to read again
+// On a Request an adapter lent: given the runtime, returns another one over the same body, for the next middleware to
+// read again
 export const nextRequestSymbol = Symbol.for("unNextRequest");
 
 /**

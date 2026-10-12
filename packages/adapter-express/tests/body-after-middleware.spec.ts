@@ -1,7 +1,7 @@
 import type { Server, ServerResponse } from "node:http";
 import { type AddressInfo, connect } from "node:net";
 import { Readable } from "node:stream";
-import type { UniversalMiddleware } from "@universal-middleware/core";
+import { pipe, type UniversalMiddleware } from "@universal-middleware/core";
 import express from "express";
 import { afterEach, describe, expect, it } from "vitest";
 import { adaptLendingBody } from "../src/body.js";
@@ -218,6 +218,33 @@ describe("body read by a universal middleware", () => {
     await aborted.promise;
     process.off("warning", onWarning);
     expect(warnings).not.toContain("MaxListenersExceededWarning");
+  });
+
+  it("gives every step of a pipe() the Request a middleware built for it", async () => {
+    const seen: string[] = [];
+    const step: UniversalMiddleware = (request) => {
+      seen.push(new URL(request.url).pathname);
+    };
+    const inner = pipe(step, step, (request: Request) => new Response(new URL(request.url).pathname));
+    const rewrites: UniversalMiddleware = (request, context, runtime) =>
+      inner(new Request(new URL("/rewritten", request.url)), context, runtime);
+    const url = await start((app) => app.get("/", (_req, res) => res.end()), [rewrites]);
+    const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
+    expect(await res.text()).toBe("/rewritten");
+    expect(seen).toEqual(["/rewritten", "/rewritten"]);
+  });
+
+  it("is read by every step of a pipe() a later middleware passes its Request to", async () => {
+    const seen: string[] = [];
+    const reads: UniversalMiddleware = async (request) => {
+      seen.push(await request.text());
+    };
+    const inner = pipe(reads, reads, async (request: Request) => new Response(await request.text()));
+    const passes: UniversalMiddleware = (request, context, runtime) => inner(request, context, runtime);
+    const url = await start((app) => app.post("/echo", (_req, res) => res.end()), [reads, passes]);
+    const res = await postJson(`${url}/echo`, { a: 1 });
+    expect(await res.text()).toBe('{"a":1}');
+    expect(seen).toEqual(['{"a":1}', '{"a":1}', '{"a":1}']);
   });
 
   it("reaches express.json() through connectToWeb's synthetic request", async () => {

@@ -1,5 +1,6 @@
 import type {
   Awaitable,
+  ElysiaAdapter,
   Get,
   RuntimeAdapter,
   UniversalFn,
@@ -97,9 +98,12 @@ async function requestOf(request: Request) {
 }
 
 // The middlewares `apply()` runs as one each read the body, as separate ones do
-async function lentRequestOf(request: Request): Promise<Request> {
-  return Object.assign(await requestOf(request), { [nextRequestSymbol]: () => lentRequestOf(request) });
+async function lend(request: Request): Promise<Request> {
+  const lent: Request & { [nextRequestSymbol]?: typeof nextRequest } = await requestOf(request);
+  lent[nextRequestSymbol] = nextRequest;
+  return lent;
 }
+const nextRequest = (runtime: RuntimeAdapter) => lend((runtime as ElysiaAdapter).elysia.request);
 
 /**
  * Creates a request handler to be passed to app.all() or any other route function
@@ -157,7 +161,7 @@ export function createMiddleware<
             middleware,
             async function universalMiddlewareElysia(elysiaContext: typeof elysiaContext1) {
               const response = await this[universalSymbol](
-                await lentRequestOf(elysiaContext.request),
+                await lend(elysiaContext.request),
                 elysiaContext.getContext(),
                 getRuntime(elysiaContext),
               );

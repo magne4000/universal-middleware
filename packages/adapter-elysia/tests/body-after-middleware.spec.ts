@@ -1,6 +1,6 @@
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import type { UniversalMiddleware } from "@universal-middleware/core";
+import { pipe, type UniversalMiddleware } from "@universal-middleware/core";
 import { Elysia } from "elysia";
 import { describe, expect, it, vi } from "vitest";
 import { apply, createMiddleware } from "../src/index.js";
@@ -68,6 +68,22 @@ describe("body after a universal middleware", () => {
     const res = await post(app, JSON.stringify({ a: 1 }), "application/json");
     expect(seen).toEqual(['{"a":1}', '{"a":1}']);
     expect(await res.json()).toEqual({ got: { a: 1 } });
+  });
+
+  it("gives every step of a pipe() the Request a middleware built for it", async () => {
+    const seen: string[] = [];
+    const step: UniversalMiddleware = (request) => {
+      seen.push(new URL(request.url).pathname);
+    };
+    const inner = pipe(step, step, (request: Request) => new Response(new URL(request.url).pathname));
+    const rewrites: UniversalMiddleware = (request, context, runtime) =>
+      inner(new Request(new URL("/rewritten", request.url)), context, runtime);
+    const app = new Elysia();
+    apply(app, [rewrites]);
+    app.get("/", () => "route");
+    const res = await app.handle(new Request("http://localhost/"));
+    expect(await res.text()).toBe("/rewritten");
+    expect(seen).toEqual(["/rewritten", "/rewritten"]);
   });
 
   it("still reaches the route when the middleware is added with app.use() instead of apply()", async () => {

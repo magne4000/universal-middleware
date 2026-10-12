@@ -163,7 +163,7 @@ export function pipeMiddlewares(before: EnhancedMiddleware[], after: EnhancedMid
 }
 
 type ResponseFunction = (response: Response) => Awaitable<Response | undefined>;
-type LendingRequest = Request & { [nextRequestSymbol]?: () => Awaitable<Request> };
+type LendingRequest = Request & { [nextRequestSymbol]?: (runtime: RuntimeAdapter) => Awaitable<Request> };
 
 // Every middleware runs, a handler (or any, with `untilAnswer`) only until something answers. The first Response
 // answers; a later one is ignored.
@@ -179,11 +179,11 @@ async function runInOrder(
     if (response && (untilAnswer || isHandler(m))) {
       continue;
     }
-    // An adapter that lets every middleware read the body (Express, Elysia) makes a Request for each, until one
+    // An adapter that lets every middleware read the body (Express, Elysia) lends a Request to each, until one
     // answers: the answer may still be reading the body
     const nextRequest = (request as LendingRequest)[nextRequestSymbol];
     if (i > 0 && !response && nextRequest) {
-      request = await nextRequest();
+      request = await nextRequest(runtime);
     }
 
     const result = await getUniversal(m)(request, context ?? {}, runtime);

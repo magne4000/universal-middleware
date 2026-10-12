@@ -1,5 +1,11 @@
 import type { ServerResponse } from "node:http";
-import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type {
+  ExpressAdapter,
+  Get,
+  RuntimeAdapter,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "@universal-middleware/core";
 import {
   bindUniversal,
   contextSymbol,
@@ -96,13 +102,16 @@ export function createMiddleware<
   const requestAdapter = createRequestAdapter(options);
   const adapt = (req: DecoratedRequest, res: ServerResponse) => requestAdapter(req, res, expressOrigin(req));
   // The middlewares `apply()` runs as one each read the body, as separate ones do
-  const lend = (req: DecoratedRequest, res: ServerResponse): Request =>
-    Object.assign(adaptLendingBody(adapt, req, res), {
-      [nextRequestSymbol]: () => {
-        handBodyBack(req);
-        return lend(req, res);
-      },
-    });
+  const lend = (req: DecoratedRequest, res: ServerResponse): Request => {
+    const request: Request & { [nextRequestSymbol]?: typeof nextRequest } = adaptLendingBody(adapt, req, res);
+    request[nextRequestSymbol] = nextRequest;
+    return request;
+  };
+  const nextRequest = (runtime: RuntimeAdapter) => {
+    const { req, res } = runtime as ExpressAdapter & { req: DecoratedRequest };
+    handBodyBack(req);
+    return lend(req, res);
+  };
 
   return (...args) => {
     const middleware = middlewareFactory(...args);
@@ -110,8 +119,7 @@ export function createMiddleware<
     return bindUniversal(middleware, async function universalMiddlewareExpress(req, res, next) {
       try {
         req[contextSymbol] ??= {} as InContext;
-        const request = lend(req, res);
-        const response = await this[universalSymbol](request, getContext(req), getRuntime(req, res));
+        const response = await this[universalSymbol](lend(req, res), getContext(req), getRuntime(req, res));
 
         // A returned `Response` ends the chain and may still be reading the body
         if (!(response instanceof Response)) handBodyBack(req);
