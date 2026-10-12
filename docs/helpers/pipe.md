@@ -40,6 +40,19 @@ You can also `pipe` universal middlewares and handlers together, creating a new 
 const newHandler = pipe(middlewareStatus(), middlewareEarlyResponseError(), handler())
 ```
 
+The middlewares run as [`apply`](/helpers/enhance#order-and-early-responses) runs a list: sorted by `order`, and following `runs`. Once a middleware or handler answers with a `Response`, a middleware listed after it only runs if it has a positive `order` (or `runs`), and every response function applies to the answer, in order:
+```ts
+pipe(
+  handler(),
+  logRequest, // no order: doesn't run, the handler already answered
+  enhance(addHeader, { order: MiddlewareOrder.HEADER_MANAGEMENT }), // runs, its response function applies
+)
+```
+
+When nothing answers, the new middleware passes the request on with what its middlewares returned: their context, or a response function that applies all of theirs to the response that comes next. If both, the context goes into the context object it was given.
+
+`pipe` ignores `path` and `method`. To route handlers and scope middlewares by them, use `pipeRoute`, which composes a list as `apply` does.
+
 You can also `pipe` middlewares or handlers that are adapter specific.
 
 Any adapter specific middleware will act as if they were universal:

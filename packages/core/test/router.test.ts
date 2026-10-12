@@ -233,6 +233,30 @@ describe("handle404 answers a request no route matches, whatever its method", ()
   });
 });
 
+describe("without handle404, a request no route matches passes on", () => {
+  const page = enhance(() => new Response("page"), { name: "page", path: "/page", method: "GET" });
+  const header = enhance(
+    () => (response: Response) => {
+      response.headers.set("x-seen", "yes");
+      return response;
+    },
+    { name: "header" },
+  );
+  const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
+
+  test("with the response functions of its middlewares", async () => {
+    const result = await pipeRoute([page, header])(new Request("http://localhost/missing"), {}, runtime);
+    expect(typeof result).toBe("function");
+    const response = await (result as (r: Response) => Promise<Response>)(new Response("downstream"));
+    expect(response.headers.get("x-seen")).toBe("yes");
+  });
+
+  test("with nothing when its middlewares return nothing", async () => {
+    const noop = enhance(() => undefined, { name: "noop" });
+    expect(await pipeRoute([page, noop])(new Request("http://localhost/missing"), {}, runtime)).toBeUndefined();
+  });
+});
+
 describe("createMatcher matches a request as a route with the same path and method would", () => {
   const request = (path: string, method = "GET") => new Request(`http://localhost${path}`, { method });
 
