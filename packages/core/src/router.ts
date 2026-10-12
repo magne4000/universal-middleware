@@ -159,7 +159,9 @@ function match<T>(router: RouterContext<T>, request: Request) {
 }
 
 /**
- * @beta
+ * Composes a list as `apply()` would, into one universal middleware: the handlers are routed by `path` and `method`,
+ * a middleware with a `path` only runs for the requests that path matches, and the list follows `order` and `runs`.
+ * When no handler matches and no middleware answers, it passes the request on (or answers 404 with `handle404`).
  */
 export function pipeRoute(
   middlewares: EnhancedMiddleware[],

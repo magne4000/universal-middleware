@@ -1,6 +1,7 @@
 import { universalSymbol } from "./const";
+import { compileList, newListState } from "./steps";
 import type { AnyFn, Awaitable, UniversalFn, UniversalHandler, UniversalMiddleware } from "./types";
-import { bindUniversal, cancelReplacedBody, getUniversal, isHandler, ordered } from "./utils";
+import { bindUniversal, getUniversal, ordered } from "./utils";
 
 type _Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
 type Out<T> = T extends UniversalFn<infer X, infer _> ? _Out<X> : _Out<T>;
@@ -53,6 +54,11 @@ type Pipe<F extends AnyMiddleware[]> = F extends []
  * Composes a sequence of middlewares into a single middleware.
  * The `pipe` function takes an array of middleware functions and returns a new middleware function that
  * applies the input middleware functions in sequence to a given request and context.
+ *
+ * They run as `apply()` runs a list: sorted by `order`, following `runs`. The first Response answers; then only the
+ * middlewares that run once a Response exists still run (a positive `order`, or `runs`), and every response function
+ * applies to the answer, in order. When none answers, the composed middleware passes the request on, with the context
+ * and the response functions of the list. `pipe` ignores `path` and `method`: `pipeRoute` routes them.
  *
  * @example piping a universal middleware into a universal handler
  * ```js
@@ -110,49 +116,30 @@ export function pipe<F extends AnyMiddleware[]>(
   this: { noCast?: boolean } | void,
   ...a: Pipe<F> extends F ? F : Pipe<F>
 ): ComposeReturnType<F> {
-  const orderedArgs = ordered(a);
+  // The same rule as `apply()`, sorted by `order` and following `runs`
+  const list = compileList(ordered(a), (m) => getUniversal(m) as UniversalMiddleware);
+  const length = a.length;
   const fn: UniversalMiddleware<any, any> = async function pipeInternal(request, context, runtime) {
-    const pending: ((response: Response) => Awaitable<Response | undefined>)[] = [];
-
-    let _response: Response | undefined;
-    for (const m of orderedArgs) {
-      // only execute a handler if we still have no response
-      if (isHandler(m) && _response) {
-        continue;
-      }
-
-      const um = getUniversal(m);
-      const response = await um(request, context ?? {}, runtime);
-
-      if (typeof response === "function") {
-        pending.push(response);
-      } else if (response !== null && typeof response === "object") {
-        // Do not override response if it already exists.
-        // The only way to replace it is through a Response Function.
-        if (response instanceof Response) {
-          if (!_response) {
-            _response = response;
-          }
-        } else {
-          // Update context
-          context = response;
-        }
+    // Local to the call: a context the caller shares between requests stays apart
+    const state = newListState();
+    let current: Universal.Context = context ?? {};
+    let contextReturned = false;
+    // The list hands over at most one function, which applies all its response functions
+    let responseFunction: ((response: Response) => Awaitable<Response | undefined>) | undefined;
+    for (let i = 0; i < length; i++) {
+      const result = await list.run(i, state, request, current, runtime);
+      if (result instanceof Response) return responseFunction ? ((await responseFunction(result)) ?? result) : result;
+      if (typeof result === "function") responseFunction = result;
+      else if (result !== null && typeof result === "object") {
+        current = result;
+        contextReturned = true;
       }
     }
-
-    if (!_response) {
-      throw new Error("No Response found");
-    }
-
-    for (const m of pending) {
-      const r = await m(_response);
-      if (r) {
-        cancelReplacedBody(_response, r);
-        _response = r;
-      }
-    }
-
-    return _response;
+    // Nothing answered: the request goes on, with the context and the response functions of the list
+    if (!responseFunction) return contextReturned ? current : undefined;
+    // A middleware returns one thing: the context goes into the caller's object, as `context.x = …` would
+    if (contextReturned && context) Object.assign(context, current);
+    return responseFunction;
   };
 
   if (!this?.noCast) {
