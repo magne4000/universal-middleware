@@ -8,6 +8,7 @@ import {
   contextSymbol,
   type Get,
   getAdapterRuntime,
+  getUniversalProp,
   isBodyInit,
   mergeHeadersInto,
   type RuntimeAdapter,
@@ -167,6 +168,9 @@ export function createMiddleware<
                 return;
               }
               if (typeof response === "function") {
+                // An apply() list hands over with its response function the context its middlewares returned
+                const returned = getUniversalProp(response, contextSymbol);
+                if (returned) setContext(request, returned);
                 if (reply.sent) {
                   throw new Error(
                     "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-middleware",

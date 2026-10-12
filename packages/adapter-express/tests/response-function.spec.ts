@@ -3,7 +3,7 @@ import type { AddressInfo } from "node:net";
 import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
 import express from "express";
 import { afterEach, describe, expect, it } from "vitest";
-import { apply, createMiddleware } from "../src/index.js";
+import { apply, createMiddleware, getContext } from "../src/index.js";
 
 // A response function holds the Express app's response back, so the adapter stands in for the socket:
 // what the app sends and how it is sent must survive the detour.
@@ -196,4 +196,55 @@ describe("apply()", () => {
     expect(ran).toEqual([]);
     expect(res.headers.get("x-late")).toBe("yes");
   });
+
+  const identity = Symbol("identity");
+  const seen = enhance(
+    (_request, context: { user?: string; [identity]?: string }) => (response: Response) => {
+      response.headers.set("x-seen", `${context.user} ${context[identity]}`);
+      return response;
+    },
+    { name: "seen" },
+  );
+
+  it.each([
+    {
+      when: "the replaced context has a non-configurable key",
+      replaced: Object.defineProperty({}, identity, { value: "ann", enumerable: true }),
+      returned: {},
+      seen: "undefined undefined",
+    },
+    {
+      when: "the replaced context is frozen",
+      replaced: Object.freeze({ user: "ann" }),
+      returned: {},
+      seen: "undefined undefined",
+    },
+    {
+      when: "the replaced context inherits a value",
+      replaced: Object.create({ user: "ann" }),
+      returned: {},
+      seen: "undefined undefined",
+    },
+    {
+      when: "the returned context inherits a value",
+      replaced: {},
+      returned: Object.create({ user: "ann" }),
+      seen: "ann undefined",
+    },
+  ])(
+    "gives the route and the response functions the returned context as is when $when",
+    async ({ replaced, returned, seen: expected }) => {
+      const url = await start((app) => {
+        app.use(createMiddleware(() => () => replaced)());
+        apply(app, [enhance(() => returned, { name: "returns" }), seen]);
+        app.get("/", (req, res) => {
+          const context: { user?: string; [identity]?: string } = getContext(req);
+          res.send(`${context.user} ${context[identity]}`);
+        });
+      });
+      const res = await fetch(url);
+      expect(await res.text()).toBe(expected);
+      expect(res.headers.get("x-seen")).toBe(expected);
+    },
+  );
 });

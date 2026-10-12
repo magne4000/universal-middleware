@@ -11,6 +11,7 @@ import {
   cancelReplacedBody,
   contextSymbol,
   getAdapterRuntime,
+  getUniversalProp,
   universalSymbol,
 } from "@universal-middleware/core";
 import type { Env, ExecutionContext, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
@@ -89,6 +90,9 @@ export function createMiddleware<
       const response = await this[universalSymbol](honoContext.req.raw, context, getRuntime(honoContext));
 
       if (typeof response === "function") {
+        // An apply() list hands over with its response function the context its middlewares returned
+        const returned = getUniversalProp(response, contextSymbol);
+        if (returned) setContext(honoContext, returned);
         const pending = honoContext.get(pendingMiddlewaresSymbol);
         if (pending) {
           pending.push(response);

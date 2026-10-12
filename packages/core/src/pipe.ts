@@ -1,4 +1,4 @@
-import { nextRequestSymbol, universalSymbol } from "./const";
+import { contextSymbol, nextRequestSymbol, universalSymbol } from "./const";
 import type {
   AnyFn,
   Awaitable,
@@ -8,7 +8,7 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "./types";
-import { bindUniversal, cancelReplacedBody, getUniversal, isHandler, ordered } from "./utils";
+import { bindUniversal, cancelReplacedBody, getUniversal, getUniversalProp, isHandler, ordered } from "./utils";
 
 type _Out<T> = T extends UniversalMiddleware<any, infer C> ? C : never;
 type Out<T> = T extends UniversalFn<infer X, infer _> ? _Out<X> : _Out<T>;
@@ -145,20 +145,20 @@ export function pipe<F extends AnyMiddleware[]>(
  */
 export function pipeMiddlewares(before: EnhancedMiddleware[], after: EnhancedMiddleware[]): UniversalMiddleware {
   return async function pipeMiddlewaresInternal(request, context, runtime) {
-    // The server takes a context or a response function from a middleware, not both: its context stays the one the
-    // route and every response function see
-    const first = await runInOrder(before, request, context, runtime, { untilAnswer: true, inPlace: true });
+    const first = await runInOrder(before, request, context, runtime, { untilAnswer: true });
     const finish = async (response: Response) => {
-      const rest = await runInOrder(after, request, context, runtime, { answer: response, inPlace: true });
+      const rest = await runInOrder(after, request, first.context, runtime, { answer: response });
       return applyResponseFunctions(response, [...first.pending, ...rest.pending]);
     };
     if (first.response) {
       return finish(first.response);
     }
     if (first.pending.length === 0 && after.length === 0) {
-      return context;
+      return first.context;
     }
-    return finish;
+    // The server takes a context or a response function from a middleware, not both: the response function carries
+    // the context, for the server to store before the route reads it
+    return Object.assign(finish, { [contextSymbol]: first.context });
   };
 }
 
@@ -168,17 +168,13 @@ type LendingRequest = Request & {
 };
 
 // Every middleware runs, a handler (or any, with `untilAnswer`) only until something answers. The first Response
-// answers; a later one is ignored. A returned context replaces `context`, or with `inPlace` its contents.
+// answers; a later one is ignored. A returned context replaces `context`.
 async function runInOrder(
   middlewares: EnhancedMiddleware[],
   request: Request,
   context: Universal.Context,
   runtime: RuntimeAdapter,
-  {
-    answer: response,
-    untilAnswer = false,
-    inPlace = false,
-  }: { answer?: Response; untilAnswer?: boolean; inPlace?: boolean } = {},
+  { answer: response, untilAnswer = false }: { answer?: Response; untilAnswer?: boolean } = {},
 ) {
   const pending: ResponseFunction[] = [];
   for (const m of middlewares) {
@@ -197,6 +193,8 @@ async function runInOrder(
 
     if (typeof result === "function") {
       pending.push(result);
+      // An apply() list hands over with its response function the context its middlewares returned
+      context = getUniversalProp(result, contextSymbol) ?? context;
     } else if (result instanceof Response) {
       // Only a response function replaces the answer
       if (response) {
@@ -204,16 +202,11 @@ async function runInOrder(
       } else {
         response = result;
       }
-    } else if (result !== null && typeof result === "object" && result !== context) {
-      if (inPlace) {
-        for (const key of Reflect.ownKeys(context)) delete context[key];
-        Object.assign(context, result);
-      } else {
-        context = result;
-      }
+    } else if (result !== null && typeof result === "object") {
+      context = result;
     }
   }
-  return { response, pending };
+  return { response, pending, context };
 }
 
 async function applyResponseFunctions(response: Response, pending: ResponseFunction[]) {

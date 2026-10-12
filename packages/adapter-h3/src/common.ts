@@ -11,6 +11,7 @@ import {
   cancelReplacedBody,
   contextSymbol,
   getAdapterRuntime,
+  getUniversalProp,
   isBodyInit,
   mergeHeadersInto,
   nodeHeadersToWeb,
@@ -201,6 +202,9 @@ export function createMiddleware<
         const response = await this[universalSymbol](memToWebRequest(event), ctx, getRuntime(event));
 
         if (typeof response === "function") {
+          // An apply() list hands over with its response function the context its middlewares returned
+          const returned = getUniversalProp(response, contextSymbol);
+          if (returned) event.context[contextSymbol] = returned;
           event.context[pendingMiddlewaresSymbol] ??= [];
           event.context[wrappedResponseSymbol] = false;
           // `wrapResponse` takes care of calling those middlewares right before sending the response

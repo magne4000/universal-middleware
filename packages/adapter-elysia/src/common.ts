@@ -14,6 +14,7 @@ import {
   cloneRequest,
   contextSymbol,
   getAdapterRuntime,
+  getUniversalProp,
   nextRequestSymbol,
   universalSymbol,
 } from "@universal-middleware/core";
@@ -168,6 +169,9 @@ export function createMiddleware<
                 getRuntime(elysiaContext),
               );
               if (typeof response === "function") {
+                // An apply() list hands over with its response function the context its middlewares returned
+                const returned = getUniversalProp(response, contextSymbol);
+                if (returned) elysiaContext.setContext(returned);
                 elysiaContext[pendingSymbol].push(response);
               } else if (response !== null && typeof response === "object") {
                 if (response instanceof Response) {

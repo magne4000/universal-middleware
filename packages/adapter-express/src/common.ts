@@ -10,6 +10,7 @@ import {
   bindUniversal,
   contextSymbol,
   getAdapterRuntime,
+  getUniversalProp,
   nextRequestSymbol,
   universalSymbol,
 } from "@universal-middleware/core";
@@ -131,6 +132,9 @@ export function createMiddleware<
           return nextOr404(res, next);
         }
         if (typeof response === "function") {
+          // An apply() list hands over with its response function the context its middlewares returned
+          const returned = getUniversalProp(response, contextSymbol);
+          if (returned) req[contextSymbol] = returned as InContext;
           if (res.headersSent) {
             throw new Error(
               "Universal Middleware called after headers have been sent. Please open an issue at https://github.com/magne4000/universal-middleware",

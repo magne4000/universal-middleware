@@ -13,6 +13,7 @@ import {
   cancelReplacedBody,
   contextSymbol,
   getAdapterRuntime,
+  getUniversalProp,
   universalSymbol,
 } from "@universal-middleware/core";
 
@@ -85,6 +86,9 @@ export function createMiddleware<
       const response = await this[universalSymbol](context.request, ctx, getRuntime(context));
 
       if (typeof response === "function") {
+        // An apply() list hands over with its response function the context its middlewares returned
+        const returned = getUniversalProp(response, contextSymbol);
+        if (returned) context[contextSymbol] = returned;
         const pending = context[pendingMiddlewaresSymbol];
         if (pending) {
           pending.push(response);
