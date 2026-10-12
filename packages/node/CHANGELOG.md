@@ -1,5 +1,20 @@
 # @universal-middleware/node
 
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [4685d38]
+- Updated dependencies [2f40695]
+- Updated dependencies [85573be]
+- Updated dependencies [85573be]
+- Updated dependencies [85573be]
+  - @universal-middleware/core@0.7.0
+
 ## 0.2.8
 
 ### Patch Changes

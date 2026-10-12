@@ -1,5 +1,36 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.6.0
+
+### Minor Changes
+
+- 2f40695: With `apply()`, a middleware with a positive `order` runs once a `Response` exists:
+  
+  - It also runs when an earlier middleware answered: a compression middleware at `MiddlewareOrder.RESPONSE_COMPRESSION` now compresses what `sirv()` serves.
+  - It runs after the handler, no longer before it: a context it returns no longer reaches the handler. Give a middleware that must run before the handler a negative `order`, or `runs: "until-response"`.
+- 2f40695: With `apply()`, a middleware with a positive `order` (or `runs: "after-response"`) that returns a `Response` fails the request with a `TypeError` naming it. It used to answer on Hono, Express, Fastify, h3, Elysia and HatTip, and was ignored on srvx and Cloudflare. A cache that answers hits needs a negative `order`, such as `MiddlewareOrder.CACHING`.
+- 2f40695: `enhance()` takes a `runs` option, and `apply()` follows it the same way on every adapter:
+  
+  - `"until-response"`, the default for an `order` of 0 or less (or none): at its place in the list, and not once a middleware answered with a `Response`.
+  - `"after-response"`, the default for a positive `order`: once a `Response` exists, after the handler or right after an earlier middleware answered. It acts through a response function.
+  - `"always"`: at its place in the list, whether a `Response` exists or not. The first `Response` answers, a later one is ignored.
+  
+  Every response function of the list applies to the answer, in order. Each middleware is still registered with the server as its own middleware.
+
+### Patch Changes
+
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [2f40695]
+- Updated dependencies [4685d38]
+- Updated dependencies [2f40695]
+- Updated dependencies [85573be]
+- Updated dependencies [85573be]
+- Updated dependencies [85573be]
+  - @universal-middleware/core@0.7.0
+  - @universal-middleware/node@0.2.9
+
 ## 0.5.3
 
 ### Patch Changes
