@@ -215,7 +215,7 @@ async function runInOrder(
       }
     }
   }
-  return { response, pending, context };
+  return { response, pending };
 }
 
 async function applyResponseFunctions(response: Response, pending: ResponseFunction[]) {
