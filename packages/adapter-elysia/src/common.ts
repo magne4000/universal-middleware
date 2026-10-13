@@ -232,13 +232,8 @@ async function runResponseFunctions(elysiaContext: ResponseFunctionsContext): Pr
   // the cookies of `set.cookie` replace them. Without `transfer-encoding`, it sends the Response as is.
   // TODO: drop once Elysia keeps the headers of a chunked Response (https://github.com/elysiajs/elysia/issues/TODO)
   if (currentResponse.headers.has("transfer-encoding")) {
-    const headers = new Headers(currentResponse.headers);
-    headers.delete("transfer-encoding");
-    currentResponse = new Response(currentResponse.body, {
-      status: currentResponse.status,
-      statusText: currentResponse.statusText,
-      headers,
-    });
+    currentResponse = new Response(currentResponse.body, currentResponse);
+    currentResponse.headers.delete("transfer-encoding");
   }
 
   // Elysia merges `set` into the Response it sends: the headers the Response lacks, and the status if it is 200.

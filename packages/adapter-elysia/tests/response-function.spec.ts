@@ -169,11 +169,14 @@ describe("a streaming route, under a response function", () => {
   ];
 
   // Off Bun, Elysia streams a generator's strings as they are, which `Response.text()` rejects
+  const decode = (value: Uint8Array | string | undefined) =>
+    typeof value === "string" ? value : new TextDecoder().decode(value);
+
   async function read(response: Response) {
     let text = "";
     const reader = (response.body as ReadableStream<Uint8Array | string>).getReader();
     for (let chunk = await reader.read(); !chunk.done; chunk = await reader.read()) {
-      text += typeof chunk.value === "string" ? chunk.value : new TextDecoder().decode(chunk.value);
+      text += decode(chunk.value);
     }
     return text;
   }
@@ -211,8 +214,6 @@ describe("a streaming route, under a response function", () => {
 
       const response = await app.handle(new Request("http://localhost/"));
       const reader = (response.body as ReadableStream<Uint8Array | string>).getReader();
-      const decode = (value: Uint8Array | string | undefined) =>
-        typeof value === "string" ? value : new TextDecoder().decode(value);
       expect(decode((await reader.read()).value)).toBe("a");
       firstRead.resolve();
       expect(decode((await reader.read()).value)).toBe("b");
