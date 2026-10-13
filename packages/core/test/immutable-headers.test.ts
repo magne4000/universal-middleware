@@ -10,9 +10,14 @@ import { pipe } from "../src/pipe";
 const request = new Request("http://localhost/");
 const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
 
-const immutableResponses: [string, () => Promise<Response>][] = [
-  ["Response.redirect()", async () => Response.redirect("http://localhost/target", 302)],
-  ["a fetch() response", () => fetch("data:text/plain,fetched")],
+const immutableResponses = [
+  {
+    name: "Response.redirect()",
+    response: async () => Response.redirect("http://localhost/target", 302),
+    status: 302,
+    body: "",
+  },
+  { name: "a fetch() response", response: () => fetch("data:text/plain,fetched"), status: 200, body: "fetched" },
 ];
 
 const changesHeaders = () => (response: Response) => {
@@ -31,11 +36,6 @@ async function received(response: Response) {
     cookies: response.headers.getSetCookie(),
   };
 }
-
-const expected = {
-  "Response.redirect()": { status: 302, body: "" },
-  "a fetch() response": { status: 200, body: "fetched" },
-};
 
 describe("withMutableHeaders", () => {
   test("returns a Response with mutable headers as is", () => {
@@ -85,13 +85,8 @@ describe("withMutableHeaders", () => {
   });
 });
 
-describe.each(immutableResponses)("pipe(), a handler returning %s", (name, immutable) => {
-  const want = {
-    ...expected[name as keyof typeof expected],
-    changed: "yes",
-    location: "/changed",
-    cookies: ["changed=1"],
-  };
+describe.each(immutableResponses)("pipe(), a handler returning $name", ({ response: immutable, status, body }) => {
+  const want = { status, body, changed: "yes", location: "/changed", cookies: ["changed=1"] };
 
   test("a response function changes its headers", async () => {
     const handler = pipe(changesHeaders, immutable);
