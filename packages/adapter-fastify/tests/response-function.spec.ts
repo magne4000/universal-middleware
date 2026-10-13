@@ -1,8 +1,8 @@
 import { Readable } from "node:stream";
-import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
+import type { UniversalMiddleware } from "@universal-middleware/core";
 import Fastify, { type FastifyInstance, type FastifyReply } from "fastify";
 import { afterEach, describe, expect, it } from "vitest";
-import { apply, createHandler, createMiddleware } from "../src/index.js";
+import { createHandler, createMiddleware } from "../src/index.js";
 
 // A response function gets what the route sent as a Response: whatever the route sent it with.
 
@@ -105,14 +105,9 @@ describe("the headers a route set, under a response function", () => {
     return response;
   };
 
-  async function startWith(
-    responseFunction: UniversalMiddleware,
-    setup: (app: FastifyInstance) => void,
-    registration = "createMiddleware()",
-  ) {
+  async function startWith(responseFunction: UniversalMiddleware, setup: (app: FastifyInstance) => void) {
     const instance = Fastify();
-    if (registration === "apply()") await apply(instance, [enhance(responseFunction, { name: "changes" })]);
-    else await instance.register(createMiddleware(() => responseFunction)());
+    await instance.register(createMiddleware(() => responseFunction)());
     setup(instance);
     app = instance;
     return instance.listen({ port: 0, host: "127.0.0.1" });
@@ -138,29 +133,24 @@ describe("the headers a route set, under a response function", () => {
     ["nothing, with status 204", (reply) => reply.code(204).send()],
   ];
 
-  describe.each(["createMiddleware()", "apply()"])("registered with %s", (registration) => {
-    describe.each(payloads)("%s", (_, payload) => {
-      it.each(["GET", "HEAD", "POST"])("%s: each cookie once, and the header changes", async (method) => {
-        const url = await startWith(
-          changes,
-          (app) =>
-            app.route({
-              method: ["GET", "HEAD", "POST"],
-              url: "/",
-              handler: (_request, reply) => {
-                reply.header("set-cookie", "own=1");
-                reply.header("x-deleted", "yes");
-                return payload(reply);
-              },
-            }),
-          registration,
-        );
+  describe.each(payloads)("%s", (_, payload) => {
+    it.each(["GET", "HEAD", "POST"])("%s: each cookie once, and the header changes", async (method) => {
+      const url = await startWith(changes, (app) =>
+        app.route({
+          method: ["GET", "HEAD", "POST"],
+          url: "/",
+          handler: (_request, reply) => {
+            reply.header("set-cookie", "own=1");
+            reply.header("x-deleted", "yes");
+            return payload(reply);
+          },
+        }),
+      );
 
-        const res = await fetch(url, { method, redirect: "manual" });
-        expect(res.headers.getSetCookie()).toEqual(["own=1", "changed=1"]);
-        expect(res.headers.get("x-changed")).toBe("yes");
-        expect(res.headers.has("x-deleted")).toBe(false);
-      });
+      const res = await fetch(url, { method, redirect: "manual" });
+      expect(res.headers.getSetCookie()).toEqual(["own=1", "changed=1"]);
+      expect(res.headers.get("x-changed")).toBe("yes");
+      expect(res.headers.has("x-deleted")).toBe(false);
     });
   });
 
