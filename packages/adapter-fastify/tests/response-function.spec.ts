@@ -1,5 +1,5 @@
 import { Readable } from "node:stream";
-import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
+import type { UniversalMiddleware } from "@universal-middleware/core";
 import { changedHeaders, changesHeaders, immutableResponses, received } from "@universal-middleware/tests/utils";
 import Fastify, { type FastifyInstance } from "fastify";
 import { afterEach, describe, expect, it } from "vitest";

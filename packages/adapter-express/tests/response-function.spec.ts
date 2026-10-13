@@ -1,6 +1,6 @@
 import type { Server } from "node:http";
 import type { AddressInfo } from "node:net";
-import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
+import type { UniversalMiddleware } from "@universal-middleware/core";
 import { changedHeaders, changesHeaders, immutableResponses, received } from "@universal-middleware/tests/utils";
 import express from "express";
 import { afterEach, describe, expect, it } from "vitest";
