@@ -4,7 +4,7 @@
 
 This repository provides a framework for writing server middlewares and handlers once and deploying them across multiple server frameworks (Express, Hono, Fastify, h3, Hattip, Elysia, srvx, Vercel, Cloudflare, Webroute). It enables library authors to write framework-agnostic middleware that can be adapted to any supported platform.
 
-**Project Type:** TypeScript monorepo using pnpm workspaces and Turbo for build orchestration  
+**Project Type:** TypeScript monorepo using pnpm workspaces and Nx for build orchestration  
 **Primary Language:** TypeScript (ES Modules)  
 **Package Manager:** pnpm 11.5.2 (required)  
 **Node Version:** Node.js 22.18 or higher (24.11 or higher on Node 24; tested on 22, 24)  
@@ -38,7 +38,7 @@ pnpm run build
 # Build all packages (ALWAYS run this first after install)
 pnpm run build
 # Takes: ~55-60 seconds on first run, faster with cache
-# Builds 18 packages in topological order using Turbo
+# Builds 18 packages in dependency order using Nx
 ```
 
 ### Linting
@@ -55,7 +55,7 @@ pnpm run lint
 # Run type checking across all packages
 pnpm run test:typecheck
 # Takes: ~45 seconds
-# Builds what it needs first (turbo `dependsOn: build`)
+# Builds what it needs first (Nx `dependsOn: build`)
 # Each package has its own tsconfig.json
 ```
 
@@ -64,8 +64,8 @@ pnpm run test:typecheck
 # Run all tests (includes vitest unit tests + integration tests)
 pnpm run test
 # Takes: Several minutes (includes starting test servers)
-# Builds what it needs first (turbo `dependsOn: build`)
-# Keeps going after a failing package; turbo lists every failed task at the end
+# Builds what it needs first (Nx `dependsOn: build`)
+# Keeps going after a failing package, skipping the tasks that depend on it; Nx lists every failed task at the end
 # Note: Some tests require Bun and Deno which may not be in all environments
 ```
 
@@ -110,7 +110,8 @@ Build/verify there, then bring the finished changes back to the branch.
 ### Root Directory Files
 - `package.json` - Workspace root with scripts for build/test/lint/release
 - `pnpm-workspace.yaml` - Defines workspace packages, shared catalog dependencies, and pnpm settings (`autoInstallPeers: false`, `linkWorkspacePackages: deep`)
-- `turbo.json` - Build orchestration config (defines task dependencies)
+- `nx.json` - Build orchestration config (defines task dependencies, inputs, outputs and caching)
+- `.nxignore` - Paths Nx skips when looking for projects (adapter-vercel's `.vercel/project.json` is not an Nx project)
 - `biome.json` - Linter and formatter configuration
 - `tsconfig.json` - Base TypeScript configuration (strict mode, ES2022)
 
@@ -183,7 +184,7 @@ Runs tests with a matrix approach for comprehensive coverage:
 2. Install Bun (pinned, e.g. 1.4.2) - required for Elysia adapter tests
 3. Install pnpm
 4. Install dependencies: `pnpm install`
-5. Build: `pnpm run build` (on Windows, `pnpm -r run build`, without turbo: see Common Pitfalls)
+5. Build: `pnpm run build`
 6. Install Playwright (only for tests-examples/tests-tool): `pnpm exec playwright install chromium`, run in `tests-examples/tests-tool`
 7. Run tests in specific package: `pnpm run test` (working directory: matrix.cwd)
 
@@ -208,11 +209,13 @@ Runs tests with a matrix approach for comprehensive coverage:
 - **Bun not available:** Elysia tests will fail with "bun: not found" - this is expected in environments without Bun
 - **Deno not available:** Some runtime tests require Deno
 - **Vercel tests:** Require VERCEL_TOKEN, or a `vercel login` session locally; CI skips them when the secret is unavailable
-- **Windows builds don't use turbo:** since turbo 2.11.4, `turbo run build` sometimes never exits on Windows after all tasks succeed, so the Tests workflow builds there with `pnpm -r run build` (dependency order, no cache). The step still fails after 10 minutes if a build stalls
 
 ### Cache Issues
-**Problem:** Turbo cache causes stale builds  
-**Solution:** Run `turbo run build --force` to bypass cache, or delete `.turbo` directory
+**Problem:** Nx cache causes stale builds  
+**Solution:** Run `pnpm run build --skip-nx-cache` to bypass the cache, or `pnpm exec nx reset` to clear it. The cache lives in `~/.nx/<workspace-id>/cache` and is shared by every checkout and worktree of the repository
+
+### Task Output
+Nx shows its terminal UI in an interactive terminal. Elsewhere it prints only the output of failed tasks, and when it detects an AI agent only a summary with the path of each failed task's log file. Add `--output-style=static` to print every task's output inline
 
 ### Playwright Installation
 **Problem:** Chromium not installed for tests  
@@ -258,7 +261,7 @@ Each adapter package (`adapter-*`) converts the universal middleware format to f
 
 1. **Install and Build First:** Always `pnpm install && pnpm run build`
 2. **Make Changes:** Edit source in `packages/*/src/`
-3. **Rebuild:** `pnpm run build` (or `turbo run build` in specific package)
+3. **Rebuild:** `pnpm run build` (or `pnpm exec nx run <package-name>:build` for one package and its dependencies)
 4. **Lint:** `pnpm exec biome ci .` (auto-fix with `pnpm run check`)
 5. **Type Check:** `pnpm run test:typecheck`
 6. **Test:** `pnpm run test`

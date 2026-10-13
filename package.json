@@ -5,9 +5,9 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "build": "turbo build",
-    "test": "turbo test --concurrency 1 --continue=dependencies-successful",
-    "test:typecheck": "turbo test:typecheck",
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test --parallel=1",
+    "test:typecheck": "nx run-many -t test:typecheck",
     "format": "biome format --write .",
     "lint": "biome lint .",
     "check": "biome check --write .",
@@ -20,7 +20,7 @@
     "@changesets/cli": "^3.0.3",
     "@types/node": "catalog:",
     "file-type": "^22.1.1",
-    "turbo": "^2.11.7",
+    "nx": "^23.3.0",
     "typescript": "catalog:",
     "unrun": "^0.3.1"
   },
