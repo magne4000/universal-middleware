@@ -114,6 +114,12 @@ export function cloneRequest(request: Request, fields?: RequestInit & { url?: st
 }
 
 const keptRequests = new WeakSet<Request>();
+const keptBodies = new WeakMap<Request, Promise<ArrayBuffer>>();
+
+/** The bytes `keepBody()` kept for `request`, once something read its body through a method */
+export function keptBody(request: Request): Promise<ArrayBuffer> | undefined {
+  return keptBodies.get(request);
+}
 
 /**
  * Makes the body of `request` readable by every middleware and the handler: the first read through a body method
@@ -130,7 +136,10 @@ export function keepBody(request: Request) {
   const type = request.headers.get("content-type") ?? "";
   let kept: Promise<ArrayBuffer> | undefined;
   const bytes = () => {
-    kept ??= read();
+    if (!kept) {
+      kept = read();
+      keptBodies.set(request, kept);
+    }
     return kept;
   };
   const replay = () =>
