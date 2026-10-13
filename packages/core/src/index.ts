@@ -35,4 +35,5 @@ export {
   mergeHeadersInto,
   nodeHeadersToWeb,
   url,
+  withMutableHeaders,
 } from "./utils.js";

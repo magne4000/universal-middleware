@@ -299,3 +299,36 @@ export function endlessResponse() {
   );
   return { state, response, cancelled };
 }
+
+/** Responses with immutable headers, as a route may return them (`Response.redirect()`, a proxied `fetch()`) */
+export const immutableResponses = [
+  {
+    name: "Response.redirect()",
+    response: async () => Response.redirect("http://localhost/target", 302),
+    status: 302,
+    body: "",
+  },
+  { name: "a fetch() response", response: () => fetch("data:text/plain,fetched"), status: 200, body: "fetched" },
+];
+
+/** A response function that changes the headers of the Response it gets, `location` included */
+export const changesHeaders = () => (response: Response) => {
+  response.headers.set("x-changed", "yes");
+  response.headers.set("location", "/changed");
+  response.headers.append("set-cookie", "changed=1");
+  return response;
+};
+
+/** The headers a client gets once `changesHeaders` ran */
+export const changedHeaders = { changed: "yes", location: "/changed", cookies: ["changed=1"] };
+
+/** What a client gets: the status, the body and the headers `changesHeaders` sets */
+export async function received(response: Response) {
+  return {
+    status: response.status,
+    body: await response.text(),
+    changed: response.headers.get("x-changed"),
+    location: response.headers.get("location"),
+    cookies: response.headers.getSetCookie(),
+  };
+}

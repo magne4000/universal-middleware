@@ -56,6 +56,20 @@ export function cancelReplacedBody(replaced: Response, replacement: Response | n
   });
 }
 
+/**
+ * A Response whose headers a response function may change: a copy of one with immutable headers, as
+ * `Response.redirect()` and `fetch()` return, else the Response itself
+ */
+export function withMutableHeaders(response: Response): Response {
+  try {
+    // Throws only on immutable headers
+    response.headers.delete("x-universal-middleware-probe");
+    return response;
+  } catch {
+    return new Response(response.body, response);
+  }
+}
+
 export function nodeHeadersToWeb(nodeHeaders: OutgoingHttpHeaders): Headers {
   const headers: [string, string][] = [];
 

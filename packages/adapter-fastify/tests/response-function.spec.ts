@@ -1,8 +1,9 @@
 import { Readable } from "node:stream";
-import type { UniversalMiddleware } from "@universal-middleware/core";
+import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
+import { changedHeaders, changesHeaders, immutableResponses, received } from "@universal-middleware/tests/utils";
 import Fastify, { type FastifyInstance } from "fastify";
 import { afterEach, describe, expect, it } from "vitest";
-import { createHandler, createMiddleware } from "../src/index.js";
+import { apply, createHandler, createMiddleware } from "../src/index.js";
 
 // A response function gets what the route sent as a Response: whatever the route sent it with.
 
@@ -93,5 +94,58 @@ describe("the response functions of several middlewares", () => {
     } finally {
       await Promise.all(apps.map((instance) => instance.close()));
     }
+  });
+});
+
+describe.each(immutableResponses)("a route returning $name", ({ response: immutable, status, body }) => {
+  const replacesWith = () => () => immutable();
+  const registrations: [string, (app: FastifyInstance, middlewares: UniversalMiddleware[]) => Promise<unknown>][] = [
+    [
+      "apply()",
+      (app, middlewares) =>
+        apply(
+          app,
+          middlewares.map((m, i) => enhance(m, { name: `m${i}` })),
+        ),
+    ],
+    [
+      "createMiddleware()",
+      async (app, middlewares) => {
+        for (const m of middlewares) await app.register(createMiddleware(() => m)());
+      },
+    ],
+  ];
+
+  async function startWith(
+    register: (app: FastifyInstance) => Promise<unknown>,
+    route: (app: FastifyInstance) => void,
+  ) {
+    const instance = Fastify();
+    await register(instance);
+    route(instance);
+    app = instance;
+    return instance.listen({ port: 0, host: "127.0.0.1" });
+  }
+
+  describe.each(registrations)("registered with %s", (_, register) => {
+    it.each(["GET", "HEAD", "POST"])("%s: a response function changes its headers", async (method) => {
+      const url = await startWith(
+        (app) => register(app, [changesHeaders]),
+        (app) => app.route({ method: ["GET", "HEAD", "POST"], url: "/", handler: createHandler(() => immutable)() }),
+      );
+
+      const response = await fetch(url, { method, redirect: "manual" });
+      expect(await received(response)).toEqual({ status, body: method === "HEAD" ? "" : body, ...changedHeaders });
+    });
+
+    it("a response function replaces the Response with it, the next one changes its headers", async () => {
+      const url = await startWith(
+        (app) => register(app, [replacesWith, changesHeaders]),
+        (app) => app.get("/", () => "replaced"),
+      );
+
+      const response = await fetch(url, { redirect: "manual" });
+      expect(await received(response)).toEqual({ status, body, ...changedHeaders });
+    });
   });
 });

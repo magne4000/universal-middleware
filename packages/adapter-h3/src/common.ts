@@ -12,6 +12,7 @@ import {
   contextSymbol,
   getAdapterRuntime,
   universalSymbol,
+  withMutableHeaders,
 } from "@universal-middleware/core";
 import { defineHandler, type EventHandler, type H3Event, type Middleware, toResponse } from "h3";
 
@@ -111,6 +112,7 @@ export function createMiddleware<
             }
             res = original;
             for (const middleware of middlewares) {
+              res = withMutableHeaders(res);
               const replacement = await middleware(res);
               cancelReplacedBody(res, replacement);
               res = replacement ?? res;

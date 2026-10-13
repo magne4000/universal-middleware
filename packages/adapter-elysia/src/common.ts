@@ -14,6 +14,7 @@ import {
   contextSymbol,
   getAdapterRuntime,
   universalSymbol,
+  withMutableHeaders,
 } from "@universal-middleware/core";
 import { Elysia, type Context as ElysiaContext, type Handler, NotFoundError } from "elysia";
 import { mapResponse as mapResponseBun } from "elysia/adapter/bun/handler";
@@ -217,6 +218,7 @@ async function runResponseFunctions(elysiaContext: ResponseFunctionsContext): Pr
 
   try {
     for (const p of elysiaContext[pendingSymbol]) {
+      currentResponse = withMutableHeaders(currentResponse);
       const res = await p(currentResponse);
       if (res) {
         cancelReplacedBody(currentResponse, res);

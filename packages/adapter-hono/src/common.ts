@@ -12,6 +12,7 @@ import {
   contextSymbol,
   getAdapterRuntime,
   universalSymbol,
+  withMutableHeaders,
 } from "@universal-middleware/core";
 import type { Env, ExecutionContext, Handler, Context as HonoContext, MiddlewareHandler } from "hono";
 
@@ -98,6 +99,9 @@ export function createMiddleware<
         honoContext.set(pendingMiddlewaresSymbol, middlewares);
         await next();
         for (const middleware of middlewares) {
+          // Hono merges the headers of the Response it holds into one it's given: the copy goes in before they change
+          const mutable = withMutableHeaders(honoContext.res);
+          if (mutable !== honoContext.res) honoContext.res = mutable;
           const original = honoContext.res;
           const res = await middleware(original);
           if (res) {

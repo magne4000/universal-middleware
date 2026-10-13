@@ -15,6 +15,7 @@ import {
   type UniversalHandler,
   type UniversalMiddleware,
   universalSymbol,
+  withMutableHeaders,
 } from "@universal-middleware/core";
 
 import { createRequestAdapter, type DecoratedRequest } from "@universal-middleware/node";
@@ -233,7 +234,7 @@ async function runResponseFunctions(request: FastifyRequest, reply: FastifyReply
   delete request[pendingMiddlewaresSymbol];
 
   const newResponse = await middlewares?.reduce(async (prev, curr) => {
-    const p = await prev;
+    const p = withMutableHeaders(await prev);
     const newR = await curr(p);
     cancelReplacedBody(p, newR);
     return newR ?? p;

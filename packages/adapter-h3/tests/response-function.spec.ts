@@ -1,10 +1,11 @@
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import { Readable } from "node:stream";
-import { type EnhancedMiddleware, enhance } from "@universal-middleware/core";
+import { type EnhancedMiddleware, enhance, type UniversalMiddleware } from "@universal-middleware/core";
+import { changedHeaders, changesHeaders, immutableResponses, received } from "@universal-middleware/tests/utils";
 import { defineHandler, H3, type H3Event, HTTPError, toNodeHandler } from "h3";
 import { describe, expect, it } from "vitest";
-import { apply } from "../src/index.js";
+import { apply, createHandler, createMiddleware } from "../src/index.js";
 
 // A middleware returning a response function wraps what a route returns, and h3 itself converts a route's return
 // value that isn't a Response: the response function must get what h3 would have sent, plus its own change.
@@ -139,5 +140,45 @@ describe("response function returning a new Response", () => {
     const { body } = await sendOverNode(appWith(shout, () => "<p>hi</p>", app));
     expect(body).toBe("<P>HI</P>");
     expect(errors).toEqual([]);
+  });
+});
+
+describe.each(immutableResponses)("a route returning $name", ({ response: immutable, status, body }) => {
+  const replacesWith = () => () => immutable();
+  const registrations: [string, (app: H3, middlewares: UniversalMiddleware[]) => void][] = [
+    [
+      "apply()",
+      (app, middlewares) =>
+        apply(
+          app,
+          middlewares.map((m, i) => enhance(m, { name: `m${i}` })),
+        ),
+    ],
+    [
+      "createMiddleware()",
+      (app, middlewares) => {
+        for (const m of middlewares) app.use(createMiddleware(() => m)());
+      },
+    ],
+  ];
+
+  describe.each(registrations)("registered with %s", (_, register) => {
+    it.each(["GET", "HEAD", "POST"])("%s: a response function changes its headers", async (method) => {
+      const app = new H3();
+      register(app, [changesHeaders]);
+      app.all("/", createHandler(() => immutable)());
+
+      const response = await app.fetch(new Request("http://localhost/", { method }));
+      expect(await received(response)).toEqual({ status, body: method === "HEAD" ? "" : body, ...changedHeaders });
+    });
+
+    it("a response function replaces the Response with it, the next one changes its headers", async () => {
+      const app = new H3();
+      register(app, [replacesWith, changesHeaders]);
+      app.get("/", createHandler(() => () => new Response("replaced"))());
+
+      const response = await app.fetch(new Request("http://localhost/"));
+      expect(await received(response)).toEqual({ status, body, ...changedHeaders });
+    });
   });
 });
