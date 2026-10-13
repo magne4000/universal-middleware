@@ -240,6 +240,8 @@ async function runResponseFunctions(request: FastifyRequest, reply: FastifyReply
   }, Promise.resolve(response));
 
   const r = newResponse ?? response;
+  // Fastify adds the headers of `r` to the reply's, which `response` took: a cookie would be sent twice
+  for (const name of Object.keys(reply.getHeaders())) reply.removeHeader(name);
   if (request.method !== "HEAD") return r;
   // Fastify's head route runs after this hook and only accepts a string, a buffer or a stream
   reply.code(r.status);
