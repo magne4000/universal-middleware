@@ -6,13 +6,13 @@ const port = 3865;
 const expectInternalServerError = {
   tests: {
     throwLate: {
-      expectedBody: '"statusCode": 500',
+      expectedBody: '"status":500',
     },
     throwEarlyAndLate: {
-      expectedBody: '"statusCode": 500',
+      expectedBody: '"status":500',
     },
     throwEarly: {
-      expectedBody: '"statusCode": 500',
+      expectedBody: '"status":500',
     },
   },
 } satisfies Pick<Run, "tests">;

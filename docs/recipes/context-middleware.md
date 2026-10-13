@@ -158,21 +158,18 @@ export default createNodeHandler(() => wrapped)();
 ```
 
 ```ts twoslash [h3.ts]
-import { createApp, createRouter, defineEventHandler } from "h3";
+import { defineHandler, H3 } from "h3";
 import contextMiddleware from "@universal-middleware-examples/tool/middlewares/context-middleware-h3";
-import { getContext, universalOnBeforeResponse } from "@universal-middleware/h3";
+import { getContext } from "@universal-middleware/h3";
 
-const app = createApp({
-  // /!\ This is required for universal-middleware to operate properly
-  onBeforeResponse: universalOnBeforeResponse,
-});
+const app = new H3();
 
 // Now the universal context contains `{ hello: "world" }`.
 app.use(contextMiddleware("world"));
 
-const router = createRouter();
+const router = new H3();
 
-router.get("/", defineEventHandler((event) => {
+router.get("/", defineHandler((event) => {
   // The universal context can be retrieved through `getContext` helper
   // outside of universal middlewares and handlers
   const universalCtx = getContext<{ hello: string }>(event);

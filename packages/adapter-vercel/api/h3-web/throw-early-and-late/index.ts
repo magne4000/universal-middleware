@@ -1,9 +1,9 @@
-import { createHandler, createMiddleware, universalOnBeforeResponse } from "@universal-middleware/h3";
+import { createHandler, createMiddleware } from "@universal-middleware/h3";
 import { middlewares, throwEarlyAndLateHandler } from "@universal-middleware/tests/utils";
-import { createApp } from "h3";
+import { H3 } from "h3";
 import { createEdgeHandler } from "../../../src/h3.js";
 
-const app = createApp({ onBeforeResponse: universalOnBeforeResponse });
+const app = new H3();
 
 app.use(createMiddleware(() => middlewares.throwEarly)());
 app.use(createMiddleware(() => middlewares.throwLate)());

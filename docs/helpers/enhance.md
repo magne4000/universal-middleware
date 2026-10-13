@@ -133,13 +133,13 @@ export default apply([
 ```ts twoslash [h3.ts]
 // @include: handler
 // ---cut---
-import { createApp } from "h3";
+import { H3 } from "h3";
 // ---cut-start---
 import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware";
 // ---cut-end---
 import { apply } from "@universal-middleware/h3";
 
-const app = createApp();
+const app = new H3();
 
 apply(app, [
   // Register middleware and handlers in the application

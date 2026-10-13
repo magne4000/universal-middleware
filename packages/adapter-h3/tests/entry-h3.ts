@@ -1,4 +1,4 @@
-import { args, bun, deno } from "@universal-middleware/tests";
+import { args } from "@universal-middleware/tests";
 import {
   enhancedMiddlewares,
   guarded,
@@ -13,10 +13,10 @@ import {
   throwEarlyHandler,
   throwLateHandler,
 } from "@universal-middleware/tests/utils";
-import { createApp, createRouter, toNodeListener, toWebHandler } from "h3";
-import { apply, createHandler, createMiddleware, universalOnBeforeResponse } from "../src/index.js";
+import { H3, serve } from "h3";
+import { apply, createHandler, createMiddleware } from "../src/index.js";
 
-const app = createApp();
+const app = new H3();
 
 const TEST_CASE = process.env.TEST_CASE;
 
@@ -67,8 +67,7 @@ switch (TEST_CASE) {
     break;
   }
   default: {
-    app.options.onBeforeResponse = universalOnBeforeResponse;
-    const router = createRouter();
+    const router = new H3();
     app.use(createMiddleware(() => middlewares.throwEarly)());
     app.use(createMiddleware(() => middlewares.throwLate)());
     app.use(createMiddleware(() => middlewares.guard)());
@@ -89,26 +88,4 @@ switch (TEST_CASE) {
 
 const port = args.port ? Number.parseInt(args.port, 10) : 3000;
 
-if (deno) {
-  // @ts-expect-error Deno
-  Deno.serve(
-    {
-      port,
-      onListen() {
-        console.log(`Server listening on http://localhost:${port}`);
-      },
-    },
-    toWebHandler(app),
-  );
-} else if (!bun) {
-  const { createServer } = await import("node:http");
-  createServer(toNodeListener(app)).listen(port, "localhost", () => {
-    console.log(`Server listening on http://localhost:${port}`);
-  });
-}
-
-// Bun
-export default {
-  port,
-  fetch: toWebHandler(app),
-};
+serve(app, { port, hostname: "localhost" });

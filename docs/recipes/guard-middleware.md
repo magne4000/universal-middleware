@@ -103,14 +103,10 @@ export default createNodeHandler(() => wrapped)();
 ```
 
 ```ts twoslash [h3.ts]
-import { createApp } from "h3";
+import { H3 } from "h3";
 import guardMiddleware from "@universal-middleware-examples/tool/middlewares/guard-middleware-h3";
-import { universalOnBeforeResponse } from "@universal-middleware/h3";
 
-const app = createApp({
-  // /!\ This is required for universal-middleware to operate properly
-  onBeforeResponse: universalOnBeforeResponse,
-});
+const app = new H3();
 
 app.use(guardMiddleware());
 

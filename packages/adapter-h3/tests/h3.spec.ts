@@ -3,27 +3,27 @@ import * as vitest from "vitest";
 
 let port = 3500;
 
-const expectInternalServerError = {
+const h3Expectations = {
+  waitUntilType: "function",
   tests: {
     throwLate: {
-      expectedBody: '"statusCode": 500',
+      expectedBody: '"status":500',
     },
     throwEarlyAndLate: {
-      expectedBody: '"statusCode": 500',
+      expectedBody: '"status":500',
     },
     throwEarly: {
-      expectedBody: '"statusCode": 500',
+      expectedBody: '"status":500',
     },
   },
-} satisfies Pick<Run, "tests">;
+} satisfies Pick<Run, "tests" | "waitUntilType">;
 
 const runs: Run[] = [
   {
     name: "adapter-h3: node",
     command: "pnpm run test:run-h3:node",
     port: port++,
-    streamCancel: "skip",
-    ...expectInternalServerError,
+    ...h3Expectations,
   },
   {
     name: "adapter-h3: node router",
@@ -32,8 +32,7 @@ const runs: Run[] = [
     env: {
       TEST_CASE: "router",
     },
-    streamCancel: "skip",
-    ...expectInternalServerError,
+    ...h3Expectations,
   },
   {
     name: "adapter-h3: node router enhanced",
@@ -42,22 +41,19 @@ const runs: Run[] = [
     env: {
       TEST_CASE: "router_enhanced",
     },
-    streamCancel: "skip",
-    ...expectInternalServerError,
+    ...h3Expectations,
   },
   {
     name: "adapter-h3: bun",
     command: "pnpm run test:run-h3:bun",
     port: port++,
-    streamCancel: "skip",
-    ...expectInternalServerError,
+    ...h3Expectations,
   },
   {
     name: "adapter-h3: deno",
     command: "pnpm run test:run-h3:deno",
     port: port++,
-    streamCancel: "skip",
-    ...expectInternalServerError,
+    ...h3Expectations,
   },
 ];
 
