@@ -108,7 +108,8 @@ export function createMiddleware<
           }
           const original = honoContext.res;
           const res = await middleware(original);
-          if (res) {
+          // Same object: setting it would make Hono copy it again, without its `url`
+          if (res && res !== original) {
             cancelReplacedBody(original, res);
             honoContext.res = res;
           }

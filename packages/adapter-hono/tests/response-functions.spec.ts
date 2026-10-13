@@ -32,14 +32,28 @@ const registrations: [string, (app: Hono, middlewares: UniversalMiddleware[]) =>
   ],
 ];
 
+const readsUrl = () => (response: Response) => new Response(response.body, { headers: { "x-source": response.url } });
+
 it.each(registrations)("%s: a response function reads the url of a fetch() response", async (_, register) => {
   const app = new Hono();
-  register(app, [() => (response: Response) => new Response(response.body, { headers: { "x-source": response.url } })]);
+  register(app, [readsUrl]);
   app.get("/", createHandler(() => () => fetch("data:text/plain,fetched"))());
 
   const response = await app.fetch(new Request("http://localhost/"));
   expect(response.headers.get("x-source")).toBe("data:text/plain,fetched");
 });
+
+it.each(registrations)(
+  "%s: a response function reads the url of a fetch() response the previous one changed",
+  async (_, register) => {
+    const app = new Hono();
+    register(app, [changesHeaders, readsUrl]);
+    app.get("/", createHandler(() => () => fetch("data:text/plain,fetched"))());
+
+    const response = await app.fetch(new Request("http://localhost/"));
+    expect(response.headers.get("x-source")).toBe("data:text/plain,fetched");
+  },
+);
 
 describe.each(immutableResponses)("a route returning $name", ({ response: immutable, status, body }) => {
   const replacesWith = () => () => immutable();
