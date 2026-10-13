@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- 4eb9f91: **BREAKING CHANGE:** the `h3` exports target h3 v2 (`h3@^2`), as `@universal-middleware/h3` now does. `createNodeHandler` and `createEdgeHandler` from `@universal-middleware/vercel/h3` take an h3 v2 app.
+
+### Patch Changes
+
+- Updated dependencies [4eb9f91]
+- Updated dependencies [4eb9f91]
+  - @universal-middleware/core@0.7.1
+  - @universal-middleware/h3@0.7.0
+
 ## 0.4.38
 
 ### Patch Changes

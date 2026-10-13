@@ -1,5 +1,23 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/h3-v0.3.2...h3-v0.3.3) (2024-12-09)
 
+## 0.7.0
+
+### Minor Changes
+
+- 4eb9f91: **BREAKING CHANGE:** supports h3 v2 only (`h3@^2`). Stay on `@universal-middleware/h3@^0.6` for h3 v1.
+  
+  Migrating:
+  
+  - Remove `onBeforeResponse: universalOnBeforeResponse` from the app options: `universalOnBeforeResponse` is gone. Middlewares are h3 v2 middlewares (`(event, next)`), and response functions run around `next()`.
+  - `createApp()` and `createRouter()` become `new H3()`. `App` is now an alias of h3's `H3`.
+  - The universal middlewares and handlers get h3's own `event.req`. `getRuntime(event)` reads `env`, `ctx` and the Node `req`/`res` from `event.runtime`, and `ctx.waitUntil` is set when the runtime provides one.
+  - Response functions also run on a 404 response, which they skipped with h3 v1.
+
+### Patch Changes
+
+- Updated dependencies [4eb9f91]
+  - @universal-middleware/core@0.7.1
+
 ## 0.6.0
 
 ### Minor Changes
