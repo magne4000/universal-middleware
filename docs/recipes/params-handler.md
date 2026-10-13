@@ -119,16 +119,12 @@ export const GET = paramHandler();
 ```
 
 ```ts twoslash [h3.ts]
-import { createApp, createRouter } from "h3";
+import { H3 } from "h3";
 import paramHandler from "@universal-middleware-examples/tool/params-handler-h3";
-import { universalOnBeforeResponse } from "@universal-middleware/h3";
 
-const app = createApp({
-  // /!\ This is required for universal-middleware to operate properly
-  onBeforeResponse: universalOnBeforeResponse,
-});
+const app = new H3();
 
-const router = createRouter();
+const router = new H3();
 
 router.get("/user/:name", paramHandler());
 

@@ -164,7 +164,7 @@ import type { RuntimeAdapter } from "somelib/h3";
 
 const runtime: RuntimeAdapter;
 
-// original H3 Event. See https://h3.unjs.io/guide/event
+// original H3 Event. See https://h3.dev/guide/api/h3event
 runtime.h3;
 //      ^^
 ```

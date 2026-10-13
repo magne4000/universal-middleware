@@ -2,7 +2,7 @@ import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { enhance } from "@universal-middleware/core";
 import { endlessResponse } from "@universal-middleware/tests/utils";
-import { type App, createApp, createRouter, defineEventHandler, toNodeListener } from "h3";
+import { defineHandler, H3, toNodeHandler } from "h3";
 import { afterEach, describe, expect, it } from "vitest";
 import { apply, createHandler } from "../src/index.js";
 
@@ -17,8 +17,8 @@ afterEach(() => {
   }
 });
 
-async function head(app: App) {
-  const server = createServer(toNodeListener(app));
+async function head(app: H3) {
+  const server = createServer(toNodeHandler(app));
   servers.push(server);
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   const ctrl = new AbortController();
@@ -38,7 +38,7 @@ async function head(app: App) {
 describe("HEAD with an endless body", () => {
   it("completes and cancels the body of a middleware without path", async () => {
     const { state, response } = endlessResponse();
-    const app = createApp();
+    const app = new H3();
     apply(app, [enhance(() => response, { name: "sse", order: -100 })]);
 
     const res = await head(app);
@@ -51,8 +51,8 @@ describe("HEAD with an endless body", () => {
 
   it("completes and cancels the body of a handler", async () => {
     const { state, response } = endlessResponse();
-    const app = createApp();
-    app.use(createRouter().head("/events", createHandler(() => () => response)()));
+    const app = new H3();
+    app.use(new H3().head("/events", createHandler(() => () => response)()));
 
     const res = await head(app);
 
@@ -62,11 +62,11 @@ describe("HEAD with an endless body", () => {
 
   it("completes and cancels the body when a response function runs over a native handler", async () => {
     const { state, response } = endlessResponse();
-    const app = createApp();
+    const app = new H3();
     apply(app, [enhance(() => (res: Response) => res, { name: "after", order: -100 })]);
     app.use(
       "/events",
-      defineEventHandler(() => response),
+      defineHandler(() => response),
     );
 
     const res = await head(app);
@@ -80,7 +80,7 @@ describe("HEAD with an endless body", () => {
     ["path-scoped middleware", { order: -100 }],
   ])("answers HEAD from a GET-only %s and cancels the body", async (_, options) => {
     const { state, response } = endlessResponse();
-    const app = createApp();
+    const app = new H3();
     apply(app, [enhance(() => response, { method: "GET", path: "/events", ...options })]);
 
     const res = await head(app);
@@ -94,19 +94,19 @@ describe("HEAD with a response function", () => {
   const source = () => new Response('"hello"', { status: 201, headers: { "x-kept": "old" } });
 
   async function headWith(fn: (res: Response) => Response | Promise<Response>, handler: () => Response = source) {
-    const app = createApp();
+    const app = new H3();
     apply(app, [enhance(() => fn, { name: "after", order: -100 })]);
     app.use(
       "/events",
-      defineEventHandler(() => handler()),
+      defineHandler(() => handler()),
     );
     return head(app);
   }
 
   async function headWithUniversal(fn: (res: Response) => Response | Promise<Response>) {
-    const app = createApp();
+    const app = new H3();
     apply(app, [enhance(() => fn, { name: "after", order: -100 })]);
-    app.use(createRouter().head("/events", createHandler(() => source)()));
+    app.use(new H3().head("/events", createHandler(() => source)()));
     return head(app);
   }
 

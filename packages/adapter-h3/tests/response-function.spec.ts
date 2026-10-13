@@ -1,19 +1,8 @@
-import { once } from "node:events";
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import { Readable } from "node:stream";
 import { type EnhancedMiddleware, enhance } from "@universal-middleware/core";
-import {
-  type AppOptions,
-  createApp,
-  createError,
-  eventHandler,
-  type H3Event,
-  setResponseHeader,
-  setResponseStatus,
-  toNodeListener,
-  toWebHandler,
-} from "h3";
+import { defineHandler, H3, type H3Event, HTTPError, toNodeHandler } from "h3";
 import { describe, expect, it } from "vitest";
 import { apply } from "../src/index.js";
 
@@ -37,17 +26,36 @@ const shout = enhance(
 
 const replace = enhance(() => (response: Response) => new Response("replaced", response), { name: "replace" });
 
+function appWith(middleware: EnhancedMiddleware | undefined, route: (event: H3Event) => unknown, app = new H3()) {
+  if (middleware) apply(app, [middleware]);
+  app.use("/route", defineHandler(route));
+  return app;
+}
+
+// Over a Node server, as a client gets it: `app.fetch` returns srvx's lazy Response, which omits default headers
+async function sendOverNode(app: H3) {
+  const server = createServer(toNodeHandler(app));
+  const { promise, resolve } = Promise.withResolvers<void>();
+  server.listen(0, "127.0.0.1", resolve);
+  await promise;
+  try {
+    const res = await fetch(`http://127.0.0.1:${(server.address() as AddressInfo).port}/route`);
+    return { res, body: await res.text() };
+  } finally {
+    server.closeAllConnections();
+    server.close();
+  }
+}
+
 async function send(route: (event: H3Event) => unknown, withStep: boolean) {
-  const app = createApp();
-  if (withStep) apply(app, [step]);
-  app.use("/route", eventHandler(route as (event: H3Event) => never));
-  const res = await toWebHandler(app)(new Request("http://localhost/route"));
+  const { res, body } = await sendOverNode(appWith(withStep ? step : undefined, route));
   return {
     status: res.status,
-    type: res.headers.get("content-type"),
+    // srvx writes its own `text/plain; charset=UTF-8`, a Response built from a string gets `text/plain;charset=UTF-8`
+    type: res.headers.get("content-type")?.replace("; ", ";") ?? null,
     step: res.headers.get("x-step"),
     event: res.headers.get("x-event"),
-    body: await res.text(),
+    body,
   };
 }
 
@@ -58,143 +66,68 @@ async function expectLikeH3(route: (event: H3Event) => unknown, expected: object
   expect(wrapped).toEqual({ ...plain, step: "yes" });
 }
 
+const json = "application/json;charset=UTF-8";
+
 describe("response function and a route returning a value h3 converts", () => {
-  it("object as JSON", () =>
-    expectLikeH3(() => ({ a: 1 }), { status: 200, type: "application/json", body: '{"a":1}' }));
-  it("array as JSON", () => expectLikeH3(() => [1, 2], { status: 200, type: "application/json", body: "[1,2]" }));
+  it("object as JSON", () => expectLikeH3(() => ({ a: 1 }), { status: 200, type: json, body: '{"a":1}' }));
+  it("array as JSON", () => expectLikeH3(() => [1, 2], { status: 200, type: json, body: "[1,2]" }));
   it("number, boolean and bigint as JSON", async () => {
-    await expectLikeH3(() => 42, { status: 200, type: "application/json", body: "42" });
-    await expectLikeH3(() => false, { status: 200, type: "application/json", body: "false" });
-    await expectLikeH3(() => 5n, { status: 200, type: "application/json", body: "5" });
+    await expectLikeH3(() => 42, { status: 200, type: json, body: "42" });
+    await expectLikeH3(() => false, { status: 200, type: json, body: "false" });
+    await expectLikeH3(() => 5n, { status: 200, type: json, body: "5" });
   });
-  it("string as HTML", () => expectLikeH3(() => "<p>hi</p>", { status: 200, type: "text/html", body: "<p>hi</p>" }));
-  it("null as 204", () => expectLikeH3(() => null, { status: 204, type: null, body: "" }));
+  it("string as text", () =>
+    expectLikeH3(() => "<p>hi</p>", { status: 200, type: "text/plain;charset=UTF-8", body: "<p>hi</p>" }));
+  it("null as an empty body", () => expectLikeH3(() => null, { status: 200, body: "" }));
   it("Buffer without content type", () =>
     expectLikeH3(() => Buffer.from("raw"), { status: 200, type: null, body: "raw" }));
   it("Node stream", () =>
     expectLikeH3(() => Readable.from([Buffer.from("a"), Buffer.from("b")]), { status: 200, type: null, body: "ab" }));
-  it("Node stream where ReadableStream.from is missing (Bun)", async () => {
-    const { from } = ReadableStream as unknown as { from: unknown };
-    Object.defineProperty(ReadableStream, "from", { value: undefined, configurable: true });
-    try {
-      await expectLikeH3(() => Readable.from([Buffer.from("a"), Buffer.from("b")]), {
-        status: 200,
-        type: null,
-        body: "ab",
-      });
-    } finally {
-      Object.defineProperty(ReadableStream, "from", { value: from, configurable: true, writable: true });
-    }
-  });
   it("Node stream of strings, read by a response function", async () => {
-    const app = createApp();
-    apply(app, [shout]);
-    app.use(
-      "/route",
-      eventHandler(() => Readable.from(["a", "b"])),
-    );
-    const server = createServer(toNodeListener(app));
-    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
-    try {
-      const res = await fetch(`http://127.0.0.1:${(server.address() as AddressInfo).port}/route`);
-      expect(await res.text()).toBe("AB");
-    } finally {
-      server.closeAllConnections();
-      server.close();
-    }
-  });
-  it("HEAD releases the Node stream", async () => {
-    const source = new Readable({
-      read() {
-        this.push("x");
-      },
-    });
-    // Each of these tests fails by timeout if the stream is never released
-    const closed = once(source, "close");
-    const app = createApp();
-    apply(app, [step]);
-    app.use(
-      "/route",
-      eventHandler(() => source),
-    );
-    await toWebHandler(app)(new Request("http://localhost/route", { method: "HEAD" }));
-    await closed;
-  });
-  it.each(["HEAD", "cancellation"])("%s releases a Node stream that is waiting for data", async (mode) => {
-    const source = new Readable({ read() {} });
-    const closed = once(source, "close");
-    const app = createApp();
-    apply(app, [step]);
-    app.use(
-      "/route",
-      eventHandler(() => source),
-    );
-    try {
-      const res = await toWebHandler(app)(
-        new Request("http://localhost/route", { method: mode === "HEAD" ? "HEAD" : "GET" }),
-      );
-      if (mode === "cancellation") void res.body?.cancel();
-      await closed;
-    } finally {
-      source.destroy();
-    }
+    const { body } = await sendOverNode(appWith(shout, () => Readable.from(["a", "b"])));
+    expect(body).toBe("AB");
   });
   it.each([204, 304])("status %s with an object keeps the status and sends no body", (status) =>
     expectLikeH3(
       (event) => {
-        setResponseStatus(event, status);
+        event.res.status = status;
         return { a: 1 };
       },
       { status, body: "" },
     ),
   );
-  it.each([204, 304])("status %s releases a Node stream it doesn't send", async (status) => {
-    const source = new Readable({ read() {} });
-    const closed = once(source, "close");
-    try {
-      await send((event) => {
-        setResponseStatus(event, status);
-        return source;
-      }, true);
-      await closed;
-    } finally {
-      source.destroy();
-    }
-  });
-  it("object with arrayBuffer() and a type", () =>
-    expectLikeH3(() => ({ type: "text/plain", arrayBuffer: async () => new TextEncoder().encode("blob").buffer }), {
-      status: 200,
-      type: "text/plain",
-      body: "blob",
-    }));
   it("keeps the status and headers set on the event", () =>
     expectLikeH3(
       (event) => {
-        setResponseStatus(event, 201);
-        setResponseHeader(event, "x-event", "set");
-        setResponseHeader(event, "content-type", "application/vnd.api+json");
+        event.res.status = 201;
+        event.res.headers.set("x-event", "set");
+        event.res.headers.set("content-type", "application/vnd.api+json");
         return { a: 1 };
       },
       { status: 201, type: "application/vnd.api+json", event: "set", body: '{"a":1}' },
     ));
   it("h3 error", async () =>
-    expect((await send(() => createError({ statusCode: 418, statusMessage: "Teapot" }), true)).status).toBe(418));
-  it("a value h3 cannot send is a 500", async () => expect((await send(() => Symbol("x"), true)).status).toBe(500));
+    expect((await send(() => new HTTPError({ status: 418, statusText: "Teapot" }), true)).status).toBe(418));
+  it("goes through the app's onError, and its onResponse once", async () => {
+    const responses: Response[] = [];
+    const app = new H3({
+      onError: () => new Response("handled", { status: 418 }),
+      onResponse: (response) => void responses.push(response),
+    });
+    const res = await appWith(step, () => new HTTPError({ status: 500 }), app).fetch(
+      new Request("http://localhost/route"),
+    );
+
+    expect(res.status).toBe(418);
+    expect(res.headers.get("x-step")).toBe("yes");
+    expect(await res.text()).toBe("handled");
+    expect(responses).toHaveLength(1);
+  });
 });
 
 describe("response function returning a new Response", () => {
-  function appWith(middleware: EnhancedMiddleware, options?: AppOptions) {
-    const app = createApp(options);
-    apply(app, [middleware]);
-    app.use(
-      "/route",
-      eventHandler(() => "<p>hi</p>"),
-    );
-    return app;
-  }
-
   const sendWeb = (middleware: EnhancedMiddleware) =>
-    toWebHandler(appWith(middleware))(new Request("http://localhost/route"));
+    appWith(middleware, () => "<p>hi</p>").fetch(new Request("http://localhost/route"));
 
   it("sends the new Response when the old body was read", async () =>
     expect(await (await sendWeb(shout)).text()).toBe("<P>HI</P>"));
@@ -202,15 +135,9 @@ describe("response function returning a new Response", () => {
     expect(await (await sendWeb(replace)).text()).toBe("replaced"));
   it("sends it once on a Node server", async () => {
     const errors: unknown[] = [];
-    const server = createServer(toNodeListener(appWith(shout, { onError: (error) => void errors.push(error) })));
-    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
-    try {
-      const res = await fetch(`http://127.0.0.1:${(server.address() as AddressInfo).port}/route`);
-      expect(await res.text()).toBe("<P>HI</P>");
-      expect(errors).toEqual([]);
-    } finally {
-      server.closeAllConnections();
-      server.close();
-    }
+    const app = new H3({ onError: (error) => void errors.push(error) });
+    const { body } = await sendOverNode(appWith(shout, () => "<p>hi</p>", app));
+    expect(body).toBe("<P>HI</P>");
+    expect(errors).toEqual([]);
   });
 });

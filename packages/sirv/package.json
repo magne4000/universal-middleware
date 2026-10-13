@@ -43,7 +43,7 @@
     "@webroute/route": "^0.8",
     "elysia": "^1",
     "fastify": "^5",
-    "h3": "^1",
+    "h3": "^2",
     "hono": "^4",
     "srvx": ">=0.8"
   },

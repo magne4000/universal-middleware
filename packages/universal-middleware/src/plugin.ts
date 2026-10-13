@@ -671,7 +671,8 @@ const universalMiddleware: UnpluginFactory<Options | undefined, boolean> = (opti
 
         builder.onResolve({ filter: /(^|\.|\/|\\)(handler|middleware)\./ }, (args) => {
           return {
-            path: resolve(args.path),
+            // Relative to the importer: the filter also matches a dependency's own files, such as h3's `./middleware.mjs`
+            path: resolve(args.resolveDir, args.path),
           };
         });
 
