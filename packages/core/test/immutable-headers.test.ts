@@ -43,8 +43,12 @@ describe("withMutableHeaders", () => {
     expect(withMutableHeaders(response)).toBe(response);
   });
 
-  test("copies a fetch() response with its status, status text, cookies and streamed body", async () => {
-    const server = createServer((_req, res) => {
+  test("copies a fetch() response with its status, status text, cookies, streamed body, url and type", async () => {
+    const server = createServer((req, res) => {
+      if (req.url === "/start") {
+        res.writeHead(302, { location: "/final" }).end();
+        return;
+      }
       res.writeHead(201, "Made", [
         ["set-cookie", "a=1"],
         ["set-cookie", "b=2"],
@@ -57,7 +61,8 @@ describe("withMutableHeaders", () => {
     server.listen(0, "127.0.0.1", resolve);
     await promise;
     try {
-      const fetched = await fetch(`http://127.0.0.1:${(server.address() as AddressInfo).port}/`);
+      const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+      const fetched = await fetch(`${origin}/start`);
       expect(() => fetched.headers.set("x-changed", "yes")).toThrow(TypeError);
 
       const copy = withMutableHeaders(fetched);
@@ -68,6 +73,11 @@ describe("withMutableHeaders", () => {
       expect(copy.headers.getSetCookie()).toEqual(["a=1", "b=2"]);
       expect(copy.headers.get("x-kept")).toBe("yes");
       expect(await copy.text()).toBe("first second");
+      expect({ url: copy.url, redirected: copy.redirected, type: copy.type }).toEqual({
+        url: `${origin}/final`,
+        redirected: true,
+        type: "basic",
+      });
     } finally {
       server.closeAllConnections();
       server.close();
@@ -111,4 +121,11 @@ describe.each(immutableResponses)("pipe(), a handler returning %s", (name, immut
     );
     expect(await received(await handler(request, {}, runtime))).toEqual(want);
   });
+});
+
+test("pipe(): a response function reads the url of a fetch() response", async () => {
+  const recordsSource = () => (response: Response) =>
+    new Response(response.body, { headers: { "x-source": response.url } });
+  const handler = pipe(recordsSource, () => fetch("data:text/plain,fetched"));
+  expect((await handler(request, {}, runtime)).headers.get("x-source")).toBe("data:text/plain,fetched");
 });

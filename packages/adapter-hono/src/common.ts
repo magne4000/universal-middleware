@@ -101,7 +101,11 @@ export function createMiddleware<
         for (const middleware of middlewares) {
           // Hono merges the headers of the Response it holds into one it's given: the copy goes in before they change
           const mutable = withMutableHeaders(honoContext.res);
-          if (mutable !== honoContext.res) honoContext.res = mutable;
+          if (mutable !== honoContext.res) {
+            // Unset first: else Hono's setter copies it again, without its `url`
+            honoContext.res = undefined;
+            honoContext.res = mutable;
+          }
           const original = honoContext.res;
           const res = await middleware(original);
           if (res) {

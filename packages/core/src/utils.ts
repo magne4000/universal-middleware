@@ -66,7 +66,12 @@ export function withMutableHeaders(response: Response): Response {
     response.headers.delete("x-universal-middleware-probe");
     return response;
   } catch {
-    return new Response(response.body, response);
+    // The constructor resets them: a response function may read where a proxied `fetch()` response came from
+    return Object.defineProperties(new Response(response.body, response), {
+      url: { value: response.url },
+      redirected: { value: response.redirected },
+      type: { value: response.type },
+    });
   }
 }
 
