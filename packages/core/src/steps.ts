@@ -1,6 +1,6 @@
 import { nameSymbol, orderSymbol, runsSymbol } from "./const";
 import type { Awaitable, EnhancedMiddleware, MiddlewareRuns, RuntimeAdapter, UniversalMiddleware } from "./types";
-import { cancelReplacedBody, enhance, getUniversal, getUniversalProp } from "./utils";
+import { cancelReplacedBody, enhance, getUniversal, getUniversalProp, keepBody } from "./utils";
 
 type ResponseFunction = (response: Response) => Awaitable<Response | undefined>;
 /** What a step hands to what runs it: an answer, a response function, a context, or nothing */
@@ -111,6 +111,8 @@ export function compileList(
     async run(i, state, request, context, runtime) {
       // The step that answered ran what had to run after it
       if (state.answer) return undefined;
+      // Every middleware of the list, and what runs after it, can read the body
+      keepBody(request);
 
       if (runs[i] === "after-response") {
         // Runs once the handler (or what comes after the list) responded

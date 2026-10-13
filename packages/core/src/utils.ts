@@ -113,6 +113,50 @@ export function cloneRequest(request: Request, fields?: RequestInit & { url?: st
   });
 }
 
+const keptRequests = new WeakSet<Request>();
+
+/**
+ * Makes the body of `request` readable by every middleware and the handler: the first read through a body method
+ * keeps the bytes, and every read after it, `body` and `clone()` included, is served from them. A body nobody reads
+ * through a method, such as one a handler streams from `request.body`, is never buffered.
+ */
+export function keepBody(request: Request) {
+  if (!request.body || keptRequests.has(request) || !Object.isExtensible(request)) return;
+  keptRequests.add(request);
+  const proto = Object.getPrototypeOf(request);
+  const read = request.arrayBuffer.bind(request);
+  const clone = request.clone.bind(request);
+  // Read before the body: Bun drops the type of a FormData body it built once the body is read
+  const type = request.headers.get("content-type") ?? "";
+  let kept: Promise<ArrayBuffer> | undefined;
+  const bytes = () => {
+    kept ??= read();
+    return kept;
+  };
+  const replay = () =>
+    new ReadableStream<Uint8Array>(
+      {
+        async pull(controller) {
+          controller.enqueue(new Uint8Array(await bytes()));
+          controller.close();
+        },
+      },
+      { highWaterMark: 0 },
+    );
+  Object.defineProperties(request, {
+    arrayBuffer: { value: bytes },
+    bytes: { value: async () => new Uint8Array(await bytes()) },
+    text: { value: async () => new TextDecoder().decode(await bytes()) },
+    json: { value: async () => JSON.parse(new TextDecoder().decode(await bytes())) },
+    blob: { value: async () => new Blob([await bytes()], { type }) },
+    formData: { value: async () => new Response(await bytes(), { headers: { "content-type": type } }).formData() },
+    // Once kept, the stream and `bodyUsed` describe the kept bytes, not the request's own stream
+    body: { get: () => (kept ? replay() : Reflect.get(proto, "body", request)) },
+    bodyUsed: { get: () => (kept ? false : Reflect.get(proto, "bodyUsed", request)) },
+    clone: { value: () => (kept ? cloneRequest(request, { body: replay() }) : clone()) },
+  });
+}
+
 export function getUniversal<T extends object>(subject: T | { [universalSymbol]: T }): T {
   return universalSymbol in subject ? subject[universalSymbol] : subject;
 }

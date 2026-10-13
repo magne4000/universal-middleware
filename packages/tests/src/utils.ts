@@ -299,3 +299,16 @@ export function endlessResponse() {
   );
   return { state, response, cancelled };
 }
+
+/** Two middlewares that read the request body, and what each read */
+export function bodyReaders() {
+  const seen: string[] = [];
+  const reader = (name: string) =>
+    enhance(
+      async (request: Request) => {
+        seen.push(await request.text());
+      },
+      { name },
+    );
+  return { middlewares: [reader("firstReader"), reader("secondReader")], seen };
+}
