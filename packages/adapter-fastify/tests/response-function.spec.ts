@@ -100,14 +100,7 @@ describe("the response functions of several middlewares", () => {
 describe.each(immutableResponses)("a route returning $name", ({ response: immutable, status, body }) => {
   const replacesWith = () => () => immutable();
   const registrations: [string, (app: FastifyInstance, middlewares: UniversalMiddleware[]) => Promise<unknown>][] = [
-    [
-      "apply()",
-      (app, middlewares) =>
-        apply(
-          app,
-          middlewares.map((m, i) => enhance(m, { name: `m${i}` })),
-        ),
-    ],
+    ["apply()", (app, middlewares) => apply(app, middlewares)],
     [
       "createMiddleware()",
       async (app, middlewares) => {

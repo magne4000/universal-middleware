@@ -23,14 +23,7 @@ it("applies response functions in registration order", async () => {
 });
 
 const registrations: [string, (app: Hono, middlewares: UniversalMiddleware[]) => void][] = [
-  [
-    "apply()",
-    (app, middlewares) =>
-      apply(
-        app,
-        middlewares.map((m, i) => enhance(m, { name: `m${i}` })),
-      ),
-  ],
+  ["apply()", (app, middlewares) => apply(app, middlewares)],
   [
     "createMiddleware()",
     (app, middlewares) => {

@@ -115,10 +115,7 @@ describe.each(immutableResponses)("a route returning $name", ({ response: immuta
       "apply()",
       (middlewares) => {
         const app = new Elysia();
-        apply(
-          app,
-          middlewares.map((m, i) => enhance(m, { name: `m${i}` })),
-        );
+        apply(app, middlewares);
         return app;
       },
     ],

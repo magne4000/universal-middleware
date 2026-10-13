@@ -179,14 +179,7 @@ describe("the Response a response function returns", () => {
 describe.each(immutableResponses)("a route returning $name", ({ response: immutable, status, body }) => {
   const replacesWith = () => () => immutable();
   const registrations: [string, (app: express.Express, middlewares: UniversalMiddleware[]) => void][] = [
-    [
-      "apply()",
-      (app, middlewares) =>
-        apply(
-          app,
-          middlewares.map((m, i) => enhance(m, { name: `m${i}` })),
-        ),
-    ],
+    ["apply()", (app, middlewares) => apply(app, middlewares)],
     [
       "createMiddleware()",
       (app, middlewares) => {
