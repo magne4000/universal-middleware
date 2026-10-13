@@ -83,11 +83,10 @@ jobs:
       - name: Install
         run: pnpm install
 
-      # On Windows, pnpm builds the packages in dependency order instead of turbo: since turbo 2.11.4, `turbo run build`
-      # sometimes never exits there after every task succeeded (#389). A build takes well under 2 minutes, so the timeout
-      # still fails a stall early instead of hanging until the 6-hour job limit.
+      # A build takes well under 2 minutes: the timeout fails a stalled build early instead of hanging until the 6-hour
+      # job limit.
       - name: Build
-        run: ${{ runner.os == 'Windows' && 'pnpm -r run build' || 'pnpm run build' }}
+        run: pnpm run build
         timeout-minutes: 10
 
       - run: pnpm exec playwright install chromium

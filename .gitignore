@@ -138,8 +138,8 @@ dist
 # IDE
 .idea
 
-# turbo
-.turbo
+# Nx
+.nx/workspace-data
 
 # cloudflare
 .wrangler

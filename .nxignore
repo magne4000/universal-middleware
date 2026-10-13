@@ -1,0 +1,2 @@
+# Vercel's link file is named like an Nx project configuration
+packages/adapter-vercel/.vercel
