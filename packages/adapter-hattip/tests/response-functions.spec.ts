@@ -13,19 +13,22 @@ const step = (name: string) =>
     { name },
   );
 
-it("applies response functions in registration order", async () => {
-  const app = createRouter();
-  apply(app, [step("first"), step("second")]);
-  app.get("/", createHandler(() => () => new Response("ok"))());
-
-  const response = await app.buildHandler()({
-    request: new Request("http://localhost/"),
+const send = (app: Router, method = "GET") =>
+  app.buildHandler()({
+    request: new Request("http://localhost/", { method }),
     ip: "127.0.0.1",
     platform: {},
     env: () => undefined,
     passThrough() {},
     waitUntil() {},
   });
+
+it("applies response functions in registration order", async () => {
+  const app = createRouter();
+  apply(app, [step("first"), step("second")]);
+  app.get("/", createHandler(() => () => new Response("ok"))());
+
+  const response = await send(app);
   expect(response.headers.get("x-order")).toBe("first, second");
 });
 
@@ -41,15 +44,6 @@ describe.each(immutableResponses)("a route returning $name", ({ response: immuta
       },
     ],
   ];
-  const send = (app: Router, method = "GET") =>
-    app.buildHandler()({
-      request: new Request("http://localhost/", { method }),
-      ip: "127.0.0.1",
-      platform: {},
-      env: () => undefined,
-      passThrough() {},
-      waitUntil() {},
-    });
 
   describe.each(registrations)("registered with %s", (_, register) => {
     it.each(["GET", "HEAD", "POST"])("%s: a response function changes its headers", async (method) => {

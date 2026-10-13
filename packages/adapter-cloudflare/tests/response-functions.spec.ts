@@ -12,10 +12,10 @@ const step = (name: string) =>
     { name },
   );
 
-it("applies response functions in registration order", async () => {
-  const functions = [createPagesFunction(() => step("first"))(), createPagesFunction(() => step("second"))()];
-  const request = new Request("http://localhost/");
-  // Like Pages, each function's `next()` calls the next one, and they all share the request's `data`
+// Like Pages, each function's `next()` calls the next one, the last one is the route, and they all share `data`
+function pages(middlewares: UniversalMiddleware[], route: () => Promise<Response>, method = "GET") {
+  const functions = middlewares.map((m) => createPagesFunction(() => m)());
+  const request = new Request("http://localhost/", { method });
   const data = {};
   const call = (index: number): Promise<Response> =>
     index < functions.length
@@ -28,9 +28,12 @@ it("applies response functions in registration order", async () => {
           waitUntil() {},
           passThroughOnException() {},
         } as never) as unknown as Promise<Response>)
-      : Promise.resolve(new Response("ok"));
+      : route();
+  return call(0);
+}
 
-  const response = await call(0);
+it("applies response functions in registration order", async () => {
+  const response = await pages([step("first"), step("second")], async () => new Response("ok"));
   expect(response.headers.get("x-order")).toBe("first, second");
 });
 
@@ -38,26 +41,6 @@ describe.each(immutableResponses)("a route returning $name", ({ response: immuta
   // Called in process: the server drops the body of a HEAD response
   const replacesWith = () => () => immutable();
   const methods: HttpMethod[] = ["GET", "HEAD", "POST"];
-
-  // Like Pages, each function's `next()` calls the next one, and the last one is the route
-  function pages(middlewares: UniversalMiddleware[], route: () => Promise<Response>, method = "GET") {
-    const functions = middlewares.map((m) => createPagesFunction(() => m)());
-    const request = new Request("http://localhost/", { method });
-    const data = {};
-    const call = (index: number): Promise<Response> =>
-      index < functions.length
-        ? (functions[index]({
-            request,
-            data,
-            env: {},
-            params: {},
-            next: () => call(index + 1),
-            waitUntil() {},
-            passThroughOnException() {},
-          } as never) as unknown as Promise<Response>)
-        : route();
-    return call(0);
-  }
 
   function worker(middlewares: UniversalMiddleware[], route: UniversalHandler, method = "GET") {
     const handler = apply([
