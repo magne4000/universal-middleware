@@ -175,6 +175,26 @@ describe("the headers a route set, under a response function", () => {
     expect((await fetch(url)).headers.getSetCookie()).toEqual(["hook=1", "changed=1"]);
   });
 
+  it("keeps the reply's headers when an onSend hook after it throws", async () => {
+    const url = await startWith(changes, (app) => {
+      app.addHook("onRequest", async (_request, reply) => {
+        reply.header("access-control-allow-origin", "*");
+      });
+      app.addHook("onSend", async () => {
+        throw new Error("later hook");
+      });
+      app.get("/", (_request, reply) => {
+        reply.header("set-cookie", "own=1");
+        return "text";
+      });
+    });
+
+    const res = await fetch(url);
+    expect(res.status).toBe(500);
+    expect(res.headers.get("access-control-allow-origin")).toBe("*");
+    expect(res.headers.getSetCookie()).toEqual(["own=1", "changed=1"]);
+  });
+
   it("sends none of the route's headers once a response function replaced the Response", async () => {
     const replaces: UniversalMiddleware = () => () => new Response("replaced", { headers: { "set-cookie": "new=1" } });
     const url = await startWith(replaces, (app) =>

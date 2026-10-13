@@ -240,14 +240,11 @@ async function runResponseFunctions(request: FastifyRequest, reply: FastifyReply
   }, Promise.resolve(response));
 
   const r = newResponse ?? response;
-  // Fastify adds the headers of `r` to the reply's, which `response` took: a cookie would be sent twice
+  // The reply holds the headers of `r` alone, also for a later hook's error response: `response` took the reply's
   for (const name of Object.keys(reply.getHeaders())) reply.removeHeader(name);
-  if (request.method !== "HEAD") return r;
-  // Fastify's head route runs after this hook and only accepts a string, a buffer or a stream
+  for (const [name, value] of r.headers) reply.header(name, value);
   reply.code(r.status);
-  for (const [name, value] of r.headers) {
-    reply.header(name, value);
-  }
+  if (request.method !== "HEAD") return r.body;
   // An idle stream would keep the HEAD response open
   void r.body?.cancel().catch(() => {});
   // Nothing is sent for HEAD: the replaced body is released now, not after `cancelReplacedBody`'s delay
