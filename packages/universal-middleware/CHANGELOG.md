@@ -1,5 +1,22 @@
 ## [0.5.5](https://github.com/magne4000/universal-middleware/compare/universal-middleware-v0.5.4...universal-middleware-v0.5.5) (2024-12-09)
 
+## 0.7.0
+
+### Minor Changes
+
+- 4eb9f91: **BREAKING CHANGE:** the generated `h3` exports target h3 v2 (`h3@^2`), as `@universal-middleware/h3` now does: a package built with this version needs h3 v2 in the apps that use its `h3` export.
+  
+  The esbuild plugin resolves a `*.handler.*` or `*.middleware.*` import relative to the file importing it. It used to resolve it from the working directory, which broke bundling h3 v2, whose own `./middleware.mjs` matched.
+
+### Patch Changes
+
+- Updated dependencies [4eb9f91]
+- Updated dependencies [4eb9f91]
+- Updated dependencies [4eb9f91]
+  - @universal-middleware/core@0.7.1
+  - @universal-middleware/vercel@0.5.0
+  - @universal-middleware/h3@0.7.0
+
 ## 0.6.36
 
 ### Patch Changes

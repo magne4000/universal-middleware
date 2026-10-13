@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/core-v0.3.2...core-v0.3.3) (2024-12-09)
 
+## 0.7.1
+
+### Patch Changes
+
+- 4eb9f91: Accepts h3 v2 as the optional `h3` peer dependency, along with h3 v1.
+
 ## 0.7.0
 
 ### Minor Changes
