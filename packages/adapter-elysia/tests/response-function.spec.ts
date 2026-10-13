@@ -1,5 +1,5 @@
 import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
-import { type AnyElysia, Elysia, t } from "elysia";
+import { type AnyElysia, Elysia, sse, t } from "elysia";
 import { describe, expect, it } from "vitest";
 import { apply, createMiddleware } from "../src/index.js";
 
@@ -104,5 +104,119 @@ describe("aot: true", () => {
     );
     expect(plain.setCookie).toEqual([expect.stringMatching(/^session=abc\.[^;]+; Path=\/$/)]);
     expect(marked).toEqual({ ...plain, marked: "yes" });
+  });
+});
+
+describe("a streaming route, under a response function", () => {
+  const changes: UniversalMiddleware = () => (response: Response) => {
+    response.headers.append("set-cookie", "changed=1");
+    response.headers.set("x-changed", "yes");
+    return response;
+  };
+
+  const stream = () =>
+    new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode("ab"));
+        controller.close();
+      },
+    });
+
+  const routes: [string, (app: AnyElysia) => AnyElysia, string][] = [
+    [
+      "a generator",
+      (app) =>
+        app.all("/", function* () {
+          yield "a";
+          yield "b";
+        }),
+      "ab",
+    ],
+    [
+      "an async generator",
+      (app) =>
+        app.all("/", async function* () {
+          yield "a";
+          yield "b";
+        }),
+      "ab",
+    ],
+    ["a ReadableStream", (app) => app.all("/", stream), "ab"],
+    [
+      "sse()",
+      (app) =>
+        app.all("/", async function* () {
+          yield sse("ab");
+        }),
+      "data: ab\n\n",
+    ],
+    [
+      "a chunked Response",
+      (app) => app.all("/", () => new Response(stream(), { headers: { "transfer-encoding": "chunked" } })),
+      "ab",
+    ],
+  ];
+
+  const registrations: [string, (app: AnyElysia) => AnyElysia][] = [
+    ["createMiddleware()", (app) => app.use(createMiddleware(() => changes)())],
+    [
+      "apply()",
+      (app) => {
+        apply(app, [enhance(changes, { name: "changes" })]);
+        return app;
+      },
+    ],
+  ];
+
+  // Off Bun, Elysia streams a generator's strings as they are, which `Response.text()` rejects
+  async function read(response: Response) {
+    let text = "";
+    const reader = (response.body as ReadableStream<Uint8Array | string>).getReader();
+    for (let chunk = await reader.read(); !chunk.done; chunk = await reader.read()) {
+      text += typeof chunk.value === "string" ? chunk.value : new TextDecoder().decode(chunk.value);
+    }
+    return text;
+  }
+
+  describe.each(registrations)("registered with %s", (_, register) => {
+    describe.each(routes)("%s", (_, route, body) => {
+      it.each(["GET", "POST"])("%s: sends the cookie and the header the response function added", async (method) => {
+        const app = route(register(new Elysia()));
+
+        const response = await app.handle(new Request("http://localhost/", { method }));
+        expect(response.headers.getSetCookie()).toEqual(["changed=1"]);
+        expect(response.headers.get("x-changed")).toBe("yes");
+        expect(await read(response)).toBe(body);
+      });
+    });
+
+    it("sends the cookie the route set with Elysia's `cookie`, and the response function's", async () => {
+      const app = register(new Elysia()).get("/", async function* ({ cookie: { session } }) {
+        session.value = "abc";
+        yield "a";
+      });
+
+      const response = await app.handle(new Request("http://localhost/"));
+      expect(response.headers.getSetCookie().sort()).toEqual(["changed=1", "session=abc; Path=/"]);
+      expect(await read(response)).toBe("a");
+    });
+
+    it("still streams: the route yields its second chunk once the client read the first", async () => {
+      const firstRead = Promise.withResolvers<void>();
+      const app = register(new Elysia()).get("/", async function* () {
+        yield "a";
+        await firstRead.promise;
+        yield "b";
+      });
+
+      const response = await app.handle(new Request("http://localhost/"));
+      const reader = (response.body as ReadableStream<Uint8Array | string>).getReader();
+      const decode = (value: Uint8Array | string | undefined) =>
+        typeof value === "string" ? value : new TextDecoder().decode(value);
+      expect(decode((await reader.read()).value)).toBe("a");
+      firstRead.resolve();
+      expect(decode((await reader.read()).value)).toBe("b");
+      expect(response.headers.getSetCookie()).toEqual(["changed=1"]);
+    });
   });
 });
