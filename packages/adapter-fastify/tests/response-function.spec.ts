@@ -265,4 +265,20 @@ describe("the headers a response function set on the reply", () => {
       expect(Object.fromEntries(Object.keys(expected).map((name) => [name, res.headers.get(name)]))).toEqual(expected);
     });
   });
+
+  it("keeps a cookie a response function set when the route set none", async () => {
+    const url = await start(
+      (app) =>
+        app.get("/", (_request, reply) => {
+          reply.header("x-route", "route");
+          return "text";
+        }),
+      (_request, _context, runtime) => (response) => {
+        replyOf(runtime).header("set-cookie", "native=1");
+        return response;
+      },
+    );
+
+    expect((await fetch(url)).headers.getSetCookie()).toEqual(["native=1"]);
+  });
 });
