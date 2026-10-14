@@ -159,6 +159,20 @@ describe("pipe(), the request a middleware gets", () => {
     expect(Object.getOwnPropertyNames(request)).toEqual([]);
   });
 
+  test("POST without a body: still has none after a middleware read it", async () => {
+    const seen: unknown[] = [];
+    await pipe(
+      async (r: Request) => {
+        await r.text();
+      },
+      (r: Request) => {
+        seen.push(r.body, r.clone().body);
+        return new Response("ok");
+      },
+    )(new Request("http://localhost/", { method: "POST" }), {}, runtime);
+    expect(seen).toEqual([null, null]);
+  });
+
   test.each(["GET", "POST"])("%s: `request.body` isn't read until something reads the body", async (method) => {
     const request = new Request("http://localhost/", { method, body: method === "POST" ? "hello" : null });
     let reads = 0;

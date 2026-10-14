@@ -155,6 +155,8 @@ export function keepBody(request: Request) {
       },
       { highWaterMark: 0 },
     );
+  // A request without a body keeps its `null` body
+  const replays = () => kept && Reflect.get(proto, "body", request) !== null;
   Object.defineProperties(request, {
     arrayBuffer: { value: bytes },
     bytes: { value: async () => new Uint8Array(await bytes()) },
@@ -163,9 +165,9 @@ export function keepBody(request: Request) {
     blob: { value: async () => new Blob([await bytes()], { type: type() }) },
     formData: { value: async () => new Response(await bytes(), { headers: { "content-type": type() } }).formData() },
     // Once kept, the stream and `bodyUsed` describe the kept bytes, not the request's own stream
-    body: { get: () => (kept ? replay() : Reflect.get(proto, "body", request)) },
+    body: { get: () => (replays() ? replay() : Reflect.get(proto, "body", request)) },
     bodyUsed: { get: () => (kept ? false : Reflect.get(proto, "bodyUsed", request)) },
-    clone: { value: () => (kept ? cloneRequest(request, { body: replay() }) : clone()) },
+    clone: { value: () => (replays() ? cloneRequest(request, { body: replay() }) : clone()) },
   });
 }
 
