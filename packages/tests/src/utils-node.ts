@@ -1,5 +1,6 @@
 import { createReadStream } from "node:fs";
-import type { IncomingMessage, ServerResponse } from "node:http";
+import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import type { AddressInfo } from "node:net";
 import { dirname, join } from "node:path";
 import { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
@@ -29,14 +30,27 @@ export const sendBigFile: Get<[], UniversalHandler> = () =>
     },
   );
 
-/** A Node listener that reads the whole body into `req.rawBody` first, as Google Cloud Functions do */
-export function withRawBody(listener: (req: IncomingMessage, res: ServerResponse) => unknown) {
-  return (req: IncomingMessage & { rawBody?: Buffer }, res: ServerResponse) => {
+/** POSTs `body` to `listener` on a Node server that reads it into `req.rawBody` first, as Google Cloud Functions do */
+export async function postWithRawBody(listener: (req: IncomingMessage, res: ServerResponse) => unknown, body: string) {
+  const server = createServer((req: IncomingMessage & { rawBody?: Buffer }, res) => {
     const chunks: Buffer[] = [];
     req.on("data", (chunk: Buffer) => chunks.push(chunk));
     req.on("end", () => {
       req.rawBody = Buffer.concat(chunks);
       listener(req, res);
     });
-  };
+  });
+  const { promise, resolve } = Promise.withResolvers<void>();
+  server.listen(0, "127.0.0.1", resolve);
+  await promise;
+  try {
+    const response = await fetch(`http://127.0.0.1:${(server.address() as AddressInfo).port}/`, {
+      method: "POST",
+      body,
+    });
+    return { status: response.status, body: await response.text() };
+  } finally {
+    server.closeAllConnections();
+    server.close();
+  }
 }

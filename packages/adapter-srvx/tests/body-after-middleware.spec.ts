@@ -1,12 +1,10 @@
-import { createServer } from "node:http";
-import type { AddressInfo } from "node:net";
 import { enhance, type HttpMethod } from "@universal-middleware/core";
 import { bodyReaders } from "@universal-middleware/tests/utils";
-import { withRawBody } from "@universal-middleware/tests/utils-node";
+import { postWithRawBody } from "@universal-middleware/tests/utils-node";
 import { type NodeHttp1Handler, serve } from "srvx";
 import { serve as serveGeneric } from "srvx/generic";
 import { toNodeHandler } from "srvx/node";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { apply } from "../src/index.js";
 
 // A route still reads the body that the middlewares registered by apply() read
@@ -41,21 +39,24 @@ it.each(methods)("%s on a Node server: the route reads the body the middlewares 
   }
 });
 
-it.each(methods)("%s on a Node server that set `req.rawBody`: the route reads the body", async (method) => {
-  const app = appFor(method);
-  const server = createServer(withRawBody(toNodeHandler(app.fetch) as NodeHttp1Handler));
-  const { promise, resolve } = Promise.withResolvers<void>();
-  server.listen(0, "127.0.0.1", resolve);
-  await promise;
-  try {
-    const response = await fetch(`http://127.0.0.1:${(server.address() as AddressInfo).port}/`, {
-      method,
-      body: '{"a":1}',
-    });
-    expect(await response.text()).toBe('{"a":1}');
-    expect(app.seen).toEqual(['{"a":1}', '{"a":1}']);
-  } finally {
-    server.closeAllConnections();
-    server.close();
-  }
+// srvx reads a `rawBody` only in `text()` and `json()`, so a request with one isn't kept (h3js/srvx#312)
+describe("on a Node server that set `req.rawBody`", () => {
+  const listenerFor = (maxRequestBodySize?: number) => {
+    const route = enhance(
+      (request: Request) =>
+        request.json().then(Response.json, (error: { status: number }) => new Response(null, { status: error.status })),
+      { path: "/", method: "POST" },
+    );
+    return toNodeHandler(apply([enhance(() => undefined, { name: "cors" }), route]), {
+      maxRequestBodySize,
+    }) as NodeHttp1Handler;
+  };
+
+  it("the route reads the body after a middleware that doesn't", async () => {
+    expect(await postWithRawBody(listenerFor(), '{"a":1}')).toEqual({ status: 200, body: '{"a":1}' });
+  });
+
+  it("a body over `maxRequestBodySize` answers 413", async () => {
+    expect((await postWithRawBody(listenerFor(4), '{"a":1}')).status).toBe(413);
+  });
 });
