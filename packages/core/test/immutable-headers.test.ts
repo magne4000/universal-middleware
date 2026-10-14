@@ -4,8 +4,8 @@ import { describe, expect, test } from "vitest";
 import { enhance, type RuntimeAdapter, withMutableHeaders } from "../src/index";
 import { pipe } from "../src/pipe";
 
-// `Response.redirect()` and `fetch()` give a Response with immutable headers: a response function that changes them
-// threw `TypeError: immutable`.
+// Except on Bun, `Response.redirect()` and `fetch()` give a Response with immutable headers: a response function
+// that changes them threw a `TypeError`.
 
 const request = new Request("http://localhost/");
 const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
