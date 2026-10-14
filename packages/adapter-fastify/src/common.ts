@@ -229,6 +229,8 @@ async function runResponseFunctions(request: FastifyRequest, reply: FastifyReply
     throw new TypeError("Payload is not a Response, a Node stream or BodyInit compatible");
   }
 
+  // The headers `response` took from the reply: a response function may set others on it
+  const taken = Object.keys(reply.getHeaders());
   const middlewares = request[pendingMiddlewaresSymbol];
   delete request[pendingMiddlewaresSymbol];
 
@@ -240,8 +242,8 @@ async function runResponseFunctions(request: FastifyRequest, reply: FastifyReply
   }, Promise.resolve(response));
 
   const r = newResponse ?? response;
-  // The reply holds the headers of `r` alone, also for a later hook's error response: `response` took the reply's
-  for (const name of Object.keys(reply.getHeaders())) reply.removeHeader(name);
+  // The reply holds the headers of `r`, also for a later hook's error response
+  for (const name of taken) reply.removeHeader(name);
   for (const [name, value] of r.headers) reply.header(name, value);
   reply.code(r.status);
   if (request.method !== "HEAD") return r.body;

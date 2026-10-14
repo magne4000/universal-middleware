@@ -1,8 +1,8 @@
 import { Readable } from "node:stream";
-import type { UniversalMiddleware } from "@universal-middleware/core";
+import type { RuntimeAdapter, UniversalMiddleware } from "@universal-middleware/core";
 import Fastify, { type FastifyInstance, type FastifyReply } from "fastify";
 import { afterEach, describe, expect, it } from "vitest";
-import { createHandler, createMiddleware } from "../src/index.js";
+import { apply, createHandler, createMiddleware } from "../src/index.js";
 
 // A response function gets what the route sent as a Response: whatever the route sent it with.
 
@@ -96,6 +96,27 @@ describe("the response functions of several middlewares", () => {
   });
 });
 
+// What a route can send
+const payloads: [string, (reply: FastifyReply) => unknown][] = [
+  ["a string", () => "text"],
+  ["an object", () => ({ a: 1 })],
+  ["a Buffer", () => Buffer.from("bytes")],
+  ["a Node stream", () => Readable.from(["node"])],
+  [
+    "a web stream",
+    () =>
+      new ReadableStream({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode("web"));
+          controller.close();
+        },
+      }),
+  ],
+  ["a Response", () => new Response("response")],
+  ["a Response with immutable headers", () => Response.redirect("http://127.0.0.1/elsewhere", 302)],
+  ["nothing, with status 204", (reply) => reply.code(204).send()],
+];
+
 describe("the headers a route set, under a response function", () => {
   // Adds a cookie and a header, and deletes the route's `x-deleted`
   const changes: UniversalMiddleware = () => (response: Response) => {
@@ -104,26 +125,6 @@ describe("the headers a route set, under a response function", () => {
     response.headers.delete("x-deleted");
     return response;
   };
-
-  const payloads: [string, (reply: FastifyReply) => unknown][] = [
-    ["a string", () => "text"],
-    ["an object", () => ({ a: 1 })],
-    ["a Buffer", () => Buffer.from("bytes")],
-    ["a Node stream", () => Readable.from(["node"])],
-    [
-      "a web stream",
-      () =>
-        new ReadableStream({
-          start(controller) {
-            controller.enqueue(new TextEncoder().encode("web"));
-            controller.close();
-          },
-        }),
-    ],
-    ["a Response", () => new Response("response")],
-    ["a Response with immutable headers", () => Response.redirect("http://127.0.0.1/elsewhere", 302)],
-    ["nothing, with status 204", (reply) => reply.code(204).send()],
-  ];
 
   describe.each(payloads)("%s", (_, payload) => {
     it.each(["GET", "HEAD", "POST"])("%s: each cookie once, and the header changes", async (method) => {
@@ -195,5 +196,74 @@ describe("the headers a route set, under a response function", () => {
     expect(res.headers.getSetCookie()).toEqual(["new=1"]);
     expect(res.headers.has("x-deleted")).toBe(false);
     expect(await res.text()).toBe("replaced");
+  });
+});
+
+describe("the headers a response function set on the reply", () => {
+  const replyOf = (runtime: RuntimeAdapter): FastifyReply => {
+    if (runtime.adapter !== "fastify") throw new Error(`Expected Fastify's runtime, got ${runtime.adapter}`);
+    return runtime.fastify.reply;
+  };
+
+  // Each sets headers through `runtime.fastify.reply`, one of them also set by the route, and returns a Response or not
+  const behaviors: [string, UniversalMiddleware, Record<string, string | null>][] = [
+    [
+      "returns the Response it edited",
+      (_request, _context, runtime) => (response) => {
+        replyOf(runtime).header("x-before", "1");
+        response.headers.set("x-edited", "1");
+        replyOf(runtime).header("x-after", "1").header("x-route", "reply");
+        return response;
+      },
+      { "x-before": "1", "x-edited": "1", "x-after": "1", "x-route": "route" },
+    ],
+    [
+      "returns nothing",
+      (_request, _context, runtime) => () => {
+        replyOf(runtime).header("x-native", "1").header("x-route", "reply");
+      },
+      { "x-native": "1", "x-route": "route" },
+    ],
+    [
+      "returns a new Response",
+      (_request, _context, runtime) => () => {
+        replyOf(runtime).header("x-native", "1");
+        return new Response("replaced", { headers: { "x-new": "1" } });
+      },
+      { "x-native": "1", "x-new": "1", "x-route": null },
+    ],
+  ];
+
+  const registrations: [string, (app: FastifyInstance, middleware: UniversalMiddleware) => PromiseLike<unknown>][] = [
+    ["createMiddleware()", (app, middleware) => app.register(createMiddleware(() => middleware)())],
+    ["apply()", (app, middleware) => apply(app, [middleware])],
+  ];
+
+  describe.each(payloads)("%s", (_, payload) => {
+    describe.each(registrations)("%s", (_, register) => {
+      it.each(
+        behaviors.flatMap(([name, middleware, expected]) =>
+          ["GET", "HEAD", "POST"].map((method) => ({ name, middleware, expected, method })),
+        ),
+      )("$method: $name", async ({ middleware, expected, method }) => {
+        const instance = Fastify();
+        app = instance;
+        await register(instance, middleware);
+        instance.route({
+          method: ["GET", "HEAD", "POST"],
+          url: "/",
+          handler: (_request, reply) => {
+            reply.header("x-route", "route");
+            return payload(reply);
+          },
+        });
+        const url = await instance.listen({ port: 0, host: "127.0.0.1" });
+
+        const res = await fetch(url, { method, redirect: "manual" });
+        expect(Object.fromEntries(Object.keys(expected).map((name) => [name, res.headers.get(name)]))).toEqual(
+          expected,
+        );
+      });
+    });
   });
 });
