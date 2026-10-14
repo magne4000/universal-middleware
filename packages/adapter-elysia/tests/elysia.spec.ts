@@ -8,7 +8,6 @@ const runs: Run[] = [
     name: "adapter-elysia: bun",
     command: "pnpm run test:run-elysia:bun",
     port: port,
-    streamCancel: "fail",
   },
   {
     name: "adapter-elysia: bun router",
@@ -17,7 +16,6 @@ const runs: Run[] = [
     env: {
       TEST_CASE: "router",
     },
-    streamCancel: "fail",
   },
   {
     name: "adapter-elysia: bun router enhanced",
@@ -26,7 +24,6 @@ const runs: Run[] = [
     env: {
       TEST_CASE: "router_enhanced",
     },
-    streamCancel: "fail",
   },
   {
     name: "adapter-elysia: worker",
