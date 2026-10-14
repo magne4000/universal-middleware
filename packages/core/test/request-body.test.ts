@@ -185,14 +185,18 @@ describe("pipe(), the request a middleware gets", () => {
   test.each(["GET", "POST"])("%s: `request.body` isn't read until something reads the body", async (method) => {
     const request = new Request("http://localhost/", { method, body: method === "POST" ? "hello" : null });
     let reads = 0;
-    // On `@hono/node-server`, reading `body` builds the full Request
-    Object.defineProperty(request, "body", {
-      configurable: true,
-      get() {
-        reads++;
-        return null;
-      },
-    });
+    // Between the request and `Request.prototype`, as on `@hono/node-server`, where reading `body` builds the full Request
+    Object.setPrototypeOf(
+      request,
+      Object.create(Request.prototype, {
+        body: {
+          get() {
+            reads++;
+            return Reflect.get(Request.prototype, "body", this);
+          },
+        },
+      }),
+    );
     await pipe(
       () => undefined,
       () => new Response("ok"),
