@@ -1,5 +1,11 @@
 import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
-import { changedHeaders, changesHeaders, immutableResponses, received } from "@universal-middleware/tests/utils";
+import {
+  changedHeaders,
+  changesHeaders,
+  endlessResponse,
+  immutableResponses,
+  received,
+} from "@universal-middleware/tests/utils";
 import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
 import { apply, createHandler, createMiddleware } from "../src/index.js";
@@ -71,6 +77,26 @@ it.each(registrations)(
     const response = await app.fetch(new Request("http://localhost/"));
     expect(response.headers.get("x-native")).toBe("native");
     expect(response.headers.get("x-universal")).toBe("universal");
+  },
+);
+
+it.each(registrations)(
+  "%s: a response function that sets its replacement on Hono's c.res releases the replaced body",
+  async (_, register) => {
+    const { response: endless, cancelled } = endlessResponse();
+    const app = new Hono();
+    register(app, [
+      (_request, _context, runtime) => () => {
+        if (runtime.adapter !== "hono") return;
+        runtime.hono.res = new Response("replacement");
+        return runtime.hono.res;
+      },
+    ]);
+    app.get("/", createHandler(() => () => endless)());
+
+    const response = await app.fetch(new Request("http://localhost/"));
+    expect(await response.text()).toBe("replacement");
+    await cancelled;
   },
 );
 

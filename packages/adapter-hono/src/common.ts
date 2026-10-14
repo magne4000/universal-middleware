@@ -108,11 +108,9 @@ export function createMiddleware<
           }
           const original = honoContext.res;
           const res = await middleware(original);
+          cancelReplacedBody(original, res);
           // `c.header()` swaps in a copy of `c.res`; setting the one Hono holds would copy it again, without its `url`
-          if (res && res !== honoContext.res) {
-            cancelReplacedBody(original, res);
-            honoContext.res = res;
-          }
+          if (res && res !== honoContext.res) honoContext.res = res;
         }
       } else if (response !== null && typeof response === "object") {
         if (response instanceof Response) {
