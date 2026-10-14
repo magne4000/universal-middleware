@@ -1,5 +1,5 @@
 ---
-"@universal-middleware/core": minor
+"@universal-middleware/core": patch
 ---
 
 Fix: with `apply()` or `pipe()`, a middleware that reads the request body no longer leaves none for the middlewares and the handler after it, which failed with `Body is unusable` or a read that never settled. The list keeps the body of its request: the first read through `text()`, `json()`, `formData()`, `arrayBuffer()`, `bytes()` or `blob()` keeps the bytes, and every read after it is served from them, `request.body`, `bodyUsed` and `clone()` included. A body nobody reads through one of these methods isn't buffered. Every middleware still gets the server's own request, with its fields (`request.cf`, srvx's `request.ip`) and the headers an earlier middleware set.
