@@ -1,7 +1,7 @@
 import { Readable } from "node:stream";
 import type { UniversalMiddleware } from "@universal-middleware/core";
 import { changedHeaders, changesHeaders, immutableResponses, received } from "@universal-middleware/tests/utils";
-import Fastify, { type FastifyInstance } from "fastify";
+import Fastify, { type FastifyInstance, type FastifyReply } from "fastify";
 import { afterEach, describe, expect, it } from "vitest";
 import { apply, createHandler, createMiddleware } from "../src/index.js";
 
@@ -16,9 +16,9 @@ afterEach(async () => {
 
 const keepsResponse: UniversalMiddleware = () => (response: Response) => response;
 
-async function start(setup: (app: FastifyInstance) => void, options = {}): Promise<string> {
-  const instance = Fastify(options);
-  await instance.register(createMiddleware(() => keepsResponse)());
+async function start(setup: (app: FastifyInstance) => void, middleware = keepsResponse): Promise<string> {
+  const instance = Fastify();
+  await instance.register(createMiddleware(() => middleware)());
   setup(instance);
   app = instance;
   return instance.listen({ port: 0, host: "127.0.0.1" });
@@ -140,5 +140,107 @@ describe.each(immutableResponses)("a route returning $name", ({ response: immuta
       const response = await fetch(url, { redirect: "manual" });
       expect(await received(response)).toEqual({ status, body, ...changedHeaders });
     });
+  });
+});
+
+describe("the headers a route set, under a response function", () => {
+  // Adds a cookie and a header, and deletes the route's `x-deleted`
+  const changes: UniversalMiddleware = () => (response: Response) => {
+    response.headers.append("set-cookie", "changed=1");
+    response.headers.set("x-changed", "yes");
+    response.headers.delete("x-deleted");
+    return response;
+  };
+
+  const payloads: [string, (reply: FastifyReply) => unknown][] = [
+    ["a string", () => "text"],
+    ["an object", () => ({ a: 1 })],
+    ["a Buffer", () => Buffer.from("bytes")],
+    ["a Node stream", () => Readable.from(["node"])],
+    [
+      "a web stream",
+      () =>
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode("web"));
+            controller.close();
+          },
+        }),
+    ],
+    ["a Response", () => new Response("response")],
+    ["a Response with immutable headers", () => Response.redirect("http://127.0.0.1/elsewhere", 302)],
+    ["nothing, with status 204", (reply) => reply.code(204).send()],
+  ];
+
+  describe.each(payloads)("%s", (_, payload) => {
+    it.each(["GET", "HEAD", "POST"])("%s: each cookie once, and the header changes", async (method) => {
+      const url = await start(
+        (app) =>
+          app.route({
+            method: ["GET", "HEAD", "POST"],
+            url: "/",
+            handler: (_request, reply) => {
+              reply.header("set-cookie", "own=1");
+              reply.header("x-deleted", "yes");
+              return payload(reply);
+            },
+          }),
+        changes,
+      );
+
+      const res = await fetch(url, { method, redirect: "manual" });
+      expect(res.headers.getSetCookie()).toEqual(["own=1", "changed=1"]);
+      expect(res.headers.get("x-changed")).toBe("yes");
+      expect(res.headers.has("x-deleted")).toBe(false);
+    });
+  });
+
+  it("sends a cookie an onRequest hook set once", async () => {
+    const url = await start((app) => {
+      app.addHook("onRequest", async (_request, reply) => {
+        reply.header("set-cookie", "hook=1");
+      });
+      app.get("/", () => "text");
+    }, changes);
+
+    expect((await fetch(url)).headers.getSetCookie()).toEqual(["hook=1", "changed=1"]);
+  });
+
+  it("keeps the reply's headers when an onSend hook after it throws", async () => {
+    const url = await start((app) => {
+      app.addHook("onRequest", async (_request, reply) => {
+        reply.header("access-control-allow-origin", "*");
+      });
+      app.addHook("onSend", async () => {
+        throw new Error("later hook");
+      });
+      app.get("/", (_request, reply) => {
+        reply.header("set-cookie", "own=1");
+        return "text";
+      });
+    }, changes);
+
+    const res = await fetch(url);
+    expect(res.status).toBe(500);
+    expect(res.headers.get("access-control-allow-origin")).toBe("*");
+    expect(res.headers.getSetCookie()).toEqual(["own=1", "changed=1"]);
+  });
+
+  it("sends none of the route's headers once a response function replaced the Response", async () => {
+    const replaces: UniversalMiddleware = () => () => new Response("replaced", { headers: { "set-cookie": "new=1" } });
+    const url = await start(
+      (app) =>
+        app.get("/", (_request, reply) => {
+          reply.header("set-cookie", "own=1");
+          reply.header("x-deleted", "yes");
+          return "text";
+        }),
+      replaces,
+    );
+
+    const res = await fetch(url);
+    expect(res.headers.getSetCookie()).toEqual(["new=1"]);
+    expect(res.headers.has("x-deleted")).toBe(false);
+    expect(await res.text()).toBe("replaced");
   });
 });
