@@ -118,6 +118,35 @@ describe.each(immutableResponses)("pipe(), a handler returning $name", ({ respon
   });
 });
 
+describe("pipe(), a Response passed on as before", () => {
+  const probe = "x-universal-middleware-probe";
+  const marks = () => (response: Response) => {
+    response.headers.set("x-marked", "yes");
+    return response;
+  };
+
+  test("keeps the handler's header named like the probe", async () => {
+    const handler = pipe(marks, () => new Response("ok", { headers: { [probe]: "keep-me" } }));
+    expect((await handler(request, {}, runtime)).headers.get(probe)).toBe("keep-me");
+  });
+
+  test("keeps the header named like the probe that an earlier response function set", async () => {
+    const setsProbe = () => (response: Response) => {
+      response.headers.set(probe, "set-earlier");
+      return response;
+    };
+    const handler = pipe(setsProbe, marks, () => new Response("ok"));
+    expect((await handler(request, {}, runtime)).headers.get(probe)).toBe("set-earlier");
+  });
+
+  test("a response function recovers from `Response.error()`", async () => {
+    const recovers = () => (response: Response) =>
+      response.type === "error" ? new Response("recovered", { status: 502 }) : response;
+    const response = await pipe(recovers, () => Response.error())(request, {}, runtime);
+    expect({ status: response.status, body: await response.text() }).toEqual({ status: 502, body: "recovered" });
+  });
+});
+
 test("pipe(): a response function reads the url of a fetch() response", async () => {
   const recordsSource = () => (response: Response) =>
     new Response(response.body, { headers: { "x-source": response.url } });

@@ -61,9 +61,14 @@ export function cancelReplacedBody(replaced: Response, replacement: Response | n
  * `Response.redirect()` and `fetch()` return, else the Response itself
  */
 export function withMutableHeaders(response: Response): Response {
+  // A status under 200, as `Response.error()`'s 0, can't be copied
+  if (response.status < 200) return response;
+  const probe = "x-universal-middleware-probe";
+  const value = response.headers.get(probe);
   try {
-    // Throws only on immutable headers
-    response.headers.delete("x-universal-middleware-probe");
+    // Throws only on immutable headers, and leaves them as they were
+    if (value === null) response.headers.delete(probe);
+    else response.headers.set(probe, value);
     return response;
   } catch {
     // The constructor resets them: a response function may read where a proxied `fetch()` response came from
