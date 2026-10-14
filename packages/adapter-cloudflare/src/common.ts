@@ -18,6 +18,7 @@ import {
   cancelReplacedBody,
   contextSymbol,
   getAdapterRuntime,
+  keepBody,
   universalSymbol,
   withMutableHeaders,
 } from "@universal-middleware/core";
@@ -87,11 +88,9 @@ export function createPagesFunction<
     return bindUniversal(middleware, async function universalPagesFunctionCloudflare(context) {
       // context.data is per request (env is shared across requests), and Pages functions share it
       const universalContext = initContext<InContext>(context.data);
-      const response = await this[universalSymbol](
-        context.request as unknown as Request,
-        universalContext,
-        getRuntime(context),
-      );
+      const request = context.request as unknown as Request;
+      keepBody(request);
+      const response = await this[universalSymbol](request, universalContext, getRuntime(context));
 
       if (typeof response === "function") {
         const data = context.data as {

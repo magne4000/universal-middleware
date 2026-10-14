@@ -5,9 +5,9 @@ import { type NodeHttp1Handler, serve } from "srvx";
 import { serve as serveGeneric } from "srvx/generic";
 import { toNodeHandler } from "srvx/node";
 import { describe, expect, it } from "vitest";
-import { apply } from "../src/index.js";
+import { apply, createMiddleware } from "../src/index.js";
 
-// A route still reads the body that the middlewares registered by apply() read
+// A route still reads the body that the middlewares registered by apply(), or as a srvx middleware, read
 
 const methods: HttpMethod[] = ["POST", "PUT", "PATCH", "DELETE"];
 
@@ -23,6 +23,18 @@ it.each(methods)("%s: the route reads the body the middlewares read", async (met
   const response = await serveGeneric({ fetch }).fetch(new Request("http://localhost/", { method, body: '{"a":1}' }));
   expect(await response.text()).toBe('{"a":1}');
   expect(seen).toEqual(['{"a":1}', '{"a":1}']);
+});
+
+it.each(methods)("%s: the route reads the body a middleware registered as a srvx middleware read", async (method) => {
+  const { middlewares, seen } = bodyReaders();
+  const server = serveGeneric({
+    middleware: [createMiddleware(() => middlewares[0])()],
+    fetch: async (request) => new Response(await request.text()),
+  });
+
+  const response = await server.fetch(new Request("http://localhost/", { method, body: '{"a":1}' }));
+  expect(await response.text()).toBe('{"a":1}');
+  expect(seen).toEqual(['{"a":1}']);
 });
 
 // srvx's Node request is not the runtime's own `Request`

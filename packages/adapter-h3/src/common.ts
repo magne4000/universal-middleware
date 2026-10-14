@@ -11,6 +11,7 @@ import {
   cancelReplacedBody,
   contextSymbol,
   getAdapterRuntime,
+  keepBody,
   universalSymbol,
   withMutableHeaders,
 } from "@universal-middleware/core";
@@ -88,6 +89,7 @@ export function createMiddleware<
         next: () => unknown,
       ) {
         const ctx = initContext<InContext>(event);
+        keepBody(event.req);
         const response = await this[universalSymbol](event.req, ctx, getRuntime(event));
 
         if (typeof response === "function") {
