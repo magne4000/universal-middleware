@@ -231,6 +231,7 @@ async function runResponseFunctions(request: FastifyRequest, reply: FastifyReply
 
   // The headers `response` took from the reply: a response function may set others on it
   const taken = Object.keys(reply.getHeaders());
+  const takenCookies = [reply.getHeader("set-cookie") ?? []].flat().length;
   const middlewares = request[pendingMiddlewaresSymbol];
   delete request[pendingMiddlewaresSymbol];
 
@@ -242,9 +243,12 @@ async function runResponseFunctions(request: FastifyRequest, reply: FastifyReply
   }, Promise.resolve(response));
 
   const r = newResponse ?? response;
+  // Cookies a response function appended to the ones `response` took
+  const addedCookies = takenCookies ? [reply.getHeader("set-cookie") ?? []].flat().slice(takenCookies) : [];
   // The reply holds the headers of `r`, also for a later hook's error response
   for (const name of taken) reply.removeHeader(name);
   for (const [name, value] of r.headers) reply.header(name, value);
+  for (const cookie of addedCookies) reply.header("set-cookie", String(cookie));
   reply.code(r.status);
   if (request.method !== "HEAD") return r.body;
   // An idle stream would keep the HEAD response open

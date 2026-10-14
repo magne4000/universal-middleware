@@ -232,6 +232,14 @@ describe("the headers a response function set on the reply", () => {
       },
       { "x-native": "1", "x-new": "1", "x-route": null },
     ],
+    [
+      "adds a cookie to the route's",
+      (_request, _context, runtime) => (response) => {
+        replyOf(runtime).header("set-cookie", "native=1");
+        return response;
+      },
+      { "set-cookie": "route=1, native=1" },
+    ],
   ];
 
   const registrations: [string, (app: FastifyInstance, middleware: UniversalMiddleware) => PromiseLike<unknown>][] = [
@@ -253,7 +261,7 @@ describe("the headers a response function set on the reply", () => {
           method: ["GET", "HEAD", "POST"],
           url: "/",
           handler: (_request, reply) => {
-            reply.header("x-route", "route");
+            reply.header("x-route", "route").header("set-cookie", "route=1");
             return payload(reply);
           },
         });
