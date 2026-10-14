@@ -39,8 +39,8 @@ const eagerLimit = 64 * 1024;
 
 async function requestOf(request: Request) {
   if (request.method === "GET" || request.method === "HEAD") return request.clone();
-  const kept = keptBody(request);
-  if (kept && Number(request.headers.get("content-length")) <= eagerLimit) {
+  const kept = Number(request.headers.get("content-length")) <= eagerLimit ? keptBody(request) : undefined;
+  if (kept) {
     return cloneRequest(request, { body: await kept });
   }
   // Costs nothing until the middleware reads the body: it then gets a copy of the kept bytes, or of the stream when
