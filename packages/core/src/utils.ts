@@ -1,5 +1,13 @@
 import type { OutgoingHttpHeaders } from "node:http";
-import { optionsToSymbols, orderSymbol, pathSymbol, unboundSymbol, universalSymbol, urlSymbol } from "./const";
+import {
+  keepBodySymbol,
+  optionsToSymbols,
+  orderSymbol,
+  pathSymbol,
+  unboundSymbol,
+  universalSymbol,
+  urlSymbol,
+} from "./const";
 import type {
   AnyFn,
   EnhancedMiddleware,
@@ -137,12 +145,12 @@ export function cloneRequest(request: Request, fields?: RequestInit & { url?: st
   });
 }
 
-const keptRequests = new WeakSet<Request>();
-const keptBodies = new WeakMap<Request, Promise<ArrayBuffer>>();
+// On the request rather than in a map, so that every copy of this package sees what another one kept
+type KeptRequest = Request & { [keepBodySymbol]?: () => Promise<ArrayBuffer> | undefined };
 
 /** The bytes `keepBody()` kept for `request`, once something read its body through a method */
 export function keptBody(request: Request): Promise<ArrayBuffer> | undefined {
-  return keptBodies.get(request);
+  return (request as KeptRequest)[keepBodySymbol]?.();
 }
 
 /**
@@ -153,8 +161,7 @@ export function keptBody(request: Request): Promise<ArrayBuffer> | undefined {
 export function keepBody(request: Request) {
   // By method, not `request.body`: on `@hono/node-server`, reading `body` builds the full Request
   if (request.method === "GET" || request.method === "HEAD") return;
-  if (keptRequests.has(request) || !Object.isExtensible(request)) return;
-  keptRequests.add(request);
+  if (keepBodySymbol in request || !Object.isExtensible(request)) return;
   const proto = Object.getPrototypeOf(request);
   const read = request.arrayBuffer.bind(request);
   const clone = request.clone.bind(request);
@@ -163,10 +170,7 @@ export function keepBody(request: Request) {
   const type = () => request.headers.get("content-type") ?? keptType;
   let kept: Promise<ArrayBuffer> | undefined;
   const bytes = () => {
-    if (!kept) {
-      kept = read();
-      keptBodies.set(request, kept);
-    }
+    kept ??= read();
     return kept;
   };
   const replay = () =>
@@ -183,17 +187,19 @@ export function keepBody(request: Request) {
   const asResponse = async () => new Response(await bytes(), { headers: { "content-type": type() } });
   // A request without a body keeps its `null` body
   const replays = () => kept && Reflect.get(proto, "body", request) !== null;
+  // Configurable, so that instrumentation can still wrap them
   Object.defineProperties(request, {
-    arrayBuffer: { value: bytes },
-    bytes: { value: async () => new Uint8Array(await bytes()) },
-    text: { value: async () => new TextDecoder().decode(await bytes()) },
-    json: { value: async () => JSON.parse(new TextDecoder().decode(await bytes())) },
-    blob: { value: async () => (await asResponse()).blob() },
-    formData: { value: async () => (await asResponse()).formData() },
+    [keepBodySymbol]: { configurable: true, value: () => kept },
+    arrayBuffer: { configurable: true, value: bytes },
+    bytes: { configurable: true, value: async () => new Uint8Array(await bytes()) },
+    text: { configurable: true, value: async () => new TextDecoder().decode(await bytes()) },
+    json: { configurable: true, value: async () => JSON.parse(new TextDecoder().decode(await bytes())) },
+    blob: { configurable: true, value: async () => (await asResponse()).blob() },
+    formData: { configurable: true, value: async () => (await asResponse()).formData() },
     // Once kept, the stream and `bodyUsed` describe the kept bytes, not the request's own stream
-    body: { get: () => (replays() ? replay() : Reflect.get(proto, "body", request)) },
-    bodyUsed: { get: () => (kept ? false : Reflect.get(proto, "bodyUsed", request)) },
-    clone: { value: () => (replays() ? cloneRequest(request, { body: replay() }) : clone()) },
+    body: { configurable: true, get: () => (replays() ? replay() : Reflect.get(proto, "body", request)) },
+    bodyUsed: { configurable: true, get: () => (kept ? false : Reflect.get(proto, "bodyUsed", request)) },
+    clone: { configurable: true, value: () => (replays() ? cloneRequest(request, { body: replay() }) : clone()) },
   });
 }
 

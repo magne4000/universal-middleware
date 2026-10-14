@@ -6,6 +6,7 @@ export const methodSymbol = Symbol.for("unMethod");
 export const orderSymbol = Symbol.for("unOrder");
 export const nameSymbol = Symbol.for("unName");
 export const urlSymbol = Symbol.for("unUrl");
+export const keepBodySymbol = Symbol.for("universal-middleware.keepBody");
 export const runsSymbol = Symbol.for("unRuns");
 
 /**

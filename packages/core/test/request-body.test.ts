@@ -1,5 +1,13 @@
-import { describe, expect, test } from "vitest";
-import { enhance, type HttpMethod, pipe, pipeRoute, type RuntimeAdapter, type UniversalMiddleware } from "../src/index";
+import { describe, expect, test, vi } from "vitest";
+import {
+  enhance,
+  type HttpMethod,
+  keepBody,
+  pipe,
+  pipeRoute,
+  type RuntimeAdapter,
+  type UniversalMiddleware,
+} from "../src/index";
 
 // A middleware of a list that read the request body left none for the middlewares and the handler after it:
 // `Body is unusable`, or a read that never settles.
@@ -263,5 +271,27 @@ describe("pipe(), the request a middleware gets", () => {
 
     expect(await (response as Response).text()).toBe("hello");
     expect(seen).toEqual(["hello"]);
+  });
+});
+
+describe("keepBody()", () => {
+  test("another copy of the package keeps the same request", async () => {
+    vi.resetModules();
+    const other = await import("../src/index");
+    expect(other.keepBody).not.toBe(keepBody);
+    const request = requestWith("POST", "hello");
+    keepBody(request);
+    other.keepBody(request);
+    const seen = [await request.text(), await request.text()];
+    expect(seen).toEqual(["hello", "hello"]);
+    expect(new TextDecoder().decode(await other.keptBody(request))).toBe("hello");
+  });
+
+  test("a body method can still be wrapped once the body is kept", async () => {
+    const request = requestWith("POST", "hello");
+    keepBody(request);
+    const text = request.text.bind(request);
+    Object.defineProperty(request, "text", { value: async () => (await text()).toUpperCase() });
+    expect(await request.text()).toBe("HELLO");
   });
 });
