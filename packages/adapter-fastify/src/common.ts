@@ -230,6 +230,9 @@ async function runResponseFunctions(request: FastifyRequest, reply: FastifyReply
     throw new TypeError("Payload is not a Response, a Node stream or BodyInit compatible");
   }
 
+  // The headers `response` took from the reply: a response function may set others on it
+  const taken = Object.keys(reply.getHeaders());
+  const takenCookies = [reply.getHeader("set-cookie") ?? []].flat().length;
   const middlewares = request[pendingMiddlewaresSymbol];
   delete request[pendingMiddlewaresSymbol];
 
@@ -241,9 +244,12 @@ async function runResponseFunctions(request: FastifyRequest, reply: FastifyReply
   }, Promise.resolve(response));
 
   const r = newResponse ?? response;
-  // The reply holds the headers of `r` alone, also for a later hook's error response: `response` took the reply's
-  for (const name of Object.keys(reply.getHeaders())) reply.removeHeader(name);
+  // Cookies a response function appended to the ones `response` took: they follow `r`'s
+  const addedCookies = [reply.getHeader("set-cookie") ?? []].flat().slice(takenCookies);
+  // `r`'s headers replace the ones `response` took, also for a later hook's error response
+  for (const name of [...taken, "set-cookie"]) reply.removeHeader(name);
   for (const [name, value] of r.headers) reply.header(name, value);
+  for (const cookie of addedCookies) reply.header("set-cookie", String(cookie));
   reply.code(r.status);
   if (request.method !== "HEAD") return r.body;
   // An idle stream would keep the HEAD response open

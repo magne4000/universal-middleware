@@ -1,5 +1,5 @@
 import { Readable } from "node:stream";
-import type { UniversalMiddleware } from "@universal-middleware/core";
+import type { RuntimeAdapter, UniversalMiddleware } from "@universal-middleware/core";
 import { changedHeaders, changesHeaders, immutableResponses, received } from "@universal-middleware/tests/utils";
 import Fastify, { type FastifyInstance, type FastifyReply } from "fastify";
 import { afterEach, describe, expect, it } from "vitest";
@@ -97,6 +97,27 @@ describe("the response functions of several middlewares", () => {
   });
 });
 
+// What a route can send
+const payloads: [string, (reply: FastifyReply) => unknown][] = [
+  ["a string", () => "text"],
+  ["an object", () => ({ a: 1 })],
+  ["a Buffer", () => Buffer.from("bytes")],
+  ["a Node stream", () => Readable.from(["node"])],
+  [
+    "a web stream",
+    () =>
+      new ReadableStream({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode("web"));
+          controller.close();
+        },
+      }),
+  ],
+  ["a Response", () => new Response("response")],
+  ["a Response with immutable headers", () => Response.redirect("http://127.0.0.1/elsewhere", 302)],
+  ["nothing, with status 204", (reply) => reply.code(204).send()],
+];
+
 describe.each(immutableResponses)("a route returning $name", ({ response: immutable, status, body }) => {
   const replacesWith = () => () => immutable();
   const registrations: [string, (app: FastifyInstance, middlewares: UniversalMiddleware[]) => Promise<unknown>][] = [
@@ -151,26 +172,6 @@ describe("the headers a route set, under a response function", () => {
     response.headers.delete("x-deleted");
     return response;
   };
-
-  const payloads: [string, (reply: FastifyReply) => unknown][] = [
-    ["a string", () => "text"],
-    ["an object", () => ({ a: 1 })],
-    ["a Buffer", () => Buffer.from("bytes")],
-    ["a Node stream", () => Readable.from(["node"])],
-    [
-      "a web stream",
-      () =>
-        new ReadableStream({
-          start(controller) {
-            controller.enqueue(new TextEncoder().encode("web"));
-            controller.close();
-          },
-        }),
-    ],
-    ["a Response", () => new Response("response")],
-    ["a Response with immutable headers", () => Response.redirect("http://127.0.0.1/elsewhere", 302)],
-    ["nothing, with status 204", (reply) => reply.code(204).send()],
-  ];
 
   describe.each(payloads)("%s", (_, payload) => {
     it.each(["GET", "HEAD", "POST"])("%s: each cookie once, and the header changes", async (method) => {
@@ -242,5 +243,114 @@ describe("the headers a route set, under a response function", () => {
     expect(res.headers.getSetCookie()).toEqual(["new=1"]);
     expect(res.headers.has("x-deleted")).toBe(false);
     expect(await res.text()).toBe("replaced");
+  });
+});
+
+describe("the headers a response function set on the reply", () => {
+  const replyOf = (runtime: RuntimeAdapter): FastifyReply => {
+    if (runtime.adapter !== "fastify") throw new Error(`Expected Fastify's runtime, got ${runtime.adapter}`);
+    return runtime.fastify.reply;
+  };
+
+  // Each sets headers through `runtime.fastify.reply`, one of them also set by the route, and returns a Response or not
+  const behaviors: [string, UniversalMiddleware, Record<string, string | null>][] = [
+    [
+      "returns the Response it edited",
+      (_request, _context, runtime) => (response) => {
+        replyOf(runtime).header("x-before", "1");
+        response.headers.set("x-edited", "1");
+        replyOf(runtime).header("x-after", "1").header("x-route", "reply");
+        return response;
+      },
+      { "x-before": "1", "x-edited": "1", "x-after": "1", "x-route": "route" },
+    ],
+    [
+      "returns nothing",
+      (_request, _context, runtime) => () => {
+        replyOf(runtime).header("x-native", "1").header("x-route", "reply");
+      },
+      { "x-native": "1", "x-route": "route" },
+    ],
+    [
+      "returns a new Response",
+      (_request, _context, runtime) => () => {
+        replyOf(runtime).header("x-native", "1");
+        return new Response("replaced", { headers: { "x-new": "1" } });
+      },
+      { "x-native": "1", "x-new": "1", "x-route": null },
+    ],
+    [
+      "adds a cookie to the route's",
+      (_request, _context, runtime) => (response) => {
+        replyOf(runtime).header("set-cookie", "native=1");
+        return response;
+      },
+      { "set-cookie": "route=1, native=1" },
+    ],
+  ];
+
+  describe.each(payloads)("%s", (_, payload) => {
+    it.each(
+      behaviors.flatMap(([name, middleware, expected]) =>
+        ["GET", "HEAD", "POST"].map((method) => ({ name, middleware, expected, method })),
+      ),
+    )("$method: $name", async ({ middleware, expected, method }) => {
+      const url = await start(
+        (app) =>
+          app.route({
+            method: ["GET", "HEAD", "POST"],
+            url: "/",
+            handler: (_request, reply) => {
+              reply.header("x-route", "route").header("set-cookie", "route=1");
+              return payload(reply);
+            },
+          }),
+        middleware,
+      );
+
+      const res = await fetch(url, { method, redirect: "manual" });
+      expect(Object.fromEntries(Object.keys(expected).map((name) => [name, res.headers.get(name)]))).toEqual(expected);
+    });
+  });
+
+  it("keeps a cookie a response function set when the route set none", async () => {
+    const url = await start(
+      (app) =>
+        app.get("/", (_request, reply) => {
+          reply.header("x-route", "route");
+          return "text";
+        }),
+      (_request, _context, runtime) => (response) => {
+        replyOf(runtime).header("set-cookie", "native=1");
+        return response;
+      },
+    );
+
+    expect((await fetch(url)).headers.getSetCookie()).toEqual(["native=1"]);
+  });
+
+  const refreshesSession: UniversalMiddleware = (_request, _context, runtime) => (response) => {
+    replyOf(runtime).header("set-cookie", "session=refreshed");
+    return response;
+  };
+  const routeResponse = () => new Response("text", { headers: { "set-cookie": "session=old" } });
+
+  describe.each([
+    [
+      "a route",
+      (app: FastifyInstance) => app.route({ method: ["GET", "HEAD", "POST"], url: "/", handler: routeResponse }),
+    ],
+    [
+      "createHandler()",
+      (app: FastifyInstance) =>
+        app.route({ method: ["GET", "HEAD", "POST"], url: "/", handler: createHandler(() => routeResponse)() }),
+    ],
+  ])("after a cookie %s returned in a Response", (_, setup) => {
+    it.each(["GET", "HEAD", "POST"])("%s: sends its cookie last", async (method) => {
+      const url = await start(setup, refreshesSession);
+
+      const res = await fetch(url, { method });
+      expect(res.headers.getSetCookie()).toEqual(["session=old", "session=refreshed"]);
+    });
   });
 });
