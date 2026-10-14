@@ -163,7 +163,10 @@ export function keepBody(request: Request) {
   if (request.method === "GET" || request.method === "HEAD") return;
   if (keepBodySymbol in request || !Object.isExtensible(request)) return;
   const proto = Object.getPrototypeOf(request);
-  const read = request.arrayBuffer.bind(request);
+  // srvx's Node request (srvx, h3) reads a `rawBody` set before it (Google Cloud Functions) in `text()` and `json()` only
+  const rawBody = (request as { runtime?: { node?: { req?: { rawBody?: unknown } } } }).runtime?.node?.req?.rawBody;
+  const read =
+    rawBody instanceof Uint8Array ? async () => new Uint8Array(rawBody).buffer : request.arrayBuffer.bind(request);
   const clone = request.clone.bind(request);
   // The type when the body is read: a middleware may set it (Bun drops a FormData body's type once read)
   const keptType = request.headers.get("content-type") ?? "";

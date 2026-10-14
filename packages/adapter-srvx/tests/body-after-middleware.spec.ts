@@ -1,7 +1,11 @@
+import { createServer } from "node:http";
+import type { AddressInfo } from "node:net";
 import { enhance, type HttpMethod } from "@universal-middleware/core";
 import { bodyReaders } from "@universal-middleware/tests/utils";
-import { serve } from "srvx";
+import { withRawBody } from "@universal-middleware/tests/utils-node";
+import { type NodeHttp1Handler, serve } from "srvx";
 import { serve as serveGeneric } from "srvx/generic";
+import { toNodeHandler } from "srvx/node";
 import { expect, it } from "vitest";
 import { apply } from "../src/index.js";
 
@@ -34,5 +38,24 @@ it.each(methods)("%s on a Node server: the route reads the body the middlewares 
     expect(app.seen).toEqual(['{"a":1}', '{"a":1}']);
   } finally {
     await server.close(true);
+  }
+});
+
+it.each(methods)("%s on a Node server that set `req.rawBody`: the route reads the body", async (method) => {
+  const app = appFor(method);
+  const server = createServer(withRawBody(toNodeHandler(app.fetch) as NodeHttp1Handler));
+  const { promise, resolve } = Promise.withResolvers<void>();
+  server.listen(0, "127.0.0.1", resolve);
+  await promise;
+  try {
+    const response = await fetch(`http://127.0.0.1:${(server.address() as AddressInfo).port}/`, {
+      method,
+      body: '{"a":1}',
+    });
+    expect(await response.text()).toBe('{"a":1}');
+    expect(app.seen).toEqual(['{"a":1}', '{"a":1}']);
+  } finally {
+    server.closeAllConnections();
+    server.close();
   }
 });

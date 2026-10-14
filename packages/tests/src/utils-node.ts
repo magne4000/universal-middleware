@@ -1,4 +1,5 @@
 import { createReadStream } from "node:fs";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { dirname, join } from "node:path";
 import { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
@@ -27,3 +28,15 @@ export const sendBigFile: Get<[], UniversalHandler> = () =>
       method: "GET",
     },
   );
+
+/** A Node listener that reads the whole body into `req.rawBody` first, as Google Cloud Functions do */
+export function withRawBody(listener: (req: IncomingMessage, res: ServerResponse) => unknown) {
+  return (req: IncomingMessage & { rawBody?: Buffer }, res: ServerResponse) => {
+    const chunks: Buffer[] = [];
+    req.on("data", (chunk: Buffer) => chunks.push(chunk));
+    req.on("end", () => {
+      req.rawBody = Buffer.concat(chunks);
+      listener(req, res);
+    });
+  };
+}
