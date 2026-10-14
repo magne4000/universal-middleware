@@ -1,6 +1,6 @@
 import { once } from "node:events";
 import type { OutgoingHttpHeader, OutgoingHttpHeaders } from "node:http";
-import { cancelReplacedBody } from "@universal-middleware/core";
+import { cancelReplacedBody, withMutableHeaders } from "@universal-middleware/core";
 import { responseAdapter, sendResponse, setResponseHeaders } from "@universal-middleware/node";
 import { pendingMiddlewaresSymbol, wrappedResponseSymbol } from "./const.js";
 import { setHead } from "./head.js";
@@ -118,6 +118,7 @@ export function wrapResponse(nodeResponse: DecoratedServerResponse, next?: (err?
     try {
       response = responseAdapter(nodeResponse, captured.readable);
       for (const middleware of middlewares) {
+        response = withMutableHeaders(response);
         const tmp = await middleware(response);
         cancelReplacedBody(response, tmp);
         // An undefined result keeps the Response
