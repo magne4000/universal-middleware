@@ -168,8 +168,8 @@ export function keepBody(request: Request) {
   const read =
     rawBody instanceof Uint8Array ? async () => new Uint8Array(rawBody).buffer : request.arrayBuffer.bind(request);
   const clone = request.clone.bind(request);
-  // The type when the body is read: a middleware may set it (Bun drops a FormData body's type once read)
   const keptType = request.headers.get("content-type") ?? "";
+  // The type at read time (a middleware may set it), else keepBody()'s: Bun drops a FormData body's type once read
   const type = () => request.headers.get("content-type") ?? keptType;
   let kept: Promise<ArrayBuffer> | undefined;
   const bytes = () => {
