@@ -162,6 +162,8 @@ export function keepBody(request: Request) {
   // By method, not `request.body`: on `@hono/node-server`, reading `body` builds the full Request
   if (request.method === "GET" || request.method === "HEAD") return;
   if (keepBodySymbol in request || !Object.isExtensible(request)) return;
+  // `@universal-middleware/elysia@0.9.0` kept it already, with methods that can't be redefined
+  if (Object.getOwnPropertyDescriptor(request, "arrayBuffer")?.configurable === false) return;
   const proto = Object.getPrototypeOf(request);
   // srvx's Node request (srvx, h3) reads a `rawBody` set before it (Google Cloud Functions) in `text()` and `json()` only
   // TODO: remove once https://github.com/h3js/srvx/pull/312 is released

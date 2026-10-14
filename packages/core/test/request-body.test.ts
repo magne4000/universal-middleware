@@ -292,6 +292,20 @@ describe("keepBody()", () => {
     expect(new TextDecoder().decode(await other.keptBody(request))).toBe("hello");
   });
 
+  test("a request @universal-middleware/elysia@0.9.0 kept is left to it", async () => {
+    const request = requestWith("POST", "hello");
+    // 0.9.0's own keepBody() defines the body methods without `configurable`
+    const kept = request.arrayBuffer();
+    Object.defineProperties(request, {
+      arrayBuffer: { value: () => kept },
+      text: { value: async () => new TextDecoder().decode(await kept) },
+    });
+    const seen: unknown[] = [];
+    const text = (r: Request) => r.text();
+    await pipe(readerOf(text, seen), readerOf(text, seen))(request, {}, runtime);
+    expect(seen).toEqual(["hello", "hello"]);
+  });
+
   test("a body streamed without a method read isn't kept", async () => {
     const request = requestWith("POST", streamed());
     keepBody(request);
