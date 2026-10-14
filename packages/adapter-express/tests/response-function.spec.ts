@@ -1,9 +1,10 @@
 import type { Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import type { UniversalMiddleware } from "@universal-middleware/core";
+import { changedHeaders, changesHeaders, immutableResponses, received } from "@universal-middleware/tests/utils";
 import express from "express";
 import { afterEach, describe, expect, it } from "vitest";
-import { createMiddleware } from "../src/index.js";
+import { apply, createHandler, createMiddleware } from "../src/index.js";
 
 // A response function holds the Express app's response back, so the adapter stands in for the socket:
 // what the app sends and how it is sent must survive the detour.
@@ -172,5 +173,46 @@ describe("the Response a response function returns", () => {
     expect((await res.arrayBuffer()).byteLength).toBe(chunks * 64 * 1024);
     // Without backpressure, most of the 8 MiB waits in the response's buffer
     expect(mostBuffered).toBeLessThan(1024 * 1024);
+  });
+});
+
+describe.each(immutableResponses)("a route returning $name", ({ response: immutable, status, body }) => {
+  const replacesWith = () => () => immutable();
+  const registrations: [string, (app: express.Express, middlewares: UniversalMiddleware[]) => void][] = [
+    ["apply()", (app, middlewares) => apply(app, middlewares)],
+    [
+      "createMiddleware()",
+      (app, middlewares) => {
+        for (const m of middlewares) app.use(createMiddleware(() => m)());
+      },
+    ],
+  ];
+
+  async function listen(app: express.Express) {
+    const s = await new Promise<Server>((resolve) => {
+      const listening = app.listen(0, () => resolve(listening));
+    });
+    server = s;
+    return `http://localhost:${(s.address() as AddressInfo).port}/`;
+  }
+
+  describe.each(registrations)("registered with %s", (_, register) => {
+    it.each(["GET", "HEAD", "POST"])("%s: a response function changes its headers", async (method) => {
+      const app = express();
+      register(app, [changesHeaders]);
+      app.all("/", createHandler(() => immutable)());
+
+      const response = await fetch(await listen(app), { method, redirect: "manual" });
+      expect(await received(response)).toEqual({ status, body: method === "HEAD" ? "" : body, ...changedHeaders });
+    });
+
+    it("a response function replaces the Response with it, the next one changes its headers", async () => {
+      const app = express();
+      register(app, [replacesWith, changesHeaders]);
+      app.get("/", (_req, res) => void res.send("replaced"));
+
+      const response = await fetch(await listen(app), { redirect: "manual" });
+      expect(await received(response)).toEqual({ status, body, ...changedHeaders });
+    });
   });
 });

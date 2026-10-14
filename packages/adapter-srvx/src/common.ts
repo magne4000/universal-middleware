@@ -6,7 +6,13 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { bindUniversal, cancelReplacedBody, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import {
+  bindUniversal,
+  cancelReplacedBody,
+  getAdapterRuntime,
+  universalSymbol,
+  withMutableHeaders,
+} from "@universal-middleware/core";
 import type { ServerHandler, ServerMiddleware, ServerRequest } from "srvx";
 
 // The response functions of a request, applied in registration order by the middleware that returned the first one
@@ -71,6 +77,7 @@ export function createMiddleware<
         try {
           res = await next();
           for (const middleware of middlewares) {
+            res = withMutableHeaders(res);
             const replacement = await middleware(res);
             cancelReplacedBody(res, replacement);
             res = replacement ?? res;

@@ -14,6 +14,7 @@ import {
   contextSymbol,
   getAdapterRuntime,
   universalSymbol,
+  withMutableHeaders,
 } from "@universal-middleware/core";
 
 // The response functions waiting for the response of `context.next()`, applied in registration order by the
@@ -96,6 +97,7 @@ export function createMiddleware<
         try {
           res = await context.next();
           for (const middleware of middlewares) {
+            res = withMutableHeaders(res);
             const actualRes = await middleware(res);
             cancelReplacedBody(res, actualRes);
             // Nothing is sent for HEAD: the replaced body is released now, not after `cancelReplacedBody`'s delay

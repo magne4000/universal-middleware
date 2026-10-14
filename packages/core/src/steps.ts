@@ -1,6 +1,6 @@
 import { nameSymbol, orderSymbol, runsSymbol } from "./const";
 import type { Awaitable, EnhancedMiddleware, MiddlewareRuns, RuntimeAdapter, UniversalMiddleware } from "./types";
-import { cancelReplacedBody, enhance, getUniversal, getUniversalProp, keepBody } from "./utils";
+import { cancelReplacedBody, enhance, getUniversal, getUniversalProp, keepBody, withMutableHeaders } from "./utils";
 
 type ResponseFunction = (response: Response) => Awaitable<Response | undefined>;
 /** What a step hands to what runs it: an answer, a response function, a context, or nothing */
@@ -49,6 +49,7 @@ export function newListState(): ListState {
 
 async function applyAll(pending: ResponseFunction[], response: Response) {
   for (const responseFunction of pending) {
+    response = withMutableHeaders(response);
     const replacement = await responseFunction(response);
     if (replacement) {
       cancelReplacedBody(response, replacement);
