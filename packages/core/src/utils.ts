@@ -66,7 +66,7 @@ export function cancelReplacedBody(replaced: Response, replacement: Response | n
 
 /**
  * A Response whose headers a response function may change: a copy of one with immutable headers, as
- * `Response.redirect()` and `fetch()` return, else the Response itself
+ * `Response.redirect()` and `fetch()` return everywhere except on Bun, else the Response itself
  */
 export function withMutableHeaders(response: Response): Response {
   // A status under 200, as `Response.error()`'s 0, can't be copied
