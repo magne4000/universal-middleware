@@ -170,7 +170,13 @@ export function keepBody(request: Request) {
   const type = () => request.headers.get("content-type") ?? keptType;
   let kept: Promise<ArrayBuffer> | undefined;
   const bytes = () => {
-    kept ??= read();
+    if (!kept) {
+      kept = read();
+      // A body streamed before, or an aborted upload: `body`, `bodyUsed` and `clone()` are the request's own again
+      kept.catch(() => {
+        kept = undefined;
+      });
+    }
     return kept;
   };
   // Each reader gets its own copy, as with a body read natively: changing or transferring it changes no other read

@@ -316,6 +316,21 @@ describe("keepBody()", () => {
     expect(await request.text()).toBe("hello");
   });
 
+  test("a middleware that streams `request.body` leaves it read for the handler", async () => {
+    const seen: unknown[] = [];
+    await pipe(
+      async (r: Request) => {
+        await new Response(r.body).text();
+      },
+      async (r: Request) => {
+        seen.push(await r.text().catch((error) => error.constructor), r.bodyUsed);
+        expect(() => r.clone()).toThrow(TypeError);
+        return new Response("ok");
+      },
+    )(requestWith("POST", streamed()), {}, runtime);
+    expect(seen).toEqual([TypeError, true]);
+  });
+
   test("a body method can still be wrapped once the body is kept", async () => {
     const request = requestWith("POST", "hello");
     keepBody(request);
