@@ -153,7 +153,7 @@ describe("pipe(), the request a middleware gets", () => {
     expect(seen[1]).toBe(request);
   });
 
-  test.each(["GET", "HEAD", "POST"])("%s without a body: is left as it is", async (method) => {
+  test.each(["GET", "HEAD"])("%s: is left as it is", async (method) => {
     const request = new Request("http://localhost/", { method });
     await pipe(() => undefined)(request, {}, runtime);
     expect(Object.getOwnPropertyNames(request)).toEqual([]);

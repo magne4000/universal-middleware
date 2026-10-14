@@ -127,7 +127,9 @@ export function keptBody(request: Request): Promise<ArrayBuffer> | undefined {
  * through a method, such as one a handler streams from `request.body`, is never buffered.
  */
 export function keepBody(request: Request) {
-  if (!request.body || keptRequests.has(request) || !Object.isExtensible(request)) return;
+  // By method, not `request.body`: on `@hono/node-server`, reading `body` builds the full Request
+  if (request.method === "GET" || request.method === "HEAD") return;
+  if (keptRequests.has(request) || !Object.isExtensible(request)) return;
   keptRequests.add(request);
   const proto = Object.getPrototypeOf(request);
   const read = request.arrayBuffer.bind(request);
