@@ -55,6 +55,25 @@ it.each(registrations)(
   },
 );
 
+it.each(registrations)(
+  "%s: a response function changes the headers after setting one with Hono's c.header()",
+  async (_, register) => {
+    const app = new Hono();
+    register(app, [
+      (_request, _context, runtime) => (response: Response) => {
+        if (runtime.adapter === "hono") runtime.hono.header("x-native", "native");
+        response.headers.set("x-universal", "universal");
+        return response;
+      },
+    ]);
+    app.get("/", createHandler(() => () => new Response("hello"))());
+
+    const response = await app.fetch(new Request("http://localhost/"));
+    expect(response.headers.get("x-native")).toBe("native");
+    expect(response.headers.get("x-universal")).toBe("universal");
+  },
+);
+
 describe.each(immutableResponses)("a route returning $name", ({ response: immutable, status, body }) => {
   const replacesWith = () => () => immutable();
 
