@@ -292,6 +292,23 @@ describe("keepBody()", () => {
     expect(new TextDecoder().decode(await other.keptBody(request))).toBe("hello");
   });
 
+  test("a body streamed without a method read isn't kept", async () => {
+    const request = requestWith("POST", streamed());
+    keepBody(request);
+    const body = request.body;
+    expect(request.body).toBe(body);
+    expect(await new Response(body).text()).toBe("hello");
+    expect(keptBody(request)).toBeUndefined();
+  });
+
+  test("keptBody() returns the bytes once a method read them", async () => {
+    const request = requestWith("POST", streamed());
+    keepBody(request);
+    expect(keptBody(request)).toBeUndefined();
+    await request.text();
+    expect(new TextDecoder().decode(await keptBody(request))).toBe("hello");
+  });
+
   // `bytes()` is missing from the DOM types
   const bytesOf = (r: Request) => (r as unknown as { bytes(): Promise<Uint8Array> }).bytes();
   const changes: [string, (request: Request) => Promise<unknown>][] = [
