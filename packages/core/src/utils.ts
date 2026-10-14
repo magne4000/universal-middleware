@@ -132,8 +132,9 @@ export function keepBody(request: Request) {
   const proto = Object.getPrototypeOf(request);
   const read = request.arrayBuffer.bind(request);
   const clone = request.clone.bind(request);
-  // Read before the body: Bun drops the type of a FormData body it built once the body is read
-  const type = request.headers.get("content-type") ?? "";
+  // Read when the body is read, as a middleware may set it; Bun drops the type of a FormData body it built once read
+  const typeBeforeRead = request.headers.get("content-type") ?? "";
+  const type = () => request.headers.get("content-type") ?? typeBeforeRead;
   let kept: Promise<ArrayBuffer> | undefined;
   const bytes = () => {
     if (!kept) {
@@ -157,8 +158,8 @@ export function keepBody(request: Request) {
     bytes: { value: async () => new Uint8Array(await bytes()) },
     text: { value: async () => new TextDecoder().decode(await bytes()) },
     json: { value: async () => JSON.parse(new TextDecoder().decode(await bytes())) },
-    blob: { value: async () => new Blob([await bytes()], { type }) },
-    formData: { value: async () => new Response(await bytes(), { headers: { "content-type": type } }).formData() },
+    blob: { value: async () => new Blob([await bytes()], { type: type() }) },
+    formData: { value: async () => new Response(await bytes(), { headers: { "content-type": type() } }).formData() },
     // Once kept, the stream and `bodyUsed` describe the kept bytes, not the request's own stream
     body: { get: () => (kept ? replay() : Reflect.get(proto, "body", request)) },
     bodyUsed: { get: () => (kept ? false : Reflect.get(proto, "bodyUsed", request)) },

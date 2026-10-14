@@ -159,6 +159,25 @@ describe("pipe(), the request a middleware gets", () => {
     expect(Object.getOwnPropertyNames(request)).toEqual([]);
   });
 
+  test("the handler's formData() and blob() use the content-type a middleware set", async () => {
+    const request = new Request("http://localhost/", {
+      method: "POST",
+      body: "a=1",
+      headers: { "content-type": "text/plain" },
+    });
+    const seen: unknown[] = [];
+    await pipe(
+      (r: Request) => {
+        r.headers.set("content-type", "application/x-www-form-urlencoded");
+      },
+      async (r: Request) => {
+        seen.push(Object.fromEntries(await r.formData()), (await r.blob()).type);
+        return new Response("ok");
+      },
+    )(request, {}, runtime);
+    expect(seen).toEqual([{ a: "1" }, "application/x-www-form-urlencoded"]);
+  });
+
   test("an always middleware after the answer reads the body the answering one read", async () => {
     const seen: unknown[] = [];
     const response = await pipe(
