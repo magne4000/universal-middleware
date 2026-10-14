@@ -210,6 +210,30 @@ describe("pipe(), the request a middleware gets", () => {
     expect(seen).toEqual([{ a: "1" }, "application/x-www-form-urlencoded"]);
   });
 
+  test.each(["application/x-www-form-urlencoded", "Text/Plain;charset=utf-8", undefined])(
+    "blob() has the type the request's own blob() has, with content-type %s",
+    async (type) => {
+      const request = () =>
+        new Request("http://localhost/", {
+          method: "POST",
+          body: bytes,
+          headers: type ? { "content-type": type } : {},
+        });
+      const types: string[] = [];
+      await pipe(
+        async (r: Request) => {
+          types.push((await r.blob()).type);
+        },
+        async (r: Request) => {
+          types.push((await r.blob()).type);
+          return new Response("ok");
+        },
+      )(request(), {}, runtime);
+      const own = (await request().blob()).type;
+      expect(types).toEqual([own, own]);
+    },
+  );
+
   test("an always middleware after the answer reads the body the answering one read", async () => {
     const seen: unknown[] = [];
     const response = await pipe(

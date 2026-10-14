@@ -155,6 +155,8 @@ export function keepBody(request: Request) {
       },
       { highWaterMark: 0 },
     );
+  // Bun's `new Blob()` rewrites some types (adds a charset to a URL-encoded one), `request.blob()` doesn't
+  const asResponse = async () => new Response(await bytes(), { headers: { "content-type": type() } });
   // A request without a body keeps its `null` body
   const replays = () => kept && Reflect.get(proto, "body", request) !== null;
   Object.defineProperties(request, {
@@ -162,8 +164,8 @@ export function keepBody(request: Request) {
     bytes: { value: async () => new Uint8Array(await bytes()) },
     text: { value: async () => new TextDecoder().decode(await bytes()) },
     json: { value: async () => JSON.parse(new TextDecoder().decode(await bytes())) },
-    blob: { value: async () => new Blob([await bytes()], { type: type() }) },
-    formData: { value: async () => new Response(await bytes(), { headers: { "content-type": type() } }).formData() },
+    blob: { value: async () => (await asResponse()).blob() },
+    formData: { value: async () => (await asResponse()).formData() },
     // Once kept, the stream and `bodyUsed` describe the kept bytes, not the request's own stream
     body: { get: () => (replays() ? replay() : Reflect.get(proto, "body", request)) },
     bodyUsed: { get: () => (kept ? false : Reflect.get(proto, "bodyUsed", request)) },
