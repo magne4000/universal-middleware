@@ -1,7 +1,8 @@
 import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
+import { changedHeaders, changesHeaders, immutableResponses, received } from "@universal-middleware/tests/utils";
 import { type AnyElysia, Elysia, sse, t } from "elysia";
 import { describe, expect, it } from "vitest";
-import { apply, createMiddleware } from "../src/index.js";
+import { apply, createHandler, createMiddleware } from "../src/index.js";
 
 // A response function gets, and sends, what Elysia would send for the route's value. A route that returned anything but
 // a Response answered 500.
@@ -104,6 +105,40 @@ describe("aot: true", () => {
     );
     expect(plain.setCookie).toEqual([expect.stringMatching(/^session=abc\.[^;]+; Path=\/$/)]);
     expect(marked).toEqual({ ...plain, marked: "yes" });
+  });
+});
+
+describe.each(immutableResponses)("a route returning $name", ({ response: immutable, status, body }) => {
+  const replacesWith = () => () => immutable();
+  const registrations: [string, (middlewares: UniversalMiddleware[]) => AnyElysia][] = [
+    [
+      "apply()",
+      (middlewares) => {
+        const app = new Elysia();
+        apply(app, middlewares);
+        return app;
+      },
+    ],
+    [
+      "createMiddleware()",
+      (middlewares) => middlewares.reduce((app, m) => app.use(createMiddleware(() => m)()), new Elysia() as AnyElysia),
+    ],
+  ];
+
+  describe.each(registrations)("registered with %s", (_, register) => {
+    it.each(["GET", "HEAD", "POST"])("%s: a response function changes its headers", async (method) => {
+      const app = register([changesHeaders]).all("/", createHandler(() => immutable)());
+
+      const response = await app.handle(new Request("http://localhost/", { method }));
+      expect(await received(response)).toEqual({ status, body: method === "HEAD" ? "" : body, ...changedHeaders });
+    });
+
+    it("a response function replaces the Response with it, the next one changes its headers", async () => {
+      const app = register([replacesWith, changesHeaders]).get("/", () => "replaced");
+
+      const response = await app.handle(new Request("http://localhost/"));
+      expect(await received(response)).toEqual({ status, body, ...changedHeaders });
+    });
   });
 });
 

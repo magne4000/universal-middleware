@@ -19,6 +19,7 @@ import {
   contextSymbol,
   getAdapterRuntime,
   universalSymbol,
+  withMutableHeaders,
 } from "@universal-middleware/core";
 
 // The response functions of a request, applied in registration order by the function that returned the first one
@@ -107,6 +108,7 @@ export function createPagesFunction<
         try {
           res = (await context.next()) as unknown as Response;
           for (const middleware of middlewares) {
+            res = withMutableHeaders(res);
             const actualRes = await middleware(res);
             cancelReplacedBody(res, actualRes);
             res = actualRes ?? res;
