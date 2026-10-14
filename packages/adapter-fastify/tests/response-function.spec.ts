@@ -2,7 +2,7 @@ import { Readable } from "node:stream";
 import type { RuntimeAdapter, UniversalMiddleware } from "@universal-middleware/core";
 import Fastify, { type FastifyInstance, type FastifyReply } from "fastify";
 import { afterEach, describe, expect, it } from "vitest";
-import { apply, createHandler, createMiddleware } from "../src/index.js";
+import { createHandler, createMiddleware } from "../src/index.js";
 
 // A response function gets what the route sent as a Response: whatever the route sent it with.
 
@@ -242,36 +242,27 @@ describe("the headers a response function set on the reply", () => {
     ],
   ];
 
-  const registrations: [string, (app: FastifyInstance, middleware: UniversalMiddleware) => PromiseLike<unknown>][] = [
-    ["createMiddleware()", (app, middleware) => app.register(createMiddleware(() => middleware)())],
-    ["apply()", (app, middleware) => apply(app, [middleware])],
-  ];
-
   describe.each(payloads)("%s", (_, payload) => {
-    describe.each(registrations)("%s", (_, register) => {
-      it.each(
-        behaviors.flatMap(([name, middleware, expected]) =>
-          ["GET", "HEAD", "POST"].map((method) => ({ name, middleware, expected, method })),
-        ),
-      )("$method: $name", async ({ middleware, expected, method }) => {
-        const instance = Fastify();
-        app = instance;
-        await register(instance, middleware);
-        instance.route({
-          method: ["GET", "HEAD", "POST"],
-          url: "/",
-          handler: (_request, reply) => {
-            reply.header("x-route", "route").header("set-cookie", "route=1");
-            return payload(reply);
-          },
-        });
-        const url = await instance.listen({ port: 0, host: "127.0.0.1" });
+    it.each(
+      behaviors.flatMap(([name, middleware, expected]) =>
+        ["GET", "HEAD", "POST"].map((method) => ({ name, middleware, expected, method })),
+      ),
+    )("$method: $name", async ({ middleware, expected, method }) => {
+      const url = await start(
+        (app) =>
+          app.route({
+            method: ["GET", "HEAD", "POST"],
+            url: "/",
+            handler: (_request, reply) => {
+              reply.header("x-route", "route").header("set-cookie", "route=1");
+              return payload(reply);
+            },
+          }),
+        middleware,
+      );
 
-        const res = await fetch(url, { method, redirect: "manual" });
-        expect(Object.fromEntries(Object.keys(expected).map((name) => [name, res.headers.get(name)]))).toEqual(
-          expected,
-        );
-      });
+      const res = await fetch(url, { method, redirect: "manual" });
+      expect(Object.fromEntries(Object.keys(expected).map((name) => [name, res.headers.get(name)]))).toEqual(expected);
     });
   });
 });
