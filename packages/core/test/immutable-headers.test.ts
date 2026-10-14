@@ -4,8 +4,8 @@ import { describe, expect, test } from "vitest";
 import { enhance, type RuntimeAdapter, withMutableHeaders } from "../src/index";
 import { pipe } from "../src/pipe";
 
-// `Response.redirect()` and `fetch()` give a Response with immutable headers: a response function that changes them
-// threw `TypeError: immutable`.
+// Except on Bun, `Response.redirect()` and `fetch()` give a Response with immutable headers: a response function
+// that changes them threw a `TypeError`.
 
 const request = new Request("http://localhost/");
 const runtime: RuntimeAdapter = { runtime: "other", adapter: "other", params: undefined };
@@ -43,7 +43,7 @@ describe("withMutableHeaders", () => {
     expect(withMutableHeaders(response)).toBe(response);
   });
 
-  test("copies a fetch() response with its status, status text, cookies, streamed body, url and type", async () => {
+  test("keeps a fetch() response's status, status text, cookies, streamed body, url and type", async () => {
     const server = createServer((req, res) => {
       if (req.url === "/start") {
         res.writeHead(302, { location: "/final" }).end();
@@ -62,21 +62,20 @@ describe("withMutableHeaders", () => {
     await promise;
     try {
       const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+      // Runtimes differ: Bun's fetch() gives mutable headers and type "default", Deno's replaces "Made" with "Created"
       const fetched = await fetch(`${origin}/start`);
-      expect(() => fetched.headers.set("x-changed", "yes")).toThrow(TypeError);
-
       const copy = withMutableHeaders(fetched);
       copy.headers.set("x-changed", "yes");
 
       expect(copy.status).toBe(201);
-      expect(copy.statusText).toBe("Made");
+      expect(copy.statusText).toBe(fetched.statusText);
       expect(copy.headers.getSetCookie()).toEqual(["a=1", "b=2"]);
       expect(copy.headers.get("x-kept")).toBe("yes");
       expect(await copy.text()).toBe("first second");
       expect({ url: copy.url, redirected: copy.redirected, type: copy.type }).toEqual({
         url: `${origin}/final`,
         redirected: true,
-        type: "basic",
+        type: fetched.type,
       });
     } finally {
       server.closeAllConnections();
