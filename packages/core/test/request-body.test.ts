@@ -159,6 +159,24 @@ describe("pipe(), the request a middleware gets", () => {
     expect(Object.getOwnPropertyNames(request)).toEqual([]);
   });
 
+  test.each(["GET", "POST"])("%s: `request.body` isn't read until something reads the body", async (method) => {
+    const request = new Request("http://localhost/", { method, body: method === "POST" ? "hello" : null });
+    let reads = 0;
+    // On `@hono/node-server`, reading `body` builds the full Request
+    Object.defineProperty(request, "body", {
+      configurable: true,
+      get() {
+        reads++;
+        return null;
+      },
+    });
+    await pipe(
+      () => undefined,
+      () => new Response("ok"),
+    )(request, {}, runtime);
+    expect(reads).toBe(0);
+  });
+
   test("the handler's formData() and blob() use the content-type a middleware set", async () => {
     const request = new Request("http://localhost/", {
       method: "POST",
