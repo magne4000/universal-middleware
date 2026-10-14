@@ -281,4 +281,29 @@ describe("the headers a response function set on the reply", () => {
 
     expect((await fetch(url)).headers.getSetCookie()).toEqual(["native=1"]);
   });
+
+  const refreshesSession: UniversalMiddleware = (_request, _context, runtime) => (response) => {
+    replyOf(runtime).header("set-cookie", "session=refreshed");
+    return response;
+  };
+  const routeResponse = () => new Response("text", { headers: { "set-cookie": "session=old" } });
+
+  describe.each([
+    [
+      "a route",
+      (app: FastifyInstance) => app.route({ method: ["GET", "HEAD", "POST"], url: "/", handler: routeResponse }),
+    ],
+    [
+      "createHandler()",
+      (app: FastifyInstance) =>
+        app.route({ method: ["GET", "HEAD", "POST"], url: "/", handler: createHandler(() => routeResponse)() }),
+    ],
+  ])("after a cookie %s returned in a Response", (_, setup) => {
+    it.each(["GET", "HEAD", "POST"])("%s: sends its cookie last", async (method) => {
+      const url = await start(setup, refreshesSession);
+
+      const res = await fetch(url, { method });
+      expect(res.headers.getSetCookie()).toEqual(["session=old", "session=refreshed"]);
+    });
+  });
 });

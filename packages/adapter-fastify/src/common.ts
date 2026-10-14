@@ -243,10 +243,10 @@ async function runResponseFunctions(request: FastifyRequest, reply: FastifyReply
   }, Promise.resolve(response));
 
   const r = newResponse ?? response;
-  // Cookies a response function appended to the ones `response` took
-  const addedCookies = takenCookies ? [reply.getHeader("set-cookie") ?? []].flat().slice(takenCookies) : [];
+  // Cookies a response function appended to the ones `response` took: they follow `r`'s
+  const addedCookies = [reply.getHeader("set-cookie") ?? []].flat().slice(takenCookies);
   // `r`'s headers replace the ones `response` took, also for a later hook's error response
-  for (const name of taken) reply.removeHeader(name);
+  for (const name of [...taken, "set-cookie"]) reply.removeHeader(name);
   for (const [name, value] of r.headers) reply.header(name, value);
   for (const cookie of addedCookies) reply.header("set-cookie", String(cookie));
   reply.code(r.status);
