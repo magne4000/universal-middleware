@@ -173,11 +173,13 @@ export function keepBody(request: Request) {
     kept ??= read();
     return kept;
   };
+  // Each reader gets its own copy, as with a body read natively: changing or transferring it changes no other read
+  const copy = async () => (await bytes()).slice(0);
   const replay = () =>
     new ReadableStream<Uint8Array>(
       {
         async pull(controller) {
-          controller.enqueue(new Uint8Array(await bytes()));
+          controller.enqueue(new Uint8Array(await copy()));
           controller.close();
         },
       },
@@ -189,9 +191,9 @@ export function keepBody(request: Request) {
   const replays = () => kept && Reflect.get(proto, "body", request) !== null;
   // Configurable, so that instrumentation can still wrap them
   Object.defineProperties(request, {
-    [keepBodySymbol]: { configurable: true, value: () => kept },
-    arrayBuffer: { configurable: true, value: bytes },
-    bytes: { configurable: true, value: async () => new Uint8Array(await bytes()) },
+    [keepBodySymbol]: { configurable: true, value: () => kept && copy() },
+    arrayBuffer: { configurable: true, value: copy },
+    bytes: { configurable: true, value: async () => new Uint8Array(await copy()) },
     text: { configurable: true, value: async () => new TextDecoder().decode(await bytes()) },
     json: { configurable: true, value: async () => JSON.parse(new TextDecoder().decode(await bytes())) },
     blob: { configurable: true, value: async () => (await asResponse()).blob() },

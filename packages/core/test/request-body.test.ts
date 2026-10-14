@@ -3,6 +3,7 @@ import {
   enhance,
   type HttpMethod,
   keepBody,
+  keptBody,
   pipe,
   pipeRoute,
   type RuntimeAdapter,
@@ -285,6 +286,34 @@ describe("keepBody()", () => {
     const seen = [await request.text(), await request.text()];
     expect(seen).toEqual(["hello", "hello"]);
     expect(new TextDecoder().decode(await other.keptBody(request))).toBe("hello");
+  });
+
+  // `bytes()` is missing from the DOM types
+  const bytesOf = (r: Request) => (r as unknown as { bytes(): Promise<Uint8Array> }).bytes();
+  const changes: [string, (request: Request) => Promise<unknown>][] = [
+    ["changes the bytes() it got", async (r) => (await bytesOf(r)).fill(74)],
+    ["transfers the arrayBuffer() it got", async (r) => (await r.arrayBuffer()).transfer()],
+    [
+      "changes a chunk of a clone's stream",
+      async (r) => {
+        await r.text();
+        (await r.clone().body?.getReader().read())?.value?.fill(74);
+      },
+    ],
+    [
+      "changes the bytes keptBody() returned",
+      async (r) => {
+        await r.text();
+        new Uint8Array((await keptBody(r)) as ArrayBuffer).fill(74);
+      },
+    ],
+  ];
+
+  test.each(changes)("a reader that %s doesn't change what the next one reads", async (_, change) => {
+    const request = requestWith("POST", "hello");
+    keepBody(request);
+    await change(request);
+    expect(await request.text()).toBe("hello");
   });
 
   test("a body method can still be wrapped once the body is kept", async () => {
