@@ -1,5 +1,13 @@
 import type { OutgoingHttpHeaders } from "node:http";
-import { optionsToSymbols, orderSymbol, pathSymbol, unboundSymbol, universalSymbol, urlSymbol } from "./const";
+import {
+  keepBodySymbol,
+  optionsToSymbols,
+  orderSymbol,
+  pathSymbol,
+  unboundSymbol,
+  universalSymbol,
+  urlSymbol,
+} from "./const";
 import type {
   AnyFn,
   EnhancedMiddleware,
@@ -134,6 +142,77 @@ export function cloneRequest(request: Request, fields?: RequestInit & { url?: st
     signal: fields?.signal ?? request.signal,
     // @ts-expect-error RequestInit: duplex option is required when sending a body
     duplex: "half",
+  });
+}
+
+// On the request rather than in a map, so that every copy of this package sees what another one kept
+type KeptRequest = Request & { [keepBodySymbol]?: () => Promise<ArrayBuffer> | undefined };
+
+/** The bytes `keepBody()` kept for `request`, once something read its body through a method */
+export function keptBody(request: Request): Promise<ArrayBuffer> | undefined {
+  return (request as KeptRequest)[keepBodySymbol]?.();
+}
+
+/**
+ * Makes the body of `request` readable by every middleware and the handler: the first read through a body method
+ * keeps the bytes, and every read after it, `body` and `clone()` included, is served from them. A body nobody reads
+ * through a method, such as one a handler streams from `request.body`, is never buffered.
+ */
+export function keepBody(request: Request) {
+  // By method, not `request.body`: on `@hono/node-server`, reading `body` builds the full Request
+  if (request.method === "GET" || request.method === "HEAD") return;
+  if (keepBodySymbol in request || !Object.isExtensible(request)) return;
+  // `@universal-middleware/elysia@0.9.0` kept it already, with methods that can't be redefined
+  if (Object.getOwnPropertyDescriptor(request, "arrayBuffer")?.configurable === false) return;
+  const proto = Object.getPrototypeOf(request);
+  // srvx's Node request (srvx, h3) reads a `rawBody` set before it (Google Cloud Functions) in `text()` and `json()` only
+  // TODO: remove once https://github.com/h3js/srvx/pull/312 is released
+  if ((request as { runtime?: { node?: { req?: { rawBody?: unknown } } } }).runtime?.node?.req?.rawBody) return;
+  const read = request.arrayBuffer.bind(request);
+  const clone = request.clone.bind(request);
+  const keptType = request.headers.get("content-type") ?? "";
+  // The type at read time (a middleware may set it), else keepBody()'s: Bun drops a FormData body's type once read
+  const type = () => request.headers.get("content-type") ?? keptType;
+  let kept: Promise<ArrayBuffer> | undefined;
+  const bytes = () => {
+    if (!kept) {
+      kept = read();
+      // A body streamed before, or an aborted upload: `body`, `bodyUsed` and `clone()` are the request's own again
+      kept.catch(() => {
+        kept = undefined;
+      });
+    }
+    return kept;
+  };
+  // Each reader gets its own copy, as with a body read natively: changing or transferring it changes no other read
+  const copy = async () => (await bytes()).slice(0);
+  const replay = () =>
+    new ReadableStream<Uint8Array>(
+      {
+        async pull(controller) {
+          controller.enqueue(new Uint8Array(await copy()));
+          controller.close();
+        },
+      },
+      { highWaterMark: 0 },
+    );
+  // `request.blob()` normalizes the type and `new Blob()` doesn't (Bun's even adds a charset to a URL-encoded one)
+  const asResponse = async () => new Response(await bytes(), { headers: { "content-type": type() } });
+  // A request without a body keeps its `null` body
+  const replays = () => kept && Reflect.get(proto, "body", request) !== null;
+  // Configurable, so that instrumentation can still wrap them
+  Object.defineProperties(request, {
+    [keepBodySymbol]: { configurable: true, value: () => kept && copy() },
+    arrayBuffer: { configurable: true, value: copy },
+    bytes: { configurable: true, value: async () => new Uint8Array(await copy()) },
+    text: { configurable: true, value: async () => new TextDecoder().decode(await bytes()) },
+    json: { configurable: true, value: async () => JSON.parse(new TextDecoder().decode(await bytes())) },
+    blob: { configurable: true, value: async () => (await asResponse()).blob() },
+    formData: { configurable: true, value: async () => (await asResponse()).formData() },
+    // Once kept, the stream and `bodyUsed` describe the kept bytes, not the request's own stream
+    body: { configurable: true, get: () => (replays() ? replay() : Reflect.get(proto, "body", request)) },
+    bodyUsed: { configurable: true, get: () => (kept ? false : Reflect.get(proto, "bodyUsed", request)) },
+    clone: { configurable: true, value: () => (replays() ? cloneRequest(request, { body: replay() }) : clone()) },
   });
 }
 
