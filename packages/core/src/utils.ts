@@ -134,9 +134,9 @@ export function keepBody(request: Request) {
   const proto = Object.getPrototypeOf(request);
   const read = request.arrayBuffer.bind(request);
   const clone = request.clone.bind(request);
-  // Read when the body is read, as a middleware may set it; Bun drops the type of a FormData body it built once read
-  const typeBeforeRead = request.headers.get("content-type") ?? "";
-  const type = () => request.headers.get("content-type") ?? typeBeforeRead;
+  // The type when the body is read: a middleware may set it (Bun drops a FormData body's type once read)
+  const keptType = request.headers.get("content-type") ?? "";
+  const type = () => request.headers.get("content-type") ?? keptType;
   let kept: Promise<ArrayBuffer> | undefined;
   const bytes = () => {
     if (!kept) {
