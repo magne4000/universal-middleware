@@ -155,7 +155,7 @@ export function keepBody(request: Request) {
       },
       { highWaterMark: 0 },
     );
-  // Bun's `new Blob()` rewrites some types (adds a charset to a URL-encoded one), `request.blob()` doesn't
+  // `request.blob()` normalizes the type and `new Blob()` doesn't (Bun's even adds a charset to a URL-encoded one)
   const asResponse = async () => new Response(await bytes(), { headers: { "content-type": type() } });
   // A request without a body keeps its `null` body
   const replays = () => kept && Reflect.get(proto, "body", request) !== null;

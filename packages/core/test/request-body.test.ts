@@ -210,7 +210,7 @@ describe("pipe(), the request a middleware gets", () => {
     expect(seen).toEqual([{ a: "1" }, "application/x-www-form-urlencoded"]);
   });
 
-  test.each(["application/x-www-form-urlencoded", "Text/Plain;charset=utf-8", undefined])(
+  test.each(["application/x-www-form-urlencoded", "text/plain; charset=ISO-8859-1", undefined])(
     "blob() has the type the request's own blob() has, with content-type %s",
     async (type) => {
       const request = () =>
