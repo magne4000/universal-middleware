@@ -1,5 +1,19 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/elysia-v0.3.2...elysia-v0.3.3) (2024-12-09)
 
+## 0.9.1
+
+### Patch Changes
+
+- 57a1ca0: A streaming route (a generator, an async generator, `sse()`, a `ReadableStream`, or a `Response` sent with `transfer-encoding: chunked`) now sends the cookies its response functions add. Off Bun, Elysia streamed that Response again with only the headers of `set`, so the cookies were dropped; on Bun, the cookies the route set with Elysia's `cookie` replaced them. The Response is now sent as is. When the route sets no headers or status of its own, this also stops the route's stream once the client disconnects, on Bun and Node: it kept running.
+- f663733: A response function can change the headers of a Response that has immutable headers. A route that returned `Response.redirect()` or a `fetch()` response answered 500 `TypeError: immutable` as soon as a response function set or deleted a header, and so did a response function that changed the headers after an earlier one returned such a Response. A response function now gets a copy with the same status, headers and body, with `apply()`, with `pipe()` and with middlewares registered one by one. Express and Fastify already copied a route's Response: there, only the second case failed.
+  
+  `withMutableHeaders(response)` is exported for adapters: it returns that copy when the headers are immutable, else the Response itself, as it does for `Response.error()`.
+- b4dfd06: With `apply()` or `pipe()`, a middleware that reads the request body no longer leaves none for the middlewares and the handler after it.
+  `keepBody()` and `keptBody()` are exported.
+- Updated dependencies [f663733]
+- Updated dependencies [b4dfd06]
+  - @universal-middleware/core@0.7.2
+
 ## 0.9.0
 
 ### Minor Changes

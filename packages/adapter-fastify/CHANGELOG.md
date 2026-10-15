@@ -1,5 +1,18 @@
 ## [0.4.3](https://github.com/magne4000/universal-middleware/compare/fastify-v0.4.2...fastify-v0.4.3) (2024-12-09)
 
+## 0.7.1
+
+### Patch Changes
+
+- 05ae4d5: Under a response function, a cookie it sets on the reply (`reply.header()`, or `@fastify/cookie`'s `setCookie()` and `clearCookie()`) is sent after the cookies of the route's Response. A refreshed or cleared cookie was sent first, so the client kept the old one.
+- 708662a: Under a response function, the headers a route or a hook set on the reply are sent once. Each cookie was sent twice, and a header a response function deleted, or every header of a Response it replaced, was still sent.
+- f663733: A response function can change the headers of a Response that has immutable headers. A route that returned `Response.redirect()` or a `fetch()` response answered 500 `TypeError: immutable` as soon as a response function set or deleted a header, and so did a response function that changed the headers after an earlier one returned such a Response. A response function now gets a copy with the same status, headers and body, with `apply()`, with `pipe()` and with middlewares registered one by one. Express and Fastify already copied a route's Response: there, only the second case failed.
+  
+  `withMutableHeaders(response)` is exported for adapters: it returns that copy when the headers are immutable, else the Response itself, as it does for `Response.error()`.
+- Updated dependencies [f663733]
+- Updated dependencies [b4dfd06]
+  - @universal-middleware/core@0.7.2
+
 ## 0.7.0
 
 ### Minor Changes
