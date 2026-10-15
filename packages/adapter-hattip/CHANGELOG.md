@@ -1,5 +1,16 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/hattip-v0.3.2...hattip-v0.3.3) (2024-12-09)
 
+## 0.6.1
+
+### Patch Changes
+
+- f663733: A response function can change the headers of a Response that has immutable headers. A route that returned `Response.redirect()` or a `fetch()` response answered 500 `TypeError: immutable` as soon as a response function set or deleted a header, and so did a response function that changed the headers after an earlier one returned such a Response. A response function now gets a copy with the same status, headers and body, with `apply()`, with `pipe()` and with middlewares registered one by one. Express and Fastify already copied a route's Response: there, only the second case failed.
+  
+  `withMutableHeaders(response)` is exported for adapters: it returns that copy when the headers are immutable, else the Response itself, as it does for `Response.error()`.
+- Updated dependencies [f663733]
+- Updated dependencies [b4dfd06]
+  - @universal-middleware/core@0.7.2
+
 ## 0.6.0
 
 ### Minor Changes
