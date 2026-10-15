@@ -13,6 +13,8 @@ import {
   cloneRequest,
   contextSymbol,
   getAdapterRuntime,
+  keepBody,
+  keptBody,
   universalSymbol,
   withMutableHeaders,
 } from "@universal-middleware/core";
@@ -32,58 +34,22 @@ export type ElysiaMiddleware<In extends Universal.Context, Out extends Universal
   typeof initPlugin
 >;
 
-// Elysia parses the body of the routes that need it before any hook runs, consuming the request
-// stream. The plugin's `onRequest` hook (it runs before any `onParse`) makes the first body read read
-// the bytes once and keep them, and serves every read, Elysia's and the middlewares', from them. So
-// universal middlewares and handlers still get the exact bytes, whatever Elysia's parsing makes of
-// them. Requests nobody reads, such as the ones of a route that streams `request.body` itself, are
-// never buffered.
-const keptBodies = new WeakMap<Request, Promise<ArrayBuffer>>();
-const wrappedRequests = new WeakSet<Request>();
-
-function keepBody(request: Request) {
-  // Elysia runs the plugin's onRequest once per nesting level that registered the middleware.
-  if (wrappedRequests.has(request)) return;
-  wrappedRequests.add(request);
-  const read = request.arrayBuffer?.bind(request);
-  if (!read) return;
-  const bytes = () => {
-    const kept = keptBodies.get(request) ?? read();
-    keptBodies.set(request, kept);
-    return kept;
-  };
-  const readers = {
-    arrayBuffer: bytes,
-    bytes: async () => new Uint8Array(await bytes()),
-    text: async () => new TextDecoder().decode(await bytes()),
-    json: async () => JSON.parse(new TextDecoder().decode(await bytes())),
-    blob: async () => new Blob([await bytes()], { type: request.headers.get("content-type") ?? "" }),
-    formData: async () => new Response(await bytes(), { headers: request.headers }).formData(),
-  };
-  for (const [name, value] of Object.entries(readers)) Object.defineProperty(request, name, { value });
-}
-
 // Below this a body is copied eagerly: building the stream costs more than copying the bytes.
 const eagerLimit = 64 * 1024;
 
 async function requestOf(request: Request) {
   if (request.method === "GET" || request.method === "HEAD") return request.clone();
-  const kept = keptBodies.get(request);
-  if (kept && Number(request.headers.get("content-length")) <= eagerLimit) {
+  const kept = Number(request.headers.get("content-length")) <= eagerLimit ? keptBody(request) : undefined;
+  if (kept) {
     return cloneRequest(request, { body: await kept });
   }
-  // Costs nothing until the middleware reads the body: it then gets the kept bytes, or a copy of the
-  // stream when nothing read the body yet, so a route that streams it keeps it.
+  // Costs nothing until the middleware reads the body: it then gets a copy of the kept bytes, or of the stream when
+  // nothing read the body yet, so a route that streams it keeps it.
   let copy: ReadableStreamDefaultReader<Uint8Array> | undefined;
   return cloneRequest(request, {
     body: new ReadableStream(
       {
         async pull(controller) {
-          const bytes = copy ? undefined : keptBodies.get(request);
-          if (bytes) {
-            controller.enqueue(new Uint8Array(await bytes));
-            return controller.close();
-          }
           copy ??= request.clone().body?.getReader();
           const chunk = await copy?.read();
           if (chunk && !chunk.done) controller.enqueue(chunk.value);
@@ -245,6 +211,7 @@ async function runResponseFunctions(elysiaContext: ResponseFunctionsContext): Pr
   return currentResponse;
 }
 
+// Elysia parses the body of the routes that need it before any hook but `onRequest` runs, consuming the request stream
 function initPlugin<Context extends Universal.Context = Universal.Context>() {
   return new Elysia({ name: "universal-middleware-context" })
     .onRequest(({ request }) => keepBody(request))
