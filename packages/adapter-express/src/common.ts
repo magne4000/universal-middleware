@@ -2,7 +2,7 @@ import type { ServerResponse } from "node:http";
 import type { Get, RuntimeAdapter, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
 import { bindUniversal, contextSymbol, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
 import { BadRequestError } from "@universal-middleware/node";
-import { adaptLendingBody, handBodyBack } from "./body.js";
+import { adaptLendingBody, handBodyBack, PayloadTooLargeError } from "./body.js";
 import { pendingMiddlewaresSymbol } from "./const.js";
 import { createRequestAdapter, expressOrigin } from "./request.js";
 import { sendResponse, wrapResponse } from "./response.js";
@@ -60,12 +60,12 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
           handBodyBack(req);
           next(error);
         } else {
-          // A malformed request is the client's error, not one to log
-          const badRequest = error instanceof BadRequestError;
-          if (!badRequest) console.error(error);
+          // A malformed or oversized request is the client's error, not one to log
+          const clientError = error instanceof BadRequestError || error instanceof PayloadTooLargeError;
+          if (!clientError) console.error(error);
 
           if (!res.headersSent) {
-            res.statusCode = badRequest ? error.status : 500;
+            res.statusCode = clientError ? error.status : 500;
           }
 
           if (!res.writableEnded) {
@@ -135,12 +135,12 @@ export function createMiddleware<
           handBodyBack(req);
           next(error);
         } else {
-          // A malformed request is the client's error, not one to log
-          const badRequest = error instanceof BadRequestError;
-          if (!badRequest) console.error(error);
+          // A malformed or oversized request is the client's error, not one to log
+          const clientError = error instanceof BadRequestError || error instanceof PayloadTooLargeError;
+          if (!clientError) console.error(error);
 
           if (!res.headersSent) {
-            res.statusCode = badRequest ? error.status : 500;
+            res.statusCode = clientError ? error.status : 500;
           }
 
           if (!res.writableEnded) {

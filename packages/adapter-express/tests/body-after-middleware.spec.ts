@@ -1,11 +1,11 @@
-import type { Server, ServerResponse } from "node:http";
+import { createServer, type Server, type ServerResponse } from "node:http";
 import { type AddressInfo, connect } from "node:net";
 import { Readable } from "node:stream";
 import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
 import express from "express";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { adaptLendingBody } from "../src/body.js";
-import { apply, connectToWeb, createHandler } from "../src/index.js";
+import { apply, connectToWeb, createHandler, createMiddleware } from "../src/index.js";
 import type { DecoratedRequest } from "../src/types.js";
 
 // A universal middleware that reads the body and passes the request on must not
@@ -16,6 +16,7 @@ let server: Server | undefined;
 afterEach(() => {
   server?.close();
   server = undefined;
+  vi.restoreAllMocks();
 });
 
 const readsBody: UniversalMiddleware = async (request) => {
@@ -251,6 +252,18 @@ describe("body read by a universal middleware", () => {
     const url = await start((app) => app.post("/big", express.json({ limit: "10mb" }), (_req, res) => res.send("ok")));
     const res = await postJson(`${url}/big`, { big: "x".repeat(2 * 1024 * 1024) });
     expect(res.status).toBe(413);
+  });
+
+  it("answers 413, without logging, when the middleware has no next", async () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const s = createServer(createMiddleware(() => readsBody)());
+    server = s;
+    await new Promise<void>((resolve) => s.listen(0, resolve));
+    const res = await postJson(`http://localhost:${(s.address() as AddressInfo).port}/`, {
+      big: "x".repeat(2 * 1024 * 1024),
+    });
+    expect(res.status).toBe(413);
+    expect(consoleError).not.toHaveBeenCalled();
   });
 
   it("hands a route that reads the stream every byte up to 1 MiB, and an error past it", async () => {
