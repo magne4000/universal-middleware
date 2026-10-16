@@ -49,7 +49,8 @@ export function createHandler<T extends unknown[], InContext extends Universal.C
         );
 
         if (!response) {
-          handBodyBack(req);
+          const error = handBodyBack(req);
+          if (error) throw error;
           nextOr404(res, next);
         } else {
           await sendResponse(response, res);
@@ -100,7 +101,10 @@ export function createMiddleware<
         const response = await this[universalSymbol](request, getContext(req), getRuntime(req, res));
 
         // A returned `Response` ends the chain and may still be reading the body
-        if (!(response instanceof Response)) handBodyBack(req);
+        if (!(response instanceof Response)) {
+          const error = handBodyBack(req);
+          if (error) throw error;
+        }
 
         if (!response) {
           return nextOr404(res, next);

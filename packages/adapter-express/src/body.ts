@@ -42,9 +42,12 @@ export function adaptLendingBody(
   }
 }
 
-/** Make the bytes a middleware read readable again on the Node request. */
-export function handBodyBack(req: LentRequest): void {
-  req[lentSymbol]?.handBack();
+/**
+ * Make the bytes a middleware read readable again on the Node request. Past `MAX_LENT_BYTES` they were dropped: it
+ * returns the error the next Express handler gets then.
+ */
+export function handBodyBack(req: LentRequest): Error | undefined {
+  return req[lentSymbol]?.handBack();
 }
 
 // `complete` is only set by Node's HTTP parser, not on `connectToWeb`'s synthetic request
@@ -105,7 +108,7 @@ class LentBody implements UnderlyingDefaultSource<Uint8Array> {
     }
   }
 
-  handBack() {
+  handBack(): Error | undefined {
     if (!this.touched && !this.cancelled) return;
     const { req } = this;
     req[lentSymbol] = undefined;
@@ -118,5 +121,9 @@ class LentBody implements UnderlyingDefaultSource<Uint8Array> {
     if (this.held.length > 0) req.unshift(Buffer.concat(this.held));
     // A read pending or started later would never settle: no bytes feed it anymore
     this.controller.error(new Error("The request body must be read before the middleware returns."));
+    if (this.heldBytes > MAX_LENT_BYTES) {
+      const message = "A universal middleware read over 1 MiB of the request body: a body this big isn't handed back";
+      return Object.assign(new Error(message), { status: 413 });
+    }
   }
 }
