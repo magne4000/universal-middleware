@@ -127,7 +127,7 @@
     "@universal-middleware/srvx": "workspace:^",
     "@universal-middleware/vercel": "workspace:^",
     "@universal-middleware/webroute": "workspace:^",
-    "oxc-transform": "^0.153.0",
+    "oxc-transform": "^0.154.0",
     "package-up": "^5.0.0",
     "unplugin": "^2.3.11"
   },
@@ -138,7 +138,7 @@
     "@swc/core": "catalog:",
     "@universal-middleware/tsdown-config": "workspace:*",
     "esbuild": "^0.28.2",
-    "rollup": "^4.64.3",
+    "rollup": "^4.64.7",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
