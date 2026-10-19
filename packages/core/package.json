@@ -33,7 +33,7 @@
     "fastify": "catalog:",
     "h3": "catalog:",
     "hono": "catalog:",
-    "rou3": "^0.12.1",
+    "rou3": "^1.0.0",
     "srvx": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",

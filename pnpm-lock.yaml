@@ -761,8 +761,8 @@ importers:
         specifier: 'catalog:'
         version: 4.13.13
       rou3:
-        specifier: ^0.12.1
-        version: 0.12.1
+        specifier: ^1.0.0
+        version: 1.0.0
       srvx:
         specifier: 'catalog:'
         version: 1.0.5
@@ -5557,10 +5557,6 @@ packages:
     resolution: {integrity: sha512-mnPSQINChN7PpT+a5CI0/+87hm/+6zxSKBK1XonrzQ0zFnglaTjhkTP2Br4yNCTcLHUEvrAfZffH57jGf+8xBQ==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
-
-  rou3@0.12.1:
-    resolution: {integrity: sha512-uv7TWJWh0lB6TyXnK1xDn9+OyzOb6Foeh+9bh+wV5hJ0v0ASpMiaGdatrlc9MPc4EBGWBMo8j0lkNxkNBel5Sg==}
-    engines: {node: '>=20.19.0'}
 
   rou3@1.0.0:
     resolution: {integrity: sha512-ySeaQkSrua+ut9g+65I7FHqOFBaY8tV0FmccXItoq0q21se32Q3u4YiW7/RqXSosWgYJaaKwRHXy3BST9PeCNQ==}
@@ -10936,8 +10932,6 @@ snapshots:
       '@rollup/rollup-win32-x64-gnu': 4.64.9
       '@rollup/rollup-win32-x64-msvc': 4.64.9
       fsevents: 2.3.3
-
-  rou3@0.12.1: {}
 
   rou3@1.0.0: {}
 
