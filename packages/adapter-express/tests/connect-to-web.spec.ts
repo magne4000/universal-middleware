@@ -339,6 +339,39 @@ describe("connectToWeb — real-Node path uses the provided req/res", () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true, echo: { from: "realNode" } });
   });
+
+  it("fires the handler's request.signal when the incoming request is aborted", async () => {
+    const reached = Promise.withResolvers<void>();
+    const aborted = Promise.withResolvers<void>();
+    const app = express();
+    app.all(
+      "/t",
+      createHandler(
+        (): UniversalHandler => async (request) => {
+          request.signal.addEventListener("abort", () => aborted.resolve());
+          reached.resolve();
+          await aborted.promise;
+          return new Response("done");
+        },
+      )(),
+    );
+
+    const realReq = Object.assign(Readable.from([]), {
+      url: "/t",
+      method: "GET",
+      headers: { host: "localhost" },
+      socket: { encrypted: false },
+    }) as unknown as IncomingMessage;
+    const runtime = { req: realReq } as unknown as RuntimeAdapterTarget<unknown>;
+    const ctrl = new AbortController();
+    const pending = Promise.resolve(
+      connectToWeb(app)(new Request("http://localhost/t", { signal: ctrl.signal }), undefined, runtime),
+    ).catch(() => undefined);
+    await reached.promise;
+    ctrl.abort();
+    await aborted.promise;
+    await pending;
+  });
 });
 
 describe("createIncomingMessage", () => {

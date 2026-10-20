@@ -65,18 +65,16 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
     if (callerContext) (req as any)[contextSymbol] = callerContext;
     const { res, onReadable } = createServerResponse(req);
 
-    // A synthetic req/res isn't wired to the client: the incoming abort is bridged while the response is in flight
-    const stopForwardingAbort = realReq ? undefined : forwardAbort(request.signal, req, res);
+    // `res` is synthetic even with a real `req`, so the incoming abort is bridged while the response is in flight
+    const stopForwardingAbort = forwardAbort(request.signal, req, res);
 
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: ignored
     return new Promise<Response | undefined>(async (resolve, reject) => {
       onReadable(({ readable, headers, statusCode, statusMessage }) => {
         const hasBody = !statusCodesWithoutBody.includes(statusCode);
         // Until a streaming body has flushed
-        if (stopForwardingAbort) {
-          if (hasBody) readable.once("close", stopForwardingAbort);
-          else stopForwardingAbort();
-        }
+        if (hasBody) readable.once("close", stopForwardingAbort);
+        else stopForwardingAbort();
         resolve(
           new Response(hasBody ? toWebStream(readable) : null, {
             status: statusCode,
@@ -87,7 +85,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
       });
 
       const next = (error?: unknown) => {
-        stopForwardingAbort?.();
+        stopForwardingAbort();
         if (error) {
           reject(error instanceof Error ? error : new Error(String(error)));
         } else {
@@ -100,7 +98,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
 
         if (handled === false) {
           res.destroy();
-          stopForwardingAbort?.();
+          stopForwardingAbort();
           resolve(undefined);
         }
       } catch (e) {
@@ -213,7 +211,7 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
 }
 
 /**
- * Bridges a Web `AbortSignal` to a synthetic `req`/`res`, and returns a function that stops it.
+ * Bridges a Web `AbortSignal` to `connectToWeb`'s `req`/`res`, and returns a function that stops it.
  * The request adapter aborts `request.signal` on `res`'s "close", which a socketless `ServerResponse` never emits.
  */
 function forwardAbort(signal: AbortSignal, req: IncomingMessage, res: ServerResponse): () => void {
