@@ -311,6 +311,30 @@ describe("connectToWeb (synthetic path) — abort propagation", () => {
     ctrl.abort();
     await aborted.promise;
   });
+
+  it("leaves the handler's signal unaborted once the response completed", async () => {
+    let signal: AbortSignal | undefined;
+    const closed = Promise.withResolvers<void>();
+    const app = express();
+    app.use((_req, res, next) => {
+      res.once("close", () => closed.resolve());
+      next();
+    });
+    app.all(
+      "/t",
+      createHandler(
+        (): UniversalHandler => async (request) => {
+          signal = request.signal;
+          return new Response("done");
+        },
+      )(),
+    );
+
+    const res = defined(await connectToWeb(app)(new Request("http://localhost/t")));
+    expect(await res.text()).toBe("done");
+    await closed.promise;
+    expect(signal?.aborted).toBe(false);
+  });
 });
 
 describe("connectToWeb — real-Node path uses the provided req/res", () => {

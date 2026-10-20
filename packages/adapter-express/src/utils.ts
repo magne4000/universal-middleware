@@ -194,6 +194,8 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
   res.write = passThrough.write.bind(passThrough);
   // biome-ignore lint/suspicious/noExplicitAny: `end`'s overloads differ from the PassThrough's
   res.end = passThrough.end.bind(passThrough) as any;
+  // The request adapter aborts `request.signal` on a "close" before the response ended
+  Object.defineProperty(res, "writableEnded", { get: () => passThrough.writableEnded });
 
   res.writeHead = function writeHead(
     statusCode: number,
