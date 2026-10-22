@@ -5,6 +5,12 @@ import type { DecoratedRequest } from "./types.js";
 // A bigger body isn't handed back, so that a streamed upload isn't held in memory. Body parsers refuse it by default.
 const MAX_LENT_BYTES = 1024 * 1024;
 
+export class PayloadTooLargeError extends Error {
+  override name = "PayloadTooLargeError";
+  readonly status = 413;
+  readonly statusCode = 413;
+}
+
 // On the request rather than in a map: a request whose body nobody reads costs nothing
 const lentSymbol = Symbol("universal-middleware.lentBody");
 type LentRequest = DecoratedRequest & { [lentSymbol]?: LentBody };
@@ -42,9 +48,12 @@ export function adaptLendingBody(
   }
 }
 
-/** Make the bytes a middleware read readable again on the Node request. */
-export function handBodyBack(req: LentRequest): void {
-  req[lentSymbol]?.handBack();
+/**
+ * Make the bytes a middleware read readable again on the Node request. Past `MAX_LENT_BYTES` they were dropped: it
+ * returns the error the next Express handler gets then.
+ */
+export function handBodyBack(req: LentRequest): PayloadTooLargeError | undefined {
+  return req[lentSymbol]?.handBack();
 }
 
 // `complete` is only set by Node's HTTP parser, not on `connectToWeb`'s synthetic request
@@ -105,7 +114,7 @@ class LentBody implements UnderlyingDefaultSource<Uint8Array> {
     }
   }
 
-  handBack() {
+  handBack(): PayloadTooLargeError | undefined {
     if (!this.touched && !this.cancelled) return;
     const { req } = this;
     req[lentSymbol] = undefined;
@@ -118,5 +127,10 @@ class LentBody implements UnderlyingDefaultSource<Uint8Array> {
     if (this.held.length > 0) req.unshift(Buffer.concat(this.held));
     // A read pending or started later would never settle: no bytes feed it anymore
     this.controller.error(new Error("The request body must be read before the middleware returns."));
+    if (this.heldBytes > MAX_LENT_BYTES) {
+      return new PayloadTooLargeError(
+        "A universal middleware read over 1 MiB of the request body: a body this big isn't handed back",
+      );
+    }
   }
 }
