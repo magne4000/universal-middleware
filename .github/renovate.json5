@@ -36,6 +36,11 @@
     {
       "matchDepTypes": ["peerDependencies"],
       "enabled": false
+    },
+    {
+      // TypeScript 7.1 is pinned to its beta: move on to its RC and release, not to the nightlies
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "!/-dev\\./"
     }
   ]
 }

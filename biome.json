@@ -17,6 +17,16 @@
       "lineWidth": 120
     }
   },
+  "markdown": {
+    "formatter": {
+      "enabled": false
+    }
+  },
+  "yaml": {
+    "formatter": {
+      "enabled": false
+    }
+  },
   "vcs": {
     "enabled": true,
     "clientKind": "git",

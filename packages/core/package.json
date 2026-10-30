@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/core",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "type": "module",
   "description": "Universal middlewares core utilities",
   "files": [
@@ -33,7 +33,7 @@
     "fastify": "catalog:",
     "h3": "catalog:",
     "hono": "catalog:",
-    "rou3": "^0.12.1",
+    "rou3": "^1.0.0",
     "srvx": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",

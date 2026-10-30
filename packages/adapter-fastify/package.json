@@ -1,6 +1,6 @@
 {
   "name": "@universal-middleware/fastify",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "type": "module",
   "description": "fastify adapter for universal middlewares",
   "files": [
@@ -28,12 +28,12 @@
     "@universal-middleware/node": "workspace:^"
   },
   "devDependencies": {
-    "@fastify/helmet": "^13.1.2",
+    "@fastify/helmet": "^13.2.0",
     "@types/node": "catalog:",
     "@universal-middleware/tests": "workspace:*",
     "@universal-middleware/tsdown-config": "workspace:*",
     "fastify": "catalog:",
-    "fastify-plugin": "^6.0.0",
+    "fastify-plugin": "^6.0.1",
     "fastify-raw-body": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
