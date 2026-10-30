@@ -5,7 +5,7 @@ import type {
   UniversalHandler,
   UniversalMiddleware,
 } from "@universal-middleware/core";
-import { bindUniversal, getAdapterRuntime, universalSymbol } from "@universal-middleware/core";
+import { bindUniversal, getAdapterRuntime, keepBody, universalSymbol } from "@universal-middleware/core";
 import type { DataResult, MiddlewareFn } from "@webroute/middleware";
 import type { RequestCtx } from "@webroute/route";
 
@@ -91,6 +91,7 @@ export function createMiddleware<
         ctx: RequestCtx<unknown, unknown, unknown, unknown, InContext>,
       ) {
         const context = initContext<InContext>(ctx);
+        keepBody(request);
         return this[universalSymbol](request, context, await getRuntime(ctx));
       },
     );

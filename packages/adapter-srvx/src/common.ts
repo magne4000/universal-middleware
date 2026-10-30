@@ -10,6 +10,7 @@ import {
   bindUniversal,
   cancelReplacedBody,
   getAdapterRuntime,
+  keepBody,
   universalSymbol,
   withMutableHeaders,
 } from "@universal-middleware/core";
@@ -62,6 +63,7 @@ export function createMiddleware<
 
     return bindUniversal(middleware, async function universalMiddlewareSrvx(request, next) {
       const context = initContext<InContext>(request);
+      keepBody(request);
 
       const response = await this[universalSymbol](request, context, getRuntime(request));
 

@@ -11,6 +11,7 @@ import {
   cancelReplacedBody,
   contextSymbol,
   getAdapterRuntime,
+  keepBody,
   universalSymbol,
   withMutableHeaders,
 } from "@universal-middleware/core";
@@ -86,6 +87,7 @@ export function createMiddleware<
 
     return bindUniversal(middleware, async function universalMiddlewareHono(honoContext, next) {
       const context = initContext<InContext>(honoContext);
+      keepBody(honoContext.req.raw);
 
       const response = await this[universalSymbol](honoContext.req.raw, context, getRuntime(honoContext));
 

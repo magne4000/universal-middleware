@@ -5,9 +5,9 @@ import { bodyReaders } from "@universal-middleware/tests/utils";
 import { postWithRawBody } from "@universal-middleware/tests/utils-node";
 import { defineHandler, H3, toNodeHandler } from "h3";
 import { expect, it } from "vitest";
-import { apply } from "../src/index.js";
+import { apply, createMiddleware } from "../src/index.js";
 
-// A route still reads the body that the middlewares registered by apply() read
+// A route still reads the body that the middlewares registered by apply(), or with app.use(), read
 
 const methods = ["POST", "PUT", "PATCH", "DELETE"];
 
@@ -28,6 +28,20 @@ it.each(methods)("%s: the route reads the body the middlewares read", async (met
   const response = await app.fetch(new Request("http://localhost/", { method, body: '{"a":1}' }));
   expect(await response.text()).toBe('{"a":1}');
   expect(seen).toEqual(['{"a":1}', '{"a":1}']);
+});
+
+it.each(methods)("%s: the route reads the body a middleware registered with app.use() read", async (method) => {
+  const { middlewares, seen } = bodyReaders();
+  const app = new H3();
+  app.use(createMiddleware(() => middlewares[0])());
+  app.all(
+    "/",
+    defineHandler((event) => event.req.text()),
+  );
+
+  const response = await app.fetch(new Request("http://localhost/", { method, body: '{"a":1}' }));
+  expect(await response.text()).toBe('{"a":1}');
+  expect(seen).toEqual(['{"a":1}']);
 });
 
 // The Node server's request is not the runtime's own `Request`
