@@ -1,6 +1,8 @@
+import { randomBytes } from "node:crypto";
 import { Agent, request as httpRequest, type Server, type ServerResponse } from "node:http";
 import { type AddressInfo, connect } from "node:net";
-import { Readable } from "node:stream";
+import { PassThrough, Readable } from "node:stream";
+import { gzipSync } from "node:zlib";
 import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
 import express from "express";
 import { afterEach, describe, expect, it } from "vitest";
@@ -344,6 +346,9 @@ describe("a body of more than 1 MiB read by a universal middleware", () => {
       res.json(length);
     });
     app.post("/never", (_req, res) => res.send("ok"));
+    app.post("/pipes", (req, res) => {
+      req.pipe(new PassThrough().resume()).on("finish", () => res.json("finish"));
+    });
     // Reads as the issue's route does, answering with JSON on "end"
     app.post("/listens", (req, res) => {
       req.on("data", () => {});
@@ -360,6 +365,19 @@ describe("a body of more than 1 MiB read by a universal middleware", () => {
   it("fails express.raw() with a 413", async () => {
     const url = await start(routes, [readsAll]);
     expect((await post(`${url}/raw`, overCap)).status).toBe(413);
+  });
+
+  it("fails express.raw() with a 413 on a gzip body", async () => {
+    const url = await start(routes, [readsAll]);
+    // Random bytes don't compress: the gzip body stays over 1 MiB
+    const body = new Uint8Array(gzipSync(randomBytes(1024 * 1024)));
+    const res = await fetch(`${url}/raw`, {
+      method: "POST",
+      headers: { ...headers, "content-encoding": "gzip" },
+      body,
+      signal: AbortSignal.timeout(3000),
+    });
+    expect(res.status).toBe(413);
   });
 
   it("fails a route's `for await` over the request with a 413", async () => {
@@ -390,6 +408,11 @@ describe("a body of more than 1 MiB read by a universal middleware", () => {
     const res = await post(`${url}/listens`, overCap);
     expect(await res.json()).toBe("end");
     expect(observed).toEqual([]);
+  });
+
+  it("leaves a pipe to a stream without an error listener as it was", async () => {
+    const url = await start(routes, [readsAll]);
+    expect(await (await post(`${url}/pipes`, overCap)).json()).toBe("finish");
   });
 
   it("leaves a route that never reads the body answering as usual", async () => {

@@ -1,4 +1,5 @@
 import type { ServerResponse } from "node:http";
+import type { Writable } from "node:stream";
 import { requestSymbol } from "./const.js";
 import type { DecoratedRequest } from "./types.js";
 
@@ -56,15 +57,23 @@ function failNextRead(req: LentRequest, res: ServerResponse) {
   req.read = (size) => {
     delete (req as Partial<LentRequest>).read;
     // Node emits its own request errors only to a listener too: an "error" event with none throws
-    if (req.rawListeners("error").some((listener) => !earlier.has(listener))) {
+    const listening = req.rawListeners("error").some((listener) => !earlier.has(listener));
+    // A pipe doesn't pass on the source's errors, and adds an "error" listener of its own to each destination, which unpipes it
+    // biome-ignore lint/suspicious/noExplicitAny: Node's own list of the destinations `pipe()` writes to
+    const pipes: Writable[] = (req as any)._readableState?.pipes ?? [];
+    const failing = pipes.filter((dest) => dest.listenerCount("error") > 1);
+    if (listening || failing.length > 0) {
       // The reader's listeners go, so that none of them runs after the error
       for (const event of readerEvents) {
         for (const listener of req.rawListeners(event)) {
           if (!earlier.has(listener)) req.removeListener(event, listener as () => void);
         }
       }
-      const error = new Error(`The request body is larger than ${MAX_LENT_BYTES} bytes and was read by a middleware`);
-      req.emit("error", Object.assign(error, { status: 413, statusCode: 413, type: "entity.too.large" }));
+      const message = `The request body is larger than ${MAX_LENT_BYTES} bytes and was read by a middleware`;
+      const error = Object.assign(new Error(message), { status: 413, statusCode: 413, type: "entity.too.large" });
+      if (listening) req.emit("error", error);
+      // Such as the decompressor Express's body parsers read a gzip body from
+      for (const dest of failing) dest.destroy(error);
       // A reader that destroys the request on the error, as `for await` does, leaves the rest unread on the connection
       if (!hasEnded(req)) res.shouldKeepAlive = false;
     }
