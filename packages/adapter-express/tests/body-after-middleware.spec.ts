@@ -247,10 +247,10 @@ describe("body read by a universal middleware", () => {
     expect(req.readableHighWaterMark).toBe(16);
   });
 
-  it("fails express.json() instead of hanging when the body was over 1 MiB and isn't handed back", async () => {
+  it("fails express.json() with a 413 when the body was over 1 MiB and isn't handed back", async () => {
     const url = await start((app) => app.post("/big", express.json({ limit: "10mb" }), (_req, res) => res.send("ok")));
     const res = await postJson(`${url}/big`, { big: "x".repeat(2 * 1024 * 1024) });
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(413);
   });
 
   it("rejects a read left pending when the middleware returns, and still hands the body back", async () => {

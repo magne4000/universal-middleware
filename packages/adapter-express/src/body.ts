@@ -47,6 +47,29 @@ export function handBodyBack(req: LentRequest): void {
   req[lentSymbol]?.handBack();
 }
 
+const readerEvents = ["data", "readable", "end"] as const;
+
+// Every way to read a Node stream (`data`, `readable`, `pipe`, `for await`) goes through `read()`
+function failNextRead(req: LentRequest) {
+  // Listeners added before the next handler, such as `on-finished`'s, aren't the reader's
+  const earlier = new Set(readerEvents.flatMap((event) => req.rawListeners(event)));
+  req.read = (size) => {
+    delete (req as Partial<LentRequest>).read;
+    // Node emits its own request errors only to a listener too: an "error" event with none throws
+    if (req.listenerCount("error") > 0) {
+      // The reader's listeners go, so that none of them runs after the error
+      for (const event of readerEvents) {
+        for (const listener of req.rawListeners(event)) {
+          if (!earlier.has(listener)) req.removeListener(event, listener as () => void);
+        }
+      }
+      const error = new Error(`The request body is larger than ${MAX_LENT_BYTES} bytes and was read by a middleware`);
+      req.emit("error", Object.assign(error, { status: 413, statusCode: 413, type: "entity.too.large" }));
+    }
+    return req.read(size);
+  };
+}
+
 // `complete` is only set by Node's HTTP parser, not on `connectToWeb`'s synthetic request
 // biome-ignore lint/suspicious/noExplicitAny: Node's own flag, also read by common.ts
 const hasEnded = (req: DecoratedRequest) => req.complete || (req as any)._readableState?.ended === true;
@@ -116,6 +139,7 @@ class LentBody implements UnderlyingDefaultSource<Uint8Array> {
     // The next middleware gets a new `Request` over the restored body
     delete req[requestSymbol];
     if (this.held.length > 0) req.unshift(Buffer.concat(this.held));
+    else if (this.heldBytes > MAX_LENT_BYTES) failNextRead(req);
     // A read pending or started later would never settle: no bytes feed it anymore
     this.controller.error(new Error("The request body must be read before the middleware returns."));
   }
