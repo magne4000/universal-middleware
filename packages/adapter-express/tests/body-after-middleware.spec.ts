@@ -1,4 +1,4 @@
-import type { Server, ServerResponse } from "node:http";
+import { Agent, request as httpRequest, type Server, type ServerResponse } from "node:http";
 import { type AddressInfo, connect } from "node:net";
 import { Readable } from "node:stream";
 import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
@@ -328,6 +328,89 @@ describe("body read by a universal middleware", () => {
       socket.destroy();
     } finally {
       process.off("uncaughtException", onUncaught);
+    }
+  });
+});
+
+describe("a body of more than 1 MiB read by a universal middleware", () => {
+  const readsAll: UniversalMiddleware = async (request) => {
+    if (request.method === "POST") await request.arrayBuffer();
+  };
+  const routes = (app: express.Express) => {
+    app.post("/raw", express.raw({ limit: "10mb" }), (req, res) => res.json(req.body.length));
+    app.post("/iter", async (req, res) => {
+      let length = 0;
+      for await (const chunk of req) length += (chunk as Buffer).byteLength;
+      res.json(length);
+    });
+    app.post("/never", (_req, res) => res.send("ok"));
+    // Reads as the issue's route does, answering with JSON on "end"
+    app.post("/listens", (req, res) => {
+      req.on("data", () => {});
+      req.on("end", () => res.json("end"));
+      if (req.query.error !== undefined)
+        req.on("error", (err: { status: number }) => res.status(err.status).json("error"));
+    });
+  };
+  const headers = { "content-type": "application/octet-stream" };
+  const overCap = new Uint8Array(1024 * 1024 + 1);
+  const post = (url: string, body: Uint8Array<ArrayBuffer>) =>
+    fetch(url, { method: "POST", headers, body, signal: AbortSignal.timeout(3000) });
+
+  it("fails express.raw() with a 413", async () => {
+    const url = await start(routes, [readsAll]);
+    expect((await post(`${url}/raw`, overCap)).status).toBe(413);
+  });
+
+  it("fails a route's `for await` over the request with a 413", async () => {
+    const url = await start(routes, [readsAll]);
+    expect((await post(`${url}/iter`, overCap)).status).toBe(413);
+  });
+
+  it("gives a route's own error listener the 413, without calling its end listener", async () => {
+    const url = await start(routes, [readsAll]);
+    const res = await post(`${url}/listens?error`, overCap);
+    expect(res.status).toBe(413);
+    expect(await res.json()).toBe("error");
+  });
+
+  it("emits no error to a route without an error listener", async () => {
+    const url = await start(routes, [readsAll]);
+    expect((await post(`${url}/listens`, overCap)).status).toBe(200);
+  });
+
+  it("leaves a route that never reads the body answering as usual", async () => {
+    const url = await start(routes, [readsAll]);
+    const res = await post(`${url}/never`, overCap);
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe("ok");
+  });
+
+  it("still hands back a body of exactly 1 MiB", async () => {
+    const url = await start(routes, [readsAll]);
+    expect(await (await post(`${url}/raw`, new Uint8Array(1024 * 1024))).json()).toBe(1024 * 1024);
+  });
+
+  it.each(["/raw", "/iter"])("keeps the connection usable for the next request after %s", async (path) => {
+    const url = await start(routes, [readsAll]);
+    const agent = new Agent({ keepAlive: true, maxSockets: 1 });
+    const send = (body: Uint8Array<ArrayBuffer>) =>
+      new Promise<{ body: string; reused: boolean }>((resolve, reject) => {
+        const req = httpRequest(`${url}${path}`, { method: "POST", headers, agent }, (res) => {
+          let text = "";
+          res.on("data", (chunk) => {
+            text += chunk;
+          });
+          res.on("end", () => resolve({ body: text, reused: req.reusedSocket }));
+        });
+        req.on("error", reject);
+        req.end(body);
+      });
+    try {
+      await send(overCap);
+      expect(await send(new Uint8Array(10))).toEqual({ body: "10", reused: true });
+    } finally {
+      agent.destroy();
     }
   });
 });
