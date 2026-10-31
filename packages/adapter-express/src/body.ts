@@ -96,10 +96,12 @@ class LentBody implements UnderlyingDefaultSource<Uint8Array> {
       const chunk = req.read(Math.min(req.readableLength, req.readableHighWaterMark)) as Buffer;
       this.heldBytes += chunk.byteLength;
       if (this.heldBytes > MAX_LENT_BYTES) this.held.length = 0;
-      // A copy: the middleware may write into the chunk it reads
-      else this.held.push(Buffer.from(chunk));
+      else this.held.push(chunk);
       this.wanted = false;
-      controller.enqueue(chunk);
+      // A copy with its own `ArrayBuffer`, not from Node's pool: the middleware may write into it or transfer it
+      const copy = Buffer.allocUnsafeSlow(chunk.byteLength);
+      chunk.copy(copy);
+      controller.enqueue(copy);
     } else if (hasEnded(req)) {
       this.wanted = false;
       controller.close();
