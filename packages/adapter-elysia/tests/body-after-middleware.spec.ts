@@ -160,7 +160,8 @@ describe("a body above the eager limit", () => {
         headers: { "content-type": "application/octet-stream", "content-length": String(size) },
         body: new ReadableStream({
           start(controller) {
-            controller.enqueue(new Uint8Array(size));
+            // A `Buffer`: Node 22 and Bun keep it through `clone()`, and its `slice()` doesn't copy
+            controller.enqueue(Buffer.alloc(size));
             controller.close();
           },
         }),
