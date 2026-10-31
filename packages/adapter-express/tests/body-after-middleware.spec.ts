@@ -81,6 +81,25 @@ describe("body read by a universal middleware", () => {
     expect(seen).toEqual(["parsed earlier"]);
   });
 
+  it("reaches express.raw() unchanged after a middleware wrote into the chunks it read", async () => {
+    const overwrites: UniversalMiddleware = async (request) => {
+      const reader = request.body?.getReader();
+      for (let chunk = await reader?.read(); chunk && !chunk.done; chunk = await reader?.read()) chunk.value.fill(65);
+    };
+    const url = await start(
+      (app) => app.post("/echo", express.raw({ limit: "1mb" }), (req, res) => res.send(req.body)),
+      [overwrites],
+    );
+    const body = Buffer.alloc(200_000);
+    const res = await fetch(`${url}/echo`, {
+      method: "POST",
+      headers: { "content-type": "application/octet-stream" },
+      body,
+      signal: AbortSignal.timeout(3000),
+    });
+    expect(Buffer.from(await res.arrayBuffer()).equals(body)).toBe(true);
+  });
+
   it("reaches a universal handler after a middleware read it", async () => {
     const url = await start((app) =>
       app.post("/echo", createHandler(() => async (request) => new Response(await request.text()))()),
