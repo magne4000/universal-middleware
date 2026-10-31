@@ -52,7 +52,8 @@ async function requestOf(request: Request) {
         async pull(controller) {
           copy ??= request.clone().body?.getReader();
           const chunk = await copy?.read();
-          if (chunk && !chunk.done) controller.enqueue(chunk.value);
+          // A copy: on Node 22 the clone's chunks are the ones the route reads
+          if (chunk && !chunk.done) controller.enqueue(chunk.value.slice());
           else controller.close();
         },
         cancel: (reason) => void copy?.cancel(reason),
