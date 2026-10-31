@@ -51,12 +51,12 @@ const readerEvents = ["data", "readable", "end"] as const;
 
 // Every way to read a Node stream (`data`, `readable`, `pipe`, `for await`) goes through `read()`
 function failNextRead(req: LentRequest, res: ServerResponse) {
-  // Listeners added before the next handler, such as `on-finished`'s, aren't the reader's
-  const earlier = new Set(readerEvents.flatMap((event) => req.rawListeners(event)));
+  // Listeners added before the next handler, such as `on-finished`'s or an error logger's, aren't the reader's
+  const earlier = new Set([...readerEvents, "error"].flatMap((event) => req.rawListeners(event)));
   req.read = (size) => {
     delete (req as Partial<LentRequest>).read;
     // Node emits its own request errors only to a listener too: an "error" event with none throws
-    if (req.listenerCount("error") > 0) {
+    if (req.rawListeners("error").some((listener) => !earlier.has(listener))) {
       // The reader's listeners go, so that none of them runs after the error
       for (const event of readerEvents) {
         for (const listener of req.rawListeners(event)) {

@@ -379,6 +379,19 @@ describe("a body of more than 1 MiB read by a universal middleware", () => {
     expect((await post(`${url}/listens`, overCap)).status).toBe(200);
   });
 
+  it("leaves a route without an error listener as it was when an earlier handler only observes errors", async () => {
+    const observed: number[] = [];
+    const url = await start(routes, [readsAll], (app) =>
+      app.use((req, _res, next) => {
+        req.on("error", (err: { status: number }) => observed.push(err.status));
+        next();
+      }),
+    );
+    const res = await post(`${url}/listens`, overCap);
+    expect(await res.json()).toBe("end");
+    expect(observed).toEqual([]);
+  });
+
   it("leaves a route that never reads the body answering as usual", async () => {
     const url = await start(routes, [readsAll]);
     const res = await post(`${url}/never`, overCap);
