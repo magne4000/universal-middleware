@@ -1,6 +1,8 @@
-import type { Server, ServerResponse } from "node:http";
+import { randomBytes } from "node:crypto";
+import { Agent, request as httpRequest, type Server, type ServerResponse } from "node:http";
 import { type AddressInfo, connect } from "node:net";
-import { Readable } from "node:stream";
+import { PassThrough, Readable } from "node:stream";
+import { gzipSync } from "node:zlib";
 import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
 import express from "express";
 import { afterEach, describe, expect, it } from "vitest";
@@ -247,10 +249,10 @@ describe("body read by a universal middleware", () => {
     expect(req.readableHighWaterMark).toBe(16);
   });
 
-  it("fails express.json() instead of hanging when the body was over 1 MiB and isn't handed back", async () => {
+  it("fails express.json() with a 413 when the body was over 1 MiB and isn't handed back", async () => {
     const url = await start((app) => app.post("/big", express.json({ limit: "10mb" }), (_req, res) => res.send("ok")));
     const res = await postJson(`${url}/big`, { big: "x".repeat(2 * 1024 * 1024) });
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(413);
   });
 
   it("rejects a read left pending when the middleware returns, and still hands the body back", async () => {
@@ -328,6 +330,171 @@ describe("body read by a universal middleware", () => {
       socket.destroy();
     } finally {
       process.off("uncaughtException", onUncaught);
+    }
+  });
+});
+
+describe("a body of more than 1 MiB read by a universal middleware", () => {
+  const readsAll: UniversalMiddleware = async (request) => {
+    if (request.method === "POST") await request.arrayBuffer();
+  };
+  const routes = (app: express.Express) => {
+    app.post("/raw", express.raw({ limit: "10mb" }), (req, res) => res.json(req.body.length));
+    app.post("/iter", async (req, res) => {
+      let length = 0;
+      for await (const chunk of req) length += (chunk as Buffer).byteLength;
+      res.json(length);
+    });
+    app.post("/never", (_req, res) => res.send("ok"));
+    app.post("/pipes", (req, res) => {
+      req.pipe(new PassThrough().resume()).on("finish", () => res.json("finish"));
+    });
+    // Reads as the issue's route does, answering with JSON on "end"
+    app.post("/listens", (req, res) => {
+      req.on("data", () => {});
+      req.on("end", () => res.json("end"));
+      if (req.query.error !== undefined)
+        req.on("error", (err: { status: number }) => res.status(err.status).json("error"));
+    });
+  };
+  const headers = { "content-type": "application/octet-stream" };
+  const overCap = new Uint8Array(1024 * 1024 + 1);
+  const post = (url: string, body: Uint8Array<ArrayBuffer>) =>
+    fetch(url, { method: "POST", headers, body, signal: AbortSignal.timeout(3000) });
+
+  it("fails express.raw() with a 413", async () => {
+    const url = await start(routes, [readsAll]);
+    expect((await post(`${url}/raw`, overCap)).status).toBe(413);
+  });
+
+  it("fails express.raw() with a 413 on a gzip body", async () => {
+    const url = await start(routes, [readsAll]);
+    // Random bytes don't compress: the gzip body stays over 1 MiB
+    const body = new Uint8Array(gzipSync(randomBytes(1024 * 1024)));
+    const res = await fetch(`${url}/raw`, {
+      method: "POST",
+      headers: { ...headers, "content-encoding": "gzip" },
+      body,
+      signal: AbortSignal.timeout(3000),
+    });
+    expect(res.status).toBe(413);
+  });
+
+  it("fails a route's `for await` over the request with a 413", async () => {
+    const url = await start(routes, [readsAll]);
+    expect((await post(`${url}/iter`, overCap)).status).toBe(413);
+  });
+
+  it("gives a route's own error listener the 413, without calling its end listener", async () => {
+    const url = await start(routes, [readsAll]);
+    const res = await post(`${url}/listens?error`, overCap);
+    expect(res.status).toBe(413);
+    expect(await res.json()).toBe("error");
+  });
+
+  it("emits no error to a route without an error listener", async () => {
+    const url = await start(routes, [readsAll]);
+    expect((await post(`${url}/listens`, overCap)).status).toBe(200);
+  });
+
+  it("leaves a route without an error listener as it was when an earlier handler only observes errors", async () => {
+    const observed: number[] = [];
+    const url = await start(routes, [readsAll], (app) =>
+      app.use((req, _res, next) => {
+        req.on("error", (err: { status: number }) => observed.push(err.status));
+        next();
+      }),
+    );
+    const res = await post(`${url}/listens`, overCap);
+    expect(await res.json()).toBe("end");
+    expect(observed).toEqual([]);
+  });
+
+  it("gives the 413 to a route registering an error responder that an earlier handler registered too", async () => {
+    const url = await start(
+      (app) =>
+        app.post("/shared", (req, res) => {
+          req.on("error", res.locals.answer);
+          req.on("data", () => {});
+          req.on("end", () => res.json("end"));
+        }),
+      [readsAll],
+      (app) =>
+        app.use((req, res, next) => {
+          res.locals.answer = (err: { status: number }) => {
+            if (!res.headersSent) res.status(err.status).json("error");
+          };
+          req.on("error", res.locals.answer);
+          next();
+        }),
+    );
+    const res = await post(`${url}/shared`, overCap);
+    expect(res.status).toBe(413);
+    expect(await res.json()).toBe("error");
+  });
+
+  it("leaves a pipe to a stream without an error listener as it was", async () => {
+    const url = await start(routes, [readsAll]);
+    expect(await (await post(`${url}/pipes`, overCap)).json()).toBe("finish");
+  });
+
+  it("leaves a route that never reads the body answering as usual", async () => {
+    const url = await start(routes, [readsAll]);
+    const res = await post(`${url}/never`, overCap);
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe("ok");
+  });
+
+  it("still hands back a body of exactly 1 MiB", async () => {
+    const url = await start(routes, [readsAll]);
+    expect(await (await post(`${url}/raw`, new Uint8Array(1024 * 1024))).json()).toBe(1024 * 1024);
+  });
+
+  // One connection: a second request reuses the first one's socket, unless the server closed it
+  const keepAlive = (url: string) => {
+    const agent = new Agent({ keepAlive: true, maxSockets: 1 });
+    const send = (path: string, body: Uint8Array<ArrayBuffer>) =>
+      new Promise<{ status?: number; body: string; reused: boolean }>((resolve, reject) => {
+        const req = httpRequest(`${url}${path}`, { method: "POST", headers, agent }, (res) => {
+          let text = "";
+          res.on("data", (chunk) => {
+            text += chunk;
+          });
+          res.on("end", () => resolve({ status: res.statusCode, body: text, reused: req.reusedSocket }));
+        });
+        req.on("error", reject);
+        req.end(body);
+      });
+    return { agent, send };
+  };
+
+  it.each(["/raw", "/iter"])("keeps the connection usable for the next request after %s", async (path) => {
+    const { agent, send } = keepAlive(await start(routes, [readsAll]));
+    try {
+      await send(path, overCap);
+      expect(await send(path, new Uint8Array(10))).toEqual({ status: 200, body: "10", reused: true });
+    } finally {
+      agent.destroy();
+    }
+  });
+
+  it("closes the connection after a `for await` fails with the rest of the body unread", async () => {
+    const readsPart: UniversalMiddleware = async (request) => {
+      if (request.method !== "POST" || !request.body) return;
+      const reader = request.body.getReader();
+      for (let length = 0; length <= 1024 * 1024; ) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        length += value.byteLength;
+      }
+      reader.releaseLock();
+    };
+    const { agent, send } = keepAlive(await start(routes, [readsPart]));
+    try {
+      expect((await send("/iter", new Uint8Array(2_000_000))).status).toBe(413);
+      expect(await send("/iter", new Uint8Array(10))).toEqual({ status: 200, body: "10", reused: false });
+    } finally {
+      agent.destroy();
     }
   });
 });
