@@ -410,6 +410,29 @@ describe("a body of more than 1 MiB read by a universal middleware", () => {
     expect(observed).toEqual([]);
   });
 
+  it("gives the 413 to a route registering an error responder that an earlier handler registered too", async () => {
+    const url = await start(
+      (app) =>
+        app.post("/shared", (req, res) => {
+          req.on("error", res.locals.answer);
+          req.on("data", () => {});
+          req.on("end", () => res.json("end"));
+        }),
+      [readsAll],
+      (app) =>
+        app.use((req, res, next) => {
+          res.locals.answer = (err: { status: number }) => {
+            if (!res.headersSent) res.status(err.status).json("error");
+          };
+          req.on("error", res.locals.answer);
+          next();
+        }),
+    );
+    const res = await post(`${url}/shared`, overCap);
+    expect(res.status).toBe(413);
+    expect(await res.json()).toBe("error");
+  });
+
   it("leaves a pipe to a stream without an error listener as it was", async () => {
     const url = await start(routes, [readsAll]);
     expect(await (await post(`${url}/pipes`, overCap)).json()).toBe("finish");

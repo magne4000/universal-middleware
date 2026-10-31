@@ -50,24 +50,34 @@ export function handBodyBack(req: LentRequest): void {
 
 const readerEvents = ["data", "readable", "end"] as const;
 
+// How many times each listener is registered for `event`
+function countListeners(req: LentRequest, event: string) {
+  const counts = new Map<unknown, number>();
+  for (const listener of req.rawListeners(event)) counts.set(listener, (counts.get(listener) ?? 0) + 1);
+  return counts;
+}
+
 // Every way to read a Node stream (`data`, `readable`, `pipe`, `for await`) goes through `read()`
 function failNextRead(req: LentRequest, res: ServerResponse) {
-  // Listeners added before the next handler, such as `on-finished`'s or an error logger's, aren't the reader's
-  const earlier = new Set([...readerEvents, "error"].flatMap((event) => req.rawListeners(event)));
+  // Registrations made before the next handler, such as `on-finished`'s or an error logger's, aren't the reader's
+  const earlier = new Map([...readerEvents, "error"].map((event) => [event, countListeners(req, event)]));
+  // A listener registered again by the reader, such as a shared error responder, counts once more than at the hand-back
+  const added = (event: string) =>
+    [...countListeners(req, event)].flatMap(([listener, count]) =>
+      Array<unknown>(Math.max(0, count - (earlier.get(event)?.get(listener) ?? 0))).fill(listener),
+    );
   req.read = (size) => {
     delete (req as Partial<LentRequest>).read;
     // Node emits its own request errors only to a listener too: an "error" event with none throws
-    const listening = req.rawListeners("error").some((listener) => !earlier.has(listener));
+    const listening = added("error").length > 0;
     // A pipe doesn't pass on the source's errors, and adds an "error" listener of its own to each destination, which unpipes it
     // biome-ignore lint/suspicious/noExplicitAny: Node's own list of the destinations `pipe()` writes to
     const pipes: Writable[] = (req as any)._readableState?.pipes ?? [];
     const failing = pipes.filter((dest) => dest.listenerCount("error") > 1);
     if (listening || failing.length > 0) {
-      // The reader's listeners go, so that none of them runs after the error
+      // The reader's registrations go, the latest first as `removeListener` does, so that none of them runs after the error
       for (const event of readerEvents) {
-        for (const listener of req.rawListeners(event)) {
-          if (!earlier.has(listener)) req.removeListener(event, listener as () => void);
-        }
+        for (const listener of added(event)) req.removeListener(event, listener as () => void);
       }
       const message = `The request body is larger than ${MAX_LENT_BYTES} bytes and was read by a middleware`;
       const error = Object.assign(new Error(message), { status: 413, statusCode: 413, type: "entity.too.large" });
