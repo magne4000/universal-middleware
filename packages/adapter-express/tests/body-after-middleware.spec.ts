@@ -1,4 +1,5 @@
-import type { Server, ServerResponse } from "node:http";
+import { once } from "node:events";
+import { createServer, type Server, type ServerResponse } from "node:http";
 import { type AddressInfo, connect } from "node:net";
 import { Readable } from "node:stream";
 import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
@@ -79,6 +80,52 @@ describe("body read by a universal middleware", () => {
     );
     await postJson(`${url}/echo`, { a: 1 });
     expect(seen).toEqual(["parsed earlier"]);
+  });
+
+  it("reaches express.raw() unchanged after a middleware wrote into the chunks it read", async () => {
+    const overwrites: UniversalMiddleware = async (request) => {
+      const reader = request.body?.getReader();
+      for (let chunk = await reader?.read(); chunk && !chunk.done; chunk = await reader?.read()) chunk.value.fill(65);
+    };
+    const url = await start(
+      (app) => app.post("/echo", express.raw({ limit: "1mb" }), (req, res) => res.send(req.body)),
+      [overwrites],
+    );
+    const body = Buffer.alloc(200_000);
+    const res = await fetch(`${url}/echo`, {
+      method: "POST",
+      headers: { "content-type": "application/octet-stream" },
+      body,
+      signal: AbortSignal.timeout(3000),
+    });
+    expect(Buffer.from(await res.arrayBuffer()).equals(body)).toBe(true);
+  });
+
+  it("reaches express.raw() after a middleware transferred the chunks it read", async () => {
+    const owned: boolean[] = [];
+    const transfers: UniversalMiddleware = async (request) => {
+      const reader = request.body?.getReader();
+      for (let chunk = await reader?.read(); chunk && !chunk.done; chunk = await reader?.read()) {
+        owned.push(Buffer.isBuffer(chunk.value) && chunk.value.buffer.byteLength === chunk.value.byteLength);
+        structuredClone(chunk.value.buffer, { transfer: [chunk.value.buffer] });
+      }
+    };
+    const app = express();
+    apply(app, [transfers]);
+    app.post("/echo", express.raw({ limit: "1mb" }), (req, res) => res.send(req.body));
+    // Below the size of the socket's reads, so that `req.read()` returns a view into a buffer holding the rest
+    server = createServer({ highWaterMark: 16 * 1024 }, app).listen(0);
+    await once(server, "listening");
+    const body = Buffer.alloc(200_000, 1);
+    const res = await fetch(`http://localhost:${(server.address() as AddressInfo).port}/echo`, {
+      method: "POST",
+      headers: { "content-type": "application/octet-stream" },
+      body,
+      signal: AbortSignal.timeout(3000),
+    });
+    expect(Buffer.from(await res.arrayBuffer()).equals(body)).toBe(true);
+    expect(owned.length).toBeGreaterThan(1);
+    expect(owned.every(Boolean)).toBe(true);
   });
 
   it("reaches a universal handler after a middleware read it", async () => {

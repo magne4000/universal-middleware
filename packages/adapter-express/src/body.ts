@@ -98,7 +98,10 @@ class LentBody implements UnderlyingDefaultSource<Uint8Array> {
       if (this.heldBytes > MAX_LENT_BYTES) this.held.length = 0;
       else this.held.push(chunk);
       this.wanted = false;
-      controller.enqueue(chunk);
+      // A copy with its own `ArrayBuffer`, not from Node's pool: the middleware may write into it or transfer it
+      const copy = Buffer.allocUnsafeSlow(chunk.byteLength);
+      chunk.copy(copy);
+      controller.enqueue(copy);
     } else if (hasEnded(req)) {
       this.wanted = false;
       controller.close();

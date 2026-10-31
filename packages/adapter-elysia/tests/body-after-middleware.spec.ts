@@ -145,6 +145,32 @@ describe("a body above the eager limit", () => {
     expect(await res.json()).toEqual({ got: 70 * 1024 });
   });
 
+  it("reaches a route that streams it unchanged after a middleware wrote into the chunks it read", async () => {
+    const size = 200_000;
+    const app = new Elysia();
+    const overwrites: UniversalMiddleware = async (request) => {
+      const reader = (request.body as ReadableStream<Uint8Array>).getReader();
+      for (let chunk = await reader.read(); !chunk.done; chunk = await reader.read()) chunk.value.fill(65);
+    };
+    apply(app, [overwrites]);
+    app.post("/big", async ({ request }) => new Response(await request.arrayBuffer()), { parse: "none" });
+    const res = await app.handle(
+      new Request("http://localhost/big", {
+        method: "POST",
+        headers: { "content-type": "application/octet-stream", "content-length": String(size) },
+        body: new ReadableStream({
+          start(controller) {
+            // A `Buffer`: Node 22 and Bun keep it through `clone()`, and its `slice()` doesn't copy
+            controller.enqueue(Buffer.alloc(size));
+            controller.close();
+          },
+        }),
+        duplex: "half",
+      } as RequestInit),
+    );
+    expect(Buffer.from(await res.arrayBuffer()).equals(Buffer.alloc(size))).toBe(true);
+  });
+
   it("does not hang a middleware that awaits cancel() after a partial read, and the route still streams it all", async () => {
     const size = 300_000;
     const app = new Elysia();
