@@ -391,24 +391,49 @@ describe("a body of more than 1 MiB read by a universal middleware", () => {
     expect(await (await post(`${url}/raw`, new Uint8Array(1024 * 1024))).json()).toBe(1024 * 1024);
   });
 
-  it.each(["/raw", "/iter"])("keeps the connection usable for the next request after %s", async (path) => {
-    const url = await start(routes, [readsAll]);
+  // One connection: a second request reuses the first one's socket, unless the server closed it
+  const keepAlive = (url: string) => {
     const agent = new Agent({ keepAlive: true, maxSockets: 1 });
-    const send = (body: Uint8Array<ArrayBuffer>) =>
-      new Promise<{ body: string; reused: boolean }>((resolve, reject) => {
+    const send = (path: string, body: Uint8Array<ArrayBuffer>) =>
+      new Promise<{ status?: number; body: string; reused: boolean }>((resolve, reject) => {
         const req = httpRequest(`${url}${path}`, { method: "POST", headers, agent }, (res) => {
           let text = "";
           res.on("data", (chunk) => {
             text += chunk;
           });
-          res.on("end", () => resolve({ body: text, reused: req.reusedSocket }));
+          res.on("end", () => resolve({ status: res.statusCode, body: text, reused: req.reusedSocket }));
         });
         req.on("error", reject);
         req.end(body);
       });
+    return { agent, send };
+  };
+
+  it.each(["/raw", "/iter"])("keeps the connection usable for the next request after %s", async (path) => {
+    const { agent, send } = keepAlive(await start(routes, [readsAll]));
     try {
-      await send(overCap);
-      expect(await send(new Uint8Array(10))).toEqual({ body: "10", reused: true });
+      await send(path, overCap);
+      expect(await send(path, new Uint8Array(10))).toEqual({ status: 200, body: "10", reused: true });
+    } finally {
+      agent.destroy();
+    }
+  });
+
+  it("closes the connection after a `for await` fails with the rest of the body unread", async () => {
+    const readsPart: UniversalMiddleware = async (request) => {
+      if (request.method !== "POST" || !request.body) return;
+      const reader = request.body.getReader();
+      for (let length = 0; length <= 1024 * 1024; ) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        length += value.byteLength;
+      }
+      reader.releaseLock();
+    };
+    const { agent, send } = keepAlive(await start(routes, [readsPart]));
+    try {
+      expect((await send("/iter", new Uint8Array(2_000_000))).status).toBe(413);
+      expect(await send("/iter", new Uint8Array(10))).toEqual({ status: 200, body: "10", reused: false });
     } finally {
       agent.destroy();
     }

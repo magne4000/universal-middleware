@@ -32,7 +32,7 @@ export function adaptLendingBody(
   // An earlier middleware left its lend unread: its `Request` still applies
   if (req[lentSymbol]) return adapt(req, res);
 
-  const lend = new LentBody(req);
+  const lend = new LentBody(req, res);
   req[lentSymbol] = lend;
   req.rawBody = new ReadableStream<Uint8Array>(lend, { highWaterMark: 0 });
   try {
@@ -50,7 +50,7 @@ export function handBodyBack(req: LentRequest): void {
 const readerEvents = ["data", "readable", "end"] as const;
 
 // Every way to read a Node stream (`data`, `readable`, `pipe`, `for await`) goes through `read()`
-function failNextRead(req: LentRequest) {
+function failNextRead(req: LentRequest, res: ServerResponse) {
   // Listeners added before the next handler, such as `on-finished`'s, aren't the reader's
   const earlier = new Set(readerEvents.flatMap((event) => req.rawListeners(event)));
   req.read = (size) => {
@@ -65,6 +65,8 @@ function failNextRead(req: LentRequest) {
       }
       const error = new Error(`The request body is larger than ${MAX_LENT_BYTES} bytes and was read by a middleware`);
       req.emit("error", Object.assign(error, { status: 413, statusCode: 413, type: "entity.too.large" }));
+      // A reader that destroys the request on the error, as `for await` does, leaves the rest unread on the connection
+      if (!hasEnded(req)) res.shouldKeepAlive = false;
     }
     return req.read(size);
   };
@@ -86,7 +88,10 @@ class LentBody implements UnderlyingDefaultSource<Uint8Array> {
   private drain!: () => void;
   private onError!: (err: Error) => void;
 
-  constructor(private readonly req: LentRequest) {}
+  constructor(
+    private readonly req: LentRequest,
+    private readonly res: ServerResponse,
+  ) {}
 
   start(controller: ReadableStreamDefaultController<Uint8Array>) {
     this.controller = controller;
@@ -139,7 +144,7 @@ class LentBody implements UnderlyingDefaultSource<Uint8Array> {
     // The next middleware gets a new `Request` over the restored body
     delete req[requestSymbol];
     if (this.held.length > 0) req.unshift(Buffer.concat(this.held));
-    else if (this.heldBytes > MAX_LENT_BYTES) failNextRead(req);
+    else if (this.heldBytes > MAX_LENT_BYTES) failNextRead(req, this.res);
     // A read pending or started later would never settle: no bytes feed it anymore
     this.controller.error(new Error("The request body must be read before the middleware returns."));
   }
