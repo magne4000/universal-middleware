@@ -5,6 +5,8 @@ import type { DecoratedRequest } from "./types.js";
 // A bigger body isn't handed back, so that a streamed upload isn't held in memory. Body parsers refuse it by default.
 const MAX_LENT_BYTES = 1024 * 1024;
 
+let warned = false;
+
 // On the request rather than in a map: a request whose body nobody reads costs nothing
 const lentSymbol = Symbol("universal-middleware.lentBody");
 type LentRequest = DecoratedRequest & { [lentSymbol]?: LentBody };
@@ -116,6 +118,14 @@ class LentBody implements UnderlyingDefaultSource<Uint8Array> {
     // The next middleware gets a new `Request` over the restored body
     delete req[requestSymbol];
     if (this.held.length > 0) req.unshift(Buffer.concat(this.held));
+    else if (this.heldBytes > MAX_LENT_BYTES && !warned) {
+      console.warn(
+        "A universal middleware read more than 1 MiB of the request body, " +
+          "so the next Express handler gets it empty or cut short. " +
+          "See https://github.com/magne4000/universal-middleware/issues/463",
+      );
+      warned = true;
+    }
     // A read pending or started later would never settle: no bytes feed it anymore
     this.controller.error(new Error("The request body must be read before the middleware returns."));
   }

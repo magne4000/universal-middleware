@@ -3,7 +3,7 @@ import { type AddressInfo, connect } from "node:net";
 import { Readable } from "node:stream";
 import { enhance, type UniversalMiddleware } from "@universal-middleware/core";
 import express from "express";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { adaptLendingBody } from "../src/body.js";
 import { apply, connectToWeb, createHandler } from "../src/index.js";
 import type { DecoratedRequest } from "../src/types.js";
@@ -251,6 +251,28 @@ describe("body read by a universal middleware", () => {
     const url = await start((app) => app.post("/big", express.json({ limit: "10mb" }), (_req, res) => res.send("ok")));
     const res = await postJson(`${url}/big`, { big: "x".repeat(2 * 1024 * 1024) });
     expect(res.status).toBe(400);
+  });
+
+  it("warns once that the next handler gets the body empty or cut short, and not under the cap", async () => {
+    // A copy of the adapter that no earlier test made warn
+    vi.resetModules();
+    const fresh = await import("../src/index.js");
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const url = await start((app) => {
+        fresh.apply(app, [readsBody]);
+        app.post("/big", (_req, res) => res.send("ok"));
+      }, []);
+      const post = (size: number) =>
+        fetch(`${url}/big`, { method: "POST", body: new Uint8Array(size), signal: AbortSignal.timeout(3000) });
+      await post(1024 * 1024);
+      expect(warn).not.toHaveBeenCalled();
+      await post(1024 * 1024 + 1);
+      await post(1024 * 1024 + 1);
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   it("rejects a read left pending when the middleware returns, and still hands the body back", async () => {
