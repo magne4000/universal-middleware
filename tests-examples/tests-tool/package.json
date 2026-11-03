@@ -55,7 +55,7 @@
     "express": "catalog:",
     "fastify": "catalog:",
     "fastify-raw-body": "catalog:",
-    "got": "^16.1.0",
+    "got": "^16.2.0",
     "h3": "catalog:",
     "hono": "catalog:",
     "mri": "catalog:",
