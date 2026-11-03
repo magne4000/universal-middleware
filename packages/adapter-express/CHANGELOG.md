@@ -1,5 +1,11 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.6.2
+
+### Patch Changes
+
+- bab449e: A warning is logged once per process when a universal middleware read more than 1 MiB of the request body, which the next Express handler then gets empty or cut short.
+
 ## 0.6.1
 
 ### Patch Changes
