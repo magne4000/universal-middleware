@@ -24,7 +24,7 @@ catalog:
   hono: ^4.13.14
   mri: ^1.2.0
   srvx: ^1.0.8
-  tsdown: ^0.23.4
+  tsdown: ^0.23.5
   tsx: ^4.23.15
   # rolldown-plugin-dts emits types through the TypeScript 7.1 API. Exact: the 7.1.0-dev nightlies sort above 7.1.0-beta
   typescript: 7.1.0-beta
@@ -47,3 +47,5 @@ allowBuilds:
   playwright-chromium: true
   sharp: true
   workerd: true
+minimumReleaseAgeExclude:
+  - tsdown@0.23.5
