@@ -1,5 +1,12 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/webroute-v0.3.2...webroute-v0.3.3) (2024-12-09)
 
+## 0.4.16
+
+### Patch Changes
+
+- d305bf9: A middleware registered on its own (`app.use()`, srvx's `middleware`, webroute's `use()`) that reads the request body no longer leaves none for the middlewares and the route after it.
+  Express, Fastify and Elysia already kept it.
+
 ## 0.4.15
 
 ### Patch Changes
