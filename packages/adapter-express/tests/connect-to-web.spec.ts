@@ -335,6 +335,51 @@ describe("connectToWeb (synthetic path) — abort propagation", () => {
     await closed.promise;
     expect(signal?.aborted).toBe(false);
   });
+
+  // An upload that sends one chunk, then waits for more: `waiting` resolves once the route's body waits for the next
+  // chunk, and aborting `ctrl` is the client leaving mid-upload.
+  function unfinishedUpload(route: (req: IncomingMessage) => void) {
+    const app = express();
+    app.post("/t", route);
+    const waiting = Promise.withResolvers<void>();
+    let pulls = 0;
+    const body = new ReadableStream<Uint8Array>(
+      {
+        pull(c) {
+          if (pulls++ === 0) c.enqueue(new TextEncoder().encode("hello"));
+          else waiting.resolve();
+        },
+      },
+      { highWaterMark: 0 },
+    );
+    const ctrl = new AbortController();
+    void connectToWeb(app)(streamingRequest("http://localhost/t", { method: "POST", body, signal: ctrl.signal }));
+    return { waiting: waiting.promise, ctrl };
+  }
+
+  it("fails an unfinished request body with ECONNRESET when the request is aborted", async () => {
+    const outcome = Promise.withResolvers<string>();
+    const upload = unfinishedUpload((req) => {
+      req.on("data", () => {});
+      req.on("end", () => outcome.resolve("end"));
+      req.on("error", (error: NodeJS.ErrnoException) => outcome.resolve(`error ${error.code}`));
+    });
+    await upload.waiting;
+    upload.ctrl.abort();
+    expect(await outcome.promise).toBe("error ECONNRESET");
+  });
+
+  it("closes an unfinished request body without an error event when the route doesn't listen for one", async () => {
+    const closed = Promise.withResolvers<boolean>();
+    const upload = unfinishedUpload((req) => {
+      req.on("data", () => {});
+      req.on("close", () => closed.resolve(req.readableEnded));
+    });
+    await upload.waiting;
+    upload.ctrl.abort();
+    // Closed without "end"; an unhandled "error" would fail the run
+    expect(await closed.promise).toBe(false);
+  });
 });
 
 describe("connectToWeb — real-Node path uses the provided req/res", () => {
