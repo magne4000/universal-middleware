@@ -66,7 +66,7 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
     const { res, onReadable } = createServerResponse(req);
 
     // `res` is synthetic even with a real `req`, so the incoming abort is bridged while the response is in flight
-    const stopForwardingAbort = forwardAbort(request.signal, req, res);
+    const stopForwardingAbort = forwardAbort(request.signal, req, res, !realReq);
 
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: ignored
     return new Promise<Response | undefined>(async (resolve, reject) => {
@@ -154,6 +154,11 @@ export function createIncomingMessage(request: Request): IncomingMessage {
   message.once("end", () => {
     message.complete = true;
   });
+  // As on Node's request, a destroy error only reaches "error" listeners: a route that doesn't read the body
+  // isn't crashed by the client leaving mid-upload
+  const destroy = message._destroy;
+  message._destroy = (error, callback) =>
+    destroy.call(message, error, (result) => callback(message.listenerCount("error") > 0 ? result : null));
 
   return message;
 }
@@ -251,14 +256,17 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
 /**
  * Bridges a Web `AbortSignal` to `connectToWeb`'s `req`/`res`, and returns a function that stops it.
  * The request adapter aborts `request.signal` on `res`'s "close", which a socketless `ServerResponse` never emits.
+ * A synthetic `req` with an unfinished body fails with ECONNRESET, as Node's server fails its own requests.
  */
-function forwardAbort(signal: AbortSignal, req: IncomingMessage, res: ServerResponse): () => void {
+function forwardAbort(signal: AbortSignal, req: IncomingMessage, res: ServerResponse, synthetic: boolean): () => void {
   let active = true;
   const abort = () => {
     if (!active) return;
     active = false;
     res.emit("close");
-    req.destroy();
+    // Destroyed without an error, it would end as if its body were complete
+    const cut = synthetic && !req.complete;
+    req.destroy(cut ? Object.assign(new Error("aborted"), { code: "ECONNRESET" }) : undefined);
   };
   // An already-aborted signal waits for the handler to listen to "close", which it does synchronously
   if (signal.aborted) queueMicrotask(abort);
