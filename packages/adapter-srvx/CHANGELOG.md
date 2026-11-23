@@ -1,5 +1,12 @@
 # @universal-middleware/srvx
 
+## 0.3.2
+
+### Patch Changes
+
+- d305bf9: A middleware registered on its own (`app.use()`, srvx's `middleware`, webroute's `use()`) that reads the request body no longer leaves none for the middlewares and the route after it.
+  Express, Fastify and Elysia already kept it.
+
 ## 0.3.1
 
 ### Patch Changes
