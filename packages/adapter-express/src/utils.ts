@@ -191,9 +191,19 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
     res.emit("drain");
   });
 
-  res.write = passThrough.write.bind(passThrough);
-  // biome-ignore lint/suspicious/noExplicitAny: `end`'s overloads differ from the PassThrough's
-  res.end = passThrough.end.bind(passThrough) as any;
+  // As Node's `_implicitHeader()`: the first write or end goes through `writeHead()`, which `on-headers` wraps
+  // (`express-session` and `cookie-session` set their cookie there)
+  let headWritten = false;
+  res.write = function write(...args: Parameters<PassThrough["write"]>) {
+    if (!headWritten) res.writeHead(res.statusCode);
+    return passThrough.write(...args);
+  } as ServerResponse["write"];
+  res.end = function end(...args: Parameters<PassThrough["end"]>) {
+    if (!headWritten) res.writeHead(res.statusCode);
+    passThrough.end(...args);
+    return res;
+  } as ServerResponse["end"];
+  Object.defineProperty(res, "headersSent", { get: () => headWritten });
   // The request adapter aborts `request.signal` on a "close" before the response ended
   Object.defineProperty(res, "writableEnded", { get: () => passThrough.writableEnded });
 
@@ -202,6 +212,7 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
     statusMessage?: string | OutgoingHttpHeaders | OutgoingHttpHeader[],
     headers?: OutgoingHttpHeaders | OutgoingHttpHeader[],
   ): ServerResponse {
+    headWritten = true;
     setHead(res, statusCode, statusMessage, headers);
     return res;
   };
