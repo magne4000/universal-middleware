@@ -192,6 +192,35 @@ describe("connectToWeb (synthetic path) — responses", () => {
     expect(await res.text()).toBe("ok");
   });
 
+  it("runs writeHead() wrappers such as on-headers' when the head goes out with send() or write()", async () => {
+    const app = express();
+    // What `on-headers` (express-session, cookie-session) does: hook `writeHead()`, which Node's first write or end calls
+    app.use((_req, res, next) => {
+      const writeHead = res.writeHead;
+      res.writeHead = ((...args: Parameters<typeof writeHead>) => {
+        res.setHeader("set-cookie", "session=abc");
+        return writeHead.apply(res, args);
+      }) as typeof writeHead;
+      next();
+    });
+    let headersSentAfterWrite: boolean | undefined;
+    app.get("/send", (_req, res) => {
+      res.send("ok");
+    });
+    app.get("/write", (_req, res) => {
+      res.write("o");
+      headersSentAfterWrite = res.headersSent;
+      res.end("k");
+    });
+    const handler = connectToWeb(app);
+    for (const path of ["/send", "/write"]) {
+      const res = defined(await handler(new Request(`http://localhost${path}`)));
+      expect(res.headers.get("set-cookie")).toBe("session=abc");
+      expect(await res.text()).toBe("ok");
+    }
+    expect(headersSentAfterWrite).toBe(true);
+  });
+
   it("streams a chunked response without buffering it all first", async () => {
     const fh = appFrom(() => async () => {
       const enc = new TextEncoder();
