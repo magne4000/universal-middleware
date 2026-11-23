@@ -1,5 +1,14 @@
 ## [0.3.3](https://github.com/magne4000/universal-middleware/compare/express-v0.3.2...express-v0.3.3) (2024-12-09)
 
+## 0.6.2
+
+### Patch Changes
+
+- bab449e: A warning is logged once per process when a universal middleware read more than 1 MiB of the request body, which the next Express handler then gets empty or cut short.
+- 5d56da4: `connectToWeb()`: when the client leaves mid-upload, the request body the app reads fails with `ECONNRESET`, as on Node's server, instead of ending as if it were complete. As on Node's server too, that error, like a failure of the request's body stream, is only emitted to `error` listeners.
+- a7066b2: `connectToWeb()` no longer leaves a response hanging when it fails: `res.destroy(error)`, which `pipeline()` calls when its source fails, and `next(error)` after the response started fail the `Response` body with the error, and a response destroyed before it started rejects with it. `createServerResponse()`'s `onReadable` takes an `onError` callback for the latter.
+- db56c37: `connectToWeb()`: the first `res.write()` or `res.end()` goes through `res.writeHead()`, as on Node's server, so `on-headers` hooks run (`express-session` and `cookie-session` set their cookie, morgan logs `:response-time`), and `res.headersSent` turns `true`.
+
 ## 0.6.1
 
 ### Patch Changes
