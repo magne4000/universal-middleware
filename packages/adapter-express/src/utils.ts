@@ -70,24 +70,35 @@ export function connectToWeb(handler: ConnectMiddleware | ConnectMiddlewareBoole
 
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: ignored
     return new Promise<Response | undefined>(async (resolve, reject) => {
-      onReadable(({ readable, headers, statusCode, statusMessage }) => {
-        const hasBody = !statusCodesWithoutBody.includes(statusCode);
-        // Until a streaming body has flushed
-        if (hasBody) readable.once("close", stopForwardingAbort);
-        else stopForwardingAbort();
-        resolve(
-          new Response(hasBody ? toWebStream(readable) : null, {
-            status: statusCode,
-            statusText: statusMessage,
-            headers: flattenHeaders(headers),
-          }),
-        );
-      });
+      let started = false;
+      onReadable(
+        ({ readable, headers, statusCode, statusMessage }) => {
+          started = true;
+          const hasBody = !statusCodesWithoutBody.includes(statusCode);
+          // Until a streaming body has flushed
+          if (hasBody) readable.once("close", stopForwardingAbort);
+          else stopForwardingAbort();
+          resolve(
+            new Response(hasBody ? toWebStream(readable) : null, {
+              status: statusCode,
+              statusText: statusMessage,
+              headers: flattenHeaders(headers),
+            }),
+          );
+        },
+        (error) => {
+          stopForwardingAbort();
+          reject(error);
+        },
+      );
 
       const next = (error?: unknown) => {
         stopForwardingAbort();
         if (error) {
-          reject(error instanceof Error ? error : new Error(String(error)));
+          const failure = error instanceof Error ? error : new Error(String(error));
+          // Too late for a rejection: the body fails, as Node's server destroys the connection
+          if (started) res.destroy(failure);
+          else reject(failure);
         } else {
           resolve(undefined);
         }
@@ -149,7 +160,7 @@ export function createIncomingMessage(request: Request): IncomingMessage {
 
 /**
  * Creates a `ServerResponse` whose output is captured. `onReadable`'s callback gets the output stream, the headers and
- * the status once the response starts.
+ * the status once the response starts. Its `onError` gets the error of a response destroyed before it started.
  * @beta
  */
 export function createServerResponse(incomingMessage: IncomingMessage) {
@@ -164,6 +175,7 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
       statusCode: number;
       statusMessage: string | undefined;
     }) => void,
+    onError?: (error: Error) => void,
   ) => {
     const handleReadable = () => {
       if (handled) return;
@@ -178,6 +190,11 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
 
     passThrough.once("readable", handleReadable);
     passThrough.once("end", handleReadable);
+    passThrough.once("close", () => {
+      if (handled) return;
+      handled = true;
+      onError?.(passThrough.errored ?? new Error("The response was destroyed before it started"));
+    });
   };
 
   passThrough.once("finish", () => {
@@ -187,6 +204,14 @@ export function createServerResponse(incomingMessage: IncomingMessage) {
     res.destroy();
     res.emit("close");
   });
+  // `pipeline()` destroys `res` when its source fails: the body fails with the error
+  const destroy = res.destroy;
+  res.destroy = (error?: Error) => {
+    passThrough.destroy(error);
+    return destroy.call(res, error);
+  };
+  // The error reaches the body's reader, or `onReadable`'s `onError` when the response hadn't started
+  passThrough.on("error", () => {});
   passThrough.on("drain", () => {
     res.emit("drain");
   });

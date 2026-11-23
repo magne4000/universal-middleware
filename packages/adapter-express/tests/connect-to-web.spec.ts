@@ -1,5 +1,5 @@
 import type { IncomingMessage } from "node:http";
-import { Readable } from "node:stream";
+import { pipeline, Readable } from "node:stream";
 import type { RuntimeAdapterTarget, UniversalHandler } from "@universal-middleware/core";
 import express from "express";
 import { describe, expect, it } from "vitest";
@@ -239,6 +239,53 @@ describe("connectToWeb (synthetic path) — large body is streamed, not buffered
       received += value.length;
     }
     expect(received).toBe(CHUNK * COUNT);
+  });
+});
+
+describe("connectToWeb (synthetic path) — a response that fails", () => {
+  // Each test fails by timing out if the failure never reaches the caller.
+  const app = express();
+  // `pipeline()` destroys `res` with the error of a source that fails
+  app.get("/mid-stream", (_req, res) => {
+    let sent = false;
+    const source = new Readable({
+      read() {
+        if (sent) {
+          setTimeout(() => this.destroy(new Error("source died")), 10);
+        } else {
+          sent = true;
+          this.push("partial");
+        }
+      },
+    });
+    pipeline(source, res, () => {});
+  });
+  app.get("/before-first-byte", (_req, res) => {
+    const source = new Readable({
+      read() {
+        this.destroy(new Error("source died"));
+      },
+    });
+    pipeline(source, res, () => {});
+  });
+  app.get("/next-after-write", (_req, res, next) => {
+    res.write("partial");
+    setTimeout(() => next(new Error("boom")), 10);
+  });
+  const handler = connectToWeb(app);
+
+  it("fails the body when the source fails mid-stream", async () => {
+    const res = defined(await handler(new Request("http://localhost/mid-stream")));
+    await expect(res.text()).rejects.toThrow("source died");
+  });
+
+  it("rejects when the source fails before the first byte", async () => {
+    await expect(handler(new Request("http://localhost/before-first-byte"))).rejects.toThrow("source died");
+  });
+
+  it("fails the body when the app passes an error on after the response started", async () => {
+    const res = defined(await handler(new Request("http://localhost/next-after-write")));
+    await expect(res.text()).rejects.toThrow("boom");
   });
 });
 
